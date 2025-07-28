@@ -1,0 +1,65 @@
+[gd_scene load_steps=8 format=4 uid="uid://cthbjvirwy2mg"]
+
+[ext_resource type="PackedScene" uid="uid://birqbeghihmpi" path="res://scene/hero.tscn" id="1_5kiuu"]
+[ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="2_dbls1"]
+[ext_resource type="SpriteFrames" uid="uid://5jb237cswid6" path="res://asset/animation/dwarf/dwarfHunter.tres" id="3_33cqm"]
+[ext_resource type="SpriteFrames" uid="uid://cji1ypma61dsn" path="res://asset/animation/elf/elfWarden.tres" id="4_xlg7c"]
+[ext_resource type="SpriteFrames" uid="uid://v0575lacuqxm" path="res://asset/animation/forestProtector/forestProtectorDryadDeer.tres" id="5_qpk70"]
+[ext_resource type="SpriteFrames" uid="uid://b4v8wyfchbjrs" path="res://asset/animation/holyWarrior/holyBattlePriest.tres" id="6_ll5lq"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_dbls1"]
+
+[node name="Game" type="Node2D"]
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("WorldBoundaryShape2D_dbls1")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(4, 4)
+
+[node name="walls" type="TileMapLayer" parent="."]
+position = Vector2(-64, -48)
+tile_map_data = PackedByteArray("AAAAAAEAAQABAA0AAAAAAAIAAQABAA0AAAAEAAQAAQACAAAAAAAEAAUAAQACAAEAAAAAAP7/AQACAAwAAAAAAP//AQACAA0AAAAAAAAAAQABAA0AAAAAAAMAAQABAA0AAAAAAAQAAQACAA4AAAAAAAUAAQACAA8AAAABAP7/AQACAAAAAAABAP//AQACAAEAAAABAAQAAQACAAAAAAABAAUAAQACAAEAAAACAP7/AQACAAAAAAACAP//AQACAAEAAAACAAQAAQACAAAAAAACAAUAAQACAAEAAAADAP7/AQACAAAAAAADAP//AQACAAEAAAADAAQAAQACAAAAAAADAAUAAQACAAEAAAAEAP7/AQACAAAAAAAEAP//AQACAAEAAAAFAP7/AQACAAAAAAAFAP//AQACAAEAAAAFAAQAAQACAAAAAAAFAAUAAQACAAEAAAAGAP7/AQACAAAAAAAGAP//AQACAAEAAAAGAAQAAQACAAAAAAAGAAUAAQACAAEAAAAHAP7/AQADAAwAAAAHAP//AQADAA0AAAAHAAAAAQAAAA0AAAAHAAEAAQAAAA0AAAAHAAIAAQAAAA0AAAAHAAMAAQAAAA0AAAAHAAQAAQADAA4AAAAHAAUAAQADAA8AAAA=")
+tile_set = ExtResource("2_dbls1")
+
+[node name="floor" type="TileMapLayer" parent="."]
+z_index = -1
+position = Vector2(-16, 16)
+tile_map_data = PackedByteArray("AAD9//z/AQACAAUAAAD+//z/AQABAAQAAAD///z/AQACAAQAAAAAAPz/AQABAAYAAAAAAP3/AQACAAYAAAABAP3/AQABAAQAAAACAP3/AQADAAUAAAADAP3/AQACAAUAAAAEAPz/AQACAAYAAAADAPz/AQADAAUAAAACAPz/AQACAAUAAAABAPz/AQACAAUAAAD///3/AQADAAQAAAD+//3/AQACAAQAAAD9//3/AQADAAQAAAAEAP7/AQADAAQAAAADAP7/AQACAAYAAAACAP7/AQABAAYAAAABAP7/AQADAAQAAAAAAP7/AQADAAUAAAD///7/AQACAAUAAAD+//7/AQABAAQAAAD9////AQADAAQAAAD+////AQACAAQAAAD/////AQADAAUAAAAAAP//AQADAAQAAAABAP//AQABAAYAAAACAP//AQABAAUAAAADAP//AQACAAUAAAAEAP//AQADAAQAAAAEAAAAAQABAAYAAAADAAAAAQABAAYAAAACAAAAAQABAAUAAAAAAAAAAQABAAUAAAD//wAAAQABAAQAAAD+/wAAAQADAAUAAAD9/wAAAQABAAUAAAD9/wEAAQABAAYAAAD+/wEAAQABAAUAAAABAAEAAQACAAYAAAACAAEAAQABAAYAAAADAAEAAQACAAYAAAAEAAEAAQADAAQAAAAEAP3/AQABAAUAAAD9//7/AQABAAUAAAD//wEAAQABAAQAAAAAAAEAAQADAAUAAAABAAAAAQADAAUAAAA=")
+tile_set = ExtResource("2_dbls1")
+
+[node name="decoration" type="TileMapLayer" parent="."]
+z_index = 1
+position = Vector2(-16, 16)
+tile_set = ExtResource("2_dbls1")
+
+[node name="Hero" parent="." instance=ExtResource("1_5kiuu")]
+position = Vector2(-26, -10)
+spd = 20
+
+[node name="Hero2" parent="." instance=ExtResource("1_5kiuu")]
+position = Vector2(-15.7329, -62.3787)
+velocity = Vector2(0.743184, -6.62511)
+hero_name = "ArchMage"
+spd = 20
+sprite_frames = ExtResource("3_33cqm")
+
+[node name="Hero3" parent="." instance=ExtResource("1_5kiuu")]
+z_index = 1
+position = Vector2(35.4641, -44.5646)
+hero_name = "KingMan"
+spd = 20
+
+[node name="Hero4" parent="." instance=ExtResource("1_5kiuu")]
+position = Vector2(0, 7)
+sprite_frames = ExtResource("4_xlg7c")
+
+[node name="Hero5" parent="." instance=ExtResource("1_5kiuu")]
+position = Vector2(30, -1)
+sprite_frames = ExtResource("5_qpk70")
+
+[node name="Hero6" parent="." instance=ExtResource("1_5kiuu")]
+position = Vector2(24, -21)
+sprite_frames = ExtResource("6_ll5lq")

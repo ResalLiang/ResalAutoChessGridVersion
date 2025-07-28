@@ -1,0 +1,13 @@
+ProgressBar
+AnimationPlayer
+Timer
+NavigationAgent2D
+Node2D
+CollisionShape2D
+AnimatedSprite2D
+Area2D
+Node
+Line2D
+TileMapLayer
+CharacterBody2D
+AnimatableBody2D

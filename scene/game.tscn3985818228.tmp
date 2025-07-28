@@ -1,0 +1,55 @@
+[gd_scene load_steps=4 format=4 uid="uid://cthbjvirwy2mg"]
+
+[ext_resource type="PackedScene" uid="uid://birqbeghihmpi" path="res://scene/hero.tscn" id="1_5kiuu"]
+[ext_resource type="Script" uid="uid://c7rtc63knhqn2" path="res://script/game.gd" id="1_ll5lq"]
+[ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="2_dbls1"]
+
+[node name="Game" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_ll5lq")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(4, 4)
+
+[node name="walls" type="TileMapLayer" parent="."]
+position = Vector2(-64, -48)
+tile_map_data = PackedByteArray("AAAAAAEAAQABAA0AAAAAAAIAAQABAA0AAAAEAAQAAQACAAAAAAAEAAUAAQACAAEAAAAAAP7/AQACAAwAAAAAAP//AQACAA0AAAAAAAAAAQABAA0AAAAAAAMAAQABAA0AAAAAAAQAAQACAA4AAAAAAAUAAQACAA8AAAABAP7/AQACAAAAAAABAP//AQACAAEAAAABAAQAAQACAAAAAAABAAUAAQACAAEAAAACAP7/AQACAAAAAAACAP//AQACAAEAAAACAAQAAQACAAAAAAACAAUAAQACAAEAAAADAP7/AQACAAAAAAADAP//AQACAAEAAAADAAQAAQACAAAAAAADAAUAAQACAAEAAAAEAP7/AQACAAAAAAAEAP//AQACAAEAAAAFAP7/AQACAAAAAAAFAP//AQACAAEAAAAFAAQAAQACAAAAAAAFAAUAAQACAAEAAAAGAP7/AQACAAAAAAAGAP//AQACAAEAAAAGAAQAAQACAAAAAAAGAAUAAQACAAEAAAAHAP7/AQADAAwAAAAHAP//AQADAA0AAAAHAAAAAQAAAA0AAAAHAAEAAQAAAA0AAAAHAAIAAQAAAA0AAAAHAAMAAQAAAA0AAAAHAAQAAQADAA4AAAAHAAUAAQADAA8AAAA=")
+tile_set = ExtResource("2_dbls1")
+
+[node name="floor" type="TileMapLayer" parent="."]
+z_index = -1
+position = Vector2(-64, -48)
+tile_map_data = PackedByteArray("AAAAAAAAAQACAAUAAAAAAAEAAQADAAQAAAABAAAAAQABAAQAAAABAAEAAQACAAQAAAACAAAAAQACAAQAAAACAAEAAQADAAQAAAADAAAAAQABAAYAAAADAAEAAQACAAYAAAAEAAAAAQACAAUAAAAEAAEAAQABAAQAAAAAAAIAAQABAAUAAAAAAAMAAQADAAQAAAAAAAQAAQABAAUAAAAAAAUAAQABAAYAAAABAAIAAQABAAQAAAABAAMAAQACAAQAAAABAAQAAQADAAUAAAABAAUAAQABAAUAAAACAAIAAQACAAUAAAACAAMAAQADAAUAAAACAAQAAQABAAQAAAACAAUAAQABAAQAAAADAAIAAQADAAUAAAADAAMAAQADAAQAAAADAAQAAQABAAUAAAADAAUAAQADAAUAAAAEAAIAAQADAAQAAAAEAAMAAQABAAYAAAAEAAQAAQADAAUAAAAEAAUAAQACAAYAAAAFAAAAAQACAAUAAAAFAAEAAQADAAUAAAAFAAIAAQABAAYAAAAFAAMAAQABAAUAAAAFAAQAAQABAAUAAAAFAAUAAQABAAYAAAAGAAAAAQADAAUAAAAGAAEAAQACAAUAAAAGAAIAAQACAAYAAAAGAAMAAQACAAUAAAAGAAQAAQABAAYAAAAGAAUAAQACAAYAAAAHAAAAAQACAAYAAAAHAAEAAQABAAUAAAAHAAIAAQADAAQAAAAHAAMAAQADAAQAAAAHAAQAAQABAAYAAAAHAAUAAQADAAQAAAA=")
+tile_set = ExtResource("2_dbls1")
+
+[node name="decoration" type="TileMapLayer" parent="."]
+z_index = 1
+position = Vector2(-16, 16)
+tile_set = ExtResource("2_dbls1")
+
+[node name="Hero" parent="." instance=ExtResource("1_5kiuu")]
+position = Vector2(31, -27)
+team = 1
+
+[node name="Hero2" parent="." instance=ExtResource("1_5kiuu")]
+position = Vector2(-38, -35)
+faction = "dwarf"
+hero_name = "ArmoredBearRider"
+team = 2
+
+[node name="Hero3" parent="." instance=ExtResource("1_5kiuu")]
+position = Vector2(-39, 5)
+faction = "elf"
+hero_name = "ArcaneArcher"
+team = 3
+
+[node name="Hero4" parent="." instance=ExtResource("1_5kiuu")]
+position = Vector2(37, 13)
+faction = "forestProtector"
+hero_name = "DryadDeer"
+team = 4
+
+[node name="Hero5" parent="." instance=ExtResource("1_5kiuu")]
+faction = "holy"
+hero_name = "Angel"
+team = 5

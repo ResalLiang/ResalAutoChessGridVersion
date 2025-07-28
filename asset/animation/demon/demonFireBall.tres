@@ -1,0 +1,72 @@
+[gd_resource type="SpriteFrames" load_steps=10 format=3 uid="uid://dyfifg1a3afh5"]
+
+[ext_resource type="Texture2D" uid="uid://lyw3eyinq8ro" path="res://asset/sprite/MinifolksDemons/Without outline/MiniFireBall.png" id="1_7mv86"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2fu5s"]
+atlas = ExtResource("1_7mv86")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wpnfi"]
+atlas = ExtResource("1_7mv86")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fwp8a"]
+atlas = ExtResource("1_7mv86")
+region = Rect2(32, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ic1ux"]
+atlas = ExtResource("1_7mv86")
+region = Rect2(48, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kjtxg"]
+atlas = ExtResource("1_7mv86")
+region = Rect2(64, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ugdx6"]
+atlas = ExtResource("1_7mv86")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vs6bn"]
+atlas = ExtResource("1_7mv86")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ih16u"]
+atlas = ExtResource("1_7mv86")
+region = Rect2(32, 0, 16, 16)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2fu5s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wpnfi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fwp8a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ic1ux")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kjtxg")
+}],
+"loop": false,
+"name": &"die",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ugdx6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vs6bn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ih16u")
+}],
+"loop": true,
+"name": &"move",
+"speed": 8.0
+}]

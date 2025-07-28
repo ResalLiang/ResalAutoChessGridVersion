@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://ch7icc5epsyku"
+
+[deps]
+
+files=["res://script/hero_stats.hero.translation", "res://script/hero_stats.spd.translation", "res://script/hero_stats.hp.translation", "res://script/hero_stats.attack.translation", "res://script/hero_stats.attack.translation", "res://script/hero_stats.attack.translation", "res://script/hero_stats.defense.translation", "res://script/hero_stats.special.translation"]
+
+source_file="res://script/hero_stats.csv"
+dest_files=["res://script/hero_stats.hero.translation", "res://script/hero_stats.spd.translation", "res://script/hero_stats.hp.translation", "res://script/hero_stats.attack.translation", "res://script/hero_stats.attack.translation", "res://script/hero_stats.attack.translation", "res://script/hero_stats.defense.translation", "res://script/hero_stats.special.translation"]
+
+[params]
+
+compress=true
+delimiter=0

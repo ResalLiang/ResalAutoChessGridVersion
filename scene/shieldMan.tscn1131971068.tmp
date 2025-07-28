@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://birqbeghihmpi"]
+
+[ext_resource type="Script" uid="uid://0ya3icu0o1fg" path="res://script/shield_man.gd" id="1_n7ut4"]
+[ext_resource type="SpriteFrames" uid="uid://pvu8xcp5ahdu" path="res://asset/animation/human/shieldMan.tres" id="2_n7ut4"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lqjy5"]
+size = Vector2(8, 8)
+
+[node name="CharacterBody2D" type="CharacterBody2D"]
+script = ExtResource("1_n7ut4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -4)
+shape = SubResource("RectangleShape2D_lqjy5")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_n7ut4")
+animation = &"attack"
+autoplay = "idle"
+
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]

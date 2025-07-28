@@ -1,0 +1,18 @@
+[gd_resource type="SpriteFrames" load_steps=3 format=3 uid="uid://dqeidtqpuerp7"]
+
+[ext_resource type="Texture2D" uid="uid://co88x3mibg3lp" path="res://asset/sprite/MinifolksDemons/Without outline/MiniTrident.png" id="1_gx0ox"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jcdkq"]
+atlas = ExtResource("1_gx0ox")
+region = Rect2(0, 8, 24, 8)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jcdkq")
+}],
+"loop": true,
+"name": &"move",
+"speed": 8.0
+}]

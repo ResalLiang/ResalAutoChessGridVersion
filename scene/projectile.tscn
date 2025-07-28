@@ -1,0 +1,53 @@
+[gd_scene load_steps=8 format=3 uid="uid://doeoqyu5a6wjk"]
+
+[ext_resource type="Texture2D" uid="uid://b33moj3tihrg4" path="res://asset/sprite/MinifolksDwarfs/Without Outline/MiniGrenade.png" id="1_v1jrq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u6xv6"]
+atlas = ExtResource("1_v1jrq")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c0tm2"]
+atlas = ExtResource("1_v1jrq")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ujo14"]
+atlas = ExtResource("1_v1jrq")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gaw4a"]
+atlas = ExtResource("1_v1jrq")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_5sdoi"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u6xv6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c0tm2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ujo14")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gaw4a")
+}],
+"loop": true,
+"name": &"default",
+"speed": 8.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_53ky5"]
+size = Vector2(8, 3)
+
+[node name="Area2D" type="Area2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_5sdoi")
+frame = 1
+frame_progress = 0.501969
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -0.5)
+shape = SubResource("RectangleShape2D_53ky5")

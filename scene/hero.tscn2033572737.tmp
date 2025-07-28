@@ -1,0 +1,42 @@
+[gd_scene load_steps=5 format=3 uid="uid://birqbeghihmpi"]
+
+[ext_resource type="Script" uid="uid://cmj65pa4j3u1u" path="res://script/hero.gd" id="1_n7ut4"]
+[ext_resource type="SpriteFrames" uid="uid://cm5gv2bfu374u" path="res://asset/animation/elf/elfArcher.tres" id="2_s32td"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_s32td"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_10qbj"]
+size = Vector2(10, 12)
+
+[node name="Hero" type="CharacterBody2D"]
+y_sort_enabled = true
+script = ExtResource("1_n7ut4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 2)
+scale = Vector2(0.4, 0.15)
+shape = SubResource("CapsuleShape2D_s32td")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+y_sort_enabled = true
+position = Vector2(0, -11)
+sprite_frames = ExtResource("2_s32td")
+animation = &"attack"
+autoplay = "idle"
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2(0, -13)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0, 11)
+shape = SubResource("RectangleShape2D_10qbj")
+
+[node name="idle_timer" type="Timer" parent="."]
+wait_time = 3.0
+
+[node name="move_timer" type="Timer" parent="."]
+wait_time = 3.0
+
+[node name="attack_timer" type="Timer" parent="."]
+
+[node name="Line2D" type="Line2D" parent="."]
