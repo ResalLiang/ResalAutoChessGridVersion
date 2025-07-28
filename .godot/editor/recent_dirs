@@ -1,3 +1,5 @@
+res://asset
+res://
 res://script
 res://asset/animation/villager
 res://asset/sprite/MinifolksVillagers2/Original/Without Outline
@@ -18,5 +20,3 @@ res://asset/animation/forestProtector
 res://asset/sprite/MinifolksForestProtectors/Outline
 res://asset/sprite/MinifolksDwarfs/Outline
 res://asset/sprite/MinifolksHumans/Outline
-res://asset/sprite/MinifolksDemons2EA/Outline
-res://asset/animation/human

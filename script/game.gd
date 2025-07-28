@@ -8,6 +8,17 @@ const hero_scene = preload("res://scene/hero.tscn")
 @export_enum("human", "dwarf", "elf", "forestProtector", "holy", "undead", "demon") var team2_faction := "human"
 
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
+enum Team { TEAM1, TEAM2 }
+enum SelectionMode { HIGH_HP, LOW_HP, NEAR_CENTER, FAR_CENTER }
+var current_team: Team
+var active_hero: Hero
+var team_dict: Dictionary = {
+	Team.TEAM1: [],
+	Team.TEAM2: []
+}
+var center_point: Vector2
+var board_width:= 216
+var board_height:= 216
 
 # Define rarity weights dictionary
 const RARITY_WEIGHTS = {
@@ -38,10 +49,16 @@ func _ready():
 		push_error("JSON parsing failed for hero_stats.json")
 		return
 	
+	var astar_grid = AStarGrid2D.new()
 	
+	var grid_size := 16
+	var grid_count := 16
+	astar_grid.region = Rect2i(tile_size.x / 2, tile_size.y / 2, tile_size.x / 2 + tile_size.x * (grid_count - 1), tile_size.y / 2 + tile_size.y * (grid_count - 1))
+	astar_grid.cell_size = Vector2(grid_size, grid_size)
+
 	# 遍历每个格子
-	for x in range(0, 4):
-		for y in range(rows):
+	for x in range(0, tile_size.x / 2):
+		for y in range(tile_size.y):
 			# 随机决定是否生成角色(50%概率)
 			if randf() > 0.65:
 				# 创建角色实例
@@ -58,13 +75,12 @@ func _ready():
 				character.team = 1
 				character.faction = team1_faction
 				character.hero_name = get_random_character(team1_faction)
-				
+				team_dict[Team.TEAM1].append(character)
 				# 添加到场景
 				add_child(character)
 				
-				
-	for x in range(4, 8):
-		for y in range(rows):
+	for x in range(tile_size.x / 2, tile_size.x):
+		for y in range(tile_size.y):
 			# 随机决定是否生成角色(50%概率)
 			if randf() > 0.65:
 				# 创建角色实例
@@ -81,8 +97,12 @@ func _ready():
 				character.team = 2
 				character.faction = team2_faction
 				character.hero_name = get_random_character(team2_faction)
+				team_dict[Team.TEAM2].append(character)
 				# 添加到场景
 				add_child(character)
+				
+	center_point = Vector2(tile_size.x * grid_count / 2, tile_size.y * grid_count / 2)
+	#start_new_round()
 
 func get_random_character(faction_name: String) -> String:
 	if not hero_data.has(faction_name):
@@ -115,3 +135,39 @@ func get_random_character(faction_name: String) -> String:
 			return candidates[i]
 	
 	return candidates[0] # Default return first one (shouldn't reach here)
+
+func start_new_round():
+	current_team = [Team.TEAM1, Team.TEAM2][randi() % 2]
+	start_team_turn(current_team)
+
+func start_team_turn(team: Team):
+	var team_chars = sort_characters(team, SelectionMode.HIGH_HP)
+	process_character_turn(team_chars.pop_front())
+
+func process_character_turn(hero: Hero):
+	active_hero = hero
+	hero.start_turn()
+	# 连接信号等待行动完成
+	hero.turn_finished.connect(_on_character_turn_finished)
+
+func _on_character_turn_finished():
+	var opposing_team = Team.TEAM2 if current_team == Team.TEAM1 else Team.TEAM1
+	if team_dict[current_team] != []:
+		start_team_turn(current_team)
+	else:
+		start_team_turn(opposing_team)
+
+func sort_characters(team: Team, mode: SelectionMode) -> Array:
+	var heroes_team = team_dict[team].duplicate()
+	match mode:
+		SelectionMode.HIGH_HP:
+			heroes_team.sort_custom(func(a, b): return a.hp > b.hp)
+		SelectionMode.LOW_HP:
+			heroes_team.sort_custom(func(a, b): return a.hp < b.hp)
+		SelectionMode.NEAR_CENTER:
+			heroes_team.sort_custom(func(a, b): 
+				return a.position.distance_to(center_point) < b.position.distance_to(center_point))
+		SelectionMode.FAR_CENTER:
+			heroes_team.sort_custom(func(a, b): 
+				return a.position.distance_to(center_point) > b.position.distance_to(center_point))
+	return heroes_team

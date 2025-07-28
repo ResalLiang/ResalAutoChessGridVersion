@@ -1,7 +1,7 @@
 # Hero character class with movement, dragging functionality and state management
 #@tool
 class_name Hero
-extends CharacterBody2D
+extends Node2D
 
 # ========================
 # Constants and Enums
@@ -50,7 +50,6 @@ const DEFAULT_ATTACK_INTERVAL := 1.0  # Default attack interval (seconds)
 # ========================
 # Node References
 # ========================
-@onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var area_2d: Area2D = $Area2D
 @onready var idle_timer: Timer = $idle_timer
@@ -90,12 +89,17 @@ var faction_hero_dict = {
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
 var rng = RandomNumberGenerator.new() # Random number generator
 
+var move_path: PackedVector2Array
+var move_speed: float = 200.0
+var is_moving: bool = false
+
 # ========================
 # Signal Definitions
 # ========================
 
 signal attack_landed(target: Hero, damage: int)  # Emitted when attack hits target
 signal died                                      # Emitted when die
+signal turn_finished
 
 # ========================
 # Projectile Properties
@@ -140,6 +144,9 @@ func _ready():
 	if animated_sprite_2d.sprite_frames.has_animation("idle"):
 		animated_sprite_2d.play("idle")
 	
+	if team == 2:
+		animated_sprite_2d.flip_h = true
+		
 	# Add to hero group for targeting
 	add_to_group("hero_group")
 	
@@ -181,6 +188,7 @@ func _ready():
 # Process Functions
 # ========================
 func _process(delta: float) -> void:
+	return
 	# Skip processing in editor mode
 	if Engine.is_editor_hint():
 		return
@@ -199,6 +207,7 @@ func _process(delta: float) -> void:
 	mp_bar.value = mp
 
 func _physics_process(delta):
+	return
 	# Skip physics in editor mode
 	if Engine.is_editor_hint():
 		return
@@ -225,10 +234,6 @@ func _input(event):
 # Validate all required node references
 func _validate_node_references() -> bool:
 	var valid = true
-	
-	if not collision_shape_2d:
-		push_error("CollisionShape2D reference is missing!")
-		valid = false
 	
 	if not animated_sprite_2d:
 		push_error("AnimatedSprite2D reference is missing!")
@@ -330,7 +335,6 @@ func _handle_state():
 		stat = STATUS.IDLE
 		if animated_sprite_2d.sprite_frames.has_animation("idle"):
 			animated_sprite_2d.play("idle")
-		velocity = Vector2.ZERO
 		# Start idle timer with random duration
 		#idle_timer.start(rng.randf_range(0.5, 1.0))
 		#idle_timer.start(0.1)
@@ -368,7 +372,6 @@ func _handle_state():
 						animated_sprite_2d.play("attack")
 			if attack_timer.is_stopped():
 				attack_timer.start() # Start attack sequence
-			velocity = Vector2.ZERO
 		# Transition to move state if out of range
 		else:
 			if stat != STATUS.MOVE:
@@ -386,9 +389,7 @@ func _handle_movement(delta):
 	if stat == STATUS.MELEE_ATTACK or stat == STATUS.RANGE_ATTACK:
 		return
 	
-	if not navigation_agent_2d.is_navigation_finished():
-		var move_dir = to_local(navigation_agent_2d.get_next_path_position()).normalized()
-		navigation_agent_2d.set_velocity(move_dir * spd)
+
 
 # Find a new target based on selection strategy
 func _find_new_target(tgt, cnt: int) -> Array[Hero]:
@@ -546,15 +547,6 @@ func _update_hero_name_options():
 func _update_hero_stat():
 	pass  # Placeholder for editor-specific stat updates
 
-
-func _on_target_timer_timeout() -> void:
-	if is_instance_valid(hero_target[0]):
-		navigation_agent_2d.target_position = hero_target[0].position
-
-func _on_navigation_agent_2d_velocity_computed(safe_velocity: Vector2) -> void:
-	velocity = safe_velocity
-	if stat != STATUS.MELEE_ATTACK and stat != STATUS.RANGE_ATTACK and stat != STATUS.IDLE and stat != STATUS.DIE:
-		move_and_slide()
 
 func _cast_spell(spell_tgt: Hero):
 	print("%s casts a spell : %s." % [hero_name, skill_name])
