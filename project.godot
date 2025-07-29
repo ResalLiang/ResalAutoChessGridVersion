@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="ResalAutoChess"
+config/name="ResalAutoChessGridVersion"
 run/main_scene="uid://cthbjvirwy2mg"
 config/features=PackedStringArray("4.4", "Mobile")
 config/icon="res://icon.svg"

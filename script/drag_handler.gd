@@ -5,8 +5,6 @@ extends Node2D
 @onready var attack_timer: Timer = $"../attack_timer"
 @onready var idle_timer: Timer = $"../idle_timer"
 @onready var animated_sprite_2d: AnimatedSprite2D = $"../AnimatedSprite2D"
-@onready var grid_highlight: AnimatedSprite2D = %grid_highlight
-@onready var node_2d: Node2D = %Node2D
 
 
 var dragging := false           # Is character being dragged
@@ -58,7 +56,6 @@ func _start_dragging():
 		return
 		
 	dragging = true
-	node_2d.visible = true
 	starting_position = hero.global_position
 	add_to_group("dragging")
 	hero.z_index = 99  # Bring to front during drag
@@ -73,7 +70,6 @@ func _end_dragging():
 	remove_from_group("dragging")
 	z_index = CHARACT_Z_INDEX  # Restore default Z-index
 	hero.stat = hero.STATUS.IDLE
-	node_2d.visible = false
 
 # Cancel dragging and return to start position
 func _cancel_dragging():
@@ -112,10 +108,6 @@ func _on_target_input_event(_viewport, event, _shape_idx):
 func _handle_dragging():
 	# Follow mouse position with offset
 	hero.global_position = get_global_mouse_position() + offset
-	node_2d.position = Vector2(
-		snap(area_2d.get_global_mouse_position().x, 16),
-		snap(area_2d.get_global_mouse_position().y, 16)
-	)
 	# Play jump animation during drag
 	animated_sprite_2d.play("jump")
 

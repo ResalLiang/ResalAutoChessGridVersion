@@ -11,7 +11,7 @@ enum STATUS {IDLE, MOVE, MELEE_ATTACK, RANGE_ATTACK, JUMP, HIT, DIE}
 enum TARGET_CHOICE {CLOSE, FAR, STRONG, WEAK, ALLY}
 
 const DEFAULT_ATTACK_INTERVAL := 1.0  # Default attack interval (seconds)
-
+const MAX_SEARCH_RADIUS = 3
 # ========================
 # Exported Variables
 # ========================
@@ -64,18 +64,15 @@ const DEFAULT_ATTACK_INTERVAL := 1.0  # Default attack interval (seconds)
 var hp: int                # Current health points
 var mp: int                # Current magic points
 var hero_target_choice := TARGET_CHOICE.CLOSE  # Target selection strategy
-var hero_target: Array[Hero] = []  # Current attack target
+var hero_target: Hero  # Current attack target
 var hero_spell_target_count := 1
 var hero_spell_target_choice := TARGET_CHOICE.CLOSE  # Target selection strategy
 var hero_spell_target: Array[Hero] = [] # Current spell target
-
-var smooth_velocity := Vector2.ZERO  # Smoothed movement velocity
-var smooth_factor := 0.1  # Velocity smoothing factor
-
 var stat := STATUS.IDLE         # Current character state
 
 var skill_name := "Place holder."
 var skill_description := "Place holder."
+
 
 # Dictionary mapping factions to available hero names
 var faction_hero_dict = {
@@ -92,7 +89,21 @@ var rng = RandomNumberGenerator.new() # Random number generator
 var move_path: PackedVector2Array
 var move_speed: float = 200.0
 var is_moving: bool = false
+var position_id := Vector2i.ZERO
+var _position := Vector2.ZERO:
+	set(value):
+		_position = value
+		position = _position
+		position_id = Vector2i(
+			snap(value.x, 16),
+			snap(value.y, 16)
+		)
+var astar_grid		
+var position_tween
 
+var is_active: bool = false
+var grid_offset =Vector2(8, 8)
+var remain_step:= 0
 # ========================
 # Signal Definitions
 # ========================
@@ -100,6 +111,11 @@ var is_moving: bool = false
 signal attack_landed(target: Hero, damage: int)  # Emitted when attack hits target
 signal died                                      # Emitted when die
 signal turn_finished
+
+signal move_started
+signal move_finished
+signal action_started
+signal action_finished
 
 # ========================
 # Projectile Properties
@@ -134,7 +150,7 @@ func _ready():
 	# Connect signals
 	idle_timer.timeout.connect(_on_idle_timeout)
 	attack_timer.timeout.connect(_on_attack_timeout)
-	
+	move_finished.connect(_handle_action)
 	
 	# Initialize random number generator
 	rng.randomize()
@@ -143,6 +159,8 @@ func _ready():
 	# Play idle animation
 	if animated_sprite_2d.sprite_frames.has_animation("idle"):
 		animated_sprite_2d.play("idle")
+	
+	astar_grid = get_parent().astar_grid
 	
 	if team == 2:
 		animated_sprite_2d.flip_h = true
@@ -153,7 +171,7 @@ func _ready():
 	# Configure attack indicator line
 	line.width = 0.5
 	line.default_color = Color(1, 0, 0)
-	line.visible = false
+	line.visible = true
 	
 	# Load hero stats from JSON
 	_load_hero_stats()
@@ -173,22 +191,12 @@ func _ready():
 	mp_bar.value = 0
 	
 	
-	var new_material = animated_sprite_2d.material.duplicate()
-	match team:
-		1:
-			new_material.set_shader_parameter("outline_color", Color(1, 1, 0, 1))
-		2:
-			new_material.set_shader_parameter("outline_color", Color(1, 0, 1, 1))
-		3:
-			new_material.set_shader_parameter("outline_color", Color(0, 1, 1, 1))
-		_:
-			new_material.set_shader_parameter("outline_color", Color(1, 1, 1, 1))
-	animated_sprite_2d.material = new_material
+
 # ========================
 # Process Functions
 # ========================
 func _process(delta: float) -> void:
-	return
+	
 	# Skip processing in editor mode
 	if Engine.is_editor_hint():
 		return
@@ -196,28 +204,41 @@ func _process(delta: float) -> void:
 	# Wait if in idle state
 	#if idle_timer.time_left > 0:
 		#return
-	
-	# Handle target selection and tracking
-	_handle_targeting()
-	
-	# Handle state transitions and actions
-	_handle_state()
-	
+
 	hp_bar.value = hp
 	mp_bar.value = mp
+		
+	# Update attack indicator line
+	if hero_target and line_visible:
+		line.points = [Vector2.ZERO, to_local(hero_target.global_position)]
+		line.visible = true
+		
+	var new_material = animated_sprite_2d.material.duplicate()
+	match team:
+		1:
+			if is_active:
+				new_material.set_shader_parameter("outline_color", Color(1, 1, 0, 1))
+			else:
+				new_material.set_shader_parameter("outline_color", Color(1, 1, 0, 0.33))
+		2:
+			if is_active:
+				new_material.set_shader_parameter("outline_color", Color(1, 0, 1, 1))
+			else:
+				new_material.set_shader_parameter("outline_color", Color(1, 0, 1, 0.33))
+		3:
+			if is_active:
+				new_material.set_shader_parameter("outline_color", Color(0, 1, 1, 1))
+			else:
+				new_material.set_shader_parameter("outline_color", Color(0, 1, 1, 0.33))
+		_:
+			if is_active:
+				new_material.set_shader_parameter("outline_color", Color(1, 1, 1, 1))
+			else:
+				new_material.set_shader_parameter("outline_color", Color(1, 1, 1, 0.33))
+	animated_sprite_2d.material = new_material
 
 func _physics_process(delta):
 	return
-	# Skip physics in editor mode
-	if Engine.is_editor_hint():
-		return
-
-	# Handle movement toward target
-	elif hero_target != [null] and hero_target != [] and stat == STATUS.MOVE:
-		_handle_movement(delta)
-	
-	# Apply physics-based movement
-	# move_and_slide()
 
 # ========================
 # Input Handling
@@ -294,27 +315,76 @@ func _load_hero_stats():
 	else:
 		push_error("Stats not found for %s/%s" % [faction, hero_name])
 
+func start_turn():
+	if not hero_target:
+		_handle_targeting()
+	if hero_target:
+		_handle_movement()
+	else:
+		action_finished.emit()
+
+func _handle_movement():
+
+	move_started.emit()
+	animated_sprite_2d.play("move")
+	if position.distance_to(hero_target.global_position) <= attack_range:
+		move_finished.emit()
+		return
+	else:
+		astar_grid.set_point_solid(position_id, false)
+		astar_grid.set_point_solid(hero_target.position_id, false)
+		astar_grid.update()
+		print("Start position ID: ", position_id)
+		print("Target position ID: ", hero_target.position_id)
+		print("Is start solid: ", astar_grid.is_point_solid(position_id))
+		print("Is target solid: ", astar_grid.is_point_solid(hero_target.position_id))
+		move_path = astar_grid.get_point_path(position_id, hero_target.position_id)
+		print("Raw path result: ", move_path)
+		if move_path.is_empty():
+			move_path = get_safe_path(position_id, hero_target.position_id)
+		if move_path.is_empty():
+			astar_grid.set_point_solid(hero_target.position_id, false)
+			move_finished.emit()
+		else:
+			var move_steps = min(spd, move_path.size() - 2)
+			if position_tween:
+				position_tween.kill() # Abort the previous animation.
+			position_tween = create_tween()
+			position_tween.connect("finished", _on_move_completed)
+			remain_step = move_steps
+			for current_step in range(move_steps):
+				var target_pos = move_path[current_step + 1] + grid_offset
+				if !astar_grid.is_point_solid(target_pos):
+					position_tween.tween_property(self, "_position", target_pos, 0.2)
+					remain_step -= 1
+					print(remain_step)
+
+func _on_move_completed():
+	remain_step -= 1
+	if remain_step <= 0:
+		action_finished.emit()
+		astar_grid.set_point_solid(hero_target.position_id, true)
+		
+		print("最终移动完成")
+						
+func _handle_action():
+	action_started.emit()
+	print("action_started signal emitted")
+	action_finished.emit()
+	print("action_finished signal emitted")
+	
 # Handle target selection and tracking
 func _handle_targeting():
 	# Clear invalid targets (dead or invalid instances)
-	if (hero_target == [null] or hero_target == []) or (not is_instance_valid(hero_target[0]) or hero_target[0].stat == STATUS.DIE):
-		hero_target = [null]
+	if !hero_target or hero_target.stat == STATUS.DIE:
 		line.visible = false
-	
-	# Find new target if needed
-	if hero_target == [null] or hero_target == []:
-		hero_target = _find_new_target(hero_target_choice, 1)
-	
-	# Update attack indicator line
-	if hero_target != [null] and hero_target != [] and line_visible:
-		line.points = [Vector2.ZERO, to_local(hero_target[0].global_position)]
-		line.visible = true
-		
+		hero_target = _find_new_target(hero_target_choice)
 
+		
 
 # Handle state transitions and actions
 func _handle_state():
-
+# TODO
 # died -> return
 # !target -> idle
 # mp == max_mp and target -> spell, reduce mp
@@ -329,7 +399,7 @@ func _handle_state():
 		return
 
 
-	if hero_target == [null] or hero_target == []:
+	if hero_target:
 		# Enter idle state if no targets available
 		target_timer.stop()
 		stat = STATUS.IDLE
@@ -342,7 +412,7 @@ func _handle_state():
  
 		
 	if mp >= max_mp:
-		var spell_target =  _find_new_target(hero_spell_target_choice, hero_spell_target_count)
+		var spell_target =  _find_new_target(hero_spell_target_choice)
 		if spell_target:
 			for spell_target_member in spell_target:
 				_cast_spell(spell_target_member)
@@ -350,11 +420,11 @@ func _handle_state():
 		return
 		
 	# Calculate distance to target
-	if hero_target != [null] and hero_target != []:
-		var distance = global_position.distance_to(hero_target[0].global_position)
+	if hero_target:
+		var distance = global_position.distance_to(hero_target.global_position)
 	
 			# Update character facing direction
-		animated_sprite_2d.flip_h = (hero_target[0].global_position - global_position).x < 0
+		animated_sprite_2d.flip_h = (hero_target.global_position - global_position).x < 0
 		
 		# Transition to attack state if in range
 		if distance <= attack_range:
@@ -381,18 +451,8 @@ func _handle_state():
 				attack_timer.stop()  # Stop attacking
 
 
-# Handle movement toward target
-func _handle_movement(delta):
-	if hero_target == [null] or hero_target == []:
-		return
-	
-	if stat == STATUS.MELEE_ATTACK or stat == STATUS.RANGE_ATTACK:
-		return
-	
-
-
 # Find a new target based on selection strategy
-func _find_new_target(tgt, cnt: int) -> Array[Hero]:
+func _find_new_target(tgt) -> Hero:
 	# Get all heroes in the scene
 	var all_heroes: Array[Hero] = []
 	for node in get_tree().get_nodes_in_group("hero_group"):
@@ -400,8 +460,7 @@ func _find_new_target(tgt, cnt: int) -> Array[Hero]:
 			all_heroes.append(node)
 	var enemy_heroes: Array[Hero] = []
 	var ally_heroes: Array[Hero] = []
-	var new_target: Array[Hero] = []
-	var new_target_count = cnt
+	var new_target: Hero
 	var new_target_choice = tgt
 	
 	# Classify heroes as enemies or allies
@@ -418,34 +477,34 @@ func _find_new_target(tgt, cnt: int) -> Array[Hero]:
 		TARGET_CHOICE.FAR:
 			if enemy_heroes.size() > 0:
 				enemy_heroes.sort_custom(_compare_distance)
-				new_target = enemy_heroes.slice(0, new_target_count) as Array[Hero]  # Farthest enemy
+				new_target = enemy_heroes.front()  # Farthest enemy
 		
 		TARGET_CHOICE.CLOSE:
 			if enemy_heroes.size() > 0:
 				enemy_heroes.sort_custom(_compare_distance)
-				new_target = enemy_heroes.slice(-new_target_count) as Array[Hero] # Closest enemy
+				new_target = enemy_heroes.back() # Closest enemy
 		
 		TARGET_CHOICE.STRONG:
 			if enemy_heroes.size() > 0:
 				# Sort by max HP descending
 				enemy_heroes.sort_custom(func(a, b): return a.max_hp > b.max_hp)
-				new_target = enemy_heroes.slice(0, new_target_count) as Array[Hero]  # Strongest enemy
+				new_target = enemy_heroes.front()  # Strongest enemy
 		
 		TARGET_CHOICE.WEAK:
 			if enemy_heroes.size() > 0:
 				# Sort by max HP ascending
 				enemy_heroes.sort_custom(func(a, b): return a.max_hp < b.max_hp)
-				new_target = enemy_heroes.slice(-new_target_count) as Array[Hero]  # Weakest enemy
+				new_target = enemy_heroes.back()  # Weakest enemy
 		
 		TARGET_CHOICE.ALLY:
 			if ally_heroes.size() > 0:
-				new_target = ally_heroes.slice(0, new_target_count) as Array[Hero]  # First ally
+				new_target = ally_heroes.front()  # First ally
 	
-	if new_target != [] and new_target != []:
+	if new_target:
 		target_timer.start()
-		return new_target as Array[Hero]
+		return new_target 
 	else:
-		return [] as Array[Hero]  # No valid target found
+		return null  # No valid target found
 
 # Comparator for sorting by distance
 func _compare_distance(a: Node2D, b: Node2D) -> bool:
@@ -464,25 +523,24 @@ func _on_idle_timeout():
 # ========================
 func _on_attack_timeout():
 	# Validate target exists
-	if hero_target == [null] or hero_target == [] or not is_instance_valid(hero_target[0]):
+	if !hero_target:
 		attack_timer.stop()
 		return
 	
 	# Calculate distance to target
-	var distance = global_position.distance_to(hero_target[0].global_position)
+	var distance = global_position.distance_to(hero_target.global_position)
 	
 	# Use ranged attack if beyond thresholds
 	if distance > melee_range && distance > ranged_attack_threshold:
-		_launch_projectile(hero_target[0])
+		_launch_projectile(hero_target)
 	else:
 		# Melee attack
-		hero_target[0].take_damage(damage, self)
+		hero_target.take_damage(damage, self)
 		emit_signal("attack_landed", hero_target, damage)
 	
 	# Handle target death
-	if hero_target[0].hp <= 0:
-		hero_target[0].stat = STATUS.DIE
-		hero_target = [null]
+	if hero_target.hp <= 0:
+		hero_target.stat = STATUS.DIE
 		attack_timer.stop()
 
 # Launch projectile at target
@@ -555,5 +613,35 @@ func _cast_spell(spell_tgt: Hero):
 
 
 func _apply_damage():
-	if hero_target != [null] and hero_target != []:
-		hero_target[0].take_damage(damage, self)
+	if hero_target:
+		hero_target.take_damage(damage, self)
+		
+func snap(value: float, grid_size: int) -> int:
+	return floor(value / grid_size)
+
+func get_safe_path(start, target):
+	var base_path = astar_grid.get_point_path(start, target)
+	if not base_path.is_empty():
+		return base_path
+	var min_path_size = 999	
+	var best_path = []
+	# 渐进式扩大搜索范围
+	for radius in range(1, MAX_SEARCH_RADIUS + 1):
+		var candidates = get_points_in_radius(target, radius)
+		for point in candidates:
+			var test_path = astar_grid.get_point_path(start, point)
+			if not test_path.is_empty():
+				if test_path.size < min_path_size:
+					best_path = test_path.duplicate()
+					min_path_size = test_path.size()
+		if min_path_size != 999:
+			return best_path
+	return PackedVector2Array()  # 完全无法接近
+
+func get_points_in_radius(target: Vector2i, radius: int) -> Array[Vector2i]:
+	var points: Array[Vector2i] = []
+	for x in range(target.x - radius, target.x + radius + 1):
+		for y in range(target.y - radius, target.y + radius + 1):
+			if Vector2i(x,y).distance_to(target) <= radius:
+				points.append(Vector2i(x,y))
+	return points

@@ -278,6 +278,7 @@ border_color = Color(0.301961, 0.101961, 0.0117647, 0.498039)
 z_index = 1
 y_sort_enabled = true
 script = ExtResource("1_n7ut4")
+line_visible = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 y_sort_enabled = true
