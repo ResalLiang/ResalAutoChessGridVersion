@@ -1,117 +1,117 @@
 faction,hero_name,move_speed,attack_damage,attack_range,attack_speed,max_health,max_mana,armor,skill_name,skill_description,skill_target_count,flavor_text,rarity,target_priority,skill_target_priority
-human,ArchMage,4,35,80,0.8,90,150,0,Arcane Surge,Deals 35 damage to 3x3 area, 2 turn cooldown,1,Library dust never settles,Epic,FAR,CLOSE
-human,ArcherMan,6,45,64,1.2,100,0,0,Precision Shot,Next attack deals 90 damage, 3 turn cooldown,1,Bullseye through history,Common,FAR,CLOSE
-human,CavalierMan,8,55,16,1,130,0,10,Charge,Moves 3 tiles, deals 110 damage,1,Hooves write war poems,Rare,CLOSE,CLOSE
-human,CrossBowMan,4,60,48,0.7,110,0,5,Piercing Bolt,Hits 2 enemies in line for 60 each,1,Reloading is an art,Common,FAR,CLOSE
-human,HalberMan,3,50,32,1.1,120,0,15,Whirlwind,Deals 50 to adjacent enemies,1,Spins like a dervish,Uncommon,CLOSE,CLOSE
-human,HorseMan,8,40,16,1.3,100,0,5,Trample,Deals 20 when moving through enemies,1,Never learned to stop,Common,CLOSE,CLOSE
-human,KingMan,5,70,16,0.9,160,100,15,Royal Command,+20 damage to allies for 2 turns,1,Crown weighs heavy,Legendary,ALLY,CLOSE
-human,Mage,4,30,64,0.9,80,120,0,Frost Nova,Freezes enemies for 1 turn, 3 tile range,1,Winter's impatient child,Rare,FAR,CLOSE
-human,PrinceMan,5,55,16,1.1,140,80,10,Valor Strike,Heals self for 30, 2 turn cooldown,1,Still proving himself,Epic,CLOSE,CLOSE
-human,ShieldMan,3,40,16,0.8,150,0,20,Shield Wall,Reduces damage by 15 for allies,1,Wall with a heartbeat,Rare,ALLY,CLOSE
-human,SpearMan,6,45,32,1,110,0,10,Phalanx,+10 damage when adjacent to SpearMen,1,Many points make might,Common,CLOSE,CLOSE
-dwarf,ArmoredBearRider,8,65,16,0.8,180,0,25,Ursine Roar,Reduces enemy damage by 10 for 2 turns,1,Bear necessities,Epic,STRONG,CLOSE
-dwarf,BearRider,6,60,16,1,160,0,15,Maul,Deals 120 with 25% stun chance,1,Hugs hurt,Uncommon,CLOSE,CLOSE
-dwarf,Demolitionist,5,70,48,0.6,90,0,0,Dynamite Toss,Deals 70 in 3x3 area, 3 turn cooldown,1,Safety third,Rare,FAR,CLOSE
+human,ArchMage,45,35,80,0.8,90,150,0,Arcane Surge,"Deals 35 damage to 3x3 area, 2 turn cooldown",1,Library dust never settles,Epic,FAR,CLOSE
+human,ArcherMan,60,45,64,1.2,100,0,0,Precision Shot,"Next attack deals 90 damage, 3 turn cooldown",1,Bullseye through history,Common,FAR,CLOSE
+human,CavalierMan,75,55,16,1,130,0,10,Charge,"Moves 3 tiles, deals 110 damage",1,Hooves write war poems,Rare,CLOSE,CLOSE
+human,CrossBowMan,45,60,48,0.7,110,0,5,Piercing Bolt,Hits 2 enemies in line for 60 each,1,Reloading is an art,Common,FAR,CLOSE
+human,HalberMan,60,50,32,1.1,120,0,15,Whirlwind,Deals 50 to adjacent enemies,1,Spins like a dervish,Uncommon,CLOSE,CLOSE
+human,HorseMan,75,40,16,1.3,100,0,5,Trample,Deals 20 when moving through enemies,1,Never learned to stop,Common,CLOSE,CLOSE
+human,KingMan,45,70,16,0.9,160,100,15,Royal Command,+20 damage to allies for 2 turns,1,Crown weighs heavy,Legendary,ALLY,CLOSE
+human,Mage,45,30,64,0.9,80,120,0,Frost Nova,"Freezes enemies for 1 turn, 3 tile range",1,Winter's impatient child,Rare,FAR,CLOSE
+human,PrinceMan,60,55,16,1.1,140,80,10,Valor Strike,"Heals self for 30, 2 turn cooldown",1,Still proving himself,Epic,CLOSE,CLOSE
+human,ShieldMan,45,40,16,0.8,150,0,20,Shield Wall,Reduces damage by 15 for allies,1,Wall with a heartbeat,Rare,ALLY,CLOSE
+human,SpearMan,60,45,32,1,110,0,10,Phalanx,+10 damage when adjacent to SpearMen,1,Many points make might,Common,CLOSE,CLOSE
+dwarf,ArmoredBearRider,45,65,16,0.8,180,0,25,Ursine Roar,Reduces enemy damage by 10 for 2 turns,1,Bear necessities,Epic,STRONG,CLOSE
+dwarf,BearRider,60,60,16,1,160,0,15,Maul,Deals 120 with 25% stun chance,1,Hugs hurt,Uncommon,CLOSE,CLOSE
+dwarf,Demolitionist,45,70,48,0.6,90,0,0,Dynamite Toss,"Deals 70 in 3x3 area, 3 turn cooldown",1,Safety third,Rare,FAR,CLOSE
 dwarf,Grenade,0,0,0,0,1,0,0,Explosion,Deals 100 on death,1,One-time friend,Common,WEAK,CLOSE
-dwarf,Grenadier,4,55,64,0.7,100,0,5,Grenade Volley,Hits 3 random enemies for 55,1,Juggler of death,Uncommon,FAR,CLOSE
-dwarf,Hunter,6,50,48,1.2,110,0,10,Tracking Shot,Cannot miss, 2 turn cooldown,1,Always finds you,Rare,FAR,CLOSE
-dwarf,King,3,75,16,0.7,200,100,20,Mountain's Might,+50 health for 3 turns,1,Beard of authority,Legendary,STRONG,CLOSE
-dwarf,Miner,6,40,16,1.1,120,0,5,Tunnel,Teleports 4 tiles, 3 turn cooldown,1,Digs his own path,Common,CLOSE,CLOSE
-dwarf,Rifleman,6,65,80,0.5,80,0,0,Headshot,Instantly kills under 50 health,1,One shot, one kill,Epic,WEAK,CLOSE
-dwarf,Shieldbreaker,6,70,20,0.9,140,0,15,Sunder,Reduces armor by 10 for 3 turns,1,Armor's nightmare,Rare,STRONG,CLOSE
-dwarf,Warrior,3,55,16,1,150,0,10,Berserk,+50% attack speed below 50 health,1,Red means go,Uncommon,CLOSE,CLOSE
-elf,ArcaneArcher,5,55,80,1,90,100,0,Magic Arrow,Ignores armor, 2 turn cooldown,1,Moonlight arrow,Epic,FAR,CLOSE
-elf,Archer,3,45,64,1.3,80,0,0,Fading Shot,Retreats 1 tile after attacking,1,Here then gone,Common,FAR,CLOSE
-elf,HorseMan,8,40,16,1.2,100,0,5,Wind Ride,+1 move speed above 75% health,1,Swift as autumn wind,Uncommon,CLOSE,CLOSE
-elf,Mage,4,35,64,0.9,70,130,0,Entangling Roots,Immobilizes for 2 turns, 3 tile range,1,Nature's handcuffs,Rare,FAR,CLOSE
-elf,PegasusRider,4,50,16,1.1,110,50,0,Sky Dive,Attacks along movement path,1,Cloud's shadow,Epic,CLOSE,CLOSE
-elf,Queen,6,60,48,0.8,120,150,5,Lunar Blessing,Heals 30 to all allies for 3 turns,1,Moonmother's grace,Legendary,ALLY,CLOSE
-elf,SpearMan,4,40,32,1.2,90,0,0,Gale Thrust,Pushes target back 2 tiles,1,Dancing with wind,Common,CLOSE,CLOSE
-elf,SpellSword,3,50,16,1.1,100,80,0,Arcane Edge,Deals 25 bonus magic damage,1,Steel sings spells,Uncommon,STRONG,CLOSE
-elf,SwordMan,5,45,16,1.3,110,0,5,Blade Dance,Attacks twice if not moved,1,Whirl of silver,Rare,CLOSE,CLOSE
-elf,Warden,3,40,32,0.8,130,70,10,Grove Shield,Reduces damage by 10 for allies,1,Ancient bark whispers,Epic,ALLY,CLOSE
-forestProtector,DryadDeer,6,35,16,1.2,100,90,0,Nature's Touch,Heals 40 to adjacent ally,1,Gentle hoofprints,Uncommon,ALLY,CLOSE
-forestProtector,DryadEnchantress,4,25,80,0.7,80,120,0,Charm,Forces enemy to attack ally once,1,Fey mischief,Rare,FAR,CLOSE
-forestProtector,DryadHuntress,4,45,48,1,90,50,0,Poison Thorn,Deals 15 damage for 3 turns,1,Sweetest berries hide thorns,Common,FAR,CLOSE
-forestProtector,Fairy,8,20,32,1.5,60,80,0,Sleep Dust,Puts target to sleep for 2 turns,1,Dreamweaver's sparkle,Uncommon,WEAK,CLOSE
-forestProtector,Pixie,8,15,32,1.7,50,70,0,Mana Leech,Drains 30 mana from target,1,Thief of magic,Rare,FAR,CLOSE
-forestProtector,SatyrDruid,3,30,64,0.9,100,110,0,Root Trap,Immobilizes for 1 turn, 4 tile range,1,Earth remembers footsteps,Epic,FAR,CLOSE
-forestProtector,SatyrWarrior,3,55,16,1.1,130,0,10,Rampage,Deals 110 when killing enemy,1,Wine-fueled fury,Uncommon,CLOSE,CLOSE
-forestProtector,Treant,3,70,32,0.6,220,0,30,Bark Armor,Reduces damage by 20 for 3 turns,1,Ancient and patient,Legendary,STRONG,CLOSE
-forestProtector,TreantGuard,6,65,16,0.7,200,0,25,Overgrowth,Slows enemies in 3 tile radius,1,Forest claims all,Epic,CLOSE,CLOSE
-forestProtector,Satyr,4,50,16,1,120,40,5,Horn Gore,Stuns for 1 turn, 2 turn cooldown,1,Party then violence,Common,CLOSE,CLOSE
-forestProtector,YoungDryad,4,30,32,1.3,70,60,0,Swift Mend,Heals self for 50, 3 turn cooldown,1,Sapling's resilience,Rare,ALLY,CLOSE
-holy,Angel,5,60,16,1,140,100,10,Divine Light,Heals 60 in 3x3 area,1,Feathers of mercy,Epic,ALLY,CLOSE
-holy,ArchAngel,6,70,32,0.9,170,150,15,Rebirth,Revives ally with 100 health,1,Second dawn,Legendary,ALLY,CLOSE
-holy,BattlePriest,6,40,48,0.8,110,120,0,Holy Smite,Deals 80 to undead, heals 40,1,Scripture and steel,Uncommon,FAR,CLOSE
-holy,Crusader,3,55,16,1.1,150,50,20,Shield of Faith,Blocks next attack completely,1,Faith is armor,Rare,CLOSE,CLOSE
-holy,CrusaderArcher,3,50,64,1,100,0,5,Purifying Arrow,Removes all buffs from target,1,Truth flies straight,Common,FAR,CLOSE
-holy,CrusaderCaptain,3,65,16,0.9,160,70,15,Rally,+1 move speed to allies for 2 turns,1,Banner in the storm,Epic,ALLY,CLOSE
-holy,CrusaderCaptainFlagless,3,65,16,0.9,160,70,15,Inspiring Presence,Passive +10 damage to allies,1,Silent standard,Rare,ALLY,CLOSE
-holy,CrusaderFlag,0,0,0,0,1,0,10,Hope's Beacon,+20 max health to all allies,1,Light in darkness,Uncommon,ALLY,CLOSE
-holy,CrusaderHorseMan,8,50,16,1.2,130,0,10,Holy Charge,Deals 100 to corrupted enemies,1,Righteous momentum,Common,CLOSE,CLOSE
-holy,HighPriestess,3,35,80,0.7,90,180,0,Sanctuary,Reduces damage by 15 in 3x3 area,1,Holy ground trembles,Legendary,ALLY,CLOSE
-holy,Paladin1,4,60,16,1,145,80,15,Lay on Hands,Heals 100 to target ally,1,Warmth of devotion,Rare,ALLY,CLOSE
-holy,Paladin2,4,60,16,1,145,80,15,Cleanse,Removes all debuffs from ally,1,Pure as sunlight,Epic,ALLY,CLOSE
-holy,Paladin3,3,60,16,1,145,80,15,Divine Shield,Makes ally immune for 1 turn,1,Moment of grace,Uncommon,ALLY,CLOSE
-holy,Priest,6,25,64,0.9,90,100,0,Heal,Restores 50 health to ally,1,Prayers made flesh,Common,ALLY,CLOSE
-demon,ClawedDemon,6,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-demon,DemonFireKeeper,3,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-demon,DemonFireThrower,3,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-demon,DemonLord,5,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-demon,DemonTormentor,4,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-demon,Demoness,4,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-demon,FireBall,0,0,0,0,1,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-demon,FireImp,6,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-demon,HighDemon,4,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-demon,Imp,4,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-demon,Succubus,5,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-demon,Trident,3,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,ArchLich,5,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,Banshee,5,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,BansheeQueen,4,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,DeathKnight,8,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,DeathLord,3,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,DreadKnight,8,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,Ghost,6,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,Ghoul,5,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,Lich,6,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,Necromancer,3,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,Reaper,5,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,Skeleton,5,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,SkeletonArcher,5,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,SkeletonHorseman,8,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,SkeletonMage,4,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,SkeletonWarrior,5,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,SoulCollector,4,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,SpikedGhoul,5,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,Zombie,5,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,ZombieButcher,3,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,ZombieCrusher,4,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,ZombieCrusher2,3,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,ZombieCrusher3,3,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,ZombieDog,3,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,ZombieRunner,5,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-undead,ZombieWarrior,4,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,Anvil,0,0,0,0,1,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,Blacksmith,5,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,Gatherer,6,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,GraveDigger,3,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,Hunter,5,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,Lumberjack,3,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,Merchant,6,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,Miner,5,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,NobleMan,3,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,NobleWoman,4,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,Nun,5,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,OldMan,3,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,OldWoman,6,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,Peasant,6,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,Princess,5,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,Queen,6,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,SuspiciousMerchant,3,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,Thief,4,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,VillagerMan,5,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,VillagerWoman,5,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
-villager,Worker,4,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+dwarf,Grenadier,45,55,64,0.7,100,0,5,Grenade Volley,Hits 3 random enemies for 55,1,Juggler of death,Uncommon,FAR,CLOSE
+dwarf,Hunter,60,50,48,1.2,110,0,10,Tracking Shot,"Cannot miss, 2 turn cooldown",1,Always finds you,Rare,FAR,CLOSE
+dwarf,King,45,75,16,0.7,200,100,20,Mountain's Might,+50 health for 3 turns,1,Beard of authority,Legendary,STRONG,CLOSE
+dwarf,Miner,45,40,16,1.1,120,0,5,Tunnel,"Teleports 4 tiles, 3 turn cooldown",1,Digs his own path,Common,CLOSE,CLOSE
+dwarf,Rifleman,45,65,80,0.5,80,0,0,Headshot,Instantly kills under 50 health,1,"One shot, one kill",Epic,WEAK,CLOSE
+dwarf,Shieldbreaker,60,70,20,0.9,140,0,15,Sunder,Reduces armor by 10 for 3 turns,1,Armor's nightmare,Rare,STRONG,CLOSE
+dwarf,Warrior,60,55,16,1,150,0,10,Berserk,+50% attack speed below 50 health,1,Red means go,Uncommon,CLOSE,CLOSE
+elf,ArcaneArcher,60,55,80,1,90,100,0,Magic Arrow,"Ignores armor, 2 turn cooldown",1,Moonlight arrow,Epic,FAR,CLOSE
+elf,Archer,75,45,64,1.3,80,0,0,Fading Shot,Retreats 1 tile after attacking,1,Here then gone,Common,FAR,CLOSE
+elf,HorseMan,90,40,16,1.2,100,0,5,Wind Ride,+1 move speed above 75% health,1,Swift as autumn wind,Uncommon,CLOSE,CLOSE
+elf,Mage,60,35,64,0.9,70,130,0,Entangling Roots,"Immobilizes for 2 turns, 3 tile range",1,Nature's handcuffs,Rare,FAR,CLOSE
+elf,PegasusRider,75,50,16,1.1,110,50,0,Sky Dive,Attacks along movement path,1,Cloud's shadow,Epic,CLOSE,CLOSE
+elf,Queen,60,60,48,0.8,120,150,5,Lunar Blessing,Heals 30 to all allies for 3 turns,1,Moonmother's grace,Legendary,ALLY,CLOSE
+elf,SpearMan,75,40,32,1.2,90,0,0,Gale Thrust,Pushes target back 2 tiles,1,Dancing with wind,Common,CLOSE,CLOSE
+elf,SpellSword,60,50,16,1.1,100,80,0,Arcane Edge,Deals 25 bonus magic damage,1,Steel sings spells,Uncommon,STRONG,CLOSE
+elf,SwordMan,75,45,16,1.3,110,0,5,Blade Dance,Attacks twice if not moved,1,Whirl of silver,Rare,CLOSE,CLOSE
+elf,Warden,45,40,32,0.8,130,70,10,Grove Shield,Reduces damage by 10 for allies,1,Ancient bark whispers,Epic,ALLY,CLOSE
+forestProtector,DryadDeer,75,35,16,1.2,100,90,0,Nature's Touch,Heals 40 to adjacent ally,1,Gentle hoofprints,Uncommon,ALLY,CLOSE
+forestProtector,DryadEnchantress,60,25,80,0.7,80,120,0,Charm,Forces enemy to attack ally once,1,Fey mischief,Rare,FAR,CLOSE
+forestProtector,DryadHuntress,75,45,48,1,90,50,0,Poison Thorn,Deals 15 damage for 3 turns,1,Sweetest berries hide thorns,Common,FAR,CLOSE
+forestProtector,Fairy,90,20,32,1.5,60,80,0,Sleep Dust,Puts target to sleep for 2 turns,1,Dreamweaver's sparkle,Uncommon,WEAK,CLOSE
+forestProtector,Pixie,90,15,32,1.7,50,70,0,Mana Leech,Drains 30 mana from target,1,Thief of magic,Rare,FAR,CLOSE
+forestProtector,SatyrDruid,60,30,64,0.9,100,110,0,Root Trap,"Immobilizes for 1 turn, 4 tile range",1,Earth remembers footsteps,Epic,FAR,CLOSE
+forestProtector,SatyrWarrior,75,55,16,1.1,130,0,10,Rampage,Deals 110 when killing enemy,1,Wine-fueled fury,Uncommon,CLOSE,CLOSE
+forestProtector,Treant,30,70,32,0.6,220,0,30,Bark Armor,Reduces damage by 20 for 3 turns,1,Ancient and patient,Legendary,STRONG,CLOSE
+forestProtector,TreantGuard,45,65,16,0.7,200,0,25,Overgrowth,Slows enemies in 3 tile radius,1,Forest claims all,Epic,CLOSE,CLOSE
+forestProtector,Satyr,75,50,16,1,120,40,5,Horn Gore,"Stuns for 1 turn, 2 turn cooldown",1,Party then violence,Common,CLOSE,CLOSE
+forestProtector,YoungDryad,90,30,32,1.3,70,60,0,Swift Mend,"Heals self for 50, 3 turn cooldown",1,Sapling's resilience,Rare,ALLY,CLOSE
+holy,Angel,75,60,16,1,140,100,10,Divine Light,Heals 60 in 3x3 area,1,Feathers of mercy,Epic,ALLY,CLOSE
+holy,ArchAngel,60,70,32,0.9,170,150,15,Rebirth,Revives ally with 100 health,1,Second dawn,Legendary,ALLY,CLOSE
+holy,BattlePriest,45,40,48,0.8,110,120,0,Holy Smite,"Deals 80 to undead, heals 40",1,Scripture and steel,Uncommon,FAR,CLOSE
+holy,Crusader,60,55,16,1.1,150,50,20,Shield of Faith,Blocks next attack completely,1,Faith is armor,Rare,CLOSE,CLOSE
+holy,CrusaderArcher,60,50,64,1,100,0,5,Purifying Arrow,Removes all buffs from target,1,Truth flies straight,Common,FAR,CLOSE
+holy,CrusaderCaptain,60,65,16,0.9,160,70,15,Rally,+1 move speed to allies for 2 turns,1,Banner in the storm,Epic,ALLY,CLOSE
+holy,CrusaderCaptainFlagless,60,65,16,0.9,160,70,15,Inspiring Presence,Passive +10 damage to allies,1,Silent standard,Rare,ALLY,CLOSE
+holy,CrusaderFlag,60,30,16,1,120,0,10,Hope's Beacon,+20 max health to all allies,1,Light in darkness,Uncommon,ALLY,CLOSE
+holy,CrusaderHorseMan,75,50,16,1.2,130,0,10,Holy Charge,Deals 100 to corrupted enemies,1,Righteous momentum,Common,CLOSE,CLOSE
+holy,HighPriestess,45,35,80,0.7,90,180,0,Sanctuary,Reduces damage by 15 in 3x3 area,1,Holy ground trembles,Legendary,ALLY,CLOSE
+holy,Paladin1,60,60,16,1,145,80,15,Lay on Hands,Heals 100 to target ally,1,Warmth of devotion,Rare,ALLY,CLOSE
+holy,Paladin2,60,60,16,1,145,80,15,Cleanse,Removes all debuffs from ally,1,Pure as sunlight,Epic,ALLY,CLOSE
+holy,Paladin3,60,60,16,1,145,80,15,Divine Shield,Makes ally immune for 1 turn,1,Moment of grace,Uncommon,ALLY,CLOSE
+holy,Priest,45,25,64,0.9,90,100,0,Heal,Restores 50 health to ally,1,Prayers made flesh,Common,ALLY,CLOSE
+demon,ClawedDemon,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+demon,DemonFireKeeper,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+demon,DemonFireThrower,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+demon,DemonLord,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+demon,DemonTormentor,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+demon,Demoness,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+demon,FireBall,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+demon,FireImp,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+demon,HighDemon,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+demon,Imp,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+demon,Succubus,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+demon,Trident,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,ArchLich,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,Banshee,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,BansheeQueen,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,DeathKnight,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,DeathLord,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,DreadKnight,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,Ghost,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,Ghoul,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,Lich,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,Necromancer,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,Reaper,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,Skeleton,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,SkeletonArcher,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,SkeletonHorseman,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,SkeletonMage,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,SkeletonWarrior,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,SoulCollector,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,SpikedGhoul,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,Zombie,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,ZombieButcher,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,ZombieCrusher,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,ZombieCrusher2,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,ZombieCrusher3,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,ZombieDog,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,ZombieRunner,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+undead,ZombieWarrior,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,Anvil,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,Blacksmith,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,Gatherer,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,GraveDigger,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,Hunter,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,Lumberjack,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,Merchant,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,Miner,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,NobleMan,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,NobleWoman,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,Nun,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,OldMan,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,OldWoman,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,Peasant,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,Princess,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,Queen,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,SuspiciousMerchant,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,Thief,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,VillagerMan,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,VillagerWoman,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
+villager,Worker,45,40,16,0.8,120,0,0,placeholder,placeholder,1,placeholder,Common,CLOSE,CLOSE
