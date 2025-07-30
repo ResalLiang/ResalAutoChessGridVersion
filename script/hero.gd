@@ -7,7 +7,7 @@ extends Node2D
 # Constants and Enums
 # ========================
 # Character states
-enum STATUS {IDLE, MOVE, MELEE_ATTACK, RANGE_ATTACK, JUMP, HIT, DIE}
+enum STATUS {IDLE, MOVE, MELEE_ATTACK, RANGED_ATTACK, JUMP, HIT, DIE, SPELL}
 enum TARGET_CHOICE {CLOSE, FAR, STRONG, WEAK, ALLY}
 
 const DEFAULT_ATTACK_INTERVAL := 1.0  # Default attack interval (seconds)
@@ -57,6 +57,7 @@ const MAX_SEARCH_RADIUS = 3
 @onready var line := $Line2D  # Attack range indicator
 @onready var drag_handler: Node2D = $drag_handler
 @onready var target_timer: Timer = $target_timer
+@onready var move_timer: Timer = $move_timer
 
 # ========================
 # Member Variables
@@ -117,6 +118,12 @@ signal move_finished
 signal action_started
 signal action_finished
 
+signal damage_taken
+
+signal is_hit
+signal spell_casted
+signal ranged_attack_finished
+signal melee_attack_finished
 # ========================
 # Projectile Properties
 # ========================
@@ -150,11 +157,15 @@ func _ready():
 	# Connect signals
 	idle_timer.timeout.connect(_on_idle_timeout)
 	attack_timer.timeout.connect(_on_attack_timeout)
-	move_finished.connect(_handle_action)
+	move_timer.timeout.connect(_handle_action)
+	action_started.connect(_handle_action)
+	
+	damage_taken.connect(_on_damage_taken)
+	animated_sprite_2d.connect("animation_finished", _on_hero_animation_finished)
 	
 	# Initialize random number generator
 	rng.randomize()
-	idle_timer.start()  # Start idle state timer
+	#idle_timer.start()  # Start idle state timer
 	
 	# Play idle animation
 	if animated_sprite_2d.sprite_frames.has_animation("idle"):
@@ -328,12 +339,15 @@ func _handle_movement():
 	move_started.emit()
 	animated_sprite_2d.play("move")
 	if position.distance_to(hero_target.global_position) <= attack_range:
-		move_finished.emit()
-		return
+		#move_finished.emit()
+		move_timer.start()
 	else:
 		astar_grid.set_point_solid(position_id, false)
-		astar_grid.set_point_solid(hero_target.position_id, false)
+		#astar_grid.set_point_solid(hero_target.position_id, false)
 		astar_grid.update()
+		await get_tree().process_frame
+		await get_tree().process_frame
+		await get_tree().process_frame
 		print("Start position ID: ", position_id)
 		print("Target position ID: ", hero_target.position_id)
 		print("Is start solid: ", astar_grid.is_point_solid(position_id))
@@ -342,11 +356,13 @@ func _handle_movement():
 		print("Raw path result: ", move_path)
 		if move_path.is_empty():
 			move_path = get_safe_path(position_id, hero_target.position_id)
+			print("Safe path result: ", move_path)
 		if move_path.is_empty():
-			astar_grid.set_point_solid(hero_target.position_id, false)
-			move_finished.emit()
+			astar_grid.set_point_solid(hero_target.position_id, true)
+			#move_finished.emit()
+			move_timer.start()
 		else:
-			var move_steps = min(spd, move_path.size() - 2)
+			var move_steps = min(floor(spd / 10), move_path.size() - 2)
 			if position_tween:
 				position_tween.kill() # Abort the previous animation.
 			position_tween = create_tween()
@@ -357,29 +373,62 @@ func _handle_movement():
 				if !astar_grid.is_point_solid(target_pos):
 					position_tween.tween_property(self, "_position", target_pos, 0.2)
 					remain_step -= 1
-					print(remain_step)
 
 func _on_move_completed():
 	remain_step -= 1
 	if remain_step <= 0:
-		action_finished.emit()
+		position_tween.pause()
+		position_tween.kill()
+		astar_grid.set_point_solid(self.position_id, true)
 		astar_grid.set_point_solid(hero_target.position_id, true)
-		
-		print("最终移动完成")
+		astar_grid.update()
+		for y in range(-8, 8, 1):
+			var test_text = ""
+			for x in range(-8, 8, 1):
+				var solid_result = 1 if astar_grid.is_point_solid(Vector2i(x, y)) else 0
+				test_text = test_text + " " + str(solid_result)
+			print(test_text)
+		print(hero_name + "movement done.")
+		print(self.position_id)
+		#action_started.emit()
+		move_timer.start()
 						
 func _handle_action():
-	action_started.emit()
-	print("action_started signal emitted")
+	if !hero_target || !is_instance_valid(hero_target):
+		action_finished.emit()
+		return  # 目标失效处理
+	if mp >= max_mp and animated_sprite_2d.sprite_frames.has_animation("spell"):
+		stat = STATUS.SPELL
+		animated_sprite_2d.play("spell")
+		_cast_spell(hero_target)
+		mp = 0
+		return
+	var current_distance_to_target = position.distance_to(hero_target.global_position)
+	if current_distance_to_target <= attack_range:
+		if current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
+			stat = STATUS.RANGED_ATTACK
+			animated_sprite_2d.play("ranged_attack")
+			var hero_projectile = _launch_projectile(hero_target)
+			hero_projectile.projectile_vanished.connect(_on_projectile_vanished)
+		elif current_distance_to_target < ranged_attack_threshold:
+			if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
+				stat = STATUS.RANGED_ATTACK
+				#animated_sprite_2d.play("melee_attack")
+				melee_attack_animation.play("melee_attack")
+			elif animated_sprite_2d.sprite_frames.has_animation("attack"):
+				stat = STATUS.RANGED_ATTACK
+				animated_sprite_2d.play("attack")
+				hero_target.take_damage(damage, self)	
 	action_finished.emit()
-	print("action_finished signal emitted")
-	
 # Handle target selection and tracking
 func _handle_targeting():
 	# Clear invalid targets (dead or invalid instances)
 	if !hero_target or hero_target.stat == STATUS.DIE:
 		line.visible = false
 		hero_target = _find_new_target(hero_target_choice)
-
+		
+func _on_projectile_vanished():
+	action_finished.emit()
 		
 
 # Handle state transitions and actions
@@ -428,9 +477,9 @@ func _handle_state():
 		
 		# Transition to attack state if in range
 		if distance <= attack_range:
-			if stat != STATUS.MELEE_ATTACK or stat != STATUS.RANGE_ATTACK:
+			if stat != STATUS.MELEE_ATTACK or stat != STATUS.RANGED_ATTACK:
 				if distance > ranged_attack_threshold and attack_range >= 32:
-					stat = STATUS.RANGE_ATTACK
+					stat = STATUS.RANGED_ATTACK
 					if animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
 						animated_sprite_2d.play("ranged_attack")
 				else:
@@ -576,11 +625,12 @@ func _launch_projectile(target: Hero):
 
 # Add damage handling method
 func take_damage(damage_value: int, attacker: Hero):
-	hp -= damage_value
+	hp -= max(0, damage_value)
 	if hp <= 0:
 		# Handle death logic
 		stat = STATUS.DIE
-	attacker.mp += damage
+	attacker.mp += damage_value
+	damage_taken.emit(damage_value)
 
 # ========================
 # Editor Helper Functions
@@ -630,8 +680,9 @@ func get_safe_path(start, target):
 		var candidates = get_points_in_radius(target, radius)
 		for point in candidates:
 			var test_path = astar_grid.get_point_path(start, point)
+			print("Find safe path from " + str(start) + " to " + str(point))
 			if not test_path.is_empty():
-				if test_path.size < min_path_size:
+				if test_path.size() < min_path_size:
 					best_path = test_path.duplicate()
 					min_path_size = test_path.size()
 		if min_path_size != 999:
@@ -645,3 +696,29 @@ func get_points_in_radius(target: Vector2i, radius: int) -> Array[Vector2i]:
 			if Vector2i(x,y).distance_to(target) <= radius:
 				points.append(Vector2i(x,y))
 	return points
+
+func _on_damage_taken(damage_value):
+	if hp <= 0:
+		stat = STATUS.DIE
+		animated_sprite_2d.stop()
+		animated_sprite_2d.play("die")
+		return
+	else:
+		stat = STATUS.HIT
+		animated_sprite_2d.play("hit")
+		
+func _on_hero_animation_finished():
+	if stat == STATUS.DIE:
+		died.emit()
+		queue_free()
+	elif stat == STATUS.HIT:
+		is_hit.emit()
+	elif stat == STATUS.SPELL:
+		spell_casted.emit()
+		action_finished.emit()
+	elif stat == STATUS.RANGED_ATTACK:
+		ranged_attack_finished.emit()
+	# 	action_finished.emit()
+	elif stat == STATUS.MELEE_ATTACK:
+		melee_attack_finished.emit()
+		action_finished.emit()

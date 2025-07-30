@@ -296,10 +296,10 @@ position = Vector2(0, 11)
 shape = SubResource("RectangleShape2D_10qbj")
 
 [node name="idle_timer" type="Timer" parent="."]
-wait_time = 3.0
+wait_time = 2.0
 
 [node name="move_timer" type="Timer" parent="."]
-wait_time = 3.0
+wait_time = 0.5
 
 [node name="attack_timer" type="Timer" parent="."]
 

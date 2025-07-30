@@ -156,33 +156,37 @@ func start_new_round():
 func start_team_turn(team: Team):
 	team_chars = sort_characters(team, SelectionMode.HIGH_HP)
 	refresh_solid_point()
-	print("Refresh solid point")
 	process_character_turn(team_chars.pop_front())
 
 func process_character_turn(hero: Hero):
 	active_hero = hero
 	active_hero.is_active = true
+	refresh_solid_point()
+	astar_grid.set_point_solid(active_hero.position_id)
+	await get_tree().process_frame
+	
+	astar_grid.update()
+	
+	await get_tree().process_frame
 	active_hero.start_turn()
 	# 连接信号等待行动完成
 	active_hero.action_finished.connect(_on_character_action_finished)
 
 func _on_character_action_finished():
-	print("Action finished signal received")  # 检查是否到达这里
-	if not active_hero:
-		print("Error: active_hero is null")
-		return
-	astar_grid.set_point_solid(active_hero.position_id, true)
-	print(active_hero.position_id)
 	active_hero.is_active = false
-	# 检查信号是否仍连接
-	print("Signal connected:", active_hero.action_finished.is_connected(_on_character_action_finished))
 	active_hero.action_finished.disconnect(_on_character_action_finished)
-
+		
 	var opposing_team = Team.TEAM2 if current_team == Team.TEAM1 else Team.TEAM1
-	if team_dict[current_team] != []:
+	if team_dict[opposing_team] != []:
+		start_team_turn(opposing_team)
+		var backup_team = opposing_team
+		opposing_team = current_team
+		current_team = backup_team
+		#opposing_team, current_team = current_team, opposing_team
+	elif team_dict[opposing_team] == [] and team_dict[current_team] != []:
 		start_team_turn(current_team)
 	else:
-		start_team_turn(opposing_team)
+		start_new_round()
 
 func sort_characters(team: Team, mode: SelectionMode) -> Array:
 	var heroes_team = team_dict[team]
@@ -202,8 +206,9 @@ func sort_characters(team: Team, mode: SelectionMode) -> Array:
 
 func refresh_solid_point():
 	astar_grid.fill_solid_region(astar_grid_region, false)
+
 	for hero1 in team_dict[Team.TEAM1]:
 		astar_grid.set_point_solid(hero1.position_id, true)
+
 	for hero2 in team_dict[Team.TEAM2]:
 		astar_grid.set_point_solid(hero2.position_id, true)
-	astar_grid.update()

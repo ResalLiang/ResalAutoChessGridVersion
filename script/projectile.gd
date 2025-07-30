@@ -22,8 +22,8 @@ var attacker: Hero = null:
 		if ResourceLoader.exists("res://asset/animation/" + attacker.faction + "/" + attacker.faction + attacker.hero_name + "_projectile.tres"):
 			animated_sprite_2d.sprite_frames = ResourceLoader.load("res://asset/animation/" + attacker.faction + "/" + attacker.faction + attacker.hero_name + "_projectile.tres")
 
+signal projectile_vanished
 
-# @onready var sprite: Sprite2D = $Sprite2D
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 func _ready():
 	# 设置初始朝向
@@ -50,7 +50,6 @@ func _physics_process(delta):
 	if traveled_distance > max_distance || penetration <= 0:
 		queue_free()
 
-# 处理碰撞
 func _on_area_entered(area):
 	if area.is_in_group("hero_group"):
 		var hero = area.get_parent()
@@ -61,6 +60,8 @@ func _on_area_entered(area):
 			
 			# 穿透次数耗尽时消失
 			if penetration <= 0:
+				projectile_vanished.emit()
+				projectile_vanished.disconnect(attacker._on_projectile_vanished)
 				queue_free()
 
 # 处理离开屏幕
