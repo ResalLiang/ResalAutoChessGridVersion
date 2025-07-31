@@ -1,7 +1,8 @@
-res://scene/game.tscn
+res://scene/hero.tscn
 res://asset/shader/LightweightPixelPerfectOutline.gdshader
 res://asset/animation/human/humanShieldMan.tres
 res://asset/tileset/dungeon_tileset.tres
 res://script/game.gd
-res://scene/hero.tscn
+res://scene/game.tscn
 res://scene/projectile.tscn
+res://script/hero.gd

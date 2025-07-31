@@ -8,14 +8,16 @@ const hero_scene = preload("res://scene/hero.tscn")
 @export_enum("human", "dwarf", "elf", "forestProtector", "holy", "undead", "demon") var team2_faction := "human"
 
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
-enum Team { TEAM1, TEAM2 }
+enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
 enum SelectionMode { HIGH_HP, LOW_HP, NEAR_CENTER, FAR_CENTER }
 var current_team: Team
 var active_hero: Hero
 var team_chars
 var team_dict: Dictionary = {
 	Team.TEAM1: [],
-	Team.TEAM2: []
+	Team.TEAM2: [],
+	Team.TEAM1_FULL: [],
+	Team.TEAM2_FULL: []
 }
 var center_point: Vector2
 var board_width:= 216
@@ -26,7 +28,9 @@ var astar_grid_region
 var grid_size := 16
 var grid_count := 16
 var current_id:= Vector2i.ZERO
+var astar_solid_map
 
+var rand_hero_ratio := 0.9
 # Define rarity weights dictionary
 const RARITY_WEIGHTS = {
 	"Common": 50,
@@ -64,10 +68,10 @@ func _ready():
 	astar_grid.region = astar_grid_region
 	astar_grid.cell_size = Vector2(grid_size, grid_size)
 	# 遍历每个格子
-	for x in range(0, tile_size.x / 2):
-		for y in range(tile_size.y):
+	for x in range(-tile_size.x / 2, 0):
+		for y in range(-tile_size.y / 2, tile_size.y / 2):
 			# 随机决定是否生成角色(50%概率)
-			if randf() > 0.9:
+			if randf() > rand_hero_ratio:
 				# 创建角色实例
 				var character = hero_scene.instantiate()
 
@@ -75,23 +79,23 @@ func _ready():
 				var position = Vector2(
 					x * tile_size.x + tile_size.x / 2,
 					y * tile_size.y + tile_size.y / 2
-				) + floor_tile.global_position
+				)
 
 				# 设置角色位置
 				character._position = position
 				character.team = 1
 				character.faction = team1_faction
 				character.hero_name = get_random_character(team1_faction)
-				team_dict[Team.TEAM1].append(character)
+				team_dict[Team.TEAM1_FULL].append(character)
 				current_id = Vector2i(x, y)
 				astar_grid.set_point_solid(current_id, true)
 				# 添加到场景
 				add_child(character)
 				
-	for x in range(tile_size.x / 2, tile_size.x):
-		for y in range(tile_size.y):
+	for x in range(0, tile_size.x / 2):
+		for y in range(-tile_size.y / 2, tile_size.y / 2):
 			# 随机决定是否生成角色(50%概率)
-			if randf() > 0.9:
+			if randf() > rand_hero_ratio:
 				# 创建角色实例
 				var character = hero_scene.instantiate()
 				
@@ -99,21 +103,21 @@ func _ready():
 				var position = Vector2(
 					x * tile_size.x + tile_size.x / 2,
 					y * tile_size.y + tile_size.y / 2
-				) + floor_tile.global_position
+				)
 				
 				# 设置角色位置
 				character._position = position
 				character.team = 2
 				character.faction = team2_faction
 				character.hero_name = get_random_character(team2_faction)
-				team_dict[Team.TEAM2].append(character)
+				team_dict[Team.TEAM2_FULL].append(character)
 				current_id = Vector2i(x, y)
 				astar_grid.set_point_solid(current_id, true)
 				# 添加到场景
 				add_child(character)
 				
 	center_point = Vector2(tile_size.x * grid_count / 2, tile_size.y * grid_count / 2)
-	
+	astar_grid.update()
 	start_new_round()
 
 func get_random_character(faction_name: String) -> String:
@@ -149,25 +153,25 @@ func get_random_character(faction_name: String) -> String:
 	return candidates[0] # Default return first one (shouldn't reach here)
 
 func start_new_round():
+	print("Start new round.")
+	for hero1 in team_dict[Team.TEAM1_FULL]:
+		team_dict[Team.TEAM1].append(hero1)
+	for hero2 in team_dict[Team.TEAM2_FULL]:
+		team_dict[Team.TEAM2].append(hero2)
+		
 	current_team = [Team.TEAM1, Team.TEAM2][randi() % 2]
 	
 	start_team_turn(current_team)
 
 func start_team_turn(team: Team):
 	team_chars = sort_characters(team, SelectionMode.HIGH_HP)
-	refresh_solid_point()
 	process_character_turn(team_chars.pop_front())
 
 func process_character_turn(hero: Hero):
+	astar_solid_map = refresh_solid_point()
 	active_hero = hero
 	active_hero.is_active = true
-	refresh_solid_point()
-	astar_grid.set_point_solid(active_hero.position_id)
-	await get_tree().process_frame
-	
-	astar_grid.update()
-	
-	await get_tree().process_frame
+	active_hero.astar_solid_map = astar_solid_map
 	active_hero.start_turn()
 	# 连接信号等待行动完成
 	active_hero.action_finished.connect(_on_character_action_finished)
@@ -206,9 +210,32 @@ func sort_characters(team: Team, mode: SelectionMode) -> Array:
 
 func refresh_solid_point():
 	astar_grid.fill_solid_region(astar_grid_region, false)
+	var add_solid_cnt = 0
+	for hero1 in team_dict[Team.TEAM1_FULL]:
+		if hero1.stat != hero1.STATUS.DIE:
+			astar_grid.set_point_solid(hero1.position_id, true)
+			add_solid_cnt += 1
+		else:
+			print(hero1.hero_name +" died.")
 
-	for hero1 in team_dict[Team.TEAM1]:
-		astar_grid.set_point_solid(hero1.position_id, true)
-
-	for hero2 in team_dict[Team.TEAM2]:
-		astar_grid.set_point_solid(hero2.position_id, true)
+	for hero2 in team_dict[Team.TEAM2_FULL]:
+		if hero2.stat != hero2.STATUS.DIE:
+			astar_grid.set_point_solid(hero2.position_id, true)
+			add_solid_cnt += 1
+		else:
+			print(hero2.hero_name +" died.")
+	
+	print(add_solid_cnt)
+	astar_grid.update()
+	var row_solid_map = ""
+	var astar_solid_map_result = []
+	var solid_sum = 0
+	for y in range(-8, 8, 1):
+		row_solid_map = ""
+		for x in range(-8, 8, 1):
+			var solid_result = 1 if astar_grid.is_point_solid(Vector2i(x, y)) else 0
+			row_solid_map = row_solid_map + str(solid_result)
+			solid_sum += solid_result
+		astar_solid_map_result.append(row_solid_map)
+	#print("Out" + str(solid_sum))
+	return astar_solid_map_result
