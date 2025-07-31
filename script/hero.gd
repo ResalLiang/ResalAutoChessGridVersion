@@ -99,8 +99,10 @@ var _position := Vector2.ZERO:
 			snap(value.x, 16),
 			snap(value.y, 16)
 		)
-var astar_grid		
+var astar_grid
+var astar_solid_map = []
 var position_tween
+
 
 var is_active: bool = false
 var grid_offset =Vector2(8, 8)
@@ -171,8 +173,6 @@ func _ready():
 	if animated_sprite_2d.sprite_frames.has_animation("idle"):
 		animated_sprite_2d.play("idle")
 	
-	astar_grid = get_parent().astar_grid
-	
 	if team == 2:
 		animated_sprite_2d.flip_h = true
 		
@@ -201,8 +201,12 @@ func _ready():
 	hp_bar.value = max_hp
 	mp_bar.value = 0
 	
-	
-
+	astar_grid = AStarGrid2D.new()
+	var astar_grid_region = Rect2i(-8, -8, 16, 16)
+	#astar_grid_region = Rect2i(tile_size.x / 2, tile_size.y / 2, tile_size.x / 2 + tile_size.x * (grid_count - 1), tile_size.y / 2 + tile_size.y * (grid_count - 1))
+	astar_grid.region = astar_grid_region
+	astar_grid.cell_size = Vector2(16, 16)
+	astar_grid.update()
 # ========================
 # Process Functions
 # ========================
@@ -327,6 +331,9 @@ func _load_hero_stats():
 		push_error("Stats not found for %s/%s" % [faction, hero_name])
 
 func start_turn():
+	
+	update_solid_map()
+	await get_tree().process_frame
 	if not hero_target:
 		_handle_targeting()
 	if hero_target:
@@ -344,19 +351,18 @@ func _handle_movement():
 	else:
 		astar_grid.set_point_solid(position_id, false)
 		#astar_grid.set_point_solid(hero_target.position_id, false)
-		astar_grid.update()
+		var solid_sum = 0
+		for y in range(-8, 8, 1):
+			for x in range(-8, 8, 1):
+				var solid_result = 1 if astar_grid.is_point_solid(Vector2i(x, y)) else 0
+				solid_sum += solid_result
+		#print(solid_sum)
 		await get_tree().process_frame
 		await get_tree().process_frame
 		await get_tree().process_frame
-		print("Start position ID: ", position_id)
-		print("Target position ID: ", hero_target.position_id)
-		print("Is start solid: ", astar_grid.is_point_solid(position_id))
-		print("Is target solid: ", astar_grid.is_point_solid(hero_target.position_id))
 		move_path = astar_grid.get_point_path(position_id, hero_target.position_id)
-		print("Raw path result: ", move_path)
 		if move_path.is_empty():
 			move_path = get_safe_path(position_id, hero_target.position_id)
-			print("Safe path result: ", move_path)
 		if move_path.is_empty():
 			astar_grid.set_point_solid(hero_target.position_id, true)
 			#move_finished.emit()
@@ -371,7 +377,7 @@ func _handle_movement():
 			for current_step in range(move_steps):
 				var target_pos = move_path[current_step + 1] + grid_offset
 				if !astar_grid.is_point_solid(target_pos):
-					position_tween.tween_property(self, "_position", target_pos, 0.2)
+					position_tween.tween_property(self, "_position", target_pos, 0.1)
 					remain_step -= 1
 
 func _on_move_completed():
@@ -379,21 +385,13 @@ func _on_move_completed():
 	if remain_step <= 0:
 		position_tween.pause()
 		position_tween.kill()
-		astar_grid.set_point_solid(self.position_id, true)
+		astar_grid.set_point_solid(position_id, true)
 		astar_grid.set_point_solid(hero_target.position_id, true)
-		astar_grid.update()
-		for y in range(-8, 8, 1):
-			var test_text = ""
-			for x in range(-8, 8, 1):
-				var solid_result = 1 if astar_grid.is_point_solid(Vector2i(x, y)) else 0
-				test_text = test_text + " " + str(solid_result)
-			print(test_text)
-		print(hero_name + "movement done.")
-		print(self.position_id)
 		#action_started.emit()
 		move_timer.start()
 						
 func _handle_action():
+	astar_grid.set_point_solid(position_id, true)
 	if !hero_target || !is_instance_valid(hero_target):
 		action_finished.emit()
 		return  # 目标失效处理
@@ -444,7 +442,7 @@ func _handle_state():
 
 	if stat == STATUS.DIE:
 		died.emit()
-		queue_free()
+		visible = false
 		return
 
 
@@ -680,7 +678,7 @@ func get_safe_path(start, target):
 		var candidates = get_points_in_radius(target, radius)
 		for point in candidates:
 			var test_path = astar_grid.get_point_path(start, point)
-			print("Find safe path from " + str(start) + " to " + str(point))
+			
 			if not test_path.is_empty():
 				if test_path.size() < min_path_size:
 					best_path = test_path.duplicate()
@@ -710,7 +708,6 @@ func _on_damage_taken(damage_value):
 func _on_hero_animation_finished():
 	if stat == STATUS.DIE:
 		died.emit()
-		queue_free()
 	elif stat == STATUS.HIT:
 		is_hit.emit()
 	elif stat == STATUS.SPELL:
@@ -722,3 +719,11 @@ func _on_hero_animation_finished():
 	elif stat == STATUS.MELEE_ATTACK:
 		melee_attack_finished.emit()
 		action_finished.emit()
+
+func update_solid_map():
+	for y in range(-8, 8, 1):
+		for x in range(-8, 8, 1):
+			if str(astar_solid_map[y + 8].substr(x + 8, 1)) == "1":
+				astar_grid.set_point_solid(Vector2i(x, y), true)
+			else:
+				astar_grid.set_point_solid(Vector2i(x, y), false)
