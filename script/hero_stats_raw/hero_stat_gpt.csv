@@ -1,124 +1,117 @@
 faction,hero_name,spd,attack_damage,attack_range,attack_speed,max_health,max_mana,armor,skill_name,skill_description,flavor_text,rarity,target_priority,spell_target_priority
-human,ArchMage,5,30,50,1,80,130,0,Blizzard,"Deals 40 frost damage in 3x3 area, slows enemies by 50% for 2 turns.","\"There is no spoon.\" - The Matrix",Legendary,FAR,STRONG
-human,ArcherMan,6,28,90,1,90,60,0,Piercing_Arrow,"Fires an arrow that pierces up to 3 enemies for 35 damage.","\"Aim small, miss small.\" - The Patriot",Common,FAR,STRONG
-human,CavalierMan,8,35,30,1,120,80,10,Charge,"Dashes 5 tiles to hit target, dealing 50 damage and stunning.","\"Fortune favors the bold.\" - Virgil",Rare,CLOSE,FAR
-human,CrossBowMan,5,32,80,1,85,70,0,Quick_Bolt,"Instantly fires two bolts at once, each dealing 25 damage.","\"Say hello to my little friend!\" - Scarface",Uncommon,FAR,STRONG
-human,HalberMan,5,33,40,1,105,70,5,Sweep_Strike,"Swings halberd in arc, hitting up to 3 enemies for 30 damage.","\"Walk softly and carry a big stick.\" - Theodore Roosevelt",Uncommon,CLOSE,CLOSE
-human,HorseMan,7,30,30,1,100,50,5,Trample,"Moves 3 tiles forward, damaging all in path for 35.","\"I feel the need — the need for speed.\" - Top Gun",Common,CLOSE,FAR
-human,KingMan,4,28,30,1,140,120,15,Royal_Command,"Buffs nearby allies, increasing their attack by 10 for 2 turns.","\"Heavy is the head that wears the crown.\" - Shakespeare, Henry IV",Legendary,CLOSE,ALLY
-human,Mage,5,25,60,1,80,120,0,Fire_Blast,"Deals 35 fire damage to one target, 20 splash nearby.","\"Not all those who wander are lost.\" - J.R.R. Tolkien",Rare,FAR,STRONG
-human,PrinceMan,6,30,30,1,110,100,8,Inspire,"Increases all allies' speed by 2 for 1 turn.","\"To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.\" - Emerson",Epic,CLOSE,ALLY
-human,ShieldMan,4,20,25,1,130,50,20,Defend,"Blocks next attack, reducing damage by 80%.","\"I am the shield that guards the realms of men.\" - Game of Thrones",Uncommon,CLOSE,ALLY
-human,SpearMan,5,28,40,1,100,60,5,Spear_Thrust,"Deals 30 damage and pushes target 1 tile back.","\"Cry havoc and let slip the dogs of war.\" - Shakespeare, Julius Caesar",Common,CLOSE,CLOSE
-
-dwarf,ArmoredBearRider,7,38,35,1,130,70,15,Maul,"Bear charges, dealing 50 damage and bleeding for 2 turns.","\"The mountains are calling and I must go.\" - John Muir",Epic,CLOSE,STRONG
-dwarf,BearRider,7,35,30,1,120,60,10,Beast_Charge,"Rider leaps 3 tiles, dealing 40 damage.","\"Hold the door!\" - Game of Thrones",Rare,CLOSE,CLOSE
-dwarf,Demolitionist,4,40,70,1,90,90,0,Bombard,"Throws bomb, 45 damage in 2x2 area.","\"Yippee-ki-yay, motherf***er!\" - Die Hard",Rare,FAR,STRONG
-dwarf,Grenade,0,0,0,0,0,0,0,None,"No skill, inert item.","\"This is your life and it’s ending one minute at a time.\" - Fight Club",Common,CLOSE,CLOSE
-dwarf,Grenadier,4,35,65,1,85,80,0,Cluster_Grenade,"Throws grenade splitting in 3, 25 damage each.","\"Boom! Shake the room.\" - Fresh Prince",Uncommon,FAR,STRONG
-dwarf,Hunter,5,30,80,1,95,70,0,Mark_Shot,"Marks target, next shot +15 damage.","\"Keep your friends close, but your enemies closer.\" - The Godfather Part II",Common,FAR,STRONG
-dwarf,King,4,28,30,1,140,110,15,Iron_Command,"All dwarves gain +5 armor for 2 turns.","\"My precious.\" - The Lord of the Rings",Legendary,CLOSE,ALLY
-dwarf,Miner,0,0,0,0,100,30,0,Dig_In,"Hides underground, immune 1 turn.","\"All we have to decide is what to do with the time that is given us.\" - The Lord of the Rings",Common,CLOSE,CLOSE
-dwarf,Rifleman,5,33,85,1,90,70,0,Headshot,"Next shot deals double damage.","\"Make my day.\" - Sudden Impact",Uncommon,FAR,STRONG
-dwarf,Shieldbreaker,5,35,40,1,110,50,5,Break_Armor,"Ignores armor for next hit.","\"Nobody ever won a war by dying for his country. He won it by making the other poor dumb bastard die for his country.\" - Patton",Rare,CLOSE,STRONG
-dwarf,Warrior,5,32,30,1,110,60,5,Reckless_Slash,"Deals 40 damage, takes 10 recoil.","\"What we do in life echoes in eternity.\" - Gladiator",Common,CLOSE,CLOSE
-
-elf,ArcaneArcher,6,30,100,1,85,100,0,Magic_Shot,"Shoots magic arrow, deals 35 and lowers armor.","\"Even the smallest person can change the course of the future.\" - The Lord of the Rings",Rare,FAR,STRONG
-elf,Archer,6,28,90,1,90,60,0,Rapid_Fire,"Fires 2 arrows in quick succession.","\"Do you feel lucky, punk?\" - Dirty Harry",Common,FAR,STRONG
-elf,HorseMan,7,30,30,1,100,50,5,Swift_Ride,"Moves 4 tiles, strikes for 35.","\"Roads? Where we're going, we don't need roads.\" - Back to the Future",Common,CLOSE,FAR
-elf,Mage,5,25,60,1,80,120,0,Arcane_Blast,"Deals 35 magic damage, silences target.","\"Magic is believing in yourself.\" - Goethe",Rare,FAR,STRONG
-elf,PegasusRider,8,32,40,1,110,80,10,Heavenly_Charge,"Flies 5 tiles, hits for 50, ignores terrain.","\"Second star to the right and straight on 'til morning.\" - Peter Pan",Epic,CLOSE,STRONG
-elf,Queen,4,28,30,1,130,120,15,Elven_Grace,"Heals all allies 30 health.","\"Though she be but little, she is fierce.\" - Shakespeare, A Midsummer Night's Dream",Legendary,CLOSE,ALLY
-elf,SpearMan,5,28,40,1,100,60,5,Thorn_Strike,"Hits target for 30, 50% chance bleed.","\"Fear cuts deeper than swords.\" - A Song of Ice and Fire",Common,CLOSE,CLOSE
-elf,SpellSword,6,32,35,1,95,90,5,Blade_Burst,"Sword strike adds 20 magic damage.","\"Knowledge is power.\" - Francis Bacon",Rare,CLOSE,STRONG
-elf,SwordMan,5,30,30,1,100,60,5,Dual_Slash,"Hits twice for 20 each.","\"There can be only one.\" - Highlander",Uncommon,CLOSE,CLOSE
-elf,Warden,5,30,30,1,110,70,10,Nature_Ward,"Shields nearby allies, -15 damage taken.","\"To protect and to serve.\" - LAPD motto",Epic,CLOSE,ALLY
-faction,hero_name,spd,attack_damage,attack_range,attack_speed,max_health,max_mana,armor,skill_name,skill_description,flavor_text,rarity,target_priority,spell_target_priority
-forestProtector,DryadDeer,6,28,30,1,90,80,0,Forest_Leap,"Moves 3 tiles, deals 35 damage.","\"Stay gold, Ponyboy.\" - The Outsiders",Rare,CLOSE,CLOSE
-forestProtector,DryadEnchantress,5,25,50,1,80,120,0,Nature_Charm,"Charms enemy for 1 turn.","\"Not all those who wander are lost.\" - Tolkien",Epic,CLOSE,STRONG
-forestProtector,DryadHuntress,6,30,80,1,85,80,0,Huntress_Shot,"Deals 40 damage, marks target.","\"Winter is coming.\" - Game of Thrones",Rare,FAR,STRONG
-forestProtector,Fairy,6,20,25,1,70,100,0,Pixie_Dust,"Heals ally 30, grants +2 spd.","\"All you need is faith, trust, and a little pixie dust.\" - Peter Pan",Uncommon,CLOSE,ALLY
-forestProtector,Pixie,6,18,25,1,60,90,0,Glitter_Spark,"Deals 20 damage, blinds target.","\"To infinity and beyond!\" - Toy Story",Common,CLOSE,STRONG
-forestProtector,SatyrDruid,5,28,50,1,90,120,0,Nature_Call,"Heals all allies 20.","\"The earth has music for those who listen.\" - Shakespeare",Rare,CLOSE,ALLY
-forestProtector,SatyrWarrior,5,30,30,1,100,70,5,Wilder_Strike,"Deals 35 damage, ignores 5 armor.","\"Wild thing, you make my heart sing.\" - The Troggs",Common,CLOSE,CLOSE
-forestProtector,Treant,4,35,30,1,140,60,10,Root_Slam,"Roots target, dealing 40 and stun.","\"I am Groot.\" - Guardians of the Galaxy",Epic,CLOSE,STRONG
-forestProtector,TreantGuard,4,30,30,1,130,60,15,Bark_Shield,"Gives nearby allies +10 armor.","\"None shall pass!\" - Monty Python and the Holy Grail",Epic,CLOSE,ALLY
-forestProtector,Satyr,5,28,30,1,90,70,5,Wild_Dash,"Moves 2 tiles, hits for 30.","\"Carpe diem. Seize the day, boys.\" - Dead Poets Society",Common,CLOSE,CLOSE
-forestProtector,YoungDryad,5,22,25,1,70,90,0,Bloom,"Restores 20 mana to ally.","\"The flower that blooms in adversity is the most rare and beautiful of all.\" - Mulan",Common,CLOSE,ALLY
-
-holy,Angel,6,30,50,1,100,120,5,Heaven_Bless,"Heals 40 health to ally, +5 armor 2 turns.","\"Every man dies, not every man really lives.\" - Braveheart",Rare,CLOSE,ALLY
-holy,ArchAngel,6,35,50,1,120,140,10,Divine_Judgement,"Deals 50 holy damage, stuns undead.","\"I am vengeance. I am the night.\" - Batman",Legendary,FAR,STRONG
-holy,BattlePriest,5,25,30,1,100,100,5,Holy_Smite,"Deals 30 holy damage, heals self 20.","\"Blessed are the meek.\" - The Bible",Uncommon,CLOSE,STRONG
-holy,Crusader,5,32,30,1,110,80,10,Holy_Strike,"Deals 35 damage, gains +5 armor.","\"The only thing we have to fear is fear itself.\" - F.D. Roosevelt",Common,CLOSE,CLOSE
-holy,CrusaderArcher,5,28,70,1,90,70,0,Silver_Arrow,"Deals 35 damage, extra 15 to undead.","\"Aim for the bushes.\" - The Other Guys",Uncommon,FAR,STRONG
-holy,CrusaderCaptain,5,30,30,1,120,90,12,Battle_Command,"Buffs nearby allies +10 attack.","\"We few, we happy few, we band of brothers.\" - Shakespeare, Henry V",Epic,CLOSE,ALLY
-holy,CrusaderCaptainFlagless,5,30,30,1,115,80,10,Banner_Call,"Inspires ally, +2 spd for 2 turns.","\"Stand your ground!\" - 300",Rare,CLOSE,ALLY
-holy,CrusaderFlag,0,0,0,0,0,0,0,Inspire_Hope,"Nearby allies gain +5 armor.","\"Hope is a good thing.\" - The Shawshank Redemption",Common,CLOSE,ALLY
-holy,CrusaderHorseMan,7,32,30,1,110,70,10,Holy_Charge,"Charges 4 tiles, 45 damage.","\"Ride or die.\" - Fast & Furious",Rare,CLOSE,STRONG
-holy,HighPriestess,5,0,0,1,90,140,0,Mass_Bless,"Heals all allies 30, removes debuffs.","\"With great power comes great responsibility.\" - Spider-Man",Legendary,CLOSE,ALLY
-holy,Paladin1,5,35,30,1,120,100,15,Divine_Shield,"Next hit immune, reflects 20.","\"A knight's tale begins with courage.\" - A Knight's Tale",Epic,CLOSE,ALLY
-holy,Paladin2,5,35,30,1,120,100,15,Sanctify,"Deals 40 damage to undead, heals self.","\"The light shines in the darkness.\" - The Bible",Epic,CLOSE,STRONG
-holy,Paladin3,5,35,30,1,120,100,15,Guardian_Blessing,"Gives nearby ally +15 armor.","\"Not all heroes wear capes.\" - Unknown",Epic,CLOSE,ALLY
-holy,Priest,5,0,0,1,80,120,0,Holy_Heal,"Heals single ally for 50.","\"Faith is taking the first step.\" - Martin Luther King Jr.",Uncommon,CLOSE,ALLY
-
-demon,ClawedDemon,6,32,30,1,110,80,5,Rend,"Deals 35 damage, bleeding.","\"Why so serious?\" - The Dark Knight",Rare,CLOSE,STRONG
-demon,DemonFireKeeper,5,25,50,1,100,120,0,Flame_Orb,"Launches fire orb, 40 AOE damage.","\"Some men just want to watch the world burn.\" - The Dark Knight",Rare,FAR,STRONG
-demon,DemonFireThrower,5,28,70,1,90,100,0,Inferno_Spit,"Spits flame, line damage 45.","\"Burn it all!\" - Game of Thrones",Rare,FAR,STRONG
-demon,DemonLord,6,40,40,2,150,150,15,Chaos_Rain,"Deals 60 damage to random enemies.","\"The greatest trick the Devil ever pulled was convincing the world he didn't exist.\" - The Usual Suspects",Legendary,FAR,STRONG
-demon,DemonTormentor,5,35,30,1,120,80,5,Agony_Whip,"Deals 40 damage, reduces armor.","\"Pain don't hurt.\" - Road House",Epic,CLOSE,STRONG
-demon,Demoness,5,30,35,1,100,100,0,Soul_Siphon,"Steals 30 health from target.","\"Be careful what you wish for.\" - The Monkey's Paw",Rare,CLOSE,STRONG
-demon,FireBall,0,0,0,0,0,0,0,Explode,"Detonates for 50 area damage.","\"This is fine.\" - KC Green (meme)",Common,CLOSE,CLOSE
-demon,FireImp,6,20,25,1,70,80,0,Scorch,"Burns enemy for 30.","\"Better to reign in Hell than serve in Heaven.\" - Milton, Paradise Lost",Common,CLOSE,STRONG
-demon,HighDemon,6,38,40,1,130,140,10,Dread_Flame,"Deals 50 damage, fear 1 turn.","\"Fear is the mind-killer.\" - Dune",Legendary,FAR,STRONG
-demon,Imp,6,18,25,1,60,60,0,Mischief,"Steals 20 mana.","\"Chaos is a ladder.\" - Game of Thrones",Common,CLOSE,STRONG
-demon,Succubus,6,28,30,1,90,100,0,Charm_Kiss,"Charms enemy, skips action.","\"I'm your worst nightmare.\" - Rambo",Epic,CLOSE,STRONG
-demon,Trident,5,35,40,1,110,80,5,Sea_Fury,"Deals 40 damage, double to holy.","\"Release the Kraken!\" - Clash of the Titans",Rare,CLOSE,STRONG
-faction,hero_name,spd,attack_damage,attack_range,attack_speed,max_health,max_mana,armor,skill_name,skill_description,flavor_text,rarity,target_priority,spell_target_priority
-undead,ArchLich,5,38,60,1,120,140,10,Death_Storm,"Deals 50 shadow damage in 3x3 area.","\"I am become Death, the destroyer of worlds.\" — Bhagavad Gita (Oppenheimer)",Legendary,FAR,STRONG
-undead,Banshee,5,28,30,1,90,110,0,Shriek,"Deals 35 damage, silences target.","\"Who you gonna call? Ghostbusters!\" — Ghostbusters",Rare,CLOSE,STRONG
-undead,BansheeQueen,5,35,40,1,110,130,5,Wail_of_Souls,"AOE damage 45, fears targets.","\"I see dead people.\" — The Sixth Sense",Epic,FAR,STRONG
-undead,DeathKnight,5,35,30,1,120,80,10,Dark_Slash,"Deals 40 damage, heals self 20.","\"That which does not kill us makes us stronger.\" — Nietzsche",Rare,CLOSE,STRONG
-undead,DeathLord,5,40,30,1,140,100,15,Reap,"Deals 50 damage, summons skeleton.","\"The king is dead, long live the king.\" — Traditional",Legendary,CLOSE,STRONG
-undead,DreadKnight,5,38,30,1,130,90,12,Terror_Blade,"Hits for 45, lowers armor.","\"Abandon all hope, ye who enter here.\" — Dante, Inferno",Epic,CLOSE,STRONG
-undead,Ghost,6,25,30,1,80,70,0,Haunt,"Moves through units, deals 30.","\"The dead know only one thing: it is better to be alive.\" — Full Metal Jacket",Common,CLOSE,STRONG
-undead,Ghoul,5,28,30,1,90,60,0,Frenzy_Bite,"Deals 30 damage, heals 15.","\"I am Legend.\" — I Am Legend",Common,CLOSE,STRONG
-undead,Lich,5,32,50,1,100,140,5,Curse_Bolt,"Deals 40 damage, drains 20 mana.","\"Something wicked this way comes.\" — Shakespeare, Macbeth",Rare,FAR,STRONG
-undead,Necromancer,5,25,50,1,90,150,0,Raise_Dead,"Summons 1 skeleton ally.","\"Do not go gentle into that good night.\" — Dylan Thomas",Legendary,FAR,ALLY
-undead,Reaper,5,40,30,1,110,100,10,Soul_Harvest,"Deals 50 damage, if kills, restores 50 mana.","\"I'm the ghost with the most, babe.\" — Beetlejuice",Epic,CLOSE,STRONG
-undead,Skeleton,5,25,30,1,80,40,0,Bone_Swing,"Deals 28 damage.","\"I've got a bone to pick with you.\" — Idiom",Common,CLOSE,CLOSE
-undead,SkeletonArcher,5,28,70,1,80,40,0,Bone_Arrow,"Deals 30 damage.","\"Dead men tell no tales.\" — Pirates of the Caribbean",Common,FAR,STRONG
-undead,SkeletonHorseman,6,30,30,1,100,50,5,Bone_Charge,"Dashes 3 tiles, 35 damage.","\"Ride eternal, shiny and chrome!\" — Mad Max: Fury Road",Uncommon,CLOSE,CLOSE
-undead,SkeletonMage,5,25,50,1,80,100,0,Bone_Spike,"Deals 30 damage, slows.","\"Knowledge itself is power.\" — Francis Bacon",Uncommon,FAR,STRONG
-undead,SkeletonWarrior,5,28,30,1,90,40,5,Bone_Slash,"Deals 30 damage.","\"Nothing is certain except death and taxes.\" — Benjamin Franklin",Common,CLOSE,CLOSE
-undead,SoulCollector,5,35,30,1,100,120,0,Soul_Drain,"Steals 40 health, 20 mana.","\"We are such stuff as dreams are made on.\" — Shakespeare, The Tempest",Epic,CLOSE,STRONG
-undead,SpikedGhoul,5,30,30,1,95,50,5,Impale,"Deals 35 damage, bleed 2 turns.","\"To sleep, perchance to dream.\" — Shakespeare, Hamlet",Uncommon,CLOSE,STRONG
-undead,Zombie,4,22,25,1,80,40,0,Bite,"Deals 25 damage.","\"Brains...\" — Zombie trope",Common,CLOSE,CLOSE
-undead,ZombieButcher,4,32,30,1,110,50,5,Cleave,"Deals 35 damage, splash.","\"Here's Johnny!\" — The Shining",Rare,CLOSE,STRONG
-undead,ZombieCrusher,4,35,30,1,120,50,8,Smash,"Deals 40 damage.","\"I love the smell of napalm in the morning.\" — Apocalypse Now",Rare,CLOSE,STRONG
-undead,ZombieCrusher2,4,35,30,1,120,50,8,Smash,"Deals 40 damage.","\"Say 'what' again!\" — Pulp Fiction",Rare,CLOSE,STRONG
-undead,ZombieCrusher3,4,35,30,1,120,50,8,Smash,"Deals 40 damage.","\"You talkin' to me?\" — Taxi Driver",Rare,CLOSE,STRONG
-undead,ZombieDog,6,20,25,1,70,30,0,Mangle,"Deals 25 damage.","\"Who's a good boy?\" — Pet trope",Common,CLOSE,CLOSE
-undead,ZombieRunner,6,22,25,1,75,30,0,Chase,"Moves 4 tiles, hits 25.","\"Run!\" — Forrest Gump",Common,CLOSE,CLOSE
-undead,ZombieWarrior,5,28,30,1,90,40,5,Bite_Slash,"Deals 30 damage.","\"The horror, the horror.\" — Heart of Darkness",Common,CLOSE,CLOSE
-
-villager,Anvil,0,0,0,0,0,0,0,None,"No skill, inert object.","\"I drink your milkshake!\" — There Will Be Blood",Common,CLOSE,CLOSE
-villager,Blacksmith,0,0,0,0,100,30,5,Forge,"Buffs ally +5 damage.","\"Keep it secret. Keep it safe.\" — The Lord of the Rings",Common,CLOSE,ALLY
-villager,Gatherer,0,0,0,0,90,40,0,Forage,"Gathers resources, +20 mana to ally.","\"Life finds a way.\" — Jurassic Park",Common,CLOSE,ALLY
-villager,GraveDigger,0,0,0,0,90,40,0,Exhume,"Revives fallen ally with 50% HP.","\"Six feet under.\" — Saying",Uncommon,CLOSE,ALLY
-villager,Hunter,0,0,0,0,100,40,0,Set_Trap,"Sets trap, immobilize enemy 1 turn.","\"It’s not the years, honey, it’s the mileage.\" — Indiana Jones",Common,CLOSE,CLOSE
-villager,Lumberjack,0,0,0,0,100,30,0,Chop,"Gives +5 armor to ally.","\"All work and no play makes Jack a dull boy.\" — The Shining",Common,CLOSE,ALLY
-villager,Merchant,0,0,0,0,100,40,0,Trade,"Gives 30 gold.","\"Greed is good.\" — Wall Street",Common,CLOSE,ALLY
-villager,Miner,0,0,0,0,100,40,0,Dig,"Gives +20 mana.","\"Fortune favors the brave.\" — Virgil",Common,CLOSE,ALLY
-villager,NobleMan,0,0,0,0,120,50,0,Inspire,"Buffs all villagers +10 HP.","\"The game is afoot!\" — Sherlock Holmes",Uncommon,CLOSE,ALLY
-villager,NobleWoman,0,0,0,0,120,50,0,Blessing,"Heals nearby villager 20.","\"Let them eat cake.\" — Marie Antoinette",Uncommon,CLOSE,ALLY
-villager,Nun,0,0,0,0,90,50,0,Pray,"Restores 30 mana to ally.","\"Bless you, my child.\" — Religious saying",Common,CLOSE,ALLY
-villager,OldMan,0,0,0,0,80,40,0,Advice,"Gives ally +10 exp.","\"With age comes wisdom.\" — Proverb",Common,CLOSE,ALLY
-villager,OldWoman,0,0,0,0,80,40,0,Remedy,"Heals 20 HP.","\"Mirror, mirror, on the wall.\" — Snow White",Common,CLOSE,ALLY
-villager,Peasant,0,0,0,0,80,30,0,Help,"Gives random buff.","\"One ring to rule them all.\" — The Lord of the Rings",Common,CLOSE,ALLY
-villager,Princess,0,0,0,0,110,60,0,Hope,"Heals and inspires +10 attack.","\"Help me, Obi-Wan Kenobi, you’re my only hope.\" — Star Wars",Rare,CLOSE,ALLY
-villager,Queen,0,0,0,0,130,70,0,Royal_Boon,"Restores 40 HP to all villagers.","\"Off with their heads!\" — Alice in Wonderland",Rare,CLOSE,ALLY
-villager,SuspiciousMerchant,0,0,0,0,100,40,0,Deal,"Swaps gold for random buff.","\"I'm gonna make him an offer he can't refuse.\" — The Godfather",Uncommon,CLOSE,ALLY
-villager,Thief,0,0,0,0,90,40,0,Steal,"Steals 20 gold.","\"Why is the rum gone?\" — Pirates of the Caribbean",Common,CLOSE,ALLY
-villager,VillagerMan,0,0,0,0,90,30,0,Support,"Gives +5 HP.","\"Elementary, my dear Watson.\" — Sherlock Holmes",Common,CLOSE,ALLY
-villager,VillagerWoman,0,0,0,0,90,30,0,Care,"Restores 10 mana.","\"Frankly, my dear, I don't give a damn.\" — Gone with the Wind",Common,CLOSE,ALLY
-villager,Worker,0,0,0,0,100,30,0,Build,"Gives +5 armor.","\"I love the smell of fresh paint.\" — Common saying",Common,CLOSE,ALLY
+human,ArchMage,5,30,50,1,80,130,0,Blizzard,"Deals 40 frost damage in 3x3 area, slows enemies by 50% for 2 turns.","There is no spoon. - The Matrix",Legendary,FAR,STRONG
+human,ArcherMan,6,28,90,1,90,60,0,Piercing_Arrow,"Fires an arrow that pierces up to 3 enemies for 35 damage.","Aim small, miss small. - The Patriot",Common,FAR,STRONG
+human,CavalierMan,8,35,30,1,120,80,10,Charge,"Dashes 5 tiles to hit target, dealing 50 damage and stunning.","Fortune favors the bold. - Virgil",Rare,CLOSE,FAR
+human,CrossBowMan,5,32,80,1,85,70,0,Quick_Bolt,"Instantly fires two bolts at once, each dealing 25 damage.","Say hello to my little friend! - Scarface",Uncommon,FAR,STRONG
+human,HalberMan,5,33,40,1,105,70,5,Sweep_Strike,"Swings halberd in arc, hitting up to 3 enemies for 30 damage.","Walk softly and carry a big stick. - Theodore Roosevelt",Uncommon,CLOSE,CLOSE
+human,HorseMan,7,30,30,1,100,50,5,Trample,"Moves 3 tiles forward, damaging all in path for 35.","I feel the need — the need for speed. - Top Gun",Common,CLOSE,FAR
+human,KingMan,4,28,30,1,140,120,15,Royal_Command,"Buffs nearby allies, increasing their attack by 10 for 2 turns.","Heavy is the head that wears the crown. - Shakespeare, Henry IV",Legendary,CLOSE,ALLY
+human,Mage,5,25,60,1,80,120,0,Fire_Blast,"Deals 35 fire damage to one target, 20 splash nearby.","Not all those who wander are lost. - J.R.R. Tolkien",Rare,FAR,STRONG
+human,PrinceMan,6,30,30,1,110,100,8,Inspire,"Increases all allies' speed by 2 for 1 turn.","To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment. - Emerson",Epic,CLOSE,ALLY
+human,ShieldMan,4,20,25,1,130,50,20,Defend,"Blocks next attack, reducing damage by 80%.","I am the shield that guards the realms of men. - Game of Thrones",Uncommon,CLOSE,ALLY
+human,SpearMan,5,28,40,1,100,60,5,Spear_Thrust,"Deals 30 damage and pushes target 1 tile back.","Cry havoc and let slip the dogs of war. - Shakespeare, Julius Caesar",Common,CLOSE,CLOSE
+dwarf,ArmoredBearRider,7,38,35,1,130,70,15,Maul,"Bear charges, dealing 50 damage and bleeding for 2 turns.","The mountains are calling and I must go. - John Muir",Epic,CLOSE,STRONG
+dwarf,BearRider,7,35,30,1,120,60,10,Beast_Charge,"Rider leaps 3 tiles, dealing 40 damage.","Hold the door! - Game of Thrones",Rare,CLOSE,CLOSE
+dwarf,Demolitionist,4,40,70,1,90,90,0,Bombard,"Throws bomb, 45 damage in 2x2 area.","Yippee-ki-yay, motherf***er! - Die Hard",Rare,FAR,STRONG
+dwarf,Grenade,0,0,0,0,0,0,0,None,"No skill, inert item.","This is your life and it’s ending one minute at a time. - Fight Club",Common,CLOSE,CLOSE
+dwarf,Grenadier,4,35,65,1,85,80,0,Cluster_Grenade,"Throws grenade splitting in 3, 25 damage each.","Boom! Shake the room. - Fresh Prince",Uncommon,FAR,STRONG
+dwarf,Hunter,5,30,80,1,95,70,0,Mark_Shot,"Marks target, next shot +15 damage.","Keep your friends close, but your enemies closer. - The Godfather Part II",Common,FAR,STRONG
+dwarf,King,4,28,30,1,140,110,15,Iron_Command,"All dwarves gain +5 armor for 2 turns.","My precious. - The Lord of the Rings",Legendary,CLOSE,ALLY
+dwarf,Miner,0,0,0,0,100,30,0,Dig_In,"Hides underground, immune 1 turn.","All we have to decide is what to do with the time that is given us. - The Lord of the Rings",Common,CLOSE,CLOSE
+dwarf,Rifleman,5,33,85,1,90,70,0,Headshot,"Next shot deals double damage.","Make my day. - Sudden Impact",Uncommon,FAR,STRONG
+dwarf,Shieldbreaker,5,35,40,1,110,50,5,Break_Armor,"Ignores armor for next hit.","Nobody ever won a war by dying for his country. He won it by making the other poor dumb bastard die for his country. - Patton",Rare,CLOSE,STRONG
+dwarf,Warrior,5,32,30,1,110,60,5,Reckless_Slash,"Deals 40 damage, takes 10 recoil.","What we do in life echoes in eternity. - Gladiator",Common,CLOSE,CLOSE
+elf,ArcaneArcher,6,30,100,1,85,100,0,Magic_Shot,"Shoots magic arrow, deals 35 and lowers armor.","Even the smallest person can change the course of the future. - The Lord of the Rings",Rare,FAR,STRONG
+elf,Archer,6,28,90,1,90,60,0,Rapid_Fire,"Fires 2 arrows in quick succession.","Do you feel lucky, punk? - Dirty Harry",Common,FAR,STRONG
+elf,HorseMan,7,30,30,1,100,50,5,Swift_Ride,"Moves 4 tiles, strikes for 35.","Roads? Where we're going, we don't need roads. - Back to the Future",Common,CLOSE,FAR
+elf,Mage,5,25,60,1,80,120,0,Arcane_Blast,"Deals 35 magic damage, silences target.","Magic is believing in yourself. - Goethe",Rare,FAR,STRONG
+elf,PegasusRider,8,32,40,1,110,80,10,Heavenly_Charge,"Flies 5 tiles, hits for 50, ignores terrain.","Second star to the right and straight on 'til morning. - Peter Pan",Epic,CLOSE,STRONG
+elf,Queen,4,28,30,1,130,120,15,Elven_Grace,"Heals all allies 30 health.","Though she be but little, she is fierce. - Shakespeare, A Midsummer Night's Dream",Legendary,CLOSE,ALLY
+elf,SpearMan,5,28,40,1,100,60,5,Thorn_Strike,"Hits target for 30, 50% chance bleed.","Fear cuts deeper than swords. - A Song of Ice and Fire",Common,CLOSE,CLOSE
+elf,SpellSword,6,32,35,1,95,90,5,Blade_Burst,"Sword strike adds 20 magic damage.","Knowledge is power. - Francis Bacon",Rare,CLOSE,STRONG
+elf,SwordMan,5,30,30,1,100,60,5,Dual_Slash,"Hits twice for 20 each.","There can be only one. - Highlander",Uncommon,CLOSE,CLOSE
+elf,Warden,5,30,30,1,110,70,10,Nature_Ward,"Shields nearby allies, -15 damage taken.","To protect and to serve. - LAPD motto",Epic,CLOSE,ALLY
+forestProtector,DryadDeer,6,28,30,1,90,80,0,Forest_Leap,"Moves 3 tiles, deals 35 damage.","Stay gold, Ponyboy. - The Outsiders",Rare,CLOSE,CLOSE
+forestProtector,DryadEnchantress,5,25,50,1,80,120,0,Nature_Charm,"Charms enemy for 1 turn.","Not all those who wander are lost. - Tolkien",Epic,CLOSE,STRONG
+forestProtector,DryadHuntress,6,30,80,1,85,80,0,Huntress_Shot,"Deals 40 damage, marks target.","Winter is coming. - Game of Thrones",Rare,FAR,STRONG
+forestProtector,Fairy,6,20,25,1,70,100,0,Pixie_Dust,"Heals ally 30, grants +2 spd.","All you need is faith, trust, and a little pixie dust. - Peter Pan",Uncommon,CLOSE,ALLY
+forestProtector,Pixie,6,18,25,1,60,90,0,Glitter_Spark,"Deals 20 damage, blinds target.","To infinity and beyond! - Toy Story",Common,CLOSE,STRONG
+forestProtector,SatyrDruid,5,28,50,1,90,120,0,Nature_Call,"Heals all allies 20.","The earth has music for those who listen. - Shakespeare",Rare,CLOSE,ALLY
+forestProtector,SatyrWarrior,5,30,30,1,100,70,5,Wilder_Strike,"Deals 35 damage, ignores 5 armor.","Wild thing, you make my heart sing. - The Troggs",Common,CLOSE,CLOSE
+forestProtector,Treant,4,35,30,1,140,60,10,Root_Slam,"Roots target, dealing 40 and stun.","I am Groot. - Guardians of the Galaxy",Epic,CLOSE,STRONG
+forestProtector,TreantGuard,4,30,30,1,130,60,15,Bark_Shield,"Gives nearby allies +10 armor.","None shall pass! - Monty Python and the Holy Grail",Epic,CLOSE,ALLY
+forestProtector,Satyr,5,28,30,1,90,70,5,Wild_Dash,"Moves 2 tiles, hits for 30.","Carpe diem. Seize the day, boys. - Dead Poets Society",Common,CLOSE,CLOSE
+forestProtector,YoungDryad,5,22,25,1,70,90,0,Bloom,"Restores 20 mana to ally.","The flower that blooms in adversity is the most rare and beautiful of all. - Mulan",Common,CLOSE,ALLY
+holy,Angel,6,30,50,1,100,120,5,Heaven_Bless,"Heals 40 health to ally, +5 armor 2 turns.","Every man dies, not every man really lives. - Braveheart",Rare,CLOSE,ALLY
+holy,ArchAngel,6,35,50,1,120,140,10,Divine_Judgement,"Deals 50 holy damage, stuns undead.","I am vengeance. I am the night. - Batman",Legendary,FAR,STRONG
+holy,BattlePriest,5,25,30,1,100,100,5,Holy_Smite,"Deals 30 holy damage, heals self 20.","Blessed are the meek. - The Bible",Uncommon,CLOSE,STRONG
+holy,Crusader,5,32,30,1,110,80,10,Holy_Strike,"Deals 35 damage, gains +5 armor.","The only thing we have to fear is fear itself. - F.D. Roosevelt",Common,CLOSE,CLOSE
+holy,CrusaderArcher,5,28,70,1,90,70,0,Silver_Arrow,"Deals 35 damage, extra 15 to undead.","Aim for the bushes. - The Other Guys",Uncommon,FAR,STRONG
+holy,CrusaderCaptain,5,30,30,1,120,90,12,Battle_Command,"Buffs nearby allies +10 attack.","We few, we happy few, we band of brothers. - Shakespeare, Henry V",Epic,CLOSE,ALLY
+holy,CrusaderCaptainFlagless,5,30,30,1,115,80,10,Banner_Call,"Inspires ally, +2 spd for 2 turns.","Stand your ground! - 300",Rare,CLOSE,ALLY
+holy,CrusaderFlag,0,0,0,0,0,0,0,Inspire_Hope,"Nearby allies gain +5 armor.","Hope is a good thing. - The Shawshank Redemption",Common,CLOSE,ALLY
+holy,CrusaderHorseMan,7,32,30,1,110,70,10,Holy_Charge,"Charges 4 tiles, 45 damage.","Ride or die. - Fast & Furious",Rare,CLOSE,STRONG
+holy,HighPriestess,5,0,0,1,90,140,0,Mass_Bless,"Heals all allies 30, removes debuffs.","With great power comes great responsibility. - Spider-Man",Legendary,CLOSE,ALLY
+holy,Paladin1,5,35,30,1,120,100,15,Divine_Shield,"Next hit immune, reflects 20.","A knight's tale begins with courage. - A Knight's Tale",Epic,CLOSE,ALLY
+holy,Paladin2,5,35,30,1,120,100,15,Sanctify,"Deals 40 damage to undead, heals self.","The light shines in the darkness. - The Bible",Epic,CLOSE,STRONG
+holy,Paladin3,5,35,30,1,120,100,15,Guardian_Blessing,"Gives nearby ally +15 armor.","Not all heroes wear capes. - Unknown",Epic,CLOSE,ALLY
+holy,Priest,5,0,0,1,80,120,0,Holy_Heal,"Heals single ally for 50.","Faith is taking the first step. - Martin Luther King Jr.",Uncommon,CLOSE,ALLY
+demon,ClawedDemon,6,32,30,1,110,80,5,Rend,"Deals 35 damage, bleeding.","Why so serious? - The Dark Knight",Rare,CLOSE,STRONG
+demon,DemonFireKeeper,5,25,50,1,100,120,0,Flame_Orb,"Launches fire orb, 40 AOE damage.","Some men just want to watch the world burn. - The Dark Knight",Rare,FAR,STRONG
+demon,DemonFireThrower,5,28,70,1,90,100,0,Inferno_Spit,"Spits flame, line damage 45.","Burn it all! - Game of Thrones",Rare,FAR,STRONG
+demon,DemonLord,6,40,40,2,150,150,15,Chaos_Rain,"Deals 60 damage to random enemies.","The greatest trick the Devil ever pulled was convincing the world he didn't exist. - The Usual Suspects",Legendary,FAR,STRONG
+demon,DemonTormentor,5,35,30,1,120,80,5,Agony_Whip,"Deals 40 damage, reduces armor.","Pain don't hurt. - Road House",Epic,CLOSE,STRONG
+demon,Demoness,5,30,35,1,100,100,0,Soul_Siphon,"Steals 30 health from target.","Be careful what you wish for. - The Monkey's Paw",Rare,CLOSE,STRONG
+demon,FireBall,0,0,0,0,0,0,0,Explode,"Detonates for 50 area damage.","This is fine. - KC Green (meme)",Common,CLOSE,CLOSE
+demon,FireImp,6,20,25,1,70,80,0,Scorch,"Burns enemy for 30.","Better to reign in Hell than serve in Heaven. - Milton, Paradise Lost",Common,CLOSE,STRONG
+demon,HighDemon,6,38,40,1,130,140,10,Dread_Flame,"Deals 50 damage, fear 1 turn.","Fear is the mind-killer. - Dune",Legendary,FAR,STRONG
+demon,Imp,6,18,25,1,60,60,0,Mischief,"Steals 20 mana.","Chaos is a ladder. - Game of Thrones",Common,CLOSE,STRONG
+demon,Succubus,6,28,30,1,90,100,0,Charm_Kiss,"Charms enemy, skips action.","I'm your worst nightmare. - Rambo",Epic,CLOSE,STRONG
+demon,Trident,5,35,40,1,110,80,5,Sea_Fury,"Deals 40 damage, double to holy.","Release the Kraken! - Clash of the Titans",Rare,CLOSE,STRONG
+undead,ArchLich,5,38,60,1,120,140,10,Death_Storm,"Deals 50 shadow damage in 3x3 area.","I am become Death, the destroyer of worlds. — Bhagavad Gita (Oppenheimer)",Legendary,FAR,STRONG
+undead,Banshee,5,28,30,1,90,110,0,Shriek,"Deals 35 damage, silences target.","Who you gonna call? Ghostbusters! — Ghostbusters",Rare,CLOSE,STRONG
+undead,BansheeQueen,5,35,40,1,110,130,5,Wail_of_Souls,"AOE damage 45, fears targets.","I see dead people. — The Sixth Sense",Epic,FAR,STRONG
+undead,DeathKnight,5,35,30,1,120,80,10,Dark_Slash,"Deals 40 damage, heals self 20.","That which does not kill us makes us stronger. — Nietzsche",Rare,CLOSE,STRONG
+undead,DeathLord,5,40,30,1,140,100,15,Reap,"Deals 50 damage, summons skeleton.","The king is dead, long live the king. — Traditional",Legendary,CLOSE,STRONG
+undead,DreadKnight,5,38,30,1,130,90,12,Terror_Blade,"Hits for 45, lowers armor.","Abandon all hope, ye who enter here. — Dante, Inferno",Epic,CLOSE,STRONG
+undead,Ghost,6,25,30,1,80,70,0,Haunt,"Moves through units, deals 30.","The dead know only one thing: it is better to be alive. — Full Metal Jacket",Common,CLOSE,STRONG
+undead,Ghoul,5,28,30,1,90,60,0,Frenzy_Bite,"Deals 30 damage, heals 15.","I am Legend. — I Am Legend",Common,CLOSE,STRONG
+undead,Lich,5,32,50,1,100,140,5,Curse_Bolt,"Deals 40 damage, drains 20 mana.","Something wicked this way comes. — Shakespeare, Macbeth",Rare,FAR,STRONG
+undead,Necromancer,5,25,50,1,90,150,0,Raise_Dead,"Summons 1 skeleton ally.","Do not go gentle into that good night. — Dylan Thomas",Legendary,FAR,ALLY
+undead,Reaper,5,40,30,1,110,100,10,Soul_Harvest,"Deals 50 damage, if kills, restores 50 mana.","I'm the ghost with the most, babe. — Beetlejuice",Epic,CLOSE,STRONG
+undead,Skeleton,5,25,30,1,80,40,0,Bone_Swing,"Deals 28 damage.","I've got a bone to pick with you. — Idiom",Common,CLOSE,CLOSE
+undead,SkeletonArcher,5,28,70,1,80,40,0,Bone_Arrow,"Deals 30 damage.","Dead men tell no tales. — Pirates of the Caribbean",Common,FAR,STRONG
+undead,SkeletonHorseman,6,30,30,1,100,50,5,Bone_Charge,"Dashes 3 tiles, 35 damage.","Ride eternal, shiny and chrome! — Mad Max: Fury Road",Uncommon,CLOSE,CLOSE
+undead,SkeletonMage,5,25,50,1,80,100,0,Bone_Spike,"Deals 30 damage, slows.","Knowledge itself is power. — Francis Bacon",Uncommon,FAR,STRONG
+undead,SkeletonWarrior,5,28,30,1,90,40,5,Bone_Slash,"Deals 30 damage.","Nothing is certain except death and taxes. — Benjamin Franklin",Common,CLOSE,CLOSE
+undead,SoulCollector,5,35,30,1,100,120,0,Soul_Drain,"Steals 40 health, 20 mana.","We are such stuff as dreams are made on. — Shakespeare, The Tempest",Epic,CLOSE,STRONG
+undead,SpikedGhoul,5,30,30,1,95,50,5,Impale,"Deals 35 damage, bleed 2 turns.","To sleep, perchance to dream. — Shakespeare, Hamlet",Uncommon,CLOSE,STRONG
+undead,Zombie,4,22,25,1,80,40,0,Bite,"Deals 25 damage.","Brains... — Zombie trope",Common,CLOSE,CLOSE
+undead,ZombieButcher,4,32,30,1,110,50,5,Cleave,"Deals 35 damage, splash.","Here's Johnny! — The Shining",Rare,CLOSE,STRONG
+undead,ZombieCrusher,4,35,30,1,120,50,8,Smash,"Deals 40 damage.","I love the smell of napalm in the morning. — Apocalypse Now",Rare,CLOSE,STRONG
+undead,ZombieCrusher2,4,35,30,1,120,50,8,Smash,"Deals 40 damage.","Say 'what' again! — Pulp Fiction",Rare,CLOSE,STRONG
+undead,ZombieCrusher3,4,35,30,1,120,50,8,Smash,"Deals 40 damage.","You talkin' to me? — Taxi Driver",Rare,CLOSE,STRONG
+undead,ZombieDog,6,20,25,1,70,30,0,Mangle,"Deals 25 damage.","Who's a good boy? — Pet trope",Common,CLOSE,CLOSE
+undead,ZombieRunner,6,22,25,1,75,30,0,Chase,"Moves 4 tiles, hits 25.","Run! — Forrest Gump",Common,CLOSE,CLOSE
+undead,ZombieWarrior,5,28,30,1,90,40,5,Bite_Slash,"Deals 30 damage.","The horror, the horror. — Heart of Darkness",Common,CLOSE,CLOSE
+villager,Anvil,0,0,0,0,0,0,0,None,"No skill, inert object.","I drink your milkshake! — There Will Be Blood",Common,CLOSE,CLOSE
+villager,Blacksmith,0,0,0,0,100,30,5,Forge,"Buffs ally +5 damage.","Keep it secret. Keep it safe. — The Lord of the Rings",Common,CLOSE,ALLY
+villager,Gatherer,0,0,0,0,90,40,0,Forage,"Gathers resources, +20 mana to ally.","Life finds a way. — Jurassic Park",Common,CLOSE,ALLY
+villager,GraveDigger,0,0,0,0,90,40,0,Exhume,"Revives fallen ally with 50% HP.","Six feet under. — Saying",Uncommon,CLOSE,ALLY
+villager,Hunter,0,0,0,0,100,40,0,Set_Trap,"Sets trap, immobilize enemy 1 turn.","It’s not the years, honey, it’s the mileage. — Indiana Jones",Common,CLOSE,CLOSE
+villager,Lumberjack,0,0,0,0,100,30,0,Chop,"Gives +5 armor to ally.","All work and no play makes Jack a dull boy. — The Shining",Common,CLOSE,ALLY
+villager,Merchant,0,0,0,0,100,40,0,Trade,"Gives 30 gold.","Greed is good. — Wall Street",Common,CLOSE,ALLY
+villager,Miner,0,0,0,0,100,40,0,Dig,"Gives +20 mana.","Fortune favors the brave. — Virgil",Common,CLOSE,ALLY
+villager,NobleMan,0,0,0,0,120,50,0,Inspire,"Buffs all villagers +10 HP.","The game is afoot! — Sherlock Holmes",Uncommon,CLOSE,ALLY
+villager,NobleWoman,0,0,0,0,120,50,0,Blessing,"Heals nearby villager 20.","Let them eat cake. — Marie Antoinette",Uncommon,CLOSE,ALLY
+villager,Nun,0,0,0,0,90,50,0,Pray,"Restores 30 mana to ally.","Bless you, my child. — Religious saying",Common,CLOSE,ALLY
+villager,OldMan,0,0,0,0,80,40,0,Advice,"Gives ally +10 exp.","With age comes wisdom. — Proverb",Common,CLOSE,ALLY
+villager,OldWoman,0,0,0,0,80,40,0,Remedy,"Heals 20 HP.","Mirror, mirror, on the wall. — Snow White",Common,CLOSE,ALLY
+villager,Peasant,0,0,0,0,80,30,0,Help,"Gives random buff.","One ring to rule them all. — The Lord of the Rings",Common,CLOSE,ALLY
+villager,Princess,0,0,0,0,110,60,0,Hope,"Heals and inspires +10 attack.","Help me, Obi-Wan Kenobi, you’re my only hope. — Star Wars",Rare,CLOSE,ALLY
+villager,Queen,0,0,0,0,130,70,0,Royal_Boon,"Restores 40 HP to all villagers.","Off with their heads! — Alice in Wonderland",Rare,CLOSE,ALLY
+villager,SuspiciousMerchant,0,0,0,0,100,40,0,Deal,"Swaps gold for random buff.","I'm gonna make him an offer he can't refuse. — The Godfather",Uncommon,CLOSE,ALLY
+villager,Thief,0,0,0,0,90,40,0,Steal,"Steals 20 gold.","Why is the rum gone? — Pirates of the Caribbean",Common,CLOSE,ALLY
+villager,VillagerMan,0,0,0,0,90,30,0,Support,"Gives +5 HP.","Elementary, my dear Watson. — Sherlock Holmes",Common,CLOSE,ALLY
+villager,VillagerWoman,0,0,0,0,90,30,0,Care,"Restores 10 mana.","Frankly, my dear, I don't give a damn. — Gone with the Wind",Common,CLOSE,ALLY
+villager,Worker,0,0,0,0,100,30,0,Build,"Gives +5 armor.","I love the smell of fresh paint. — Common saying",Common,CLOSE,ALLY
