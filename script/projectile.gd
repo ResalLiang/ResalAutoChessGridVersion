@@ -21,6 +21,10 @@ var attacker: Hero = null:
 		# Load animation resource in editor mode
 		if ResourceLoader.exists("res://asset/animation/" + attacker.faction + "/" + attacker.faction + attacker.hero_name + "_projectile.tres"):
 			animated_sprite_2d.sprite_frames = ResourceLoader.load("res://asset/animation/" + attacker.faction + "/" + attacker.faction + attacker.hero_name + "_projectile.tres")
+		elif ResourceLoader.exists("res://asset/animation/" + attacker.faction + "/" +  "default_projectile.tres"):
+			animated_sprite_2d.sprite_frames = ResourceLoader.exists("res://asset/animation/" + attacker.faction + "/" +  "default_projectile.tres")
+		else:
+			animated_sprite_2d.sprite_frames = ResourceLoader.exists("res://asset/animation/default_projectile.tres")
 
 signal projectile_vanished
 
