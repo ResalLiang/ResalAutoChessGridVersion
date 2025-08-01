@@ -56,7 +56,6 @@ const MAX_SEARCH_RADIUS = 3
 @onready var attack_timer: Timer = $attack_timer
 @onready var line := $Line2D  # Attack range indicator
 @onready var drag_handler: Node2D = $drag_handler
-@onready var target_timer: Timer = $target_timer
 @onready var move_timer: Timer = $move_timer
 
 # ========================
@@ -87,6 +86,7 @@ var faction_hero_dict = {
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
 var rng = RandomNumberGenerator.new() # Random number generator
 
+#Astar navigation related
 var move_path: PackedVector2Array
 var move_speed: float = 200.0
 var is_moving: bool = false
@@ -107,6 +107,7 @@ var position_tween
 var is_active: bool = false
 var grid_offset =Vector2(8, 8)
 var remain_step:= 0
+
 # ========================
 # Signal Definitions
 # ========================
@@ -126,6 +127,7 @@ signal is_hit
 signal spell_casted
 signal ranged_attack_finished
 signal melee_attack_finished
+
 # ========================
 # Projectile Properties
 # ========================
@@ -161,6 +163,10 @@ func _ready():
 	attack_timer.timeout.connect(_on_attack_timeout)
 	move_timer.timeout.connect(_handle_action)
 	action_started.connect(_handle_action)
+	drag_handler.drag_started.connect(_handle_dragging_state(drag_action))
+	drag_handler.drag_canceled.connect(_handle_dragging_state(drag_action))
+	drag_handler.drag_dropped.connect(_handle_dragging_state(drag_action))
+
 	
 	damage_taken.connect(_on_damage_taken)
 	animated_sprite_2d.connect("animation_finished", _on_hero_animation_finished)
@@ -252,6 +258,11 @@ func _process(delta: float) -> void:
 				new_material.set_shader_parameter("outline_color", Color(1, 1, 1, 0.33))
 	animated_sprite_2d.material = new_material
 
+	if !is_active:
+		drag_handler.dragging_enabled = false
+	else:
+		drag_handler.dragging_enabled = dragging_enabled
+
 func _physics_process(delta):
 	return
 
@@ -291,16 +302,19 @@ func _validate_node_references() -> bool:
 
 # Load appropriate animations for the hero
 func _load_animations():
-	# Use custom sprite frames if provided
-	if sprite_frames != null:
-		animated_sprite_2d.sprite_frames = sprite_frames
+	var path = "res://asset/animation/%s/%s%s.tres" % [faction, faction, hero_name]
+	if ResourceLoader.exists(path):
+		var frames = ResourceLoader.load(path)
+		for anim_name in frames.get_animation_names():
+			# 根据需求设置不同循环条件
+			if anim_name == "idle" or "move":
+				frames.set_animation_loop(anim_name, true)
+			else:
+				frames.set_animation_loop(anim_name, false)
+			frames.set_animation_speed(anim_name, 8.0)
+		animated_sprite_2d.sprite_frames = frames
 	else:
-		# Build path to default animation resource
-		var path = "res://asset/animation/%s/%s%s.tres" % [faction, faction, hero_name]
-		if ResourceLoader.exists(path):
-			animated_sprite_2d.sprite_frames = ResourceLoader.load(path)
-		else:
-			push_error("Animation resource not found: " + path)
+		push_error("Animation resource not found: " + path)
 
 # Load hero stats from JSON file
 func _load_hero_stats():
@@ -334,6 +348,7 @@ func start_turn():
 	
 	update_solid_map()
 	await get_tree().process_frame
+
 	if not hero_target:
 		_handle_targeting()
 	if hero_target:
@@ -368,7 +383,7 @@ func _handle_movement():
 			#move_finished.emit()
 			move_timer.start()
 		else:
-			var move_steps = min(floor(spd / 10), move_path.size() - 2)
+			var move_steps = min(spd, move_path.size() - 2)
 			if position_tween:
 				position_tween.kill() # Abort the previous animation.
 			position_tween = create_tween()
@@ -410,14 +425,14 @@ func _handle_action():
 			hero_projectile.projectile_vanished.connect(_on_projectile_vanished)
 		elif current_distance_to_target < ranged_attack_threshold:
 			if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
-				stat = STATUS.RANGED_ATTACK
-				#animated_sprite_2d.play("melee_attack")
+				stat = STATUS.MELEE_ATTACK
 				melee_attack_animation.play("melee_attack")
 			elif animated_sprite_2d.sprite_frames.has_animation("attack"):
 				stat = STATUS.RANGED_ATTACK
 				animated_sprite_2d.play("attack")
 				hero_target.take_damage(damage, self)	
 	action_finished.emit()
+
 # Handle target selection and tracking
 func _handle_targeting():
 	# Clear invalid targets (dead or invalid instances)
@@ -428,76 +443,6 @@ func _handle_targeting():
 func _on_projectile_vanished():
 	action_finished.emit()
 		
-
-# Handle state transitions and actions
-func _handle_state():
-# TODO
-# died -> return
-# !target -> idle
-# mp == max_mp and target -> spell, reduce mp
-# target and target in range and range >= ranged_criteria -> ranged_attack
-# target and target in range and range < ranged_criteria -> melee_attack
-# target and target not in range -> move
-#
-
-	if stat == STATUS.DIE:
-		died.emit()
-		visible = false
-		return
-
-
-	if hero_target:
-		# Enter idle state if no targets available
-		target_timer.stop()
-		stat = STATUS.IDLE
-		if animated_sprite_2d.sprite_frames.has_animation("idle"):
-			animated_sprite_2d.play("idle")
-		# Start idle timer with random duration
-		#idle_timer.start(rng.randf_range(0.5, 1.0))
-		#idle_timer.start(0.1)
-		pass
- 
-		
-	if mp >= max_mp:
-		var spell_target =  _find_new_target(hero_spell_target_choice)
-		if spell_target:
-			for spell_target_member in spell_target:
-				_cast_spell(spell_target_member)
-		mp = 0
-		return
-		
-	# Calculate distance to target
-	if hero_target:
-		var distance = global_position.distance_to(hero_target.global_position)
-	
-			# Update character facing direction
-		animated_sprite_2d.flip_h = (hero_target.global_position - global_position).x < 0
-		
-		# Transition to attack state if in range
-		if distance <= attack_range:
-			if stat != STATUS.MELEE_ATTACK or stat != STATUS.RANGED_ATTACK:
-				if distance > ranged_attack_threshold and attack_range >= 32:
-					stat = STATUS.RANGED_ATTACK
-					if animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
-						animated_sprite_2d.play("ranged_attack")
-				else:
-					stat = STATUS.MELEE_ATTACK
-					if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
-						#animated_sprite_2d.play("melee_attack")
-						melee_attack_animation.play("melee_attack")
-					elif animated_sprite_2d.sprite_frames.has_animation("attack"):
-						animated_sprite_2d.play("attack")
-			if attack_timer.is_stopped():
-				attack_timer.start() # Start attack sequence
-		# Transition to move state if out of range
-		else:
-			if stat != STATUS.MOVE:
-				stat = STATUS.MOVE
-				if animated_sprite_2d.sprite_frames.has_animation("move"):
-					animated_sprite_2d.play("move")
-				attack_timer.stop()  # Stop attacking
-
-
 # Find a new target based on selection strategy
 func _find_new_target(tgt) -> Hero:
 	# Get all heroes in the scene
@@ -548,7 +493,6 @@ func _find_new_target(tgt) -> Hero:
 				new_target = ally_heroes.front()  # First ally
 	
 	if new_target:
-		target_timer.start()
 		return new_target 
 	else:
 		return null  # No valid target found
@@ -708,6 +652,7 @@ func _on_damage_taken(damage_value):
 func _on_hero_animation_finished():
 	if stat == STATUS.DIE:
 		died.emit()
+		action_finished.emit()
 	elif stat == STATUS.HIT:
 		is_hit.emit()
 	elif stat == STATUS.SPELL:
@@ -727,3 +672,16 @@ func update_solid_map():
 				astar_grid.set_point_solid(Vector2i(x, y), true)
 			else:
 				astar_grid.set_point_solid(Vector2i(x, y), false)
+
+func _handle_dragging_state(drag_action):
+	if !is_active:
+		match drag_action:
+			"started":
+				stat = STATUS.JUMP
+			"dropped":
+				stat = STATUS.IDLE
+			"canceled":
+				stat = STATUS.JUMP
+			_:
+				stat = STATUS.JUMP
+
