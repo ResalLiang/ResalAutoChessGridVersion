@@ -1,9 +1,7 @@
 extends Node2D
 
-@onready var hero: Hero = $".."
+@onready var dragging_item: Area2D = $".."
 @onready var area_2d: Area2D = $"../Area2D"
-@onready var attack_timer: Timer = $"../attack_timer"
-@onready var idle_timer: Timer = $"../idle_timer"
 @onready var animated_sprite_2d: AnimatedSprite2D = $"../AnimatedSprite2D"
 
 
@@ -27,8 +25,6 @@ signal dropped                                   # Emitted when character is dro
 func _ready() -> void:
 	# Connect signals
 	area_2d.input_event.connect(_on_target_input_event)
-	pass # Replace with function body.
-
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -56,34 +52,28 @@ func _start_dragging():
 		return
 		
 	dragging = true
-	starting_position = hero.global_position
+	starting_position = dragging_item.global_position
 	add_to_group("dragging")
-	hero.z_index = 99  # Bring to front during drag
-	offset = hero.global_position - get_global_mouse_position()
+	dragging_item.z_index = 99  # Bring to front during drag
+	offset = dragging_item.global_position - get_global_mouse_position()
 	drag_started.emit()
-	hero.stat = hero.STATUS.JUMP
-	attack_timer.stop()  # Stop attacking during drag
 
 # End dragging (common operations)
 func _end_dragging():
 	dragging = false
 	remove_from_group("dragging")
 	z_index = CHARACT_Z_INDEX  # Restore default Z-index
-	hero.stat = hero.STATUS.IDLE
 
 # Cancel dragging and return to start position
 func _cancel_dragging():
 	_end_dragging()
 	global_position = starting_position
 	drag_canceled.emit(starting_position)
-	hero.animated_sprite_2d.play("idle")
 
 # Drop character at current position
 func _drop():
 	_end_dragging()
 	dropped.emit()
-	hero.animated_sprite_2d.play("idle")
-	idle_timer.start()  # Restart idle timer
 	
 	
 # ========================
@@ -102,14 +92,7 @@ func _on_target_input_event(_viewport, event, _shape_idx):
 	if event.is_action_pressed("select") and not dragging:
 		_start_dragging()
 		
-
-
 # Handle dragging behavior
 func _handle_dragging():
 	# Follow mouse position with offset
-	hero.global_position = get_global_mouse_position() + offset
-	# Play jump animation during drag
-	animated_sprite_2d.play("jump")
-
-func snap(value: float, grid_size: int) -> float:
-	return floor(value / grid_size) * grid_size
+	dragging_item.global_position = get_global_mouse_position() + offset
