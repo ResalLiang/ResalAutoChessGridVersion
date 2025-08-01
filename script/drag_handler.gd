@@ -1,6 +1,6 @@
 extends Node2D
 
-@onready var dragging_item: Area2D = $".."
+@onready var dragging_item: Node2D = $".."
 @onready var area_2d: Area2D = $"../Area2D"
 @onready var animated_sprite_2d: AnimatedSprite2D = $"../AnimatedSprite2D"
 
@@ -19,7 +19,7 @@ const CHARACT_Z_INDEX = 2  # Default rendering layer
 # Dragging signals
 signal drag_canceled(starting_position: Vector2) # Emitted when drag is canceled
 signal drag_started                              # Emitted when drag starts
-signal dropped                                   # Emitted when character is dropped
+signal drag_dropped                                   # Emitted when character is dropped
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -56,7 +56,7 @@ func _start_dragging():
 	add_to_group("dragging")
 	dragging_item.z_index = 99  # Bring to front during drag
 	offset = dragging_item.global_position - get_global_mouse_position()
-	drag_started.emit()
+	drag_started.emit("started")
 
 # End dragging (common operations)
 func _end_dragging():
@@ -68,12 +68,12 @@ func _end_dragging():
 func _cancel_dragging():
 	_end_dragging()
 	global_position = starting_position
-	drag_canceled.emit(starting_position)
+	drag_canceled.emit("canceled")
 
 # Drop character at current position
 func _drop():
 	_end_dragging()
-	dropped.emit()
+	drag_dropped.emit("dropped")
 	
 	
 # ========================
@@ -91,7 +91,7 @@ func _on_target_input_event(_viewport, event, _shape_idx):
 	# Start dragging on select input
 	if event.is_action_pressed("select") and not dragging:
 		_start_dragging()
-		
+
 # Handle dragging behavior
 func _handle_dragging():
 	# Follow mouse position with offset
