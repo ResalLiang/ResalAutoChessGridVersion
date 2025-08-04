@@ -1,7 +1,7 @@
 # Hero character class with movement, dragging functionality and state management
 #@tool
-class_name Hero
 extends Node2D
+class_name Hero
 
 # ========================
 # Constants and Enums
@@ -52,6 +52,7 @@ var base_critical_rate := 0.10
 var armor := 0
 var base_armor := 0
 
+var spd = base_spd
 var max_hp = base_max_hp
 var max_mp = base_max_mp
 var damage = base_damage
@@ -72,6 +73,8 @@ var attack_range = base_attack_range
 @onready var line := $Line2D  # Attack range indicator
 @onready var drag_handler: Node2D = $drag_handler
 @onready var move_timer: Timer = $move_timer
+@onready var action_timer: Timer = $action_timer
+@onready var projectile: Area2D = $projectile
 
 # ========================
 # Member Variables
@@ -118,6 +121,7 @@ var is_active: bool = false
 var grid_offset =Vector2(8, 8)
 var remain_step:= 0
 
+var astar_grid_region = Rect2i(-8, -8, 16, 16)
 # ========================
 # Signal Definitions
 # ========================
@@ -142,7 +146,6 @@ signal melee_attack_finished
 # ========================
 # Projectile Properties
 # ========================
-var projectile_scene: PackedScene  # Projectile scene for ranged attacks
 var projectile_speed: float = 100.0  # Projectile speed
 var projectile_damage: int = 15  # Projectile damage
 var projectile_penetration: int = 1  # Number of enemies projectile can penetrate
@@ -152,6 +155,8 @@ var ranged_attack_threshold: float = 32.0  # Minimum distance for ranged attack
 @onready var hp_bar: ProgressBar = $hp_bar
 @onready var mp_bar: ProgressBar = $mp_bar
 
+var buff_handler = Buff_handler.new()
+var debuff_handler = Debuff_handler.new()
 # ========================
 # Initialization
 # ========================
@@ -174,16 +179,16 @@ func _ready():
 	
 	# Connect signals
 	idle_timer.timeout.connect(_on_idle_timeout)
-	attack_timer.timeout.connect(_on_attack_timeout)
+	#attack_timer.timeout.connect(_on_attack_timeout)
 	move_timer.timeout.connect(_handle_action)
-	action_started.connect(_handle_action)
-	drag_handler.drag_started.connect(_handle_dragging_state(drag_action))
-	drag_handler.drag_canceled.connect(_handle_dragging_state(drag_action))
-	drag_handler.drag_dropped.connect(_handle_dragging_state(drag_action))
+	action_timer.timeout.connect(_handle_action_timeout)
+	
+	drag_handler.drag_started.connect(_handle_dragging_state)
+	drag_handler.drag_canceled.connect(_handle_dragging_state)
+	drag_handler.drag_dropped.connect(_handle_dragging_state)
 
 	
 	damage_taken.connect(_on_damage_taken)
-	animated_sprite_2d.connect("animation_finished", _on_hero_animation_finished)
 
 	died.connect(_on_died)
 	
@@ -226,7 +231,6 @@ func _ready():
 	mp_bar.value = 0
 	
 	astar_grid = AStarGrid2D.new()
-	var astar_grid_region = Rect2i(-8, -8, 16, 16)
 	#astar_grid_region = Rect2i(tile_size.x / 2, tile_size.y / 2, tile_size.x / 2 + tile_size.x * (grid_count - 1), tile_size.y / 2 + tile_size.y * (grid_count - 1))
 	astar_grid.region = astar_grid_region
 	astar_grid.cell_size = Vector2(16, 16)
@@ -281,6 +285,15 @@ func _process(delta: float) -> void:
 	else:
 		drag_handler.dragging_enabled = dragging_enabled
 
+	if stat == STATUS.DIE:
+		visible = false
+		
+	if hero_target:
+		if (hero_target.position_id - position_id)[0] >= 0:
+			animated_sprite_2d.flip_h = false
+		else:
+			animated_sprite_2d.flip_h = true
+		
 func _physics_process(delta):
 	return
 
@@ -341,7 +354,7 @@ func _load_animations():
 		var frames = ResourceLoader.load(path)
 		for anim_name in frames.get_animation_names():
 			# 根据需求设置不同循环条件
-			if anim_name == "idle" or "move":
+			if anim_name == "idle" or anim_name == "move":
 				frames.set_animation_loop(anim_name, true)
 			else:
 				frames.set_animation_loop(anim_name, false)
@@ -367,30 +380,33 @@ func _load_hero_stats():
 	# Safely retrieve stats if available
 	if hero_data.has(faction) and hero_data[faction].has(hero_name):
 		var stats = hero_data[faction][hero_name]
-		base_spd = stats.get("spd", spd)
-		base_max_hp = stats.get("hp", max_hp)
-		base_attack_range = stats.get("attack_range", attack_range)
-		base_attack_spd = stats.get("attack_speed", attack_spd)
+		base_spd = stats.get("spd", base_spd)
+		base_max_hp = stats.get("hp", base_max_hp)
+		base_attack_range = stats.get("attack_range", base_attack_range)
+		base_attack_spd = stats.get("attack_speed", base_attack_spd)
 		skill_name = stats.get("skill_name", skill_name)
 		skill_description = stats.get("skill_description", skill_description)
 		print("Loaded stats for %s: spd=%d, hp=%d, range=%d, atk_speed=%d" % 
-			[hero_name, spd, max_hp, attack_range, attack_spd])
+			[hero_name, base_spd, base_max_hp, base_attack_range, base_attack_spd])
 	else:
 		push_error("Stats not found for %s/%s" % [faction, hero_name])
 
 func start_turn():
-	
+	if stat == STATUS.DIE:
+		visible = false
+		action_timer.start()
+		return
 	update_solid_map()
 	await get_tree().process_frame
 
-	update_buff_debuff()
+	#update_buff_debuff()
 
-	if not hero_target:
+	if not hero_target or hero_target.stat == STATUS.DIE:
 		_handle_targeting()
-	if hero_target:
+	if hero_target and hero_target.stat != STATUS.DIE:
 		_handle_movement()
 	else:
-		action_finished.emit()
+		action_timer.start()
 
 func _handle_movement():
 
@@ -398,7 +414,7 @@ func _handle_movement():
 
 	animated_sprite_2d.play("move")
 
-	if position.distance_to(hero_target.global_position) <= attack_range or debuff_handler.is_stunned:
+	if global_position.distance_to(hero_target.global_position) <= attack_range or debuff_handler.is_stunned:
 		#move_finished.emit()
 		move_timer.start()
 	else:
@@ -414,6 +430,7 @@ func _handle_movement():
 		await get_tree().process_frame
 		await get_tree().process_frame
 		move_path = astar_grid.get_point_path(position_id, hero_target.position_id)
+			
 		if move_path.is_empty():
 			move_path = get_safe_path(position_id, hero_target.position_id)
 		if move_path.is_empty():
@@ -421,7 +438,8 @@ func _handle_movement():
 			#move_finished.emit()
 			move_timer.start()
 		else:
-			var move_steps = min(spd, move_path.size() - 2)
+			var move_steps = min(spd, move_path.size() - 1)
+			print("%s move count = %d" % [hero_name, move_steps])
 			if position_tween:
 				position_tween.kill() # Abort the previous animation.
 			position_tween = create_tween()
@@ -440,14 +458,13 @@ func _on_move_completed():
 		position_tween.kill()
 		astar_grid.set_point_solid(position_id, true)
 		astar_grid.set_point_solid(hero_target.position_id, true)
-		#action_started.emit()
 		move_timer.start()
 						
 func _handle_action():
+	move_timer.stop()
 	astar_grid.set_point_solid(position_id, true)
-	if !hero_target || !is_instance_valid(hero_target):
-		action_finished.emit()
-		return  # 目标失效处理
+	if !hero_target or !is_instance_valid(hero_target):
+		action_timer.start()
 	if mp >= max_mp and animated_sprite_2d.sprite_frames.has_animation("spell") and (!debuff_handler.is_silenced or !debuff_handler.is_stunned):
 		if !hero_spell_target:
 			hero_spell_target = _find_new_target(hero_spell_target_choice)
@@ -457,7 +474,7 @@ func _handle_action():
 			_cast_spell(hero_spell_target)
 			mp = 0
 			return
-	var current_distance_to_target = position.distance_to(hero_target.global_position)
+	var current_distance_to_target = global_position.distance_to(hero_target.global_position)
 	if current_distance_to_target <= attack_range and (!debuff_handler.is_stunned or !debuff_handler.is_disarmed):
 		if current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
 			stat = STATUS.RANGED_ATTACK
@@ -472,7 +489,11 @@ func _handle_action():
 				stat = STATUS.RANGED_ATTACK
 				animated_sprite_2d.play("attack")
 				hero_target.take_damage(damage, self)	
+	action_timer.start()
+
+func _handle_action_timeout():
 	action_finished.emit()
+	action_timer.stop()
 
 # Handle target selection and tracking
 func _handle_targeting():
@@ -482,14 +503,14 @@ func _handle_targeting():
 		hero_target = _find_new_target(hero_target_choice)
 		
 func _on_projectile_vanished():
-	action_finished.emit()
+	action_timer.start()
 		
 # Find a new target based on selection strategy
 func _find_new_target(tgt) -> Hero:
 	# Get all heroes in the scene
 	var all_heroes: Array[Hero] = []
 	for node in get_tree().get_nodes_in_group("hero_group"):
-		if node is Hero:
+		if node is Hero and node.stat != STATUS.DIE:
 			all_heroes.append(node)
 	var enemy_heroes: Array[Hero] = []
 	var ally_heroes: Array[Hero] = []
@@ -498,7 +519,7 @@ func _find_new_target(tgt) -> Hero:
 	
 	# Classify heroes as enemies or allies
 	for hero in all_heroes:
-		if hero == self and hero.stat == STATUS.DIE:  # Skip self
+		if hero == self:  # Skip self
 			continue
 		if hero.team == team:
 			ally_heroes.append(hero as Hero)
@@ -554,12 +575,11 @@ func _on_idle_timeout():
 
 # Launch projectile at target
 func _launch_projectile(target: Hero):
-	if not projectile_scene:
+	if not projectile:
 		push_error("Projectile scene is not set!")
 		return
 	
 	# Create projectile instance
-	var projectile = projectile_scene.instantiate()
 	get_parent().add_child(projectile)
 	
 	# Calculate direction to target
@@ -627,15 +647,15 @@ func _cast_spell(spell_tgt: Hero):
 	print("%s casts a spell %s to %s." % [hero_name, skill_name, spell_tgt])
 	print("\"%s\"" % skill_description)
 
-func _apply_damage():
+func _apply_damage(damage_target: Hero = hero_target, damage_value: int = damage):
 	if hero_target:
 		if rng.randf() <= critical_rate:
 			var real_damage_value =  damage * 2
 			hero_target.take_damage(real_damage_value, self)
 
-func _apply_heal():
-	if hero_target:
-		hero_target.take_heal(heal_value, self)
+func _apply_heal(heal_target: Hero = hero_spell_target, heal_value: int = damage):
+	if heal_target:
+		heal_target.take_heal(heal_value, self)
 		
 func snap(value: float, grid_size: int) -> int:
 	return floor(value / grid_size)
@@ -679,32 +699,10 @@ func _on_damage_taken(damage_value):
 		animated_sprite_2d.play("hit")
 		
 func _on_hero_animation_finished():
-	if stat == STATUS.DIE:
-		died.emit()
-		if is_active:
-			action_finished.emit()
-		return
-
-	elif stat == STATUS.HIT:
-		is_hit.emit()
-
-	elif stat == STATUS.SPELL:
-		spell_casted.emit()
-		action_finished.emit()
-		
-	elif stat == STATUS.RANGED_ATTACK:
-		ranged_attack_finished.emit()
-	# 	action_finished.emit()
-
-	elif stat == STATUS.MELEE_ATTACK:
-		melee_attack_finished.emit()
-		action_finished.emit()
-
-	stat = STATUS.IDLE
-	animated_sprite_2d.play("idle")
-
+	pass
+	
 func _on_died():
-	animated_sprite_2d.visible = false
+	self.visible = false
 
 func update_solid_map():
 
@@ -734,7 +732,7 @@ func _handle_dragging_state(drag_action):
 			_:
 				stat = STATUS.JUMP
 
-func update_buff_debuff()
+func update_buff_debuff():
 	
 	buff_handler.start_turn_update()
 	debuff_handler.start_turn_update()
@@ -756,3 +754,30 @@ func update_buff_debuff()
 
 	max_hp = base_max_hp + max(0, buff_handler.max_hp_modifier) - max(0, debuff_handler.max_hp_modifier)
 	hp = min(hp, max_hp)
+
+
+func _on_animated_sprite_2d_animation_finished() -> void:
+	print("%s animation has finished." % str(stat))
+	if stat == STATUS.DIE:
+		died.emit()
+		if is_active:
+			action_timer.start()
+		return
+
+	elif stat == STATUS.HIT:
+		is_hit.emit()
+
+	elif stat == STATUS.SPELL:
+		spell_casted.emit()
+		action_timer.start()
+		
+	elif stat == STATUS.RANGED_ATTACK:
+		ranged_attack_finished.emit()
+	# 	action_finished.emit()
+
+	elif stat == STATUS.MELEE_ATTACK:
+		melee_attack_finished.emit()
+		action_timer.start()
+
+	stat = STATUS.IDLE
+	animated_sprite_2d.play("idle")

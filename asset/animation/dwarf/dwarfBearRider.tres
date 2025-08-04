@@ -2,26 +2,6 @@
 
 [ext_resource type="Texture2D" uid="uid://v8pm3hunkysw" path="res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfBearRider.png" id="1_lvp1w"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_qk7w8"]
-atlas = ExtResource("1_lvp1w")
-region = Rect2(0, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_302dc"]
-atlas = ExtResource("1_lvp1w")
-region = Rect2(32, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ady7b"]
-atlas = ExtResource("1_lvp1w")
-region = Rect2(64, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_l8xcy"]
-atlas = ExtResource("1_lvp1w")
-region = Rect2(96, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_0yvhn"]
-atlas = ExtResource("1_lvp1w")
-region = Rect2(128, 96, 32, 32)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_gxdj6"]
 atlas = ExtResource("1_lvp1w")
 region = Rect2(0, 128, 32, 32)
@@ -98,6 +78,26 @@ region = Rect2(32, 64, 32, 32)
 atlas = ExtResource("1_lvp1w")
 region = Rect2(64, 64, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_qk7w8"]
+atlas = ExtResource("1_lvp1w")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_302dc"]
+atlas = ExtResource("1_lvp1w")
+region = Rect2(32, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ady7b"]
+atlas = ExtResource("1_lvp1w")
+region = Rect2(64, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l8xcy"]
+atlas = ExtResource("1_lvp1w")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0yvhn"]
+atlas = ExtResource("1_lvp1w")
+region = Rect2(128, 96, 32, 32)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_rrnor"]
 atlas = ExtResource("1_lvp1w")
 region = Rect2(0, 32, 32, 32)
@@ -124,26 +124,6 @@ region = Rect2(160, 32, 32, 32)
 
 [resource]
 animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_qk7w8")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_302dc")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ady7b")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_l8xcy")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_0yvhn")
-}],
-"loop": false,
-"name": &"attack",
-"speed": 8.0
-}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_gxdj6")
@@ -224,6 +204,26 @@ animations = [{
 }],
 "loop": false,
 "name": &"jump",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qk7w8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_302dc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ady7b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l8xcy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0yvhn")
+}],
+"loop": false,
+"name": &"melee_attack",
 "speed": 8.0
 }, {
 "frames": [{

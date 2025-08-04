@@ -1,12 +1,12 @@
+Timer
+Node
 Node2D
 Area2D
 AnimatedSprite2D
 ProgressBar
 AnimationPlayer
-Timer
 NavigationAgent2D
 CollisionShape2D
-Node
 Line2D
 TileMapLayer
 CharacterBody2D

@@ -1,3 +1,4 @@
+extends Node
 class_name Buff_handler
 
 var is_immunity := false
@@ -52,16 +53,16 @@ func start_turn_update():
 	attack_dmg_modifier = 0 if attack_dmg_modifier_duration <= 0 else attack_dmg_modifier
 
 	continuous_hp_modifier_duration = max(0, continuous_hp_modifier_duration - 1)
-	continuous_hp_modifier = o if continuous_hp_modifier_duration <= 0 else continuous_hp_modifier_duration
+	continuous_hp_modifier = 0 if continuous_hp_modifier_duration <= 0 else continuous_hp_modifier_duration
 
 	continuous_mp_modifier_duration = max(0, continuous_mp_modifier_duration - 1)
-	continuous_mp_modifier = o if continuous_mp_modifier_duration <= 0 else continuous_mp_modifier_duration
+	continuous_mp_modifier = 0 if continuous_mp_modifier_duration <= 0 else continuous_mp_modifier_duration
 
 	armor_modifier_duration = max(0, armor_modifier_duration - 1)
 	armor_modifier = 0 if armor_modifier_duration <= 0 else armor_modifier_duration
 
 	max_hp_modifier_duration = max(0, max_hp_modifier_duration - 1)
-	max_hp_modifier = 0 if max_hp_modifier_duration <= 0 lese max_hp_modifier_duration
+	max_hp_modifier = 0 if max_hp_modifier_duration <= 0 else max_hp_modifier_duration
 
 	critical_rate_modifier_duration = max(0, critical_rate_modifier_duration - 1)
 	critical_rate_modifier = 0.0 if critical_rate_modifier_duration <= 0 else critical_rate_modifier_duration
@@ -82,4 +83,4 @@ func buff_clean():
 	max_hp_modifier_duration = 0
 	critical_rate_modifier_duration = 0
 	evasion_rate_modifier_duration = 0
-	turn_update()
+	start_turn_update()

@@ -1,9 +1,12 @@
-[gd_scene load_steps=21 format=3 uid="uid://birqbeghihmpi"]
+[gd_scene load_steps=24 format=3 uid="uid://birqbeghihmpi"]
 
 [ext_resource type="Script" uid="uid://cmj65pa4j3u1u" path="res://script/hero.gd" id="1_n7ut4"]
 [ext_resource type="Shader" uid="uid://d3tyrfwlw2c1g" path="res://asset/shader/LightweightPixelPerfectOutline.gdshader" id="2_jr182"]
 [ext_resource type="SpriteFrames" uid="uid://pvu8xcp5ahdu" path="res://asset/animation/human/humanShieldMan.tres" id="3_jr182"]
 [ext_resource type="Script" uid="uid://pmtyv1bl3nog" path="res://script/drag_handler.gd" id="3_r065v"]
+[ext_resource type="Script" uid="uid://bwyapus01e2fk" path="res://script/buff_handler.gd" id="5_dbi3s"]
+[ext_resource type="Script" uid="uid://clowjrn7v3b1m" path="res://script/debuff_handler.gd" id="6_heiwi"]
+[ext_resource type="PackedScene" uid="uid://doeoqyu5a6wjk" path="res://scene/projectile.tscn" id="7_heiwi"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dbi3s"]
 shader = ExtResource("2_jr182")
@@ -299,9 +302,11 @@ shape = SubResource("RectangleShape2D_10qbj")
 wait_time = 2.0
 
 [node name="move_timer" type="Timer" parent="."]
-wait_time = 0.5
 
 [node name="attack_timer" type="Timer" parent="."]
+
+[node name="action_timer" type="Timer" parent="."]
+wait_time = 0.5
 
 [node name="Line2D" type="Line2D" parent="."]
 visible = false
@@ -344,5 +349,14 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_heiwi")
 value = 50.0
 show_percentage = false
 
+[node name="buff_handler" type="Node" parent="."]
+script = ExtResource("5_dbi3s")
+
+[node name="debuff_handler" type="Node" parent="."]
+script = ExtResource("6_heiwi")
+
+[node name="projectile" parent="." instance=ExtResource("7_heiwi")]
+
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
 [connection signal="velocity_computed" from="NavigationAgent2D" to="." method="_on_navigation_agent_2d_velocity_computed"]
 [connection signal="timeout" from="target_timer" to="." method="_on_target_timer_timeout"]
