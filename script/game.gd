@@ -130,7 +130,7 @@ func get_random_character(faction_name: String) -> String:
 	# Prepare candidate list and weight list
 	for char_name in hero_data[faction_name]:
 		var rarity = hero_data[faction_name][char_name]["rarity"]
-		if RARITY_WEIGHTS.has(rarity) and hero_data[faction_name][char_name]["move_speed"] != 0:
+		if RARITY_WEIGHTS.has(rarity) and hero_data[faction_name][char_name]["spd"] != 0:
 			candidates.append(char_name)
 			weights.append(RARITY_WEIGHTS[rarity])
 	
@@ -171,7 +171,6 @@ func process_character_turn(hero: Hero):
 	astar_solid_map = refresh_solid_point()
 	active_hero = hero
 	active_hero.is_active = true
-	active_hero.astar_solid_map = astar_solid_map
 	active_hero.start_turn()
 	# 连接信号等待行动完成
 	active_hero.action_finished.connect(_on_character_action_finished)

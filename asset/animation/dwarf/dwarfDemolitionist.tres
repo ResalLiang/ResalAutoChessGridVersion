@@ -2,30 +2,6 @@
 
 [ext_resource type="Texture2D" uid="uid://bok1xvwqs8t41" path="res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfDemolitionist.png" id="1_e842f"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_f0qvx"]
-atlas = ExtResource("1_e842f")
-region = Rect2(0, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_2ydab"]
-atlas = ExtResource("1_e842f")
-region = Rect2(32, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_stq57"]
-atlas = ExtResource("1_e842f")
-region = Rect2(64, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_u6n65"]
-atlas = ExtResource("1_e842f")
-region = Rect2(96, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_r48p7"]
-atlas = ExtResource("1_e842f")
-region = Rect2(128, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_mrnd4"]
-atlas = ExtResource("1_e842f")
-region = Rect2(160, 96, 32, 32)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_03dsa"]
 atlas = ExtResource("1_e842f")
 region = Rect2(0, 192, 32, 32)
@@ -81,6 +57,30 @@ region = Rect2(32, 64, 32, 32)
 [sub_resource type="AtlasTexture" id="AtlasTexture_y1k4e"]
 atlas = ExtResource("1_e842f")
 region = Rect2(64, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f0qvx"]
+atlas = ExtResource("1_e842f")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2ydab"]
+atlas = ExtResource("1_e842f")
+region = Rect2(32, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_stq57"]
+atlas = ExtResource("1_e842f")
+region = Rect2(64, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u6n65"]
+atlas = ExtResource("1_e842f")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r48p7"]
+atlas = ExtResource("1_e842f")
+region = Rect2(128, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mrnd4"]
+atlas = ExtResource("1_e842f")
+region = Rect2(160, 96, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ksln8"]
 atlas = ExtResource("1_e842f")
@@ -146,29 +146,6 @@ region = Rect2(256, 128, 32, 32)
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_f0qvx")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_2ydab")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_stq57")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_u6n65")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_r48p7")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_mrnd4")
-}],
-"loop": false,
-"name": &"attack",
-"speed": 8.0
-}, {
-"frames": [{
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_03dsa")
 }, {
 "duration": 1.0,
@@ -227,6 +204,29 @@ animations = [{
 }],
 "loop": false,
 "name": &"jump",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f0qvx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2ydab")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_stq57")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u6n65")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r48p7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mrnd4")
+}],
+"loop": false,
+"name": &"melee_attack",
 "speed": 8.0
 }, {
 "frames": [{

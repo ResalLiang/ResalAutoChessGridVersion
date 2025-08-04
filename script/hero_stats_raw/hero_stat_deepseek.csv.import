@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://bh3o1hogxusdd"
+
+[deps]
+
+files=["res://script/hero_stats_raw/hero_stat_deepseek.hero.translation", "res://script/hero_stats_raw/hero_stat_deepseek.spd.translation", "res://script/hero_stats_raw/hero_stat_deepseek.attack.translation", "res://script/hero_stats_raw/hero_stat_deepseek.attack.translation", "res://script/hero_stats_raw/hero_stat_deepseek.attack.translation", "res://script/hero_stats_raw/hero_stat_deepseek.max.translation", "res://script/hero_stats_raw/hero_stat_deepseek.max.translation", "res://script/hero_stats_raw/hero_stat_deepseek.armor.translation", "res://script/hero_stats_raw/hero_stat_deepseek.skill.translation", "res://script/hero_stats_raw/hero_stat_deepseek.skill.translation", "res://script/hero_stats_raw/hero_stat_deepseek.flavor.translation", "res://script/hero_stats_raw/hero_stat_deepseek.rarity.translation", "res://script/hero_stats_raw/hero_stat_deepseek.target.translation", "res://script/hero_stats_raw/hero_stat_deepseek.spell.translation"]
+
+source_file="res://script/hero_stats_raw/hero_stat_deepseek.csv"
+dest_files=["res://script/hero_stats_raw/hero_stat_deepseek.hero.translation", "res://script/hero_stats_raw/hero_stat_deepseek.spd.translation", "res://script/hero_stats_raw/hero_stat_deepseek.attack.translation", "res://script/hero_stats_raw/hero_stat_deepseek.attack.translation", "res://script/hero_stats_raw/hero_stat_deepseek.attack.translation", "res://script/hero_stats_raw/hero_stat_deepseek.max.translation", "res://script/hero_stats_raw/hero_stat_deepseek.max.translation", "res://script/hero_stats_raw/hero_stat_deepseek.armor.translation", "res://script/hero_stats_raw/hero_stat_deepseek.skill.translation", "res://script/hero_stats_raw/hero_stat_deepseek.skill.translation", "res://script/hero_stats_raw/hero_stat_deepseek.flavor.translation", "res://script/hero_stats_raw/hero_stat_deepseek.rarity.translation", "res://script/hero_stats_raw/hero_stat_deepseek.target.translation", "res://script/hero_stats_raw/hero_stat_deepseek.spell.translation"]
+
+[params]
+
+compress=true
+delimiter=0
