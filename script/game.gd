@@ -30,7 +30,7 @@ var grid_count := 16
 var current_id:= Vector2i.ZERO
 var astar_solid_map
 
-var rand_hero_ratio := 0.9
+var rand_hero_ratio := 0.95
 # Define rarity weights dictionary
 const RARITY_WEIGHTS = {
 	"Common": 50,
@@ -39,6 +39,8 @@ const RARITY_WEIGHTS = {
 	"Epic": 10,
 	"Legendary": 5
 }
+
+signal game_finished
 
 func _ready():
 	if Engine.is_editor_hint():
@@ -62,6 +64,7 @@ func _ready():
 	
 	astar_grid = AStarGrid2D.new()
 	
+	game_finished.connect(_on_game_finished)
 
 	astar_grid_region = Rect2i(-8, -8, grid_count, grid_count)
 	#astar_grid_region = Rect2i(tile_size.x / 2, tile_size.y / 2, tile_size.x / 2 + tile_size.x * (grid_count - 1), tile_size.y / 2 + tile_size.y * (grid_count - 1))
@@ -154,10 +157,21 @@ func get_random_character(faction_name: String) -> String:
 
 func start_new_round():
 	print("Start new round.")
+	var team1_alive_cnt = 0
+	var team2_alive_cnt = 0
 	for hero1 in team_dict[Team.TEAM1_FULL]:
 		team_dict[Team.TEAM1].append(hero1)
+		if hero1.stat != Hero.STATUS.DIE:
+			team1_alive_cnt += 1
 	for hero2 in team_dict[Team.TEAM2_FULL]:
 		team_dict[Team.TEAM2].append(hero2)
+		if hero2.stat != Hero.STATUS.DIE:
+			team2_alive_cnt += 1
+			
+	if team1_alive_cnt == 0:
+		game_finished.emit("team2")
+	elif team2_alive_cnt == 0:
+		game_finished.emit("team1")
 		
 	current_team = [Team.TEAM1, Team.TEAM2][randi() % 2]
 	
@@ -191,6 +205,9 @@ func _on_character_action_finished():
 	else:
 		start_new_round()
 
+func _on_game_finished(msg):
+	print("Game over, %s won!" % msg)
+
 func sort_characters(team: Team, mode: SelectionMode) -> Array:
 	var heroes_team = team_dict[team]
 	match mode:
@@ -215,16 +232,15 @@ func refresh_solid_point():
 			astar_grid.set_point_solid(hero1.position_id, true)
 			add_solid_cnt += 1
 		else:
-			print(hero1.hero_name +" died.")
+			pass
 
 	for hero2 in team_dict[Team.TEAM2_FULL]:
 		if hero2.stat != hero2.STATUS.DIE:
 			astar_grid.set_point_solid(hero2.position_id, true)
 			add_solid_cnt += 1
 		else:
-			print(hero2.hero_name +" died.")
+			pass
 	
-	print(add_solid_cnt)
 	astar_grid.update()
 	var row_solid_map = ""
 	var astar_solid_map_result = []

@@ -425,7 +425,6 @@ func _handle_movement():
 			for x in range(-8, 8, 1):
 				var solid_result = 1 if astar_grid.is_point_solid(Vector2i(x, y)) else 0
 				solid_sum += solid_result
-		#print(solid_sum)
 		await get_tree().process_frame
 		await get_tree().process_frame
 		await get_tree().process_frame
@@ -439,7 +438,6 @@ func _handle_movement():
 			move_timer.start()
 		else:
 			var move_steps = min(spd, move_path.size() - 1)
-			print("%s move count = %d" % [hero_name, move_steps])
 			if position_tween:
 				position_tween.kill() # Abort the previous animation.
 			position_tween = create_tween()
@@ -453,7 +451,7 @@ func _handle_movement():
 
 func _on_move_completed():
 	remain_step -= 1
-	if remain_step <= 0:
+	if remain_step <= 0 or global_position.distance_to(hero_target.global_position) <= attack_range:
 		position_tween.pause()
 		position_tween.kill()
 		astar_grid.set_point_solid(position_id, true)
@@ -612,6 +610,8 @@ func take_damage(damage_value: int, attacker: Hero):
 			stat = STATUS.DIE
 		attacker.mp += real_damage_value
 		damage_taken.emit(damage_value)
+	else:
+		print("%s's attack was evased!" % hero_name)
 
 
 func take_heal(heal_value: int, healer: Hero):
@@ -652,6 +652,10 @@ func _apply_damage(damage_target: Hero = hero_target, damage_value: int = damage
 		if rng.randf() <= critical_rate:
 			var real_damage_value =  damage * 2
 			hero_target.take_damage(real_damage_value, self)
+			print("%s's apply a critical attack!" % hero_name)
+		else:
+			var real_damage_value =  damage
+			hero_target.take_damage(real_damage_value, self)			
 
 func _apply_heal(heal_target: Hero = hero_spell_target, heal_value: int = damage):
 	if heal_target:
@@ -757,7 +761,6 @@ func update_buff_debuff():
 
 
 func _on_animated_sprite_2d_animation_finished() -> void:
-	print("%s animation has finished." % str(stat))
 	if stat == STATUS.DIE:
 		died.emit()
 		if is_active:
