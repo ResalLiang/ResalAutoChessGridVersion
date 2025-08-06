@@ -234,6 +234,7 @@ func _ready():
 	#astar_grid_region = Rect2i(tile_size.x / 2, tile_size.y / 2, tile_size.x / 2 + tile_size.x * (grid_count - 1), tile_size.y / 2 + tile_size.y * (grid_count - 1))
 	astar_grid.region = astar_grid_region
 	astar_grid.cell_size = Vector2(16, 16)
+	astar_grid.diagonal_mode = 2
 	astar_grid.update()
 # ========================
 # Process Functions
@@ -243,10 +244,6 @@ func _process(delta: float) -> void:
 	# Skip processing in editor mode
 	if Engine.is_editor_hint():
 		return
-		
-	# Wait if in idle state
-	#if idle_timer.time_left > 0:
-		#return
 
 	hp_bar.value = hp
 	mp_bar.value = mp
@@ -278,6 +275,13 @@ func _process(delta: float) -> void:
 				new_material.set_shader_parameter("outline_color", Color(1, 1, 1, 1))
 			else:
 				new_material.set_shader_parameter("outline_color", Color(1, 1, 1, 0.33))
+
+	if stat == STATUS.HIT:			
+		if is_active:
+				new_material.set_shader_parameter("outline_color", Color(1, 0, 0, 1))
+			else:
+				new_material.set_shader_parameter("outline_color", Color(1, 0, 0, 0.33))
+
 	animated_sprite_2d.material = new_material
 
 	if !is_active:
@@ -396,13 +400,15 @@ func start_turn():
 		visible = false
 		action_timer.start()
 		return
+
 	update_solid_map()
 	await get_tree().process_frame
 
-	#update_buff_debuff()
+	update_buff_debuff()
 
 	if not hero_target or hero_target.stat == STATUS.DIE:
 		_handle_targeting()
+		
 	if hero_target and hero_target.stat != STATUS.DIE:
 		_handle_movement()
 	else:
@@ -477,8 +483,11 @@ func _handle_action():
 		if current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
 			stat = STATUS.RANGED_ATTACK
 			animated_sprite_2d.play("ranged_attack")
-			var hero_projectile = _launch_projectile(hero_target)
-			hero_projectile.projectile_vanished.connect(_on_projectile_vanished)
+			if ResourceLoader.exists("res://asset/animation/%s/%s%s_projectile.tres" % [faction, faction, hero_name]):
+				var hero_projectile = _launch_projectile(hero_target)
+				hero_projectile.projectile_vanished.connect(_on_projectile_vanished)
+			else:
+				hero_target.take_damage(damage, self)	
 		elif current_distance_to_target < ranged_attack_threshold:
 			if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
 				stat = STATUS.MELEE_ATTACK
@@ -717,13 +726,6 @@ func update_solid_map():
 		if node.stat != STATUS.DIE:
 			astar_grid.set_point_solid(node.position_id, true)
 
-	# for y in range(-8, 8, 1):
-	# 	for x in range(-8, 8, 1):
-	# 		if str(astar_solid_map[y + 8].substr(x + 8, 1)) == "1":
-	# 			astar_grid.set_point_solid(Vector2i(x, y), true)
-	# 		else:
-	# 			astar_grid.set_point_solid(Vector2i(x, y), false)
-
 func _handle_dragging_state(drag_action):
 	if !is_active:
 		match drag_action:
@@ -775,6 +777,10 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 		action_timer.start()
 		
 	elif stat == STATUS.RANGED_ATTACK:
+		if ResourceLoader.exists("res://asset/animation/%s/%s%s_projectile.tres" % [faction, faction, hero_name]):
+			pass
+		else:
+			action_timer.start()
 		ranged_attack_finished.emit()
 	# 	action_finished.emit()
 
