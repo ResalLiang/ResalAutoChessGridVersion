@@ -278,9 +278,9 @@ func _process(delta: float) -> void:
 
 	if stat == STATUS.HIT:			
 		if is_active:
-				new_material.set_shader_parameter("outline_color", Color(1, 0, 0, 1))
-			else:
-				new_material.set_shader_parameter("outline_color", Color(1, 0, 0, 0.33))
+			new_material.set_shader_parameter("outline_color", Color(1, 0, 0, 1))
+		else:
+			new_material.set_shader_parameter("outline_color", Color(1, 0, 0, 0.33))
 
 	animated_sprite_2d.material = new_material
 
@@ -288,9 +288,6 @@ func _process(delta: float) -> void:
 		drag_handler.dragging_enabled = false
 	else:
 		drag_handler.dragging_enabled = dragging_enabled
-
-	if stat == STATUS.DIE:
-		visible = false
 		
 	if hero_target:
 		if (hero_target.position_id - position_id)[0] >= 0:
@@ -614,9 +611,6 @@ func take_damage(damage_value: int, attacker: Hero):
 	if rng.randf() > evasion_rate or !buff_handler.is_immunity:
 		var real_damage_value = damage_value - armor
 		hp -= max(0, damage_value)
-		if hp <= 0:
-			# Handle death logic
-			stat = STATUS.DIE
 		attacker.mp += real_damage_value
 		damage_taken.emit(damage_value)
 	else:
@@ -710,9 +704,6 @@ func _on_damage_taken(damage_value):
 	else:
 		stat = STATUS.HIT
 		animated_sprite_2d.play("hit")
-		
-func _on_hero_animation_finished():
-	pass
 	
 func _on_died():
 	self.visible = false
@@ -760,7 +751,8 @@ func update_buff_debuff():
 
 	max_hp = base_max_hp + max(0, buff_handler.max_hp_modifier) - max(0, debuff_handler.max_hp_modifier)
 	hp = min(hp, max_hp)
-
+	
+	return
 
 func _on_animated_sprite_2d_animation_finished() -> void:
 	if stat == STATUS.DIE:
