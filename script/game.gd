@@ -2,6 +2,8 @@ extends Node2D
 
 # 预加载角色场景
 const hero_scene = preload("res://scene/hero.tscn")
+const hero_class = preload("res://script/hero.gd")
+
 @onready var floor_tile: TileMapLayer = $tilemap/floor
 
 @export_enum("human", "dwarf", "elf", "forestProtector", "holy", "undead", "demon") var team1_faction := "human"
@@ -11,7 +13,7 @@ var hero_data: Dictionary  # Stores hero stats loaded from JSON
 enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
 enum SelectionMode { HIGH_HP, LOW_HP, NEAR_CENTER, FAR_CENTER }
 var current_team: Team
-var active_hero: Hero
+var active_hero
 var team_chars
 var team_dict: Dictionary = {
 	Team.TEAM1: [],
@@ -161,11 +163,11 @@ func start_new_round():
 	var team2_alive_cnt = 0
 	for hero1 in team_dict[Team.TEAM1_FULL]:
 		team_dict[Team.TEAM1].append(hero1)
-		if hero1.stat != Hero.STATUS.DIE:
+		if hero1.stat != hero_class.STATUS.DIE:
 			team1_alive_cnt += 1
 	for hero2 in team_dict[Team.TEAM2_FULL]:
 		team_dict[Team.TEAM2].append(hero2)
-		if hero2.stat != Hero.STATUS.DIE:
+		if hero2.stat != hero_class.STATUS.DIE:
 			team2_alive_cnt += 1
 			
 	if team1_alive_cnt == 0:
@@ -181,7 +183,7 @@ func start_team_turn(team: Team):
 	team_chars = sort_characters(team, SelectionMode.HIGH_HP)
 	process_character_turn(team_chars.pop_front())
 
-func process_character_turn(hero: Hero):
+func process_character_turn(hero):
 	astar_solid_map = refresh_solid_point()
 	active_hero = hero
 	active_hero.is_active = true

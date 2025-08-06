@@ -1,143 +1,143 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1754401263
+::res://::1754488014
 dungeontileset-extended.png::CompressedTexture2D/CompressedTexture2D::5386095999095507831::1754401131::1754401131::1::::<><><>0<>0<>1e7832a8be6d1e2aa86e8cfa9e764124<>res://.godot/imported/dungeontileset-extended.png-40bb72ba04191d75cadea69acbb68a1d.ctex::
 icon.svg::CompressedTexture2D/CompressedTexture2D::3978766711659692636::1754401131::1754401131::1::::<><><>0<>0<>118e60a3562b828ffb0cc8d00366e4fe<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
-README.md::TextFile::-1::1754401130::0::1::::<><><>0<>0<><>::
+README.md::TextFile/TextFile::-1::1754401130::0::1::::<><><>0<>0<><>::
 ::res://addons/::1754401130
 ::res://addons/AS2P/::1754401130
-InspectorConvertor.gd::GDScript::3965255246405464599::1754401130::0::1::::<>EditorInspectorPlugin<><>0<>1<><>::
-NodeSelectorProperty.gd::GDScript::5043704661756115149::1754401130::0::1::::<>EditorProperty<><>0<>1<><>::
-plugin.cfg::TextFile::-1::1754401130::0::1::::<><><>0<>0<><>::
-plugin.gd::GDScript::7296227619585456095::1754401130::0::1::::<>EditorPlugin<><>0<>1<><>::
+InspectorConvertor.gd::GDScript/GDScript::3965255246405464599::1754401130::0::1::::<>EditorInspectorPlugin<><>0<>1<><>::
+NodeSelectorProperty.gd::GDScript/GDScript::5043704661756115149::1754401130::0::1::::<>EditorProperty<><>0<>1<><>::
+plugin.cfg::TextFile/TextFile::-1::1754401130::0::1::::<><><>0<>0<><>::
+plugin.gd::GDScript/GDScript::7296227619585456095::1754401130::0::1::::<>EditorPlugin<><>0<>1<><>::
 ::res://asset/::1754401131
 0x72_DungeonTilesetII_v1.7.png::CompressedTexture2D/CompressedTexture2D::274666399948365277::1754401130::1754401130::1::::<><><>0<>0<>7e4bb7fb74ec384a1a5bb5f9c799ab63<>res://.godot/imported/0x72_DungeonTilesetII_v1.7.png-17b6382f8ada510e54b0e88c0e92b06b.ctex::
 ::res://asset/animation/::1754401130
 ::res://asset/animation/demon/::1754401130
-demonClawedDemon.tres::SpriteFrames::7026557881880790858::1754401130::0::1::::<><><>0<>0<><>::uid://bpkwejncqusp::::res://asset/sprite/MinifolksDemons/Without outline/MiniClawedDemon.png
-demonDemoness.tres::SpriteFrames::8780499648388065008::1754401130::0::1::::<><><>0<>0<><>::uid://b308nunygblk0::::res://asset/sprite/MinifolksDemons/Without outline/MiniDemoness.png
-demonDemonFireKeeper.tres::SpriteFrames::3534227097930141221::1754401130::0::1::::<><><>0<>0<><>::uid://vuvaves54ndn::::res://asset/sprite/MinifolksDemons/Without outline/MiniDemonFireKeeper.png
-demonDemonFireThrower.tres::SpriteFrames::9130885029587093484::1754401130::0::1::::<><><>0<>0<><>::uid://cpxdocw5x2e7k::::res://asset/sprite/MinifolksDemons/Without outline/MiniDemonFireThrower.png
-demonDemonLord.tres::SpriteFrames::2791321360937343949::1754401130::0::1::::<><><>0<>0<><>::uid://cmg7nvxaov7oi::::res://asset/sprite/MinifolksDemons/Without outline/MiniDemonLord.png
-demonDemonTormentor.tres::SpriteFrames::196929659693746380::1754401130::0::1::::<><><>0<>0<><>::uid://bgiss5elc0rtl::::res://asset/sprite/MinifolksDemons/Without outline/MiniDemonTormentor.png
-demonFireBall.tres::SpriteFrames::8854611207416474592::1754401130::0::1::::<><><>0<>0<><>::uid://lyw3eyinq8ro::::res://asset/sprite/MinifolksDemons/Without outline/MiniFireBall.png
-demonFireImp.tres::SpriteFrames::5170874475280441059::1754401130::0::1::::<><><>0<>0<><>::uid://b1t1fym20yn7f::::res://asset/sprite/MinifolksDemons/Without outline/MiniFireImp.png
-demonHighDemon.tres::SpriteFrames::3646106177546155914::1754401130::0::1::::<><><>0<>0<><>::uid://dx4k3qtdg23q0::::res://asset/sprite/MinifolksDemons/Without outline/MiniHighDemon.png
-demonImp.tres::SpriteFrames::391774751968541117::1754401130::0::1::::<><><>0<>0<><>::uid://dwj5ijxg6xk0u::::res://asset/sprite/MinifolksDemons/Without outline/MiniImp.png
-demonSuccubus.tres::SpriteFrames::2171363700418838237::1754401130::0::1::::<><><>0<>0<><>::uid://bp1jf7fxxl7ru::::res://asset/sprite/MinifolksDemons/Without outline/MiniSuccubus.png
-demonTrident.tres::SpriteFrames::8291033176996865698::1754401130::0::1::::<><><>0<>0<><>::uid://co88x3mibg3lp::::res://asset/sprite/MinifolksDemons/Without outline/MiniTrident.png
-::res://asset/animation/dwarf/::1754401130
-dwarfArmoredBearRider.tres::SpriteFrames::3199139428002020398::1754401130::0::1::::<><><>0<>0<><>::uid://cuu3hud25amfv::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfArmoredBearRider.png
-dwarfBearRider.tres::SpriteFrames::8808100290484198700::1754401130::0::1::::<><><>0<>0<><>::uid://v8pm3hunkysw::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfBearRider.png
-dwarfDemolitionist.tres::SpriteFrames::5604356668036371138::1754401130::0::1::::<><><>0<>0<><>::uid://bok1xvwqs8t41::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfDemolitionist.png
-dwarfGrenadier.tres::SpriteFrames::8499736606322158896::1754401130::0::1::::<><><>0<>0<><>::uid://cdj7wfqjim1yw::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfGrenadier.png
-dwarfGrenadier_projectile.tres::SpriteFrames::284348338806924544::1754401130::0::1::::<><><>0<>0<><>::uid://504qhctvhavs::::res://asset/sprite/MinifolksDwarfs/Outline/MiniGrenade.png
-dwarfHunter.tres::SpriteFrames::2124355162559052469::1754401130::0::1::::<><><>0<>0<><>::uid://bv22r8s7wrw2q::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfHunter.png
-dwarfKing.tres::SpriteFrames::2193495145296201190::1754401130::0::1::::<><><>0<>0<><>::uid://d2hn3lwq6cohq::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfKing.png
-dwarfMiner.tres::SpriteFrames::865416758791178268::1754401130::0::1::::<><><>0<>0<><>::uid://dcuhsbu3u4ut5::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfMiner.png
-dwarfRifleman.tres::SpriteFrames::7709946603440882585::1754401130::0::1::::<><><>0<>0<><>::uid://27tqwkadkmcr::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfRifleman.png
-dwarfShieldbreaker.tres::SpriteFrames::1381622888173854538::1754401130::0::1::::<><><>0<>0<><>::uid://b4rd53nvckow6::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfShieldbreaker.png
-dwarfWarrior.tres::SpriteFrames::6818113167081916860::1754401130::0::1::::<><><>0<>0<><>::uid://b0i62y72syoy3::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfWarrior.png
+demonClawedDemon.tres::SpriteFrames/SpriteFrames::7026557881880790858::1754401130::0::1::::<><><>0<>0<><>::uid://bpkwejncqusp::::res://asset/sprite/MinifolksDemons/Without outline/MiniClawedDemon.png
+demonDemoness.tres::SpriteFrames/SpriteFrames::8780499648388065008::1754401130::0::1::::<><><>0<>0<><>::uid://b308nunygblk0::::res://asset/sprite/MinifolksDemons/Without outline/MiniDemoness.png
+demonDemonFireKeeper.tres::SpriteFrames/SpriteFrames::3534227097930141221::1754401130::0::1::::<><><>0<>0<><>::uid://vuvaves54ndn::::res://asset/sprite/MinifolksDemons/Without outline/MiniDemonFireKeeper.png
+demonDemonFireThrower.tres::SpriteFrames/SpriteFrames::9130885029587093484::1754401130::0::1::::<><><>0<>0<><>::uid://cpxdocw5x2e7k::::res://asset/sprite/MinifolksDemons/Without outline/MiniDemonFireThrower.png
+demonDemonLord.tres::SpriteFrames/SpriteFrames::2791321360937343949::1754401130::0::1::::<><><>0<>0<><>::uid://cmg7nvxaov7oi::::res://asset/sprite/MinifolksDemons/Without outline/MiniDemonLord.png
+demonDemonTormentor.tres::SpriteFrames/SpriteFrames::196929659693746380::1754401130::0::1::::<><><>0<>0<><>::uid://bgiss5elc0rtl::::res://asset/sprite/MinifolksDemons/Without outline/MiniDemonTormentor.png
+demonFireBall.tres::SpriteFrames/SpriteFrames::8854611207416474592::1754401130::0::1::::<><><>0<>0<><>::uid://lyw3eyinq8ro::::res://asset/sprite/MinifolksDemons/Without outline/MiniFireBall.png
+demonFireImp.tres::SpriteFrames/SpriteFrames::5170874475280441059::1754401130::0::1::::<><><>0<>0<><>::uid://b1t1fym20yn7f::::res://asset/sprite/MinifolksDemons/Without outline/MiniFireImp.png
+demonHighDemon.tres::SpriteFrames/SpriteFrames::3646106177546155914::1754401130::0::1::::<><><>0<>0<><>::uid://dx4k3qtdg23q0::::res://asset/sprite/MinifolksDemons/Without outline/MiniHighDemon.png
+demonImp.tres::SpriteFrames/SpriteFrames::391774751968541117::1754401130::0::1::::<><><>0<>0<><>::uid://dwj5ijxg6xk0u::::res://asset/sprite/MinifolksDemons/Without outline/MiniImp.png
+demonSuccubus.tres::SpriteFrames/SpriteFrames::2171363700418838237::1754401130::0::1::::<><><>0<>0<><>::uid://bp1jf7fxxl7ru::::res://asset/sprite/MinifolksDemons/Without outline/MiniSuccubus.png
+demonTrident.tres::SpriteFrames/SpriteFrames::8291033176996865698::1754401130::0::1::::<><><>0<>0<><>::uid://co88x3mibg3lp::::res://asset/sprite/MinifolksDemons/Without outline/MiniTrident.png
+::res://asset/animation/dwarf/::1754483620
+dwarfArmoredBearRider.tres::SpriteFrames/SpriteFrames::3199139428002020398::1754401130::0::1::::<><><>0<>0<><>::uid://cuu3hud25amfv::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfArmoredBearRider.png
+dwarfBearRider.tres::SpriteFrames/SpriteFrames::8808100290484198700::1754401130::0::1::::<><><>0<>0<><>::uid://v8pm3hunkysw::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfBearRider.png
+dwarfDemolitionist.tres::SpriteFrames/SpriteFrames::5604356668036371138::1754401130::0::1::::<><><>0<>0<><>::uid://bok1xvwqs8t41::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfDemolitionist.png
+dwarfGrenadier.tres::SpriteFrames/SpriteFrames::8499736606322158896::1754401130::0::1::::<><><>0<>0<><>::uid://cdj7wfqjim1yw::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfGrenadier.png
+dwarfGrenadier_projectile.tres::SpriteFrames/SpriteFrames::284348338806924544::1754401130::0::1::::<><><>0<>0<><>::uid://504qhctvhavs::::res://asset/sprite/MinifolksDwarfs/Outline/MiniGrenade.png
+dwarfHunter.tres::SpriteFrames/SpriteFrames::2124355162559052469::1754401130::0::1::::<><><>0<>0<><>::uid://bv22r8s7wrw2q::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfHunter.png
+dwarfKing.tres::SpriteFrames/SpriteFrames::2193495145296201190::1754401130::0::1::::<><><>0<>0<><>::uid://d2hn3lwq6cohq::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfKing.png
+dwarfMiner.tres::SpriteFrames::865416758791178268::1754483620::0::1::::<><><>0<>0<><>::uid://dcuhsbu3u4ut5::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfMiner.png
+dwarfRifleman.tres::SpriteFrames/SpriteFrames::7709946603440882585::1754401130::0::1::::<><><>0<>0<><>::uid://27tqwkadkmcr::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfRifleman.png
+dwarfShieldbreaker.tres::SpriteFrames/SpriteFrames::1381622888173854538::1754401130::0::1::::<><><>0<>0<><>::uid://b4rd53nvckow6::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfShieldbreaker.png
+dwarfWarrior.tres::SpriteFrames/SpriteFrames::6818113167081916860::1754401130::0::1::::<><><>0<>0<><>::uid://b0i62y72syoy3::::res://asset/sprite/MinifolksDwarfs/Outline/MiniDwarfWarrior.png
 ::res://asset/animation/elf/::1754401130
-elfArcaneArcher.tres::SpriteFrames::4658328857424583924::1754401130::0::1::::<><><>0<>0<><>::uid://dx61ew74h6hm6::::res://asset/sprite/MinifolksElves/Outline/MiniElfArcaneArcher.png
-elfArcher.tres::SpriteFrames::5677442047223286254::1754401130::0::1::::<><><>0<>0<><>::uid://b163x1spy3yxs::::res://asset/sprite/MinifolksElves/Outline/MiniElfArcher.png
-elfHorseMan.tres::SpriteFrames::1397130948151325524::1754401130::0::1::::<><><>0<>0<><>::uid://d1ifqfgx6is56::::res://asset/sprite/MinifolksElves/Outline/MiniElfHorseman.png
-elfMage.tres::SpriteFrames::2345820494465366822::1754401130::0::1::::<><><>0<>0<><>::uid://be1i155udgiwg::::res://asset/sprite/MinifolksElves/Outline/MiniElfMage.png
-elfPegasusRider.tres::SpriteFrames::8614952087107007977::1754401130::0::1::::<><><>0<>0<><>::uid://bsqcamtagce68::::res://asset/sprite/MinifolksElves/Outline/MiniElfPegasusRider.png
-elfQueen.tres::SpriteFrames::1057373995682912570::1754401130::0::1::::<><><>0<>0<><>::uid://c1i58urmasqec::::res://asset/sprite/MinifolksElves/Outline/MiniElfQueen.png
-elfSpearMan.tres::SpriteFrames::1843488042650504488::1754401130::0::1::::<><><>0<>0<><>::uid://o1yoyj6ib8ux::::res://asset/sprite/MinifolksElves/Outline/MiniElfSpearMan.png
-elfSpellSword.tres::SpriteFrames::5708986376907728763::1754401130::0::1::::<><><>0<>0<><>::uid://bsvjil887ibu5::::res://asset/sprite/MinifolksElves/Outline/MiniElfSpellsword.png
-elfSwordMan.tres::SpriteFrames::5157689186740670574::1754401130::0::1::::<><><>0<>0<><>::uid://0sv4b84rkb11::::res://asset/sprite/MinifolksElves/Outline/MiniElfSwordMan.png
-elfWarden.tres::SpriteFrames::5422678289456974909::1754401130::0::1::::<><><>0<>0<><>::uid://cjq0v5s4vx2t7::::res://asset/sprite/MinifolksElves/Outline/MiniElfWarden.png
+elfArcaneArcher.tres::SpriteFrames/SpriteFrames::4658328857424583924::1754401130::0::1::::<><><>0<>0<><>::uid://dx61ew74h6hm6::::res://asset/sprite/MinifolksElves/Outline/MiniElfArcaneArcher.png
+elfArcher.tres::SpriteFrames/SpriteFrames::5677442047223286254::1754401130::0::1::::<><><>0<>0<><>::uid://b163x1spy3yxs::::res://asset/sprite/MinifolksElves/Outline/MiniElfArcher.png
+elfHorseMan.tres::SpriteFrames/SpriteFrames::1397130948151325524::1754401130::0::1::::<><><>0<>0<><>::uid://d1ifqfgx6is56::::res://asset/sprite/MinifolksElves/Outline/MiniElfHorseman.png
+elfMage.tres::SpriteFrames/SpriteFrames::2345820494465366822::1754401130::0::1::::<><><>0<>0<><>::uid://be1i155udgiwg::::res://asset/sprite/MinifolksElves/Outline/MiniElfMage.png
+elfPegasusRider.tres::SpriteFrames/SpriteFrames::8614952087107007977::1754401130::0::1::::<><><>0<>0<><>::uid://bsqcamtagce68::::res://asset/sprite/MinifolksElves/Outline/MiniElfPegasusRider.png
+elfQueen.tres::SpriteFrames/SpriteFrames::1057373995682912570::1754401130::0::1::::<><><>0<>0<><>::uid://c1i58urmasqec::::res://asset/sprite/MinifolksElves/Outline/MiniElfQueen.png
+elfSpearMan.tres::SpriteFrames/SpriteFrames::1843488042650504488::1754401130::0::1::::<><><>0<>0<><>::uid://o1yoyj6ib8ux::::res://asset/sprite/MinifolksElves/Outline/MiniElfSpearMan.png
+elfSpellSword.tres::SpriteFrames/SpriteFrames::5708986376907728763::1754401130::0::1::::<><><>0<>0<><>::uid://bsvjil887ibu5::::res://asset/sprite/MinifolksElves/Outline/MiniElfSpellsword.png
+elfSwordMan.tres::SpriteFrames/SpriteFrames::5157689186740670574::1754401130::0::1::::<><><>0<>0<><>::uid://0sv4b84rkb11::::res://asset/sprite/MinifolksElves/Outline/MiniElfSwordMan.png
+elfWarden.tres::SpriteFrames/SpriteFrames::5422678289456974909::1754401130::0::1::::<><><>0<>0<><>::uid://cjq0v5s4vx2t7::::res://asset/sprite/MinifolksElves/Outline/MiniElfWarden.png
 ::res://asset/animation/forestProtector/::1754401130
-forestProtectorDryadDeer.tres::SpriteFrames::1527455408134955994::1754401130::0::1::::<><><>0<>0<><>::uid://cj2hduru2nkju::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniDryadDeer.png
-forestProtectorDryadEnchantress.tres::SpriteFrames::4106845657575513632::1754401130::0::1::::<><><>0<>0<><>::uid://s4wlmefdt728::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniDryadEnchantress.png
-forestProtectorDryadHuntress.tres::SpriteFrames::281272416907227345::1754401130::0::1::::<><><>0<>0<><>::uid://ctbawqrgfofb4::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniDryadHuntress.png
-forestProtectorFairy.tres::SpriteFrames::5459397635916063022::1754401130::0::1::::<><><>0<>0<><>::uid://i4w0tfkrpeox::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniFairy.png
-forestProtectorPixie.tres::SpriteFrames::5161930500367410208::1754401130::0::1::::<><><>0<>0<><>::uid://ift4eweounoa::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniPixie.png
-forestProtectorSatyr.tres::SpriteFrames::168268958175291606::1754401130::0::1::::<><><>0<>0<><>::uid://ubnlmy2y4w64::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniSatyr.png
-forestProtectorSatyrDruid.tres::SpriteFrames::6847377953591386465::1754401130::0::1::::<><><>0<>0<><>::uid://dyn8335cj0or4::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniSatyrDruid.png
-forestProtectorSatyrWarrior.tres::SpriteFrames::7493165363108937339::1754401130::0::1::::<><><>0<>0<><>::uid://dmth5m25y6w07::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniSatyrWarrior.png
-forestProtectorTreant.tres::SpriteFrames::221615493827776621::1754401130::0::1::::<><><>0<>0<><>::uid://dtwoe0x8xk3iv::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniTreant.png
-forestProtectorTreantGuard.tres::SpriteFrames::5460434929817245999::1754401130::0::1::::<><><>0<>0<><>::uid://bid1jq4mxnbff::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniTreantGuard.png
-forestProtectorYoungDryad.tres::SpriteFrames::3291054732745358958::1754401130::0::1::::<><><>0<>0<><>::uid://bed03ge224urg::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniYoungDryad.png
+forestProtectorDryadDeer.tres::SpriteFrames/SpriteFrames::1527455408134955994::1754401130::0::1::::<><><>0<>0<><>::uid://cj2hduru2nkju::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniDryadDeer.png
+forestProtectorDryadEnchantress.tres::SpriteFrames/SpriteFrames::4106845657575513632::1754401130::0::1::::<><><>0<>0<><>::uid://s4wlmefdt728::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniDryadEnchantress.png
+forestProtectorDryadHuntress.tres::SpriteFrames/SpriteFrames::281272416907227345::1754401130::0::1::::<><><>0<>0<><>::uid://ctbawqrgfofb4::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniDryadHuntress.png
+forestProtectorFairy.tres::SpriteFrames/SpriteFrames::5459397635916063022::1754401130::0::1::::<><><>0<>0<><>::uid://i4w0tfkrpeox::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniFairy.png
+forestProtectorPixie.tres::SpriteFrames/SpriteFrames::5161930500367410208::1754401130::0::1::::<><><>0<>0<><>::uid://ift4eweounoa::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniPixie.png
+forestProtectorSatyr.tres::SpriteFrames/SpriteFrames::168268958175291606::1754401130::0::1::::<><><>0<>0<><>::uid://ubnlmy2y4w64::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniSatyr.png
+forestProtectorSatyrDruid.tres::SpriteFrames/SpriteFrames::6847377953591386465::1754401130::0::1::::<><><>0<>0<><>::uid://dyn8335cj0or4::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniSatyrDruid.png
+forestProtectorSatyrWarrior.tres::SpriteFrames/SpriteFrames::7493165363108937339::1754401130::0::1::::<><><>0<>0<><>::uid://dmth5m25y6w07::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniSatyrWarrior.png
+forestProtectorTreant.tres::SpriteFrames/SpriteFrames::221615493827776621::1754401130::0::1::::<><><>0<>0<><>::uid://dtwoe0x8xk3iv::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniTreant.png
+forestProtectorTreantGuard.tres::SpriteFrames/SpriteFrames::5460434929817245999::1754401130::0::1::::<><><>0<>0<><>::uid://bid1jq4mxnbff::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniTreantGuard.png
+forestProtectorYoungDryad.tres::SpriteFrames/SpriteFrames::3291054732745358958::1754401130::0::1::::<><><>0<>0<><>::uid://bed03ge224urg::::res://asset/sprite/MinifolksForestProtectors/Outline/MiniYoungDryad.png
 ::res://asset/animation/holy/::1754401130
-holyAngel.tres::SpriteFrames::1108279650852815616::1754401130::0::1::::<><><>0<>0<><>::uid://brm7kmcn0b45y::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniAngel.png
-holyArchAngel.tres::SpriteFrames::6449383822871233635::1754401130::0::1::::<><><>0<>0<><>::uid://ehawhny1pxdl::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniArchAngel.png
-holyBattlePriest.tres::SpriteFrames::4467293298643197552::1754401130::0::1::::<><><>0<>0<><>::uid://dcmgr818iwn3s::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniBattlePriest.png
-holyCrusader.tres::SpriteFrames::6740744520756488137::1754401130::0::1::::<><><>0<>0<><>::uid://diuj115olk2qo::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniCrusader.png
-holyCrusaderArcher.tres::SpriteFrames::3606633493587732056::1754401130::0::1::::<><><>0<>0<><>::uid://b8feicpcrdus0::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniCrusaderArcher.png
-holyCrusaderCaptain.tres::SpriteFrames::9190989196067422723::1754401130::0::1::::<><><>0<>0<><>::uid://ba44sna830rxj::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniCrusaderCaptain.png
-holyCrusaderCaptainFlagless.tres::SpriteFrames::4722691466968187071::1754401130::0::1::::<><><>0<>0<><>::uid://dhxvrxhunebo3::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniCrusaderCaptainFlagless.png
-holyCrusaderFlag.tres::SpriteFrames::7211971456021104939::1754401130::0::1::::<><><>0<>0<><>::uid://d2we4xetjvu7i::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniCrusaderFlag.png
-holyCrusaderHorseMan.tres::SpriteFrames::1576252988857465424::1754401130::0::1::::<><><>0<>0<><>::uid://cijlcwva1e2al::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniCrusaderHorseman.png
-holyHighPriestess.tres::SpriteFrames::2376398197806242909::1754401130::0::1::::<><><>0<>0<><>::uid://c62v5ab801u3e::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniHighPriestess.png
-holyPaladin1.tres::SpriteFrames::2045960155873710426::1754401130::0::1::::<><><>0<>0<><>::uid://cax6hrdpjp0q4::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniPaladin.png
-holyPaladin2.tres::SpriteFrames::5257698364970110860::1754401130::0::1::::<><><>0<>0<><>::uid://dk2bghd5d0dto::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniPaladin2.png
-holyPaladin3.tres::SpriteFrames::5191521671788180207::1754401130::0::1::::<><><>0<>0<><>::uid://d4cedeuu1hud5::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniPaladin3.png
-holyPriest.tres::SpriteFrames::4602482771291427414::1754401130::0::1::::<><><>0<>0<><>::uid://k7sadfjmlt71::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniPriest.png
-::res://asset/animation/human/::1754401130
-humanArcherMan.tres::SpriteFrames::2316943852250199665::1754401130::0::1::::<><><>0<>0<><>::uid://do6y26gbh05y5::::res://asset/sprite/MinifolksHumans/Outline/MiniArcherMan.png
-humanArchMage.tres::SpriteFrames::5559123454964362698::1754401130::0::1::::<><><>0<>0<><>::uid://cdain0clo0sgp::::res://asset/sprite/MinifolksHumans/Outline/MiniArchMage.png
-humanCavalierMan.tres::SpriteFrames::3394954540391318842::1754401130::0::1::::<><><>0<>0<><>::uid://diolx1f7v4a4r::::res://asset/sprite/MinifolksHumans/Outline/MiniCavalierMan.png
-humanCrossBowMan.tres::SpriteFrames::2145221812700534924::1754401130::0::1::::<><><>0<>0<><>::uid://c6llb22ybx4n::::res://asset/sprite/MinifolksHumans/Outline/MiniCrossBowMan.png
-humanHalberMan.tres::SpriteFrames::852213517108383685::1754401130::0::1::::<><><>0<>0<><>::uid://c7v6fi8pdjeop::::res://asset/sprite/MinifolksHumans/Outline/MiniHalberdMan.png
-humanHorseMan.tres::SpriteFrames::3693531172369987874::1754401130::0::1::::<><><>0<>0<><>::uid://8hxr1o66tiex::::res://asset/sprite/MinifolksHumans/Outline/MiniHorseMan.png
-humanKingMan.tres::SpriteFrames::6278669872078511715::1754401130::0::1::::<><><>0<>0<><>::uid://kxdh6e2fqxpc::::res://asset/sprite/MinifolksHumans/Outline/MiniKingMan.png
-humanMage.tres::SpriteFrames::5852045607676616334::1754401130::0::1::::<><><>0<>0<><>::uid://cstentg2o5iyt::::res://asset/sprite/MinifolksHumans/Outline/MiniMage.png
-humanPrinceMan.tres::SpriteFrames::5959047231672677199::1754401130::0::1::::<><><>0<>0<><>::uid://bm0hgoe1thn6k::::res://asset/sprite/MinifolksHumans/Outline/MiniPrinceMan.png
-humanShieldMan.tres::SpriteFrames::1097459070308223702::1754401130::0::1::::<><><>0<>0<><>::uid://c2bn1mph5qkp6::::res://asset/sprite/MinifolksHumans/Outline/MiniShieldMan.png
-humanSpearMan.tres::SpriteFrames::3919327574009538365::1754401130::0::1::::<><><>0<>0<><>::uid://tkmo5031rjyd::::res://asset/sprite/MinifolksHumans/Outline/MiniSpearMan.png
+holyAngel.tres::SpriteFrames/SpriteFrames::1108279650852815616::1754401130::0::1::::<><><>0<>0<><>::uid://brm7kmcn0b45y::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniAngel.png
+holyArchAngel.tres::SpriteFrames/SpriteFrames::6449383822871233635::1754401130::0::1::::<><><>0<>0<><>::uid://ehawhny1pxdl::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniArchAngel.png
+holyBattlePriest.tres::SpriteFrames/SpriteFrames::4467293298643197552::1754401130::0::1::::<><><>0<>0<><>::uid://dcmgr818iwn3s::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniBattlePriest.png
+holyCrusader.tres::SpriteFrames/SpriteFrames::6740744520756488137::1754401130::0::1::::<><><>0<>0<><>::uid://diuj115olk2qo::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniCrusader.png
+holyCrusaderArcher.tres::SpriteFrames/SpriteFrames::3606633493587732056::1754401130::0::1::::<><><>0<>0<><>::uid://b8feicpcrdus0::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniCrusaderArcher.png
+holyCrusaderCaptain.tres::SpriteFrames/SpriteFrames::9190989196067422723::1754401130::0::1::::<><><>0<>0<><>::uid://ba44sna830rxj::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniCrusaderCaptain.png
+holyCrusaderCaptainFlagless.tres::SpriteFrames/SpriteFrames::4722691466968187071::1754401130::0::1::::<><><>0<>0<><>::uid://dhxvrxhunebo3::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniCrusaderCaptainFlagless.png
+holyCrusaderFlag.tres::SpriteFrames/SpriteFrames::7211971456021104939::1754401130::0::1::::<><><>0<>0<><>::uid://d2we4xetjvu7i::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniCrusaderFlag.png
+holyCrusaderHorseMan.tres::SpriteFrames/SpriteFrames::1576252988857465424::1754401130::0::1::::<><><>0<>0<><>::uid://cijlcwva1e2al::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniCrusaderHorseman.png
+holyHighPriestess.tres::SpriteFrames/SpriteFrames::2376398197806242909::1754401130::0::1::::<><><>0<>0<><>::uid://c62v5ab801u3e::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniHighPriestess.png
+holyPaladin1.tres::SpriteFrames/SpriteFrames::2045960155873710426::1754401130::0::1::::<><><>0<>0<><>::uid://cax6hrdpjp0q4::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniPaladin.png
+holyPaladin2.tres::SpriteFrames/SpriteFrames::5257698364970110860::1754401130::0::1::::<><><>0<>0<><>::uid://dk2bghd5d0dto::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniPaladin2.png
+holyPaladin3.tres::SpriteFrames/SpriteFrames::5191521671788180207::1754401130::0::1::::<><><>0<>0<><>::uid://d4cedeuu1hud5::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniPaladin3.png
+holyPriest.tres::SpriteFrames/SpriteFrames::4602482771291427414::1754401130::0::1::::<><><>0<>0<><>::uid://k7sadfjmlt71::::res://asset/sprite/MinifolksHolyWarriors/Original/Outline/MiniPriest.png
+::res://asset/animation/human/::1754482935
+humanArcherMan.tres::SpriteFrames/SpriteFrames::2316943852250199665::1754401130::0::1::::<><><>0<>0<><>::uid://do6y26gbh05y5::::res://asset/sprite/MinifolksHumans/Outline/MiniArcherMan.png
+humanArchMage.tres::SpriteFrames/SpriteFrames::5559123454964362698::1754401130::0::1::::<><><>0<>0<><>::uid://cdain0clo0sgp::::res://asset/sprite/MinifolksHumans/Outline/MiniArchMage.png
+humanCavalierMan.tres::SpriteFrames/SpriteFrames::3394954540391318842::1754401130::0::1::::<><><>0<>0<><>::uid://diolx1f7v4a4r::::res://asset/sprite/MinifolksHumans/Outline/MiniCavalierMan.png
+humanCrossBowMan.tres::SpriteFrames/SpriteFrames::2145221812700534924::1754401130::0::1::::<><><>0<>0<><>::uid://c6llb22ybx4n::::res://asset/sprite/MinifolksHumans/Outline/MiniCrossBowMan.png
+humanHalberMan.tres::SpriteFrames/SpriteFrames::852213517108383685::1754401130::0::1::::<><><>0<>0<><>::uid://c7v6fi8pdjeop::::res://asset/sprite/MinifolksHumans/Outline/MiniHalberdMan.png
+humanHorseMan.tres::SpriteFrames/SpriteFrames::3693531172369987874::1754401130::0::1::::<><><>0<>0<><>::uid://8hxr1o66tiex::::res://asset/sprite/MinifolksHumans/Outline/MiniHorseMan.png
+humanKingMan.tres::SpriteFrames/SpriteFrames::6278669872078511715::1754401130::0::1::::<><><>0<>0<><>::uid://kxdh6e2fqxpc::::res://asset/sprite/MinifolksHumans/Outline/MiniKingMan.png
+humanMage.tres::SpriteFrames/SpriteFrames::5852045607676616334::1754401130::0::1::::<><><>0<>0<><>::uid://cstentg2o5iyt::::res://asset/sprite/MinifolksHumans/Outline/MiniMage.png
+humanPrinceMan.tres::SpriteFrames/SpriteFrames::5959047231672677199::1754401130::0::1::::<><><>0<>0<><>::uid://bm0hgoe1thn6k::::res://asset/sprite/MinifolksHumans/Outline/MiniPrinceMan.png
+humanShieldMan.tres::SpriteFrames::1097459070308223702::1754482935::0::1::::<><><>0<>0<><>::uid://c2bn1mph5qkp6::::res://asset/sprite/MinifolksHumans/Outline/MiniShieldMan.png
+humanSpearMan.tres::SpriteFrames/SpriteFrames::3919327574009538365::1754401130::0::1::::<><><>0<>0<><>::uid://tkmo5031rjyd::::res://asset/sprite/MinifolksHumans/Outline/MiniSpearMan.png
 ::res://asset/animation/undead/::1754401130
-undeadArchLich.tres::SpriteFrames::6421178246510155391::1754401130::0::1::::<><><>0<>0<><>::uid://d4fdvtxo1bays::::res://asset/sprite/MinifolksUndead2/Without outline/MiniArchLich.png
-undeadBanshee.tres::SpriteFrames::2288393958591331662::1754401130::0::1::::<><><>0<>0<><>::uid://csixsu5hkhhm::::res://asset/sprite/MinifolksUndead2/Without outline/MiniBanshee.png
-undeadBansheeQueen.tres::SpriteFrames::1420241019471799868::1754401130::0::1::::<><><>0<>0<><>::uid://rjpfu73ct13y::::res://asset/sprite/MinifolksUndead2/Without outline/MiniBansheeQueen.png
-undeadDeathKnight.tres::SpriteFrames::47077745644694924::1754401130::0::1::::<><><>0<>0<><>::uid://b2dy1xm8i1184::::res://asset/sprite/MinifolksUndead/Without Outline/MiniDeathKnight.png
-undeadDeathLord.tres::SpriteFrames::6529005080839575012::1754401130::0::1::::<><><>0<>0<><>::uid://co2hgfp8vumoa::::res://asset/sprite/MinifolksUndead2/Without outline/MiniDeathLord.png
-undeadDreadKnight.tres::SpriteFrames::2379788706565181309::1754401130::0::1::::<><><>0<>0<><>::uid://crg0kqs6q1tr7::::res://asset/sprite/MinifolksUndead/Without Outline/MiniDreadKnight.png
-undeadGhost.tres::SpriteFrames::919742932091781551::1754401130::0::1::::<><><>0<>0<><>::uid://ckpjsdbpn61er::::res://asset/sprite/MinifolksUndead/Without Outline/MiniGhost.png
-undeadGhoul.tres::SpriteFrames::2942637049127105128::1754401130::0::1::::<><><>0<>0<><>::uid://dbmjx0ku3k10s::::res://asset/sprite/MinifolksUndead2/Without outline/MiniGhoul.png
-undeadLich.tres::SpriteFrames::2156118624478155075::1754401130::0::1::::<><><>0<>0<><>::uid://c0rnxxqj32tbb::::res://asset/sprite/MinifolksUndead/Without Outline/MiniLich.png
-undeadNecromancer.tres::SpriteFrames::675804799669540327::1754401130::0::1::::<><><>0<>0<><>::uid://cowoey0fu4quj::::res://asset/sprite/MinifolksUndead/Without Outline/MiniNecromancer.png
-undeadReaper.tres::SpriteFrames::5666354245148219895::1754401130::0::1::::<><><>0<>0<><>::uid://dwob1jel3k0rf::::res://asset/sprite/MinifolksUndead/Without Outline/MiniReaper.png
-undeadSkeleton.tres::SpriteFrames::8848588196203526700::1754401130::0::1::::<><><>0<>0<><>::uid://cr4m4l15h8d7o::::res://asset/sprite/MinifolksUndead/Without Outline/MiniSkeleton.png
-undeadSkeletonArcher.tres::SpriteFrames::1634534946776925920::1754401130::0::1::::<><><>0<>0<><>::uid://bapp2chp0gm5k::::res://asset/sprite/MinifolksUndead/Without Outline/MiniSkeletonArcher.png
-undeadSkeletonHorseman.tres::SpriteFrames::7555738233510098181::1754401130::0::1::::<><><>0<>0<><>::uid://blec0d3vmm1ri::::res://asset/sprite/MinifolksUndead2/Without outline/MiniSkeletonHorseman.png
-undeadSkeletonMage.tres::SpriteFrames::8997679291724094368::1754401130::0::1::::<><><>0<>0<><>::uid://bv3uo6oract6x::::res://asset/sprite/MinifolksUndead2/Without outline/MiniSkeletonMage.png
-undeadSkeletonWarrior.tres::SpriteFrames::4548857552969062568::1754401130::0::1::::<><><>0<>0<><>::uid://0qs3jmjvbdsh::::res://asset/sprite/MinifolksUndead2/Without outline/MiniSkeletonWarrior.png
-undeadSoulCollector.tres::SpriteFrames::3295072301769107159::1754401130::0::1::::<><><>0<>0<><>::uid://bakq06t2xv6g1::::res://asset/sprite/MinifolksUndead2/Without outline/MiniSoulCollector.png
-undeadSpikedGhoul.tres::SpriteFrames::2366132530897068550::1754401130::0::1::::<><><>0<>0<><>::uid://elhtly3wsnr3::::res://asset/sprite/MinifolksUndead2/Without outline/MiniSpikedGhoul.png
-undeadZombie.tres::SpriteFrames::680313370735884690::1754401130::0::1::::<><><>0<>0<><>::uid://c43vlcucsb5in::::res://asset/sprite/MinifolksUndead/Without Outline/MiniZombie.png
-undeadZombieButcher.tres::SpriteFrames::2605480435411999819::1754401130::0::1::::<><><>0<>0<><>::uid://biraqvq4hg8wf::::res://asset/sprite/MinifolksUndead/Without Outline/MiniZombieButcher.png
-undeadZombieCrusher2.tres::SpriteFrames::567031807067867580::1754401130::0::1::::<><><>0<>0<><>::uid://b6ft6v4l4tb6a::::res://asset/sprite/MinifolksUndead2/Without outline/MiniZombieCrusher2.png
-undeadZombieCrusher3.tres::SpriteFrames::225226322744149747::1754401130::0::1::::<><><>0<>0<><>::uid://cp8jigqbexldm::::res://asset/sprite/MinifolksUndead2/Without outline/MiniZombieCrusher3.png
-undeadZombieCrusher.tres::SpriteFrames::1350820103684203270::1754401130::0::1::::<><><>0<>0<><>::uid://do068qnjr7ix6::::res://asset/sprite/MinifolksUndead2/Without outline/MiniZombieCrusher.png
-undeadZombieDog.tres::SpriteFrames::2926881131396263256::1754401130::0::1::::<><><>0<>0<><>::uid://c4vjljiexwni3::::res://asset/sprite/MinifolksUndead2/Without outline/MiniZombieDog.png
-undeadZombieRunner.tres::SpriteFrames::5956863070767318087::1754401130::0::1::::<><><>0<>0<><>::uid://dced8nm4is56s::::res://asset/sprite/MinifolksUndead2/Without outline/MiniZombieRunner.png
-undeadZombieWarrior.tres::SpriteFrames::819420214525269530::1754401130::0::1::::<><><>0<>0<><>::uid://0p3ca1ogkv27::::res://asset/sprite/MinifolksUndead2/Without outline/MiniZombieWarrior.png
+undeadArchLich.tres::SpriteFrames/SpriteFrames::6421178246510155391::1754401130::0::1::::<><><>0<>0<><>::uid://d4fdvtxo1bays::::res://asset/sprite/MinifolksUndead2/Without outline/MiniArchLich.png
+undeadBanshee.tres::SpriteFrames/SpriteFrames::2288393958591331662::1754401130::0::1::::<><><>0<>0<><>::uid://csixsu5hkhhm::::res://asset/sprite/MinifolksUndead2/Without outline/MiniBanshee.png
+undeadBansheeQueen.tres::SpriteFrames/SpriteFrames::1420241019471799868::1754401130::0::1::::<><><>0<>0<><>::uid://rjpfu73ct13y::::res://asset/sprite/MinifolksUndead2/Without outline/MiniBansheeQueen.png
+undeadDeathKnight.tres::SpriteFrames/SpriteFrames::47077745644694924::1754401130::0::1::::<><><>0<>0<><>::uid://b2dy1xm8i1184::::res://asset/sprite/MinifolksUndead/Without Outline/MiniDeathKnight.png
+undeadDeathLord.tres::SpriteFrames/SpriteFrames::6529005080839575012::1754401130::0::1::::<><><>0<>0<><>::uid://co2hgfp8vumoa::::res://asset/sprite/MinifolksUndead2/Without outline/MiniDeathLord.png
+undeadDreadKnight.tres::SpriteFrames/SpriteFrames::2379788706565181309::1754401130::0::1::::<><><>0<>0<><>::uid://crg0kqs6q1tr7::::res://asset/sprite/MinifolksUndead/Without Outline/MiniDreadKnight.png
+undeadGhost.tres::SpriteFrames/SpriteFrames::919742932091781551::1754401130::0::1::::<><><>0<>0<><>::uid://ckpjsdbpn61er::::res://asset/sprite/MinifolksUndead/Without Outline/MiniGhost.png
+undeadGhoul.tres::SpriteFrames/SpriteFrames::2942637049127105128::1754401130::0::1::::<><><>0<>0<><>::uid://dbmjx0ku3k10s::::res://asset/sprite/MinifolksUndead2/Without outline/MiniGhoul.png
+undeadLich.tres::SpriteFrames/SpriteFrames::2156118624478155075::1754401130::0::1::::<><><>0<>0<><>::uid://c0rnxxqj32tbb::::res://asset/sprite/MinifolksUndead/Without Outline/MiniLich.png
+undeadNecromancer.tres::SpriteFrames/SpriteFrames::675804799669540327::1754401130::0::1::::<><><>0<>0<><>::uid://cowoey0fu4quj::::res://asset/sprite/MinifolksUndead/Without Outline/MiniNecromancer.png
+undeadReaper.tres::SpriteFrames/SpriteFrames::5666354245148219895::1754401130::0::1::::<><><>0<>0<><>::uid://dwob1jel3k0rf::::res://asset/sprite/MinifolksUndead/Without Outline/MiniReaper.png
+undeadSkeleton.tres::SpriteFrames/SpriteFrames::8848588196203526700::1754401130::0::1::::<><><>0<>0<><>::uid://cr4m4l15h8d7o::::res://asset/sprite/MinifolksUndead/Without Outline/MiniSkeleton.png
+undeadSkeletonArcher.tres::SpriteFrames/SpriteFrames::1634534946776925920::1754401130::0::1::::<><><>0<>0<><>::uid://bapp2chp0gm5k::::res://asset/sprite/MinifolksUndead/Without Outline/MiniSkeletonArcher.png
+undeadSkeletonHorseman.tres::SpriteFrames/SpriteFrames::7555738233510098181::1754401130::0::1::::<><><>0<>0<><>::uid://blec0d3vmm1ri::::res://asset/sprite/MinifolksUndead2/Without outline/MiniSkeletonHorseman.png
+undeadSkeletonMage.tres::SpriteFrames/SpriteFrames::8997679291724094368::1754401130::0::1::::<><><>0<>0<><>::uid://bv3uo6oract6x::::res://asset/sprite/MinifolksUndead2/Without outline/MiniSkeletonMage.png
+undeadSkeletonWarrior.tres::SpriteFrames/SpriteFrames::4548857552969062568::1754401130::0::1::::<><><>0<>0<><>::uid://0qs3jmjvbdsh::::res://asset/sprite/MinifolksUndead2/Without outline/MiniSkeletonWarrior.png
+undeadSoulCollector.tres::SpriteFrames/SpriteFrames::3295072301769107159::1754401130::0::1::::<><><>0<>0<><>::uid://bakq06t2xv6g1::::res://asset/sprite/MinifolksUndead2/Without outline/MiniSoulCollector.png
+undeadSpikedGhoul.tres::SpriteFrames/SpriteFrames::2366132530897068550::1754401130::0::1::::<><><>0<>0<><>::uid://elhtly3wsnr3::::res://asset/sprite/MinifolksUndead2/Without outline/MiniSpikedGhoul.png
+undeadZombie.tres::SpriteFrames/SpriteFrames::680313370735884690::1754401130::0::1::::<><><>0<>0<><>::uid://c43vlcucsb5in::::res://asset/sprite/MinifolksUndead/Without Outline/MiniZombie.png
+undeadZombieButcher.tres::SpriteFrames/SpriteFrames::2605480435411999819::1754401130::0::1::::<><><>0<>0<><>::uid://biraqvq4hg8wf::::res://asset/sprite/MinifolksUndead/Without Outline/MiniZombieButcher.png
+undeadZombieCrusher2.tres::SpriteFrames/SpriteFrames::567031807067867580::1754401130::0::1::::<><><>0<>0<><>::uid://b6ft6v4l4tb6a::::res://asset/sprite/MinifolksUndead2/Without outline/MiniZombieCrusher2.png
+undeadZombieCrusher3.tres::SpriteFrames/SpriteFrames::225226322744149747::1754401130::0::1::::<><><>0<>0<><>::uid://cp8jigqbexldm::::res://asset/sprite/MinifolksUndead2/Without outline/MiniZombieCrusher3.png
+undeadZombieCrusher.tres::SpriteFrames/SpriteFrames::1350820103684203270::1754401130::0::1::::<><><>0<>0<><>::uid://do068qnjr7ix6::::res://asset/sprite/MinifolksUndead2/Without outline/MiniZombieCrusher.png
+undeadZombieDog.tres::SpriteFrames/SpriteFrames::2926881131396263256::1754401130::0::1::::<><><>0<>0<><>::uid://c4vjljiexwni3::::res://asset/sprite/MinifolksUndead2/Without outline/MiniZombieDog.png
+undeadZombieRunner.tres::SpriteFrames/SpriteFrames::5956863070767318087::1754401130::0::1::::<><><>0<>0<><>::uid://dced8nm4is56s::::res://asset/sprite/MinifolksUndead2/Without outline/MiniZombieRunner.png
+undeadZombieWarrior.tres::SpriteFrames/SpriteFrames::819420214525269530::1754401130::0::1::::<><><>0<>0<><>::uid://0p3ca1ogkv27::::res://asset/sprite/MinifolksUndead2/Without outline/MiniZombieWarrior.png
 ::res://asset/animation/villager/::1754401130
-villagerAnvil.tres::SpriteFrames::8180102712727389282::1754401130::0::1::::<><><>0<>0<><>::uid://bgnru0oirvfpt::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniAnvil.png
-villagerBlacksmith.tres::SpriteFrames::5596434316763291087::1754401130::0::1::::<><><>0<>0<><>::uid://brashu4raeg07::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniBlacksmith.png
-villagerGatherer.tres::SpriteFrames::8436084948995290641::1754401130::0::1::::<><><>0<>0<><>::uid://dncslskmhxrh6::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniGatherer.png
-villagerGraveDigger.tres::SpriteFrames::6087289840765430452::1754401130::0::1::::<><><>0<>0<><>::uid://daerwig613gfo::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniGraveDigger.png
-villagerHunter.tres::SpriteFrames::3299177892395878628::1754401130::0::1::::<><><>0<>0<><>::uid://dt0hbfo3ax16i::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniHunter.png
-villagerLumberjack.tres::SpriteFrames::3731689099629407256::1754401130::0::1::::<><><>0<>0<><>::uid://dhwc765lxt8pv::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniLumberjack.png
-villagerMerchant.tres::SpriteFrames::886765526439394606::1754401130::0::1::::<><><>0<>0<><>::uid://cnu2l152qxxjt::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniMerchant.png
-villagerMiner.tres::SpriteFrames::2829477625199639177::1754401130::0::1::::<><><>0<>0<><>::uid://bmr7b00nn4emv::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniMiner.png
-villagerNobleMan.tres::SpriteFrames::2470011232815826698::1754401130::0::1::::<><><>0<>0<><>::uid://drrqctvwauaa2::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniNobleMan.png
-villagerNobleWoman.tres::SpriteFrames::5422182484067466100::1754401130::0::1::::<><><>0<>0<><>::uid://b4xf0tm2eey1j::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniNobleWoman.png
-villagerNun.tres::SpriteFrames::3818100323277087078::1754401130::0::1::::<><><>0<>0<><>::uid://rylovlp65mdp::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniNun.png
-villagerOldMan.tres::SpriteFrames::649261280848206350::1754401130::0::1::::<><><>0<>0<><>::uid://dubeuk1kks2tj::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniOldMan.png
-villagerOldWoman.tres::SpriteFrames::2419990927792662611::1754401130::0::1::::<><><>0<>0<><>::uid://c8mwlfqfevkn2::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniOldWoman.png
-villagerPeasant.tres::SpriteFrames::8004754478125492383::1754401130::0::1::::<><><>0<>0<><>::uid://cyxkjs1xijduy::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniPeasant.png
-villagerPrincess.tres::SpriteFrames::792731366062122421::1754401130::0::1::::<><><>0<>0<><>::uid://ct8tmsb1drhqh::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniPrincess.png
-villagerQueen.tres::SpriteFrames::1854155109852941256::1754401130::0::1::::<><><>0<>0<><>::uid://bl5qnna8aijgn::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniQueen.png
-villagerSuspiciousMerchant.tres::SpriteFrames::6991287801009329820::1754401130::0::1::::<><><>0<>0<><>::uid://bapwupbn2w7je::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniSuspiciousMerchant.png
-villagerThief.tres::SpriteFrames::6391625118070716397::1754401130::0::1::::<><><>0<>0<><>::uid://0cc75083yg4t::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniThief.png
-villagerVillagerMan.tres::SpriteFrames::2599622855385567364::1754401130::0::1::::<><><>0<>0<><>::uid://cmuw5sv8a8ic3::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniVillagerMan.png
-villagerVillagerWoman.tres::SpriteFrames::5383398606889610978::1754401130::0::1::::<><><>0<>0<><>::uid://brxysxh6ahugw::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniVillagerWoman.png
-villagerWorker.tres::SpriteFrames::7383917331383398948::1754401130::0::1::::<><><>0<>0<><>::uid://bt1wr86w2rq6c::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniWorker.png
-::res://asset/shader/::1754401130
-LightweightPixelPerfectOutline.gdshader::Shader::9165260713726825370::1754401130::0::1::::<><><>0<>0<><>::
+villagerAnvil.tres::SpriteFrames/SpriteFrames::8180102712727389282::1754401130::0::1::::<><><>0<>0<><>::uid://bgnru0oirvfpt::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniAnvil.png
+villagerBlacksmith.tres::SpriteFrames/SpriteFrames::5596434316763291087::1754401130::0::1::::<><><>0<>0<><>::uid://brashu4raeg07::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniBlacksmith.png
+villagerGatherer.tres::SpriteFrames/SpriteFrames::8436084948995290641::1754401130::0::1::::<><><>0<>0<><>::uid://dncslskmhxrh6::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniGatherer.png
+villagerGraveDigger.tres::SpriteFrames/SpriteFrames::6087289840765430452::1754401130::0::1::::<><><>0<>0<><>::uid://daerwig613gfo::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniGraveDigger.png
+villagerHunter.tres::SpriteFrames/SpriteFrames::3299177892395878628::1754401130::0::1::::<><><>0<>0<><>::uid://dt0hbfo3ax16i::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniHunter.png
+villagerLumberjack.tres::SpriteFrames/SpriteFrames::3731689099629407256::1754401130::0::1::::<><><>0<>0<><>::uid://dhwc765lxt8pv::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniLumberjack.png
+villagerMerchant.tres::SpriteFrames/SpriteFrames::886765526439394606::1754401130::0::1::::<><><>0<>0<><>::uid://cnu2l152qxxjt::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniMerchant.png
+villagerMiner.tres::SpriteFrames/SpriteFrames::2829477625199639177::1754401130::0::1::::<><><>0<>0<><>::uid://bmr7b00nn4emv::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniMiner.png
+villagerNobleMan.tres::SpriteFrames/SpriteFrames::2470011232815826698::1754401130::0::1::::<><><>0<>0<><>::uid://drrqctvwauaa2::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniNobleMan.png
+villagerNobleWoman.tres::SpriteFrames/SpriteFrames::5422182484067466100::1754401130::0::1::::<><><>0<>0<><>::uid://b4xf0tm2eey1j::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniNobleWoman.png
+villagerNun.tres::SpriteFrames/SpriteFrames::3818100323277087078::1754401130::0::1::::<><><>0<>0<><>::uid://rylovlp65mdp::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniNun.png
+villagerOldMan.tres::SpriteFrames/SpriteFrames::649261280848206350::1754401130::0::1::::<><><>0<>0<><>::uid://dubeuk1kks2tj::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniOldMan.png
+villagerOldWoman.tres::SpriteFrames/SpriteFrames::2419990927792662611::1754401130::0::1::::<><><>0<>0<><>::uid://c8mwlfqfevkn2::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniOldWoman.png
+villagerPeasant.tres::SpriteFrames/SpriteFrames::8004754478125492383::1754401130::0::1::::<><><>0<>0<><>::uid://cyxkjs1xijduy::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniPeasant.png
+villagerPrincess.tres::SpriteFrames/SpriteFrames::792731366062122421::1754401130::0::1::::<><><>0<>0<><>::uid://ct8tmsb1drhqh::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniPrincess.png
+villagerQueen.tres::SpriteFrames/SpriteFrames::1854155109852941256::1754401130::0::1::::<><><>0<>0<><>::uid://bl5qnna8aijgn::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniQueen.png
+villagerSuspiciousMerchant.tres::SpriteFrames/SpriteFrames::6991287801009329820::1754401130::0::1::::<><><>0<>0<><>::uid://bapwupbn2w7je::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniSuspiciousMerchant.png
+villagerThief.tres::SpriteFrames/SpriteFrames::6391625118070716397::1754401130::0::1::::<><><>0<>0<><>::uid://0cc75083yg4t::::res://asset/sprite/MinifolksVillagers2/Original/Without Outline/MiniThief.png
+villagerVillagerMan.tres::SpriteFrames/SpriteFrames::2599622855385567364::1754401130::0::1::::<><><>0<>0<><>::uid://cmuw5sv8a8ic3::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniVillagerMan.png
+villagerVillagerWoman.tres::SpriteFrames/SpriteFrames::5383398606889610978::1754401130::0::1::::<><><>0<>0<><>::uid://brxysxh6ahugw::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniVillagerWoman.png
+villagerWorker.tres::SpriteFrames/SpriteFrames::7383917331383398948::1754401130::0::1::::<><><>0<>0<><>::uid://bt1wr86w2rq6c::::res://asset/sprite/MinifolksVillagers/Without Outline/MiniWorker.png
+::res://asset/shader/::1754487953
+LightweightPixelPerfectOutline.gdshader::Shader::9165260713726825370::1754487953::0::1::::<><><>0<>0<><>::
 ::res://asset/sprite/::1754401131
 ::res://asset/sprite/MinifolksBandits/::1754401130
 ::res://asset/sprite/MinifolksBandits/Outline/::1754401130
@@ -784,68 +784,70 @@ MiniMiner.png::CompressedTexture2D/CompressedTexture2D::3265727311043979349::175
 MiniNun.png::CompressedTexture2D/CompressedTexture2D::1243449416686437285::1754401131::1754401131::1::::<><><>0<>0<>b3964a4c1d2f14385e1aeccd03aa3a3b<>res://.godot/imported/MiniNun.png-e7e6add3e6303fe2f9a8093bda82fa77.ctex::
 MiniSuspiciousMerchant.png::CompressedTexture2D/CompressedTexture2D::2418758629745657974::1754401131::1754401131::1::::<><><>0<>0<>3e9387fb416ada2fc9d57d7a293c1019<>res://.godot/imported/MiniSuspiciousMerchant.png-0a51305f240886c661eb20daa80daf2c.ctex::
 MiniThief.png::CompressedTexture2D/CompressedTexture2D::1759030041707771109::1754401131::1754401131::1::::<><><>0<>0<>4bdf628ea2db80d1f3d12f6f07937059<>res://.godot/imported/MiniThief.png-92fce791c250de3a5a03717dab49d49f.ctex::
-::res://asset/tileset/::1754401131
-dungeon_tileset.tres::TileSet::4800758838690454208::1754401131::0::1::::<><><>0<>0<><>::uid://ci0chjunkkyw2::::res://dungeontileset-extended.png
-::res://scene/::1754401131
-game.tscn::PackedScene::6120957946076711242::1754401131::0::1::::<><><>0<>0<><>::uid://c7rtc63knhqn2::::res://script/game.gd<>uid://canr2c7puh78g::::res://asset/tileset/dungeon_tileset.tres
-hero.tscn::PackedScene::2983999331985799886::1754401131::0::1::::<><><>0<>0<><>::uid://cmj65pa4j3u1u::::res://script/hero.gd<>uid://d3tyrfwlw2c1g::::res://asset/shader/LightweightPixelPerfectOutline.gdshader<>uid://pvu8xcp5ahdu::::res://asset/animation/human/humanShieldMan.tres<>uid://pmtyv1bl3nog::::res://script/drag_handler.gd<>uid://bwyapus01e2fk::::res://script/buff_handler.gd<>uid://clowjrn7v3b1m::::res://script/debuff_handler.gd<>uid://doeoqyu5a6wjk::::res://scene/projectile.tscn
-projectile.tscn::PackedScene::8151043276450003148::1754401131::0::1::::<><><>0<>0<><>::uid://b33moj3tihrg4::::res://asset/sprite/MinifolksDwarfs/Without Outline/MiniGrenade.png
-::res://script/::1754401131
-buff_handler.gd::GDScript::3980148176180122880::1754401131::0::1::::Buff_handler<>Node<><>0<>0<><>::
-debuff_handler.gd::GDScript::5575172696409910516::1754401131::0::1::::Debuff_handler<>Node<><>0<>0<><>::
-drag_and_drop.gd::GDScript::8125215433462389678::1754401131::0::1::::DragAndDrop<>Node<><>0<>0<><>::
-drag_handler.gd::GDScript::1078802812752002374::1754401131::0::1::::<>Node2D<><>0<>0<><>::
-game.gd::GDScript::7055137652023026013::1754401131::0::1::::<>Node2D<><>0<>0<><>::
-hero.gd::GDScript::5635623480603066984::1754401131::0::1::::Hero<>Node2D<><>0<>0<><>::
-hero_stats.json::JSON::-1::1754401131::0::1::::<><><>0<>0<><>::
-projectile.gd::GDScript::4886341041917635844::1754401131::0::1::::<>Area2D<><>0<>0<><>::
-shield_man.gd::GDScript::1804316583496688664::1754401131::0::1::::<>CharacterBody2D<><>0<>0<><>::
-::res://script/hero_stats_raw/::1754401131
-hero_stats.armor.translation::OptimizedTranslation::9097945646851535587::1754401131::0::1::::<><><>0<>0<><>::
-hero_stats.attack.translation::OptimizedTranslation::2397283935727038870::1754401131::0::1::::<><><>0<>0<><>::
+::res://asset/tileset/::1754482935
+dungeon_tileset.tres::TileSet::4800758838690454208::1754482935::0::1::::<><><>0<>0<><>::uid://ci0chjunkkyw2::::res://dungeontileset-extended.png
+::res://scene/::1754487951
+game.tscn::PackedScene::6120957946076711242::1754487951::0::1::::<><><>0<>0<><>::uid://c7rtc63knhqn2::::res://script/game.gd<>uid://canr2c7puh78g::::res://asset/tileset/dungeon_tileset.tres<>uid://bf8ewc86eld58::::res://script/unit_grid.gd<>uid://d3fjiohmxfkv2::::res://script/play_area.gd
+hero.tscn::PackedScene::2983999331985799886::1754487951::0::1::::<><><>0<>0<><>::uid://cmj65pa4j3u1u::::res://script/hero.gd<>uid://d3tyrfwlw2c1g::::res://asset/shader/LightweightPixelPerfectOutline.gdshader<>uid://pvu8xcp5ahdu::::res://asset/animation/human/humanShieldMan.tres<>uid://pmtyv1bl3nog::::res://script/drag_handler.gd<>uid://bwyapus01e2fk::::res://script/buff_handler.gd<>uid://clowjrn7v3b1m::::res://script/debuff_handler.gd<>uid://doeoqyu5a6wjk::::res://scene/projectile.tscn
+projectile.tscn::PackedScene::8151043276450003148::1754487951::0::1::::<><><>0<>0<><>::uid://b33moj3tihrg4::::res://asset/sprite/MinifolksDwarfs/Without Outline/MiniGrenade.png
+::res://script/::1754487951
+buff_handler.gd::GDScript/GDScript::3980148176180122880::1754401131::0::1::::Buff_handler<>Node<><>0<>0<><>::
+debuff_handler.gd::GDScript/GDScript::5575172696409910516::1754401131::0::1::::Debuff_handler<>Node<><>0<>0<><>::
+drag_and_drop.gd::GDScript/GDScript::8125215433462389678::1754401131::0::1::::DragAndDrop<>Node<><>0<>0<><>::
+drag_handler.gd::GDScript/GDScript::1078802812752002374::1754401131::0::1::::<>Node2D<><>0<>0<><>::
+game.gd::GDScript::7055137652023026013::1754483112::0::1::::<>Node2D<><>0<>0<><>::
+hero.gd::GDScript::5635623480603066984::1754483620::0::1::::Hero<>Node2D<><>0<>0<><>::
+hero_stats.json::JSON/JSON::-1::1754401131::0::1::::<><><>0<>0<><>::
+play_area.gd::GDScript::9135433047717348709::1754487951::0::1::::PlayArea<>TileMapLayer<><>0<>0<><>::
+projectile.gd::GDScript/GDScript::4886341041917635844::1754401131::0::1::::<>Area2D<><>0<>0<><>::
+shield_man.gd::GDScript/GDScript::1804316583496688664::1754401131::0::1::::<>CharacterBody2D<><>0<>0<><>::
+unit_grid.gd::GDScript::2805771680643735521::1754486826::0::1::::UnitGrid<>Node2D<><>0<>0<><>::
+::res://script/hero_stats_raw/::1754401269
+hero_stats.armor.translation::OptimizedTranslation/OptimizedTranslation::9097945646851535587::1754401131::0::1::::<><><>0<>0<><>::
+hero_stats.attack.translation::OptimizedTranslation/OptimizedTranslation::2397283935727038870::1754401131::0::1::::<><><>0<>0<><>::
 hero_stats.csv::Translation/Translation::1891292108608897305::1754401131::1754401131::1::::<><><>0<>0<>6c75ca2e998c5fece2090d7ddc030f95<>res://script/hero_stats_raw/hero_stats.hero.translation<*>res://script/hero_stats_raw/hero_stats.move.translation<*>res://script/hero_stats_raw/hero_stats.attack.translation<*>res://script/hero_stats_raw/hero_stats.attack.translation<*>res://script/hero_stats_raw/hero_stats.attack.translation<*>res://script/hero_stats_raw/hero_stats.max.translation<*>res://script/hero_stats_raw/hero_stats.max.translation<*>res://script/hero_stats_raw/hero_stats.armor.translation<*>res://script/hero_stats_raw/hero_stats.skill.translation<*>res://script/hero_stats_raw/hero_stats.skill.translation<*>res://script/hero_stats_raw/hero_stats.skill.translation<*>res://script/hero_stats_raw/hero_stats.flavor.translation<*>res://script/hero_stats_raw/hero_stats.rarity.translation<*>res://script/hero_stats_raw/hero_stats.target.translation<*>res://script/hero_stats_raw/hero_stats.skill.translation::
-hero_stats.defense.translation::OptimizedTranslation::1977719541715578907::1754401131::0::1::::<><><>0<>0<><>::
-hero_stats.flavor.translation::OptimizedTranslation::6892556687342017757::1754401131::0::1::::<><><>0<>0<><>::
-hero_stats.hero.translation::OptimizedTranslation::111027854301727800::1754401131::0::1::::<><><>0<>0<><>::
-hero_stats.hp.translation::OptimizedTranslation::8402223394235462449::1754401131::0::1::::<><><>0<>0<><>::
-hero_stats.json::JSON::-1::1754401131::0::1::::<><><>0<>0<><>::
-hero_stats.max.translation::OptimizedTranslation::1981295587944800784::1754401131::0::1::::<><><>0<>0<><>::
-hero_stats.move.translation::OptimizedTranslation::9059774715604455304::1754401131::0::1::::<><><>0<>0<><>::
-hero_stats.rarity.translation::OptimizedTranslation::4374794718358094289::1754401131::0::1::::<><><>0<>0<><>::
-hero_stats.skill.translation::OptimizedTranslation::5655309066747349924::1754401131::0::1::::<><><>0<>0<><>::
-hero_stats.spd.translation::OptimizedTranslation::8073279393970911373::1754401131::0::1::::<><><>0<>0<><>::
-hero_stats.special.translation::OptimizedTranslation::3040766535623669769::1754401131::0::1::::<><><>0<>0<><>::
-hero_stats.target.translation::OptimizedTranslation::7497255017968143062::1754401131::0::1::::<><><>0<>0<><>::
-hero_stat_deepseek.armor.translation::OptimizedTranslation::1020552635542473099::1754401269::0::1::::<><><>0<>0<><>::
-hero_stat_deepseek.attack.translation::OptimizedTranslation::6832323362781529920::1754401268::0::1::::<><><>0<>0<><>::
+hero_stats.defense.translation::OptimizedTranslation/OptimizedTranslation::1977719541715578907::1754401131::0::1::::<><><>0<>0<><>::
+hero_stats.flavor.translation::OptimizedTranslation/OptimizedTranslation::6892556687342017757::1754401131::0::1::::<><><>0<>0<><>::
+hero_stats.hero.translation::OptimizedTranslation/OptimizedTranslation::111027854301727800::1754401131::0::1::::<><><>0<>0<><>::
+hero_stats.hp.translation::OptimizedTranslation/OptimizedTranslation::8402223394235462449::1754401131::0::1::::<><><>0<>0<><>::
+hero_stats.json::JSON/JSON::-1::1754401131::0::1::::<><><>0<>0<><>::
+hero_stats.max.translation::OptimizedTranslation/OptimizedTranslation::1981295587944800784::1754401131::0::1::::<><><>0<>0<><>::
+hero_stats.move.translation::OptimizedTranslation/OptimizedTranslation::9059774715604455304::1754401131::0::1::::<><><>0<>0<><>::
+hero_stats.rarity.translation::OptimizedTranslation/OptimizedTranslation::4374794718358094289::1754401131::0::1::::<><><>0<>0<><>::
+hero_stats.skill.translation::OptimizedTranslation/OptimizedTranslation::5655309066747349924::1754401131::0::1::::<><><>0<>0<><>::
+hero_stats.spd.translation::OptimizedTranslation/OptimizedTranslation::8073279393970911373::1754401131::0::1::::<><><>0<>0<><>::
+hero_stats.special.translation::OptimizedTranslation/OptimizedTranslation::3040766535623669769::1754401131::0::1::::<><><>0<>0<><>::
+hero_stats.target.translation::OptimizedTranslation/OptimizedTranslation::7497255017968143062::1754401131::0::1::::<><><>0<>0<><>::
+hero_stat_deepseek.armor.translation::OptimizedTranslation/OptimizedTranslation::1020552635542473099::1754401269::0::1::::<><><>0<>0<><>::
+hero_stat_deepseek.attack.translation::OptimizedTranslation/OptimizedTranslation::6832323362781529920::1754401268::0::1::::<><><>0<>0<><>::
 hero_stat_deepseek.csv::Translation/Translation::2936442024408127361::1754401131::1754401269::1::::<><><>0<>0<>0d7a9a483be116a1611eade92fd913cf<>res://script/hero_stats_raw/hero_stat_deepseek.hero.translation<*>res://script/hero_stats_raw/hero_stat_deepseek.spd.translation<*>res://script/hero_stats_raw/hero_stat_deepseek.attack.translation<*>res://script/hero_stats_raw/hero_stat_deepseek.attack.translation<*>res://script/hero_stats_raw/hero_stat_deepseek.attack.translation<*>res://script/hero_stats_raw/hero_stat_deepseek.max.translation<*>res://script/hero_stats_raw/hero_stat_deepseek.max.translation<*>res://script/hero_stats_raw/hero_stat_deepseek.armor.translation<*>res://script/hero_stats_raw/hero_stat_deepseek.skill.translation<*>res://script/hero_stats_raw/hero_stat_deepseek.skill.translation<*>res://script/hero_stats_raw/hero_stat_deepseek.flavor.translation<*>res://script/hero_stats_raw/hero_stat_deepseek.rarity.translation<*>res://script/hero_stats_raw/hero_stat_deepseek.target.translation<*>res://script/hero_stats_raw/hero_stat_deepseek.spell.translation::
-hero_stat_deepseek.flavor.translation::OptimizedTranslation::6444672160510385973::1754401269::0::1::::<><><>0<>0<><>::
-hero_stat_deepseek.hero.translation::OptimizedTranslation::8022139024645620536::1754401268::0::1::::<><><>0<>0<><>::
-hero_stat_deepseek.max.translation::OptimizedTranslation::5813052072125480788::1754401268::0::1::::<><><>0<>0<><>::
-hero_stat_deepseek.rarity.translation::OptimizedTranslation::8288860296564505669::1754401269::0::1::::<><><>0<>0<><>::
-hero_stat_deepseek.skill.translation::OptimizedTranslation::5318640096851535392::1754401269::0::1::::<><><>0<>0<><>::
-hero_stat_deepseek.spd.translation::OptimizedTranslation::5814331149810656273::1754401268::0::1::::<><><>0<>0<><>::
-hero_stat_deepseek.spell.translation::OptimizedTranslation::8642528578589575561::1754401269::0::1::::<><><>0<>0<><>::
-hero_stat_deepseek.target.translation::OptimizedTranslation::3168424745637605715::1754401269::0::1::::<><><>0<>0<><>::
-hero_stat_gemini.armor.translation::OptimizedTranslation::8256621401525451981::1754401269::0::1::::<><><>0<>0<><>::
-hero_stat_gemini.attack.translation::OptimizedTranslation::6931048164756061300::1754401268::0::1::::<><><>0<>0<><>::
+hero_stat_deepseek.flavor.translation::OptimizedTranslation/OptimizedTranslation::6444672160510385973::1754401269::0::1::::<><><>0<>0<><>::
+hero_stat_deepseek.hero.translation::OptimizedTranslation/OptimizedTranslation::8022139024645620536::1754401268::0::1::::<><><>0<>0<><>::
+hero_stat_deepseek.max.translation::OptimizedTranslation/OptimizedTranslation::5813052072125480788::1754401268::0::1::::<><><>0<>0<><>::
+hero_stat_deepseek.rarity.translation::OptimizedTranslation/OptimizedTranslation::8288860296564505669::1754401269::0::1::::<><><>0<>0<><>::
+hero_stat_deepseek.skill.translation::OptimizedTranslation/OptimizedTranslation::5318640096851535392::1754401269::0::1::::<><><>0<>0<><>::
+hero_stat_deepseek.spd.translation::OptimizedTranslation/OptimizedTranslation::5814331149810656273::1754401268::0::1::::<><><>0<>0<><>::
+hero_stat_deepseek.spell.translation::OptimizedTranslation/OptimizedTranslation::8642528578589575561::1754401269::0::1::::<><><>0<>0<><>::
+hero_stat_deepseek.target.translation::OptimizedTranslation/OptimizedTranslation::3168424745637605715::1754401269::0::1::::<><><>0<>0<><>::
+hero_stat_gemini.armor.translation::OptimizedTranslation/OptimizedTranslation::8256621401525451981::1754401269::0::1::::<><><>0<>0<><>::
+hero_stat_gemini.attack.translation::OptimizedTranslation/OptimizedTranslation::6931048164756061300::1754401268::0::1::::<><><>0<>0<><>::
 hero_stat_gemini.csv::Translation/Translation::6490341012003212819::1754401131::1754401269::1::::<><><>0<>0<>6f37227f148b110705ed703b774ebf44<>res://script/hero_stats_raw/hero_stat_gemini.hero.translation<*>res://script/hero_stats_raw/hero_stat_gemini.spd.translation<*>res://script/hero_stats_raw/hero_stat_gemini.attack.translation<*>res://script/hero_stats_raw/hero_stat_gemini.attack.translation<*>res://script/hero_stats_raw/hero_stat_gemini.attack.translation<*>res://script/hero_stats_raw/hero_stat_gemini.max.translation<*>res://script/hero_stats_raw/hero_stat_gemini.max.translation<*>res://script/hero_stats_raw/hero_stat_gemini.armor.translation<*>res://script/hero_stats_raw/hero_stat_gemini.skill.translation<*>res://script/hero_stats_raw/hero_stat_gemini.skill.translation<*>res://script/hero_stats_raw/hero_stat_gemini.flavor.translation<*>res://script/hero_stats_raw/hero_stat_gemini.rarity.translation<*>res://script/hero_stats_raw/hero_stat_gemini.target.translation<*>res://script/hero_stats_raw/hero_stat_gemini.spell.translation::
-hero_stat_gemini.flavor.translation::OptimizedTranslation::818312545878932082::1754401269::0::1::::<><><>0<>0<><>::
-hero_stat_gemini.hero.translation::OptimizedTranslation::7277240772296213433::1754401268::0::1::::<><><>0<>0<><>::
-hero_stat_gemini.max.translation::OptimizedTranslation::3009297718945245435::1754401268::0::1::::<><><>0<>0<><>::
-hero_stat_gemini.rarity.translation::OptimizedTranslation::1809294195161772312::1754401269::0::1::::<><><>0<>0<><>::
-hero_stat_gemini.skill.translation::OptimizedTranslation::8329382497403331434::1754401269::0::1::::<><><>0<>0<><>::
-hero_stat_gemini.spd.translation::OptimizedTranslation::4375503065628244720::1754401268::0::1::::<><><>0<>0<><>::
-hero_stat_gemini.spell.translation::OptimizedTranslation::1477114913826726708::1754401269::0::1::::<><><>0<>0<><>::
-hero_stat_gemini.target.translation::OptimizedTranslation::1683702725046662840::1754401269::0::1::::<><><>0<>0<><>::
-hero_stat_gpt.armor.translation::OptimizedTranslation::6542402298031818820::1754401269::0::1::::<><><>0<>0<><>::
-hero_stat_gpt.attack.translation::OptimizedTranslation::1159090770093757033::1754401268::0::1::::<><><>0<>0<><>::
+hero_stat_gemini.flavor.translation::OptimizedTranslation/OptimizedTranslation::818312545878932082::1754401269::0::1::::<><><>0<>0<><>::
+hero_stat_gemini.hero.translation::OptimizedTranslation/OptimizedTranslation::7277240772296213433::1754401268::0::1::::<><><>0<>0<><>::
+hero_stat_gemini.max.translation::OptimizedTranslation/OptimizedTranslation::3009297718945245435::1754401268::0::1::::<><><>0<>0<><>::
+hero_stat_gemini.rarity.translation::OptimizedTranslation/OptimizedTranslation::1809294195161772312::1754401269::0::1::::<><><>0<>0<><>::
+hero_stat_gemini.skill.translation::OptimizedTranslation/OptimizedTranslation::8329382497403331434::1754401269::0::1::::<><><>0<>0<><>::
+hero_stat_gemini.spd.translation::OptimizedTranslation/OptimizedTranslation::4375503065628244720::1754401268::0::1::::<><><>0<>0<><>::
+hero_stat_gemini.spell.translation::OptimizedTranslation/OptimizedTranslation::1477114913826726708::1754401269::0::1::::<><><>0<>0<><>::
+hero_stat_gemini.target.translation::OptimizedTranslation/OptimizedTranslation::1683702725046662840::1754401269::0::1::::<><><>0<>0<><>::
+hero_stat_gpt.armor.translation::OptimizedTranslation/OptimizedTranslation::6542402298031818820::1754401269::0::1::::<><><>0<>0<><>::
+hero_stat_gpt.attack.translation::OptimizedTranslation/OptimizedTranslation::1159090770093757033::1754401268::0::1::::<><><>0<>0<><>::
 hero_stat_gpt.csv::Translation/Translation::8915628692327669371::1754401131::1754401269::1::::<><><>0<>0<>0dc979ab01f1a4e1ae29bf71c45962d8<>res://script/hero_stats_raw/hero_stat_gpt.hero.translation<*>res://script/hero_stats_raw/hero_stat_gpt.spd.translation<*>res://script/hero_stats_raw/hero_stat_gpt.attack.translation<*>res://script/hero_stats_raw/hero_stat_gpt.attack.translation<*>res://script/hero_stats_raw/hero_stat_gpt.attack.translation<*>res://script/hero_stats_raw/hero_stat_gpt.max.translation<*>res://script/hero_stats_raw/hero_stat_gpt.max.translation<*>res://script/hero_stats_raw/hero_stat_gpt.armor.translation<*>res://script/hero_stats_raw/hero_stat_gpt.skill.translation<*>res://script/hero_stats_raw/hero_stat_gpt.skill.translation<*>res://script/hero_stats_raw/hero_stat_gpt.flavor.translation<*>res://script/hero_stats_raw/hero_stat_gpt.rarity.translation<*>res://script/hero_stats_raw/hero_stat_gpt.target.translation<*>res://script/hero_stats_raw/hero_stat_gpt.spell.translation::
-hero_stat_gpt.flavor.translation::OptimizedTranslation::7010951381971019900::1754401269::0::1::::<><><>0<>0<><>::
-hero_stat_gpt.hero.translation::OptimizedTranslation::708871718563623615::1754401268::0::1::::<><><>0<>0<><>::
-hero_stat_gpt.max.translation::OptimizedTranslation::680955105323337020::1754401268::0::1::::<><><>0<>0<><>::
-hero_stat_gpt.rarity.translation::OptimizedTranslation::1827607782832069155::1754401269::0::1::::<><><>0<>0<><>::
-hero_stat_gpt.skill.translation::OptimizedTranslation::2256832167896453794::1754401269::0::1::::<><><>0<>0<><>::
-hero_stat_gpt.spd.translation::OptimizedTranslation::623608837423204181::1754401268::0::1::::<><><>0<>0<><>::
-hero_stat_gpt.spell.translation::OptimizedTranslation::8994705819595563348::1754401269::0::1::::<><><>0<>0<><>::
-hero_stat_gpt.target.translation::OptimizedTranslation::3326987918756045072::1754401269::0::1::::<><><>0<>0<><>::
+hero_stat_gpt.flavor.translation::OptimizedTranslation/OptimizedTranslation::7010951381971019900::1754401269::0::1::::<><><>0<>0<><>::
+hero_stat_gpt.hero.translation::OptimizedTranslation/OptimizedTranslation::708871718563623615::1754401268::0::1::::<><><>0<>0<><>::
+hero_stat_gpt.max.translation::OptimizedTranslation/OptimizedTranslation::680955105323337020::1754401268::0::1::::<><><>0<>0<><>::
+hero_stat_gpt.rarity.translation::OptimizedTranslation/OptimizedTranslation::1827607782832069155::1754401269::0::1::::<><><>0<>0<><>::
+hero_stat_gpt.skill.translation::OptimizedTranslation/OptimizedTranslation::2256832167896453794::1754401269::0::1::::<><><>0<>0<><>::
+hero_stat_gpt.spd.translation::OptimizedTranslation/OptimizedTranslation::623608837423204181::1754401268::0::1::::<><><>0<>0<><>::
+hero_stat_gpt.spell.translation::OptimizedTranslation/OptimizedTranslation::8994705819595563348::1754401269::0::1::::<><><>0<>0<><>::
+hero_stat_gpt.target.translation::OptimizedTranslation/OptimizedTranslation::3326987918756045072::1754401269::0::1::::<><><>0<>0<><>::
