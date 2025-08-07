@@ -58,6 +58,7 @@ var max_mp = base_max_mp
 var damage = base_damage
 var attack_spd = base_attack_spd
 var attack_range = base_attack_range
+var remain_attack_count
 
 @onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D
 @onready var melee_attack_animation: AnimationPlayer = $melee_attack_animation
@@ -403,6 +404,8 @@ func start_turn():
 
 	update_buff_debuff()
 
+	remain_attack_count = attack_spd
+
 	if not hero_target or hero_target.stat == STATUS.DIE:
 		_handle_targeting()
 		
@@ -475,14 +478,19 @@ func _handle_action():
 			_cast_spell(hero_spell_target)
 			mp = 0
 			return
+		_handle_attack()
+	action_timer.start()
+
+func _handle_attack():
 	var current_distance_to_target = global_position.distance_to(hero_target.global_position)
+	remain_attack_count -= 1
 	if current_distance_to_target <= attack_range and (!debuff_handler.is_stunned or !debuff_handler.is_disarmed):
 		if current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
 			stat = STATUS.RANGED_ATTACK
 			animated_sprite_2d.play("ranged_attack")
 			if ResourceLoader.exists("res://asset/animation/%s/%s%s_projectile.tres" % [faction, faction, hero_name]):
 				var hero_projectile = _launch_projectile(hero_target)
-				hero_projectile.projectile_vanished.connect(_on_projectile_vanished)
+				hero_projectile.projectile_vanished.connect(_on_animated_sprite_2d_animation_finished)
 			else:
 				hero_target.take_damage(damage, self)	
 		elif current_distance_to_target < ranged_attack_threshold:
@@ -493,7 +501,6 @@ func _handle_action():
 				stat = STATUS.RANGED_ATTACK
 				animated_sprite_2d.play("attack")
 				hero_target.take_damage(damage, self)	
-	action_timer.start()
 
 func _handle_action_timeout():
 	action_finished.emit()
@@ -505,9 +512,6 @@ func _handle_targeting():
 	if !hero_target or hero_target.stat == STATUS.DIE:
 		line.visible = false
 		hero_target = _find_new_target(hero_target_choice)
-		
-func _on_projectile_vanished():
-	action_timer.start()
 		
 # Find a new target based on selection strategy
 func _find_new_target(tgt) -> Hero:
@@ -769,16 +773,28 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 		action_timer.start()
 		
 	elif stat == STATUS.RANGED_ATTACK:
-		if ResourceLoader.exists("res://asset/animation/%s/%s%s_projectile.tres" % [faction, faction, hero_name]):
-			pass
+		if remain_attack_count <= 0:
+			if ResourceLoader.exists("res://asset/animation/%s/%s%s_projectile.tres" % [faction, faction, hero_name]):
+				pass
+			else:
+				action_timer.start()
+			ranged_attack_finished.emit()
+		elif hero_target and hero_target.stat != STATUS.DIE:
+			_handle_attack()
 		else:
-			action_timer.start()
-		ranged_attack_finished.emit()
-	# 	action_finished.emit()
+			hero_target = _find_new_target(TARGET_CHOICE.CLOSE)
+			_handle_attack()
 
 	elif stat == STATUS.MELEE_ATTACK:
-		melee_attack_finished.emit()
-		action_timer.start()
+		if remain_attack_count <= 0:
+			melee_attack_finished.emit()
+			action_timer.start()
+		elif hero_target and hero_target.stat != STATUS.DIE:
+			_handle_attack()
+		else:
+			hero_target = _find_new_target(TARGET_CHOICE.CLOSE)
+			_handle_attack()
+
 
 	stat = STATUS.IDLE
 	animated_sprite_2d.play("idle")
