@@ -4,10 +4,10 @@ extends Node2D
 const hero_scene = preload("res://scene/hero.tscn")
 const hero_class = preload("res://script/hero.gd")
 
-@onready var floor_tile: TileMapLayer = $tilemap/floor
 
 @export_enum("human", "dwarf", "elf", "forestProtector", "holy", "undead", "demon") var team1_faction := "human"
 @export_enum("human", "dwarf", "elf", "forestProtector", "holy", "undead", "demon") var team2_faction := "human"
+@onready var floor: PlayArea = $tilemap/floor
 
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
 enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
@@ -68,14 +68,13 @@ func _ready():
 	
 	game_finished.connect(_on_game_finished)
 
-	astar_grid_region = Rect2i(-8, -8, grid_count, grid_count)
+	astar_grid_region = Rect2i(0, 0, grid_count, grid_count)
 	#astar_grid_region = Rect2i(tile_size.x / 2, tile_size.y / 2, tile_size.x / 2 + tile_size.x * (grid_count - 1), tile_size.y / 2 + tile_size.y * (grid_count - 1))
 	astar_grid.region = astar_grid_region
 	astar_grid.cell_size = Vector2(grid_size, grid_size)
 	# 遍历每个格子
-	for x in range(-tile_size.x / 2, 0):
-		for y in range(-tile_size.y / 2, tile_size.y / 2):
-			# 随机决定是否生成角色(50%概率)
+	for x in range(0, tile_size.x / 2):
+		for y in range(0, tile_size.y):
 			if randf() > rand_hero_ratio:
 				# 创建角色实例
 				var character = hero_scene.instantiate()
@@ -87,6 +86,7 @@ func _ready():
 				)
 
 				# 设置角色位置
+				character.floor_global_position = floor.global_position
 				character._position = position
 				character.team = 1
 				character.faction = team1_faction
@@ -97,9 +97,8 @@ func _ready():
 				# 添加到场景
 				add_child(character)
 				
-	for x in range(0, tile_size.x / 2):
-		for y in range(-tile_size.y / 2, tile_size.y / 2):
-			# 随机决定是否生成角色(50%概率)
+	for x in range(tile_size.x / 2, tile_size.x):
+		for y in range(0, tile_size.y):
 			if randf() > rand_hero_ratio:
 				# 创建角色实例
 				var character = hero_scene.instantiate()
@@ -111,6 +110,7 @@ func _ready():
 				)
 				
 				# 设置角色位置
+				character.floor_global_position = floor.global_position
 				character._position = position
 				character.team = 2
 				character.faction = team2_faction
@@ -123,7 +123,7 @@ func _ready():
 				
 	center_point = Vector2(tile_size.x * grid_count / 2, tile_size.y * grid_count / 2)
 	astar_grid.update()
-	start_new_round()
+	# start_new_round()
 
 func get_random_character(faction_name: String) -> String:
 	if not hero_data.has(faction_name):
