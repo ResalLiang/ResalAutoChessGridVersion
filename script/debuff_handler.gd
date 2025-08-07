@@ -2,13 +2,25 @@ extends Node
 class_name Debuff_handler
 
 var is_silenced := false
-var silence_duration := 0
+var silence_duration := 0:
+	set(value):
+		if value > 0:
+			silence_duration = value
+			is_silenced = true
 
 var is_disarmed := false
-var disarmed_duration := 0
+var disarmed_duration := 0:
+	set(value):
+		if value > 0:
+			disarmed_duration = value
+			is_disarmed = true
 
 var is_stunned := false
-var stunned_duration := 0
+var stunned_duration := 0:
+	set(value):
+		if value > 0:
+			stunned_duration = value
+			is_stunned = true
 
 var spd_modifier := 0
 var spd_modifier_duration := 0

@@ -2,7 +2,11 @@ extends Node
 class_name Buff_handler
 
 var is_immunity := false
-var immunity_duration := 0
+var immunity_duration := 0:
+	set(value):
+		if value > 0:
+			immunity_duration = value
+			is_immunity = true
 
 var spd_modifier := 0
 var spd_modifier_duration := 0

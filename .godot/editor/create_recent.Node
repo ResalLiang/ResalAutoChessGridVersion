@@ -1,6 +1,7 @@
+TileMapLayer
+Node
 Node2D
 Timer
-Node
 Area2D
 AnimatedSprite2D
 ProgressBar
@@ -8,6 +9,5 @@ AnimationPlayer
 NavigationAgent2D
 CollisionShape2D
 Line2D
-TileMapLayer
 CharacterBody2D
 AnimatableBody2D

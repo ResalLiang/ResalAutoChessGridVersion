@@ -10,7 +10,6 @@ class_name Hero
 enum STATUS {IDLE, MOVE, MELEE_ATTACK, RANGED_ATTACK, JUMP, HIT, DIE, SPELL}
 enum TARGET_CHOICE {CLOSE, FAR, STRONG, WEAK, ALLY}
 
-const DEFAULT_ATTACK_INTERVAL := 1.5  # Default attack interval (seconds)
 const MAX_SEARCH_RADIUS = 3
 # ========================
 # Exported Variables
@@ -104,6 +103,7 @@ var faction_hero_dict = {
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
 var rng = RandomNumberGenerator.new() # Random number generator
 
+var floor_global_position
 #Astar navigation related
 var move_path: PackedVector2Array
 var position_id := Vector2i.ZERO
@@ -122,7 +122,7 @@ var is_active: bool = false
 var grid_offset =Vector2(8, 8)
 var remain_step:= 0
 
-var astar_grid_region = Rect2i(-8, -8, 16, 16)
+var astar_grid_region = Rect2i(0, 0, 16, 16)
 # ========================
 # Signal Definitions
 # ========================
@@ -220,9 +220,6 @@ func _ready():
 	# Initialize character properties
 	hp = max_hp
 	mp = 0
-	# Set attack timer interval based on attack speed
-	attack_timer.wait_time = DEFAULT_ATTACK_INTERVAL
-	# print("%s's attack timer wait time = %d." % [hero_name, attack_timer.wait_time])
 
 	hp_bar.min_value = 0
 	hp_bar.max_value = max_hp
@@ -285,7 +282,7 @@ func _process(delta: float) -> void:
 
 	animated_sprite_2d.material = new_material
 
-	if !is_active:
+	if is_active:
 		drag_handler.dragging_enabled = false
 	else:
 		drag_handler.dragging_enabled = dragging_enabled
@@ -356,7 +353,7 @@ func _load_animations():
 		var frames = ResourceLoader.load(path)
 		for anim_name in frames.get_animation_names():
 			# 根据需求设置不同循环条件
-			if anim_name == "idle" or anim_name == "move":
+			if anim_name == "idle" or anim_name == "move" or anim_name == "jump":
 				frames.set_animation_loop(anim_name, true)
 			else:
 				frames.set_animation_loop(anim_name, false)
@@ -478,8 +475,7 @@ func _handle_action():
 			_cast_spell(hero_spell_target)
 			mp = 0
 			return
-		_handle_attack()
-	action_timer.start()
+	_handle_attack()
 
 func _handle_attack():
 	var current_distance_to_target = global_position.distance_to(hero_target.global_position)
@@ -501,6 +497,7 @@ func _handle_attack():
 				stat = STATUS.RANGED_ATTACK
 				animated_sprite_2d.play("attack")
 				hero_target.take_damage(damage, self)	
+	action_timer.start()
 
 func _handle_action_timeout():
 	action_finished.emit()
@@ -726,13 +723,15 @@ func _handle_dragging_state(drag_action):
 		match drag_action:
 			"started":
 				stat = STATUS.JUMP
+				animated_sprite_2d.play("jump")
+				return
 			"dropped":
 				stat = STATUS.IDLE
 			"canceled":
-				stat = STATUS.JUMP
+				stat = STATUS.IDLE
 			_:
-				stat = STATUS.JUMP
-
+				stat = STATUS.IDLE
+		animated_sprite_2d.play("idle")
 func update_buff_debuff():
 	
 	buff_handler.start_turn_update()
