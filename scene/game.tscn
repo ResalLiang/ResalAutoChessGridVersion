@@ -673,7 +673,7 @@ highlight_layer = NodePath("../highlight")
 tile = Vector2i(6, 9)
 
 [node name="highlight" type="TileMapLayer" parent="tilemap/floor"]
-z_index = 2
+z_index = 1
 tile_set = SubResource("TileSet_ll5lq")
 
 [node name="decoration" type="TileMapLayer" parent="tilemap"]
