@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cmj65pa4j3u1u" path="res://script/hero.gd" id="1_n7ut4"]
 [ext_resource type="Shader" uid="uid://d3tyrfwlw2c1g" path="res://asset/shader/LightweightPixelPerfectOutline.gdshader" id="2_jr182"]
-[ext_resource type="SpriteFrames" uid="uid://pvu8xcp5ahdu" path="res://asset/animation/human/humanShieldMan.tres" id="3_jr182"]
+[ext_resource type="SpriteFrames" uid="uid://txjek67pxwh3" path="res://asset/animation/dwarf/dwarfShieldbreaker.tres" id="3_heiwi"]
 [ext_resource type="Script" uid="uid://pmtyv1bl3nog" path="res://script/drag_handler.gd" id="3_r065v"]
 [ext_resource type="Script" uid="uid://bwyapus01e2fk" path="res://script/buff_handler.gd" id="5_dbi3s"]
 [ext_resource type="Script" uid="uid://clowjrn7v3b1m" path="res://script/debuff_handler.gd" id="6_heiwi"]
@@ -287,8 +287,8 @@ line_visible = true
 y_sort_enabled = true
 material = SubResource("ShaderMaterial_dbi3s")
 position = Vector2(0, -11)
-sprite_frames = ExtResource("3_jr182")
-animation = &"block"
+sprite_frames = ExtResource("3_heiwi")
+animation = &"die"
 autoplay = "idle"
 
 [node name="Area2D" type="Area2D" parent="."]

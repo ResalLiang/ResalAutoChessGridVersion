@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" load_steps=27 format=3 uid="uid://eb0f78vycdwy"]
+[gd_resource type="SpriteFrames" load_steps=13 format=3 uid="uid://eb0f78vycdwy"]
 
 [ext_resource type="Texture2D" uid="uid://504qhctvhavs" path="res://asset/sprite/MinifolksDwarfs/Outline/MiniGrenade.png" id="1_4rlfg"]
 
@@ -29,62 +29,6 @@ region = Rect2(80, 16, 16, 16)
 [sub_resource type="AtlasTexture" id="AtlasTexture_ilfri"]
 atlas = ExtResource("1_4rlfg")
 region = Rect2(96, 16, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_oj6y4"]
-atlas = ExtResource("1_4rlfg")
-region = Rect2(0, 48, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hq3ti"]
-atlas = ExtResource("1_4rlfg")
-region = Rect2(16, 48, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_j503p"]
-atlas = ExtResource("1_4rlfg")
-region = Rect2(32, 48, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_85c1x"]
-atlas = ExtResource("1_4rlfg")
-region = Rect2(48, 48, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cdl48"]
-atlas = ExtResource("1_4rlfg")
-region = Rect2(64, 48, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_s1h06"]
-atlas = ExtResource("1_4rlfg")
-region = Rect2(80, 48, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_j5ed0"]
-atlas = ExtResource("1_4rlfg")
-region = Rect2(0, 32, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_i1fga"]
-atlas = ExtResource("1_4rlfg")
-region = Rect2(16, 32, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fxt5p"]
-atlas = ExtResource("1_4rlfg")
-region = Rect2(32, 32, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_xgwms"]
-atlas = ExtResource("1_4rlfg")
-region = Rect2(48, 32, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_5rd4r"]
-atlas = ExtResource("1_4rlfg")
-region = Rect2(64, 32, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ah4yd"]
-atlas = ExtResource("1_4rlfg")
-region = Rect2(80, 32, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_yryfk"]
-atlas = ExtResource("1_4rlfg")
-region = Rect2(96, 32, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_a66y5"]
-atlas = ExtResource("1_4rlfg")
-region = Rect2(112, 32, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_uaelv"]
 atlas = ExtResource("1_4rlfg")
@@ -127,59 +71,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_ilfri")
 }],
 "loop": false,
-"name": &"attack",
-"speed": 8.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_oj6y4")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_hq3ti")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_j503p")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_85c1x")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cdl48")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_s1h06")
-}],
-"loop": false,
-"name": &"attack2",
-"speed": 8.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_j5ed0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_i1fga")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_fxt5p")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_xgwms")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_5rd4r")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ah4yd")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_yryfk")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_a66y5")
-}],
-"loop": false,
-"name": &"idle",
+"name": &"boom",
 "speed": 8.0
 }, {
 "frames": [{
