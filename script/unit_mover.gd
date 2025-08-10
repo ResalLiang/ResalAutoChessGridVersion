@@ -1,0 +1,79 @@
+class_name UnitMover
+extends Node
+
+@export var play_areas: Array[PlayArea]
+
+func _ready() -> void:
+	var heroes := get_tree().get_nodes_in_group("hero_group")
+	for hero: Hero in heroes:
+		setup_hero(hero)
+		
+func setup_hero(hero: Hero) -> void:
+	hero.drag_and_drop.drag_started.connect(_on_hero_drag_started.bind(hero))
+	hero.drag_and_drop.drag_canceled.connect(_on_hero_drag_canceled.bind(hero))
+	hero.drag_and_drop.dropped.connect(_on_hero_dropped.bind(hero))
+	
+func _set_highlighters(enabled: bool) -> void:
+	for play_area: PlayArea in play_areas:
+		play_area.tile_highlighter.enable = enabled
+		
+func _get_play_area_for_position(global: Vector2) -> int:
+	var dropped_area_index := 1
+	
+	for i in play_areas.size():
+		var tile := play_areas[i].get_tile_from_global(global)
+		if play_areas[i].is_tile_in_bounds(tile):
+			dropped_area_index = i
+	
+	return dropped_area_index
+	
+func _reset_hero_to_starting_position(starting_position: Vector2, hero: Hero) -> void:
+	var i := _get_play_area_for_position(starting_position)
+	var tile := play_areas[i].get_tile_from_global(starting_position)
+	
+	hero.reset_after_dragging(starting_position)
+	play_areas[i].unit_grid.add_unit(tile, hero)
+
+
+func _move_hero(hero: Hero, play_area: PlayArea, tile: Vector2i) -> void:
+	play_area.unit_grid.add_unit(tile, hero)
+	hero.global_position = play_area.get_global_from_tile(tile) - Arena.HALF_CELL_SIZE
+	hero.reparent(play_area.unit_grid)
+
+		
+func _on_hero_drag_started(hero: Hero) -> void:
+	_set_highlighters(true)
+	
+	var i := _get_play_area_for_position(hero.global_position)
+	if i >= -1:
+		var tile := play_areas[i].get_tile_from_global(hero.global_position)
+		play_areas[i].unit_gird.remove_unit(tile)
+		
+		
+func _on_hero_drag_canceled(starting_position: Vector2, hero: Hero) -> void:
+	_set_highlighters(false)
+	_reset_hero_to_starting_position(starting_position, hero)
+	
+	
+func _on_hero_dropped(starting_position: Vector2, hero: Hero) -> void:
+	
+	var old_area_index := _get_play_area_for_position(starting_position)
+	var drop_area_index := _get_play_area_for_position(hero.get_global_mouse_position())
+
+	if drop_area_index == -1:
+		_reset_hero_to_starting_position(starting_position, hero)
+		return
+		
+	var old_area := play_areas[old_area_index]
+	var old_tile := old_area.get_tile_from_global(starting_position)
+	var new_area := play_areas[drop_area_index]
+	var new_tile := new_area.get_hovered_tile()
+
+	# swap heroes if we have to
+	if new_area.unit_gird.is_tile_occupied(new_tile):
+		var old_hero: Hero = new_area.unit_gird.heroes[new_tile]
+		new_area.unit_gird.remove_unit(new_tile)
+		_move_hero(old_hero, old_area, old_tile)
+		
+	_move_hero(hero, new_area, new_tile)		
+	
