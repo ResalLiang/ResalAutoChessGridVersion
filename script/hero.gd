@@ -364,7 +364,7 @@ func _load_animations():
 
 # Load hero stats from JSON file
 func _load_hero_stats():
-	var file = FileAccess.open("res://script/hero_stats_raw/hero_stats.json", FileAccess.READ)
+	var file = FileAccess.open("res://script/hero_stats.json", FileAccess.READ)
 	if not file:
 		push_error("Failed to open hero_stats.json")
 		return

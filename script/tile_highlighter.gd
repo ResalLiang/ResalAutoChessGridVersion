@@ -7,7 +7,7 @@ extends Node
 @export var highlight_layer: TileMapLayer
 @export var tile: Vector2i
 
-@onready var source_id := highlight_layer.tile_set.get_source_id(2)
+@onready var source_id := highlight_layer.tile_set.get_source_id(1)
 
 func _process(delta: float) -> void:
 	if not enable:

@@ -50,7 +50,7 @@ func _ready():
 	var rows = 5
 	var cols = 4
 	
-	var file = FileAccess.open("res://script/hero_stats_raw/hero_stats.json", FileAccess.READ)
+	var file = FileAccess.open("res://script/hero_stats.json", FileAccess.READ)
 	if not file:
 		push_error("Failed to open hero_stats.json")
 		return

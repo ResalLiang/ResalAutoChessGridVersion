@@ -1,8 +1,9 @@
-res://scene/projectile.tscn
+res://scene/hero.tscn
 res://asset/shader/LightweightPixelPerfectOutline.gdshader
 res://asset/animation/dwarf/dwarfShieldbreaker.tres
 res://asset/tileset/dungeon_tileset.tres
+res://script/hero.gd
 res://scene/game.tscn
-res://scene/hero.tscn
-res://script/tile_highlighter.gd
+res://scene/projectile.tscn
 res://script/game.gd
+res://script/tile_highlighter.gd
