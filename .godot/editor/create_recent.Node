@@ -1,6 +1,7 @@
+Sprite2D
+Node2D
 TileMapLayer
 Node
-Node2D
 Timer
 Area2D
 AnimatedSprite2D

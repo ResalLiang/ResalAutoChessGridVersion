@@ -25,8 +25,6 @@ var center_point: Vector2
 var board_width:= 216
 var board_height:= 216
 
-var astar_grid
-var astar_grid_region
 var grid_size := 16
 var grid_count := 16
 var current_id:= Vector2i.ZERO
@@ -64,14 +62,8 @@ func _ready():
 		push_error("JSON parsing failed for hero_stats.json")
 		return
 	
-	astar_grid = AStarGrid2D.new()
-	
 	game_finished.connect(_on_game_finished)
 
-	astar_grid_region = Rect2i(0, 0, grid_count, grid_count)
-	#astar_grid_region = Rect2i(tile_size.x / 2, tile_size.y / 2, tile_size.x / 2 + tile_size.x * (grid_count - 1), tile_size.y / 2 + tile_size.y * (grid_count - 1))
-	astar_grid.region = astar_grid_region
-	astar_grid.cell_size = Vector2(grid_size, grid_size)
 	# 遍历每个格子
 	for x in range(0, tile_size.x / 2):
 		for y in range(0, tile_size.y):
@@ -93,7 +85,6 @@ func _ready():
 				character.hero_name = get_random_character(team1_faction)
 				team_dict[Team.TEAM1_FULL].append(character)
 				current_id = Vector2i(x, y)
-				astar_grid.set_point_solid(current_id, true)
 				# 添加到场景
 				add_child(character)
 				
@@ -117,12 +108,10 @@ func _ready():
 				character.hero_name = get_random_character(team2_faction)
 				team_dict[Team.TEAM2_FULL].append(character)
 				current_id = Vector2i(x, y)
-				astar_grid.set_point_solid(current_id, true)
 				# 添加到场景
 				add_child(character)
 				
 	center_point = Vector2(tile_size.x * grid_count / 2, tile_size.y * grid_count / 2)
-	astar_grid.update()
 	# start_new_round()
 
 func get_random_character(faction_name: String) -> String:
@@ -184,7 +173,6 @@ func start_team_turn(team: Team):
 	process_character_turn(team_chars.pop_front())
 
 func process_character_turn(hero):
-	astar_solid_map = refresh_solid_point()
 	active_hero = hero
 	active_hero.is_active = true
 	active_hero.start_turn()
@@ -224,35 +212,3 @@ func sort_characters(team: Team, mode: SelectionMode) -> Array:
 			heroes_team.sort_custom(func(a, b): 
 				return a.position.distance_to(center_point) > b.position.distance_to(center_point))
 	return heroes_team
-
-
-func refresh_solid_point():
-	astar_grid.fill_solid_region(astar_grid_region, false)
-	var add_solid_cnt = 0
-	for hero1 in team_dict[Team.TEAM1_FULL]:
-		if hero1.stat != hero1.STATUS.DIE:
-			astar_grid.set_point_solid(hero1.position_id, true)
-			add_solid_cnt += 1
-		else:
-			pass
-
-	for hero2 in team_dict[Team.TEAM2_FULL]:
-		if hero2.stat != hero2.STATUS.DIE:
-			astar_grid.set_point_solid(hero2.position_id, true)
-			add_solid_cnt += 1
-		else:
-			pass
-	
-	astar_grid.update()
-	var row_solid_map = ""
-	var astar_solid_map_result = []
-	var solid_sum = 0
-	for y in range(-8, 8, 1):
-		row_solid_map = ""
-		for x in range(-8, 8, 1):
-			var solid_result = 1 if astar_grid.is_point_solid(Vector2i(x, y)) else 0
-			row_solid_map = row_solid_map + str(solid_result)
-			solid_sum += solid_result
-		astar_solid_map_result.append(row_solid_map)
-	#print("Out" + str(solid_sum))
-	return astar_solid_map_result

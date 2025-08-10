@@ -1,6 +1,6 @@
 [gd_resource type="SpriteFrames" load_steps=32 format=3 uid="uid://cq5uvwxtp8keh"]
 
-[ext_resource type="Texture2D" uid="uid://bm0hgoe1thn6k" path="res://asset/sprite/MinifolksHumans/Outline/MiniPrinceMan.png" id="1_oi4nt"]
+[ext_resource type="Texture2D" uid="uid://bm0hgoe1thn6k" path="res://asset/sprite/MiniFolks/MinifolksHumans/Outline/MiniPrinceMan.png" id="1_oi4nt"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3luv7"]
 atlas = ExtResource("1_oi4nt")

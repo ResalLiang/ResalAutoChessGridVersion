@@ -289,7 +289,7 @@ y_sort_enabled = true
 material = SubResource("ShaderMaterial_dbi3s")
 position = Vector2(0, -11)
 sprite_frames = ExtResource("3_heiwi")
-animation = &"die"
+animation = &"idle"
 autoplay = "idle"
 
 [node name="Area2D" type="Area2D" parent="."]
