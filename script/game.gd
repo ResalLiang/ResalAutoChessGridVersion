@@ -8,6 +8,8 @@ const hero_class = preload("res://script/hero.gd")
 @export_enum("human", "dwarf", "elf", "forestProtector", "holy", "undead", "demon") var team1_faction := "human"
 @export_enum("human", "dwarf", "elf", "forestProtector", "holy", "undead", "demon") var team2_faction := "human"
 @onready var floor: PlayArea = $tilemap/floor
+@onready var arena_unit_grid: UnitGrid = $ArenaUnitGrid
+@onready var bench_unit_grid: UnitGrid = $BenchUnitGrid
 
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
 enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
@@ -84,6 +86,7 @@ func _ready():
 				character.faction = team1_faction
 				character.hero_name = get_random_character(team1_faction)
 				team_dict[Team.TEAM1_FULL].append(character)
+				arena_unit_grid.units[Vector2(x, y)] = character
 				current_id = Vector2i(x, y)
 				# 添加到场景
 				add_child(character)
@@ -107,12 +110,13 @@ func _ready():
 				character.faction = team2_faction
 				character.hero_name = get_random_character(team2_faction)
 				team_dict[Team.TEAM2_FULL].append(character)
+				arena_unit_grid.units[Vector2(x, y)] = character
 				current_id = Vector2i(x, y)
 				# 添加到场景
 				add_child(character)
 				
 	center_point = Vector2(tile_size.x * grid_count / 2, tile_size.y * grid_count / 2)
-	start_new_round()
+	#start_new_round()
 
 func get_random_character(faction_name: String) -> String:
 	if not hero_data.has(faction_name):

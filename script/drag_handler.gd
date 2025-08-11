@@ -1,4 +1,5 @@
 extends Node2D
+class_name DragHandler
 
 @onready var dragging_item: Node2D = $".."
 @onready var area_2d: Area2D = $"../Area2D"
@@ -17,9 +18,9 @@ const CHARACT_Z_INDEX = 2  # Default rendering layer
 # Signal Definitions
 # ========================
 # Dragging signals
-signal drag_canceled(starting_position: Vector2) # Emitted when drag is canceled
-signal drag_started                              # Emitted when drag starts
-signal drag_dropped                                   # Emitted when character is dropped
+signal drag_canceled(starting_position: Vector2, action: String) # Emitted when drag is canceled
+signal drag_started(starting_position: Vector2, action: String)                              # Emitted when drag starts
+signal drag_dropped(starting_position: Vector2, action: String)                                   # Emitted when character is dropped
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -56,7 +57,7 @@ func _start_dragging():
 	add_to_group("dragging")
 	dragging_item.z_index = 99  # Bring to front during drag
 	offset = dragging_item.global_position - get_global_mouse_position()
-	drag_started.emit("started")
+	drag_started.emit(starting_position, "started")
 
 # End dragging (common operations)
 func _end_dragging():
@@ -68,12 +69,12 @@ func _end_dragging():
 func _cancel_dragging():
 	_end_dragging()
 	global_position = starting_position
-	drag_canceled.emit("canceled")
+	drag_canceled.emit(starting_position, "canceled")
 
 # Drop character at current position
 func _drop():
 	_end_dragging()
-	drag_dropped.emit("dropped")
+	drag_dropped.emit(starting_position, "dropped")
 	
 	
 # ========================

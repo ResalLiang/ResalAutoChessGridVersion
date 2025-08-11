@@ -1,7 +1,8 @@
-class_name UnitMover
+class_name HeroMover
 extends Node
 
 @export var play_areas: Array[PlayArea]
+const HALF_CELL_SIZE := Vector2(8, 8)
 
 func _ready() -> void:
 	var heroes := get_tree().get_nodes_in_group("hero_group")
@@ -9,9 +10,9 @@ func _ready() -> void:
 		setup_hero(hero)
 		
 func setup_hero(hero: Hero) -> void:
-	hero.drag_and_drop.drag_started.connect(_on_hero_drag_started.bind(hero))
-	hero.drag_and_drop.drag_canceled.connect(_on_hero_drag_canceled.bind(hero))
-	hero.drag_and_drop.dropped.connect(_on_hero_dropped.bind(hero))
+	hero.drag_handler.drag_started.connect(_on_hero_drag_started.bind(hero))
+	hero.drag_handler.drag_canceled.connect(_on_hero_drag_canceled.bind(hero))
+	hero.drag_handler.drag_dropped.connect(_on_hero_dropped.bind(hero))
 	
 func _set_highlighters(enabled: bool) -> void:
 	for play_area: PlayArea in play_areas:
@@ -37,11 +38,11 @@ func _reset_hero_to_starting_position(starting_position: Vector2, hero: Hero) ->
 
 func _move_hero(hero: Hero, play_area: PlayArea, tile: Vector2i) -> void:
 	play_area.unit_grid.add_unit(tile, hero)
-	hero.global_position = play_area.get_global_from_tile(tile) - Arena.HALF_CELL_SIZE
+	hero.global_position = play_area.get_global_from_tile(tile) - HALF_CELL_SIZE
 	hero.reparent(play_area.unit_grid)
 
 		
-func _on_hero_drag_started(hero: Hero) -> void:
+func _on_hero_drag_started(starting_position: Vector2, status: String, hero: Hero) -> void:
 	_set_highlighters(true)
 	
 	var i := _get_play_area_for_position(hero.global_position)
@@ -50,12 +51,12 @@ func _on_hero_drag_started(hero: Hero) -> void:
 		play_areas[i].unit_gird.remove_unit(tile)
 		
 		
-func _on_hero_drag_canceled(starting_position: Vector2, hero: Hero) -> void:
+func _on_hero_drag_canceled(starting_position: Vector2, status: String, hero: Hero) -> void:
 	_set_highlighters(false)
 	_reset_hero_to_starting_position(starting_position, hero)
 	
 	
-func _on_hero_dropped(starting_position: Vector2, hero: Hero) -> void:
+func _on_hero_dropped(starting_position: Vector2, status: String, hero: Hero) -> void:
 	
 	var old_area_index := _get_play_area_for_position(starting_position)
 	var drop_area_index := _get_play_area_for_position(hero.get_global_mouse_position())

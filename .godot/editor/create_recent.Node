@@ -1,10 +1,10 @@
+Node
 CollisionShape2D
 Area2D
 AnimationPlayer
 Sprite2D
 Node2D
 TileMapLayer
-Node
 Timer
 AnimatedSprite2D
 ProgressBar

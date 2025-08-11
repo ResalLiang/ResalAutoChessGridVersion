@@ -8,3 +8,6 @@ res://scene/projectile.tscn
 res://script/game.gd
 res://script/hero.gd
 res://script/projectile.gd
+res://script/drag_handler.gd
+res://script/unit_mover.gd
+res://script/hero_mover.gd

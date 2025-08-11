@@ -732,7 +732,7 @@ func update_solid_map():
 		if node.stat != STATUS.DIE:
 			astar_grid.set_point_solid(node.position_id, true)
 
-func _handle_dragging_state(drag_action):
+func _handle_dragging_state(stating_position: Vector2, drag_action: String):
 	if !is_active:
 		match drag_action:
 			"started":

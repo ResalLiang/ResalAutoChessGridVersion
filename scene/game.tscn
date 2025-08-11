@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=4 uid="uid://cthbjvirwy2mg"]
+[gd_scene load_steps=12 format=4 uid="uid://cthbjvirwy2mg"]
 
 [ext_resource type="Script" uid="uid://c7rtc63knhqn2" path="res://script/game.gd" id="1_ll5lq"]
 [ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="2_dbls1"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://k66qmjhfvp2w" path="res://script/tile_highlighter.gd" id="4_p1ry8"]
 [ext_resource type="Texture2D" uid="uid://d6bylde4el1n" path="res://asset/tileset/0x72_DungeonTilesetII_v1.7.png" id="5_xlg7c"]
 [ext_resource type="Texture2D" uid="uid://bj8r1mq64aqwi" path="res://asset/tileset/Final_Tileset.png" id="6_qpk70"]
+[ext_resource type="Script" uid="uid://rxa6ts4scjj8" path="res://script/hero_mover.gd" id="7_ll5lq"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qpk70"]
 texture = ExtResource("5_xlg7c")
@@ -1989,6 +1990,10 @@ tile = Vector2i(0, 15)
 [node name="highlight" type="TileMapLayer" parent="tilemap/floor"]
 z_index = 1
 tile_set = SubResource("TileSet_ll5lq")
+
+[node name="hero_mover" type="Node" parent="tilemap/floor" node_paths=PackedStringArray("play_areas")]
+script = ExtResource("7_ll5lq")
+play_areas = [NodePath("..")]
 
 [node name="decoration" type="TileMapLayer" parent="tilemap"]
 z_index = 1
