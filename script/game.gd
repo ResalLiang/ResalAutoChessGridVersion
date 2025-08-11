@@ -30,7 +30,7 @@ var grid_count := 16
 var current_id:= Vector2i.ZERO
 var astar_solid_map
 
-var rand_hero_ratio := 0.95
+var rand_hero_ratio := 0.8
 # Define rarity weights dictionary
 const RARITY_WEIGHTS = {
 	"Common": 50,
@@ -112,7 +112,7 @@ func _ready():
 				add_child(character)
 				
 	center_point = Vector2(tile_size.x * grid_count / 2, tile_size.y * grid_count / 2)
-	# start_new_round()
+	start_new_round()
 
 func get_random_character(faction_name: String) -> String:
 	if not hero_data.has(faction_name):

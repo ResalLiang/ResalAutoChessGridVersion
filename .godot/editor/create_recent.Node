@@ -1,3 +1,4 @@
+AnimationPlayer
 Sprite2D
 Node2D
 TileMapLayer
@@ -6,7 +7,6 @@ Timer
 Area2D
 AnimatedSprite2D
 ProgressBar
-AnimationPlayer
 NavigationAgent2D
 CollisionShape2D
 Line2D

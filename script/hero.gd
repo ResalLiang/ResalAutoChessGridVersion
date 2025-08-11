@@ -61,6 +61,7 @@ var remain_attack_count
 
 @onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D
 @onready var melee_attack_animation: AnimationPlayer = $melee_attack_animation
+@onready var ranged_attack_animation: AnimationPlayer = $ranged_attack_animation
 
 
 # ========================
@@ -483,12 +484,12 @@ func _handle_attack():
 	if current_distance_to_target <= attack_range and (!debuff_handler.is_stunned or !debuff_handler.is_disarmed):
 		if current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
 			stat = STATUS.RANGED_ATTACK
-			animated_sprite_2d.play("ranged_attack")
 			if ResourceLoader.exists("res://asset/animation/%s/%s%s_projectile.tres" % [faction, faction, hero_name]):
+				animated_sprite_2d.play("ranged_attack")
 				var hero_projectile = _launch_projectile(hero_target)
 				hero_projectile.projectile_vanished.connect(_on_animated_sprite_2d_animation_finished)
 			else:
-				hero_target.take_damage(damage, self)	
+				ranged_attack_animation.play("ranged_attack")
 		elif current_distance_to_target < ranged_attack_threshold:
 			if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
 				stat = STATUS.MELEE_ATTACK
@@ -797,3 +798,11 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 
 	stat = STATUS.IDLE
 	animated_sprite_2d.play("idle")
+
+
+func _on_melee_attack_animation_animation_finished(anim_name: StringName) -> void:
+	_on_animated_sprite_2d_animation_finished()
+
+
+func _on_ranged_attack_animation_animation_finished(anim_name: StringName) -> void:
+	_on_animated_sprite_2d_animation_finished()
