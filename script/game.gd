@@ -105,7 +105,8 @@ func _ready():
 				character._position = position
 				character.team = 2
 				character.faction = team2_faction
-				character.hero_name = get_random_character(team2_faction)
+				#character.hero_name = get_random_character(team2_faction)
+				character.hero_name = "Archer"
 				team_dict[Team.TEAM2_FULL].append(character)
 				current_id = Vector2i(x, y)
 				# 添加到场景

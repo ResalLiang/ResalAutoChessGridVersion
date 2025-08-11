@@ -7,3 +7,4 @@ res://scene/game.tscn
 res://scene/projectile.tscn
 res://script/game.gd
 res://script/hero.gd
+res://script/projectile.gd

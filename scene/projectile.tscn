@@ -1,53 +1,22 @@
-[gd_scene load_steps=8 format=3 uid="uid://doeoqyu5a6wjk"]
+[gd_scene load_steps=4 format=3 uid="uid://doeoqyu5a6wjk"]
 
-[ext_resource type="Texture2D" uid="uid://b33moj3tihrg4" path="res://asset/sprite/MiniFolks/MinifolksDwarfs/Without Outline/MiniGrenade.png" id="1_v1jrq"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_u6xv6"]
-atlas = ExtResource("1_v1jrq")
-region = Rect2(0, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_c0tm2"]
-atlas = ExtResource("1_v1jrq")
-region = Rect2(16, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ujo14"]
-atlas = ExtResource("1_v1jrq")
-region = Rect2(32, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gaw4a"]
-atlas = ExtResource("1_v1jrq")
-region = Rect2(48, 0, 16, 16)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_5sdoi"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_u6xv6")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_c0tm2")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ujo14")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_gaw4a")
-}],
-"loop": true,
-"name": &"default",
-"speed": 8.0
-}]
+[ext_resource type="Script" uid="uid://cbu8k8poy2ls3" path="res://script/projectile.gd" id="1_u6xv6"]
+[ext_resource type="SpriteFrames" uid="uid://d0tbcd02gdeu4" path="res://asset/animation/elf/elfArcaneArcher_projectile.tres" id="1_v1jrq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_53ky5"]
-size = Vector2(8, 3)
+size = Vector2(14, 3)
 
 [node name="Area2D" type="Area2D"]
+script = ExtResource("1_u6xv6")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-sprite_frames = SubResource("SpriteFrames_5sdoi")
-frame = 1
+z_index = 4
+sprite_frames = ExtResource("1_v1jrq")
+autoplay = "default"
 frame_progress = 0.501969
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -0.5)
+position = Vector2(0, 0.5)
 shape = SubResource("RectangleShape2D_53ky5")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]

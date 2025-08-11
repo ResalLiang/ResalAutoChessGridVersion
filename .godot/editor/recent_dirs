@@ -1,22 +1,14 @@
-res://asset/sprite/MinifolksDwarfs/Without Outline
-res://asset/sprite/MinifolksElves/Without outline
+res://asset/animation/elf
+res://asset/sprite
 res://script
 res://asset
 res://
 res://asset/animation/villager
-res://asset/sprite/MinifolksVillagers2/Original/Without Outline
-res://asset/sprite/MinifolksVillagers2/Blue/Without Outline
-res://asset/sprite/MinifolksVillagers/Without Outline
 res://asset/shader
 res://asset/animation/demon
 res://asset/animation/undead
-res://asset/sprite/MinifolksUndead2/Without outline
-res://asset/sprite/MinifolksUndead/Without Outline
-res://asset/sprite/MinifolksDemons/Without outline
 D:/LearningGodot/ResalAutoChess/script/hero_stats_raw
 res://scene
 D:/LearningGodot/ResalAutoChess/script
 res://asset/tileset
 res://asset/animation/forestProtector
-res://asset/sprite/MinifolksForestProtectors/Outline
-res://asset/sprite/MinifolksDwarfs/Outline

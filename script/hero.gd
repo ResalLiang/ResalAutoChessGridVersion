@@ -11,6 +11,7 @@ enum STATUS {IDLE, MOVE, MELEE_ATTACK, RANGED_ATTACK, JUMP, HIT, DIE, SPELL}
 enum TARGET_CHOICE {CLOSE, FAR, STRONG, WEAK, ALLY}
 
 const MAX_SEARCH_RADIUS = 3
+const projectile_scene = preload("res://scene/projectile.tscn")
 # ========================
 # Exported Variables
 # ========================
@@ -75,7 +76,6 @@ var remain_attack_count
 @onready var drag_handler: Node2D = $drag_handler
 @onready var move_timer: Timer = $move_timer
 @onready var action_timer: Timer = $action_timer
-@onready var projectile: Area2D = $projectile
 
 # ========================
 # Member Variables
@@ -150,8 +150,9 @@ signal melee_attack_finished
 # ========================
 var projectile_speed: float = 100.0  # Projectile speed
 var projectile_damage: int = 15  # Projectile damage
-var projectile_penetration: int = 1  # Number of enemies projectile can penetrate
+var projectile_penetration: int = 3  # Number of enemies projectile can penetrate
 var ranged_attack_threshold: float = 32.0  # Minimum distance for ranged attack
+var projectile
 
 @export var melee_range: float = 16.0  # Melee attack range
 @onready var hp_bar: ProgressBar = $hp_bar
@@ -501,6 +502,7 @@ func _handle_attack():
 	action_timer.start()
 
 func _handle_action_timeout():
+	animated_sprite_2d.play("idle")
 	action_finished.emit()
 	action_timer.stop()
 
@@ -581,12 +583,7 @@ func _on_idle_timeout():
 
 # Launch projectile at target
 func _launch_projectile(target: Hero):
-	if not projectile:
-		push_error("Projectile scene is not set!")
-		return
 	
-	# Create projectile instance
-	get_parent().add_child(projectile)
 	
 	# Calculate direction to target
 	var direction = (target.global_position - global_position).normalized()
@@ -594,19 +591,32 @@ func _launch_projectile(target: Hero):
 	# Determine if we need to flip the projectile sprite
 	var is_flipped = direction.x < 0
 	
+	
+	projectile = projectile_scene.instantiate()
+	
+	if not projectile:
+		push_error("Projectile scene is not set!")
+		return
+		
+	# Create projectile instance
+	get_parent().add_child(projectile)
+	
+	
 	# Set up projectile
-	projectile.setup(
-		global_position, 
-		direction,
-		team,
-		is_flipped,
-		self
-	)
+	projectile.global_position = global_position
+	projectile.direction = direction
+	projectile.source_team = team
+	projectile.initial_flip = is_flipped
+	projectile.attacker = self
 	
 	# Configure projectile properties
 	projectile.speed = projectile_speed
 	projectile.damage = projectile_damage
 	projectile.penetration = projectile_penetration
+	projectile.is_active = true
+	
+	
+	return projectile
 
 # Add damage handling method
 func take_damage(damage_value: int, attacker: Hero):
