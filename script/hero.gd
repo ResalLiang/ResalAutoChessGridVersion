@@ -197,10 +197,11 @@ func _ready():
 	
 	# Initialize random number generator
 	rng.randomize()
-	#idle_timer.start()  # Start idle state timer
+	idle_timer.set_wait_time(rng.randf_range(1.0,3.0))
+	idle_timer.start()  # Start idle state timer
 	
 	# Play idle animation
-	animated_sprite_2d.play("idle")
+	#animated_sprite_2d.play("idle")
 	
 	if team == 2:
 		animated_sprite_2d.flip_h = true
@@ -236,6 +237,10 @@ func _ready():
 	astar_grid.cell_size = Vector2(16, 16)
 	astar_grid.diagonal_mode = 2
 	astar_grid.update()
+	
+	if not animated_sprite_2d.sprite_frames.has_animation("spell") :
+		mp_bar.visible = false
+		
 # ========================
 # Process Functions
 # ========================
@@ -355,7 +360,7 @@ func _load_animations():
 		var frames = ResourceLoader.load(path)
 		for anim_name in frames.get_animation_names():
 			# 根据需求设置不同循环条件
-			if anim_name == "idle" or anim_name == "move" or anim_name == "jump":
+			if anim_name == "move" or anim_name == "jump":
 				frames.set_animation_loop(anim_name, true)
 			else:
 				frames.set_animation_loop(anim_name, false)
@@ -575,10 +580,8 @@ func _compare_distance(a: Node2D, b: Node2D) -> bool:
 
 # Handle idle timer timeout
 func _on_idle_timeout():
-	# End idle state and search for targets
-	# _handle_targeting()
-	# idle_timer.stop()
-	pass
+	if stat == STATUS.IDLE:
+		animated_sprite_2d.play("idle")
 
 
 # Launch projectile at target
@@ -807,7 +810,7 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 
 
 	stat = STATUS.IDLE
-	animated_sprite_2d.play("idle")
+
 
 
 func _on_melee_attack_animation_animation_finished(anim_name: StringName) -> void:
