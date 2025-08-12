@@ -1,7 +1,7 @@
 class_name TileHighlighter
 extends Node
 
-@export var enable:bool = true:
+@export var enable:bool = false:
 	set = _set_enable
 @export var play_area: PlayArea
 @export var highlight_layer: TileMapLayer

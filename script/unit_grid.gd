@@ -12,13 +12,18 @@ func _ready() -> void:
 		for x in size.x:
 			units[Vector2i(x,y)] = null
 	
-func add_unit(tile: Vector2i, unit: Hero) -> bool:
-	if not is_tile_occupied(tile):
-		units[tile] =  unit
-		unit_grid_changed.emit()
-		return true
-	else:
-		return false
+func add_unit(tile: Vector2i, hero: Hero) -> void:
+	units[tile] =  hero
+	unit_grid_changed.emit()
+
+func remove_unit(tile: Vector2i) -> void:
+	var unit := units[tile] as Node
+	
+	if not unit:
+		return
+	
+	units[tile] = null
+	unit_grid_changed.emit()
 	
 func is_tile_occupied(tile: Vector2i) -> bool:
 	return units[tile] != null

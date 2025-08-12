@@ -254,9 +254,6 @@ _data = {
 &"new_animation_2": SubResource("Animation_mccdw")
 }
 
-[sub_resource type="Animation" id="Animation_kerqw"]
-resource_name = "new_animation"
-
 [sub_resource type="Animation" id="Animation_l2q1f"]
 length = 0.625
 tracks/0/type = "value"
@@ -420,6 +417,9 @@ tracks/1/keys = {
 "update": 1,
 "values": ["move"]
 }
+
+[sub_resource type="Animation" id="Animation_kerqw"]
+resource_name = "new_animation"
 
 [sub_resource type="Animation" id="Animation_y63tt"]
 length = 1.25

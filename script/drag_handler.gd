@@ -70,6 +70,7 @@ func _cancel_dragging():
 	_end_dragging()
 	global_position = starting_position
 	drag_canceled.emit(starting_position, "canceled")
+	dragging_item.global_position = starting_position
 
 # Drop character at current position
 func _drop():

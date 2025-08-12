@@ -10,6 +10,7 @@ const hero_class = preload("res://script/hero.gd")
 @onready var floor: PlayArea = $tilemap/floor
 @onready var arena_unit_grid: UnitGrid = $ArenaUnitGrid
 @onready var bench_unit_grid: UnitGrid = $BenchUnitGrid
+@onready var hero_mover: HeroMover = $hero_mover
 
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
 enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
@@ -86,10 +87,10 @@ func _ready():
 				character.faction = team1_faction
 				character.hero_name = get_random_character(team1_faction)
 				team_dict[Team.TEAM1_FULL].append(character)
-				arena_unit_grid.units[Vector2(x, y)] = character
+				arena_unit_grid.add_unit(Vector2(x, y), character)
 				current_id = Vector2i(x, y)
 				# 添加到场景
-				add_child(character)
+				arena_unit_grid.add_child(character)
 				
 	for x in range(tile_size.x / 2, tile_size.x):
 		for y in range(0, tile_size.y):
@@ -110,12 +111,13 @@ func _ready():
 				character.faction = team2_faction
 				character.hero_name = get_random_character(team2_faction)
 				team_dict[Team.TEAM2_FULL].append(character)
-				arena_unit_grid.units[Vector2(x, y)] = character
+				arena_unit_grid.add_unit(Vector2(x, y), character)
 				current_id = Vector2i(x, y)
 				# 添加到场景
-				add_child(character)
+				arena_unit_grid.add_child(character)
 				
 	center_point = Vector2(tile_size.x * grid_count / 2, tile_size.y * grid_count / 2)
+	hero_mover.setup_before_turn_start()
 	#start_new_round()
 
 func get_random_character(faction_name: String) -> String:

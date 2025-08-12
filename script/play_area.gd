@@ -1,12 +1,13 @@
 class_name PlayArea
 extends TileMapLayer
 
-@export var unit_gird: UnitGrid
+@export var unit_grid: UnitGrid
+@export var tile_highlighter: TileHighlighter
 
 var bounds: Rect2i
 
 func _ready() -> void:
-	bounds = Rect2i(Vector2i.ZERO, unit_gird.size)
+	bounds = Rect2i(Vector2i.ZERO, unit_grid.size)
 	
 func get_tile_from_global(global: Vector2) -> Vector2i:
 	return local_to_map(to_local(global))
