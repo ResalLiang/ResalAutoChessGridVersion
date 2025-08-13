@@ -1,3 +1,5 @@
+Label
+Button
 Node
 CollisionShape2D
 Area2D
@@ -11,4 +13,3 @@ ProgressBar
 NavigationAgent2D
 Line2D
 CharacterBody2D
-AnimatableBody2D

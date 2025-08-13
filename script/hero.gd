@@ -104,7 +104,6 @@ var faction_hero_dict = {
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
 var rng = RandomNumberGenerator.new() # Random number generator
 
-var floor_global_position
 #Astar navigation related
 var move_path: PackedVector2Array
 var position_id := Vector2i.ZERO

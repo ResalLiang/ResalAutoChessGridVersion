@@ -7,10 +7,11 @@ const hero_class = preload("res://script/hero.gd")
 
 @export_enum("human", "dwarf", "elf", "forestProtector", "holy", "undead", "demon") var team1_faction := "human"
 @export_enum("human", "dwarf", "elf", "forestProtector", "holy", "undead", "demon") var team2_faction := "human"
-@onready var floor: PlayArea = $tilemap/floor
+@onready var arena: PlayArea = $tilemap/arena
 @onready var arena_unit_grid: UnitGrid = $ArenaUnitGrid
 @onready var bench_unit_grid: UnitGrid = $BenchUnitGrid
 @onready var hero_mover: HeroMover = $hero_mover
+@onready var game_start_button: Button = $game_start_button
 
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
 enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
@@ -81,7 +82,6 @@ func _ready():
 				)
 
 				# 设置角色位置
-				character.floor_global_position = floor.global_position
 				character._position = position
 				character.team = 1
 				character.faction = team1_faction
@@ -105,7 +105,6 @@ func _ready():
 				)
 				
 				# 设置角色位置
-				character.floor_global_position = floor.global_position
 				character._position = position
 				character.team = 2
 				character.faction = team2_faction
@@ -118,6 +117,9 @@ func _ready():
 				
 	center_point = Vector2(tile_size.x * grid_count / 2, tile_size.y * grid_count / 2)
 	hero_mover.setup_before_turn_start()
+	
+	game_start_button.pressed.connect(start_new_round)
+	add_child(game_start_button)
 	#start_new_round()
 
 func get_random_character(faction_name: String) -> String:
@@ -153,6 +155,7 @@ func get_random_character(faction_name: String) -> String:
 	return candidates[0] # Default return first one (shouldn't reach here)
 
 func start_new_round():
+	game_start_button.disabled = true
 	print("Start new round.")
 	var team1_alive_cnt = 0
 	var team2_alive_cnt = 0

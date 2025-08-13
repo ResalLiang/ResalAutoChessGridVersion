@@ -7,7 +7,4 @@ res://scene/hero.tscn
 res://scene/projectile.tscn
 res://script/game.gd
 res://script/hero_mover.gd
-res://script/play_area.gd
-res://script/unit_grid.gd
-res://script/drag_handler.gd
-res://script/tile_highlighter.gd
+res://script/hero.gd
