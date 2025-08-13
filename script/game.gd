@@ -15,6 +15,7 @@ const hero_class = preload("res://script/hero.gd")
 @onready var game_restart_button: Button = $game_restart_button
 @onready var shop_refresh_button: Button = $shop_refresh_button
 @onready var shop_freeze_button: Button = $shop_freeze_button
+@onready var remain_coins_label: Label = $remain_coins_label
 
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
 enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
@@ -39,6 +40,7 @@ var astar_solid_map
 var rand_hero_ratio := 0.8
 
 var is_shop_frozen := false
+var remain_coins := 999
 
 # Define rarity weights dictionary
 const RARITY_WEIGHTS = {
@@ -72,6 +74,7 @@ func _ready():
 		return
 	
 	game_finished.connect(_on_game_finished)
+	
 
 	# 遍历每个格子
 	for x in range(0, tile_size.x / 2):
@@ -131,6 +134,10 @@ func _ready():
 	add_child(game_start_button)
 	#start_new_round()
 
+func _process(delta: float) -> void:
+	remain_coins_label.text = "Remaining Coins    = " + str(remain_coins)
+	
+	
 func get_random_character(faction_name: String) -> String:
 	if not hero_data.has(faction_name):
 		return ""
@@ -244,7 +251,7 @@ func restart_game() ->  void:
 	pass
 	
 func shop_refresh() -> void:
-	
+	remain_coins -= 3
 	pass
 	
 func shop_freeze() -> void:

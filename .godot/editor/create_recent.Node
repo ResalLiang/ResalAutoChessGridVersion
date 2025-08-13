@@ -1,3 +1,4 @@
+AnimatedSprite2D
 Label
 Button
 Node
@@ -8,8 +9,6 @@ Sprite2D
 Node2D
 TileMapLayer
 Timer
-AnimatedSprite2D
 ProgressBar
 NavigationAgent2D
 Line2D
-CharacterBody2D

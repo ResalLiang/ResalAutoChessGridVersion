@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=4 uid="uid://cthbjvirwy2mg"]
+[gd_scene load_steps=23 format=4 uid="uid://cthbjvirwy2mg"]
 
 [ext_resource type="Script" uid="uid://c7rtc63knhqn2" path="res://script/game.gd" id="1_ll5lq"]
 [ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="2_dbls1"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://bj8r1mq64aqwi" path="res://asset/tileset/Final_Tileset.png" id="6_qpk70"]
 [ext_resource type="Script" uid="uid://rxa6ts4scjj8" path="res://script/hero_mover.gd" id="7_ll5lq"]
 [ext_resource type="FontFile" uid="uid://cll5ig7kupxpi" path="res://asset/font/PixelOperator-Bold.ttf" id="9_17rxn"]
+[ext_resource type="Texture2D" uid="uid://crj21hmdkcij7" path="res://asset/sprite/SpinningCoin/Spinning Coin.png" id="10_yq8tf"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qpk70"]
 texture = ExtResource("5_xlg7c")
@@ -1959,6 +1960,70 @@ texture = ExtResource("6_qpk70")
 sources/0 = SubResource("TileSetAtlasSource_qpk70")
 sources/1 = SubResource("TileSetAtlasSource_ll5lq")
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_ym5sv"]
+atlas = ExtResource("10_yq8tf")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sng2h"]
+atlas = ExtResource("10_yq8tf")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5g16k"]
+atlas = ExtResource("10_yq8tf")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_81276"]
+atlas = ExtResource("10_yq8tf")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ve786"]
+atlas = ExtResource("10_yq8tf")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0lu6w"]
+atlas = ExtResource("10_yq8tf")
+region = Rect2(80, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i6gbm"]
+atlas = ExtResource("10_yq8tf")
+region = Rect2(96, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ux4dc"]
+atlas = ExtResource("10_yq8tf")
+region = Rect2(112, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jrd6n"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ym5sv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sng2h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5g16k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_81276")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ve786")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0lu6w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i6gbm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ux4dc")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
 [node name="Game" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_ll5lq")
@@ -2089,3 +2154,18 @@ offset_bottom = 149.0
 theme_override_fonts/font = ExtResource("9_17rxn")
 text = "Shop freeze"
 alignment = 0
+
+[node name="remain_coins_label" type="Label" parent="."]
+z_index = 1
+offset_left = -158.0
+offset_top = 263.0
+offset_right = -59.0
+offset_bottom = 286.0
+theme_override_fonts/font = ExtResource("9_17rxn")
+text = "Remaining Coins    = "
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="remain_coins_label"]
+position = Vector2(119, 9)
+sprite_frames = SubResource("SpriteFrames_jrd6n")
+autoplay = "default"
+frame_progress = 0.347104
