@@ -12,6 +12,9 @@ const hero_class = preload("res://script/hero.gd")
 @onready var bench_unit_grid: UnitGrid = $BenchUnitGrid
 @onready var hero_mover: HeroMover = $hero_mover
 @onready var game_start_button: Button = $game_start_button
+@onready var game_restart_button: Button = $game_restart_button
+@onready var shop_refresh_button: Button = $shop_refresh_button
+@onready var shop_freeze_button: Button = $shop_freeze_button
 
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
 enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
@@ -34,6 +37,9 @@ var grid_count := 16
 var astar_solid_map
 
 var rand_hero_ratio := 0.8
+
+var is_shop_frozen := false
+
 # Define rarity weights dictionary
 const RARITY_WEIGHTS = {
 	"Common": 50,
@@ -118,6 +124,10 @@ func _ready():
 	hero_mover.setup_before_turn_start()
 	
 	game_start_button.pressed.connect(start_new_round)
+	game_restart_button.pressed.connect(restart_game)
+	shop_refresh_button.pressed.connect(shop_refresh)
+	shop_freeze_button.pressed.connect(shop_freeze)
+	
 	add_child(game_start_button)
 	#start_new_round()
 
@@ -229,3 +239,18 @@ func sort_characters(team: Team, mode: SelectionMode) -> Array:
 			heroes_team.sort_custom(func(a, b): 
 				return a.position.distance_to(center_point) > b.position.distance_to(center_point))
 	return heroes_team
+
+func restart_game() ->  void:
+	pass
+	
+func shop_refresh() -> void:
+	
+	pass
+	
+func shop_freeze() -> void:
+	if is_shop_frozen:
+		shop_refresh_button.disabled = false
+	else:
+		shop_refresh_button.disabled = true
+	is_shop_frozen = not is_shop_frozen 
+	return
