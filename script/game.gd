@@ -31,7 +31,6 @@ var board_height:= 216
 
 var grid_size := 16
 var grid_count := 16
-var current_id:= Vector2i.ZERO
 var astar_solid_map
 
 var rand_hero_ratio := 0.8
@@ -86,9 +85,9 @@ func _ready():
 				character.team = 1
 				character.faction = team1_faction
 				character.hero_name = get_random_character(team1_faction)
+				character.current_play_area = character.play_areas.arena
 				team_dict[Team.TEAM1_FULL].append(character)
 				arena_unit_grid.add_unit(Vector2(x, y), character)
-				current_id = Vector2i(x, y)
 				# 添加到场景
 				arena_unit_grid.add_child(character)
 				
@@ -109,9 +108,9 @@ func _ready():
 				character.team = 2
 				character.faction = team2_faction
 				character.hero_name = get_random_character(team2_faction)
+				character.current_play_area = character.play_areas.arena
 				team_dict[Team.TEAM2_FULL].append(character)
 				arena_unit_grid.add_unit(Vector2(x, y), character)
-				current_id = Vector2i(x, y)
 				# 添加到场景
 				arena_unit_grid.add_child(character)
 				
@@ -161,11 +160,11 @@ func start_new_round():
 	var team2_alive_cnt = 0
 	for hero1 in team_dict[Team.TEAM1_FULL]:
 		team_dict[Team.TEAM1].append(hero1)
-		if hero1.stat != hero_class.STATUS.DIE:
+		if hero1.stat != hero_class.STATUS.DIE and hero1.current_play_area == hero1.play_areas.arena:
 			team1_alive_cnt += 1
 	for hero2 in team_dict[Team.TEAM2_FULL]:
 		team_dict[Team.TEAM2].append(hero2)
-		if hero2.stat != hero_class.STATUS.DIE:
+		if hero2.stat != hero_class.STATUS.DIE and hero2.current_play_area == hero2.play_areas.arena:
 			team2_alive_cnt += 1
 			
 	if team1_alive_cnt == 0:
@@ -179,7 +178,16 @@ func start_new_round():
 
 func start_team_turn(team: Team):
 	team_chars = sort_characters(team, SelectionMode.HIGH_HP)
-	process_character_turn(team_chars.pop_front())
+	var current_hero = team_chars.pop_front()
+	if hero_mover._get_play_area_for_position(current_hero.global_position) == 0:
+		process_character_turn(current_hero)
+	else:
+		active_hero = current_hero
+		active_hero.is_active = true
+		#active_hero.start_turn()
+		# 连接信号等待行动完成
+		active_hero.action_finished.connect(_on_character_action_finished)
+		_on_character_action_finished()
 
 func process_character_turn(hero):
 	active_hero = hero

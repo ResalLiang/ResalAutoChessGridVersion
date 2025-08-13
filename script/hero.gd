@@ -159,6 +159,10 @@ var projectile
 
 var buff_handler = Buff_handler.new()
 var debuff_handler = Debuff_handler.new()
+
+enum play_areas {arena, bench, shop}
+var current_play_area = play_areas.arena
+
 # ========================
 # Initialization
 # ========================
@@ -522,7 +526,7 @@ func _find_new_target(tgt) -> Hero:
 	# Get all heroes in the scene
 	var all_heroes: Array[Hero] = []
 	for node in get_tree().get_nodes_in_group("hero_group"):
-		if node is Hero and node.stat != STATUS.DIE:
+		if (node is Hero and node.stat != STATUS.DIE) and node.current_play_area == play_areas.arena:
 			all_heroes.append(node)
 	var enemy_heroes: Array[Hero] = []
 	var ally_heroes: Array[Hero] = []
