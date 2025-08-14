@@ -1,5 +1,4 @@
 # Hero character class with movement, dragging functionality and state management
-#@tool
 extends Node2D
 class_name Hero
 
@@ -732,7 +731,7 @@ func update_solid_map():
 	astar_grid.update()
 
 	for node in get_tree().get_nodes_in_group("hero_group"):
-		if node.stat != STATUS.DIE:
+		if node.stat != STATUS.DIE and current_play_area == play_areas.arena:
 			astar_grid.set_point_solid(node.position_id, true)
 
 func _handle_dragging_state(stating_position: Vector2, drag_action: String):
