@@ -36,12 +36,14 @@ func _reset_hero_to_starting_position(starting_position: Vector2, hero: Hero) ->
 	
 	#hero.reset_after_dragging(starting_position)
 	play_areas[i].unit_grid.add_unit(tile, hero)
-	hero.global_position = play_areas[i].get_global_from_tile(tile)
+	# hero.global_position = play_areas[i].get_global_from_tile(tile)
+	hero._position = get_parent.to_local(play_areas[i].get_global_from_tile(tile))
 
 
 func _move_hero(hero: Hero, play_area: PlayArea, tile: Vector2i) -> void:
 	play_area.unit_grid.add_unit(tile, hero)
-	hero.global_position = play_area.get_global_from_tile(tile)
+	# hero.global_position = play_area.get_global_from_tile(tile)
+	hero._postion = get_parent().to_local(play_area.get_global_from_tile(tile))
 	hero.reparent(play_area.unit_grid)
 	if _get_play_area_for_position(hero.global_position) == 0:
 		hero.current_play_area = hero.play_areas.arena
@@ -70,7 +72,7 @@ func _on_hero_dropped(starting_position: Vector2, status: String, hero: Hero) ->
 	var old_area_index := _get_play_area_for_position(starting_position)
 	var drop_area_index := _get_play_area_for_position(hero.get_global_mouse_position())
 
-	if drop_area_index == -1:
+	if drop_area_index == -1 or (old_area_index != 2 and drop_area_index == 2): # cannot move hero back to shop
 		_reset_hero_to_starting_position(starting_position, hero)
 		return
 		
@@ -79,7 +81,14 @@ func _on_hero_dropped(starting_position: Vector2, status: String, hero: Hero) ->
 	var new_area := play_areas[drop_area_index]
 	var new_tile := new_area.get_hovered_tile()
 
-	# swap heroes if we have to
+	if old_area_index == 2 and drop_area_index != 2:
+		if get_parent.shop_handler.can_pay_hero() and not new_area.unit_grid.is_tile_occupied(new_tile):
+			_move_hero(hero, new_area, new_tile)
+			return
+		else:
+			_reset_hero_to_starting_position(starting_position, hero)
+			return
+
 	if new_area.unit_grid.is_tile_occupied(new_tile):
 		var old_hero: Hero = new_area.unit_grid.units[new_tile]
 		new_area.unit_grid.remove_unit(new_tile)
