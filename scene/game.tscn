@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=4 uid="uid://cthbjvirwy2mg"]
+[gd_scene load_steps=24 format=4 uid="uid://cthbjvirwy2mg"]
 
 [ext_resource type="Script" uid="uid://c7rtc63knhqn2" path="res://script/game.gd" id="1_ll5lq"]
 [ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="2_dbls1"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://rxa6ts4scjj8" path="res://script/hero_mover.gd" id="7_ll5lq"]
 [ext_resource type="FontFile" uid="uid://cll5ig7kupxpi" path="res://asset/font/PixelOperator-Bold.ttf" id="9_17rxn"]
 [ext_resource type="Texture2D" uid="uid://crj21hmdkcij7" path="res://asset/sprite/SpinningCoin/Spinning Coin.png" id="10_yq8tf"]
+[ext_resource type="Script" uid="uid://bnobjccy7mbl1" path="res://script/shop_handler.gd" id="11_ym5sv"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qpk70"]
 texture = ExtResource("5_xlg7c")
@@ -2101,20 +2102,24 @@ tile_map_data = PackedByteArray("AAD5/wQABAANAAQAAAD3/wgABAALAAIAAAARAAYABAASAAE
 tile_set = ExtResource("2_dbls1")
 
 [node name="ArenaUnitGrid" type="Node2D" parent="."]
+z_index = 2
 script = ExtResource("3_33cqm")
 size = Vector2i(16, 16)
 
 [node name="BenchUnitGrid" type="Node2D" parent="."]
+z_index = 2
 position = Vector2(-64, 0)
 script = ExtResource("3_33cqm")
 size = Vector2i(1, 16)
 
 [node name="ShopUnitGrid" type="Node2D" parent="."]
+z_index = 2
 position = Vector2(320, 0)
 script = ExtResource("3_33cqm")
 size = Vector2i(1, 16)
 
-[node name="hero_mover" type="Node" parent="." node_paths=PackedStringArray("play_areas")]
+[node name="hero_mover" type="Node2D" parent="." node_paths=PackedStringArray("play_areas")]
+unique_name_in_owner = true
 script = ExtResource("7_ll5lq")
 play_areas = [NodePath("../tilemap/arena"), NodePath("../tilemap/bench"), NodePath("../tilemap/shop")]
 
@@ -2155,6 +2160,16 @@ theme_override_fonts/font = ExtResource("9_17rxn")
 text = "Shop freeze"
 alignment = 0
 
+[node name="shop_upgrade_button" type="Button" parent="."]
+z_index = 2
+offset_left = -159.0
+offset_top = 160.0
+offset_right = -68.0
+offset_bottom = 184.0
+theme_override_fonts/font = ExtResource("9_17rxn")
+text = "Shop upgrade"
+alignment = 0
+
 [node name="remain_coins_label" type="Label" parent="."]
 z_index = 1
 offset_left = -158.0
@@ -2169,3 +2184,15 @@ position = Vector2(119, 9)
 sprite_frames = SubResource("SpriteFrames_jrd6n")
 autoplay = "default"
 frame_progress = 0.347104
+
+[node name="current_shop_level" type="Label" parent="."]
+z_index = 1
+offset_left = -10.0
+offset_top = 266.0
+offset_right = 127.0
+offset_bottom = 289.0
+theme_override_fonts/font = ExtResource("9_17rxn")
+
+[node name="shop_handler" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("11_ym5sv")
