@@ -1,0 +1,25 @@
+[gd_resource type="SpriteFrames" load_steps=4 format=3 uid="uid://cc7ybxmwhud5h"]
+
+[ext_resource type="Texture2D" uid="uid://q00xautyud6v" path="res://asset/sprite/MiniFolks/MinifolksHumans/HumansProjectiles.png" id="1_cq4tj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5va2i"]
+atlas = ExtResource("1_cq4tj")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oksuc"]
+atlas = ExtResource("1_cq4tj")
+region = Rect2(16, 16, 16, 16)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5va2i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oksuc")
+}],
+"loop": true,
+"name": &"default",
+"speed": 8.0
+}]

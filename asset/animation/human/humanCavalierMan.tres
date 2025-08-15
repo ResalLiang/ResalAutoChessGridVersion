@@ -1,6 +1,7 @@
-[gd_resource type="SpriteFrames" load_steps=38 format=3 uid="uid://bomsn1q1p4f5s"]
+[gd_resource type="SpriteFrames" load_steps=41 format=3 uid="uid://bomsn1q1p4f5s"]
 
 [ext_resource type="Texture2D" uid="uid://diolx1f7v4a4r" path="res://asset/sprite/MiniFolks/MinifolksHumans/Outline/MiniCavalierMan.png" id="1_mgega"]
+[ext_resource type="Texture2D" uid="uid://csoiwagma2i61" path="res://asset/sprite/MiniFolks/MinifolksHumans/Without Outline/MiniCavalierMan.png" id="2_ujii6"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_x3jry"]
 atlas = ExtResource("1_mgega")
@@ -53,6 +54,14 @@ region = Rect2(128, 192, 32, 32)
 [sub_resource type="AtlasTexture" id="AtlasTexture_u2286"]
 atlas = ExtResource("1_mgega")
 region = Rect2(160, 192, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5cqeq"]
+atlas = ExtResource("2_ujii6")
+region = Rect2(0, 160, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tlo6y"]
+atlas = ExtResource("2_ujii6")
+region = Rect2(32, 160, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lbhln"]
 atlas = ExtResource("1_mgega")
@@ -195,6 +204,17 @@ animations = [{
 }],
 "loop": false,
 "name": &"die",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5cqeq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tlo6y")
+}],
+"loop": false,
+"name": &"hit",
 "speed": 8.0
 }, {
 "frames": [{

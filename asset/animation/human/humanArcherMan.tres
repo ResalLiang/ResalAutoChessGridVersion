@@ -295,6 +295,6 @@ animations = [{
 "texture": SubResource("AtlasTexture_ldy2x")
 }],
 "loop": false,
-"name": &"ranged_ttack",
+"name": &"ranged_attack",
 "speed": 8.0
 }]

@@ -438,7 +438,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_aa7qp")
 }],
 "loop": false,
-"name": &"rangec_attack",
+"name": &"ranged_attack",
 "speed": 8.0
 }, {
 "frames": [{

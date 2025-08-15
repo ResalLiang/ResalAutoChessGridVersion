@@ -7,7 +7,7 @@ extends Area2D
 @export var speed: float = 300.0
 @export var damage: int = 20
 @export var penetration: int = 1  # 穿透次数
-@export var max_distance: float = 1000.0  # 最大飞行距离
+@export var max_distance: float = 300.0  # 最大飞行距离
 
 var direction: Vector2 = Vector2.ZERO:
 	set(value):
@@ -21,8 +21,6 @@ var is_active := false
 var attacker: Hero = null:
 	set(value):
 		attacker = value
-		if not Engine.is_editor_hint():
-			return
 		# Load animation resource in editor mode
 		if ResourceLoader.exists("res://asset/animation/" + attacker.faction + "/" + attacker.faction + attacker.hero_name + "_projectile.tres"):
 			animated_sprite_2d.sprite_frames = ResourceLoader.load("res://asset/animation/" + attacker.faction + "/" + attacker.faction + attacker.hero_name + "_projectile.tres")
@@ -41,6 +39,8 @@ func _ready():
 	if initial_flip:
 		animated_sprite_2d.flip_h = true
 		animated_sprite_2d.rotation_degrees = 180  # 根据实际美术资源调整
+		
+	animated_sprite_2d.play("default")
 
 func setup(pos: Vector2, dir: Vector2, team: int, is_flipped: bool, hero_attack: Hero):
 	global_position = pos
@@ -61,6 +61,7 @@ func _physics_process(delta):
 		
 		# 超出最大距离或穿透次数耗尽时消失
 		if traveled_distance > max_distance || penetration <= 0:
+			projectile_vanished.emit()
 			queue_free()
 
 func _on_area_entered(area):
@@ -75,8 +76,10 @@ func _on_area_entered(area):
 			if penetration <= 0:
 				projectile_vanished.emit()
 				projectile_vanished.disconnect(attacker._on_animated_sprite_2d_animation_finished)
+				projectile_vanished.emit()
 				queue_free()
 
 # 处理离开屏幕
 func _on_visibility_notifier_screen_exited():
+	projectile_vanished.emit()
 	queue_free()

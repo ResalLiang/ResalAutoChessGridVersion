@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=4 uid="uid://cthbjvirwy2mg"]
+[gd_scene load_steps=25 format=4 uid="uid://cthbjvirwy2mg"]
 
 [ext_resource type="Script" uid="uid://c7rtc63knhqn2" path="res://script/game.gd" id="1_ll5lq"]
 [ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="2_dbls1"]
@@ -11,6 +11,7 @@
 [ext_resource type="FontFile" uid="uid://cll5ig7kupxpi" path="res://asset/font/PixelOperator-Bold.ttf" id="9_17rxn"]
 [ext_resource type="Texture2D" uid="uid://crj21hmdkcij7" path="res://asset/sprite/SpinningCoin/Spinning Coin.png" id="10_yq8tf"]
 [ext_resource type="Script" uid="uid://bnobjccy7mbl1" path="res://script/shop_handler.gd" id="11_ym5sv"]
+[ext_resource type="Script" uid="uid://c101twvdkyo0l" path="res://script/area_effect_handler.gd" id="12_sng2h"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qpk70"]
 texture = ExtResource("5_xlg7c")
@@ -2196,3 +2197,7 @@ theme_override_fonts/font = ExtResource("9_17rxn")
 [node name="shop_handler" type="Node2D" parent="."]
 unique_name_in_owner = true
 script = ExtResource("11_ym5sv")
+
+[node name="area_effect_handler" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("12_sng2h")

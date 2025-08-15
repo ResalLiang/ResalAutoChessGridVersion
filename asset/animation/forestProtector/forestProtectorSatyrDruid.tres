@@ -2,26 +2,6 @@
 
 [ext_resource type="Texture2D" uid="uid://dyn8335cj0or4" path="res://asset/sprite/MiniFolks/MinifolksForestProtectors/Outline/MiniSatyrDruid.png" id="1_hl2dq"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_dws32"]
-atlas = ExtResource("1_hl2dq")
-region = Rect2(0, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_dk4vc"]
-atlas = ExtResource("1_hl2dq")
-region = Rect2(32, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_j38uk"]
-atlas = ExtResource("1_hl2dq")
-region = Rect2(64, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ikhpr"]
-atlas = ExtResource("1_hl2dq")
-region = Rect2(96, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_jq8yu"]
-atlas = ExtResource("1_hl2dq")
-region = Rect2(128, 96, 32, 32)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_ofg7j"]
 atlas = ExtResource("1_hl2dq")
 region = Rect2(0, 192, 32, 32)
@@ -77,6 +57,26 @@ region = Rect2(32, 64, 32, 32)
 [sub_resource type="AtlasTexture" id="AtlasTexture_ro1b6"]
 atlas = ExtResource("1_hl2dq")
 region = Rect2(64, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dws32"]
+atlas = ExtResource("1_hl2dq")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dk4vc"]
+atlas = ExtResource("1_hl2dq")
+region = Rect2(32, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j38uk"]
+atlas = ExtResource("1_hl2dq")
+region = Rect2(64, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ikhpr"]
+atlas = ExtResource("1_hl2dq")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jq8yu"]
+atlas = ExtResource("1_hl2dq")
+region = Rect2(128, 96, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rykiy"]
 atlas = ExtResource("1_hl2dq")
@@ -154,26 +154,6 @@ region = Rect2(352, 128, 32, 32)
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_dws32")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_dk4vc")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_j38uk")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ikhpr")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_jq8yu")
-}],
-"loop": false,
-"name": &" melee_attack",
-"speed": 8.0
-}, {
-"frames": [{
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_ofg7j")
 }, {
 "duration": 1.0,
@@ -232,6 +212,26 @@ animations = [{
 }],
 "loop": false,
 "name": &"jump",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dws32")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dk4vc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j38uk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ikhpr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jq8yu")
+}],
+"loop": false,
+"name": &"melee_attack",
 "speed": 8.0
 }, {
 "frames": [{

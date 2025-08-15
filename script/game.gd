@@ -22,6 +22,7 @@ const hero_class = preload("res://script/hero.gd")
 @onready var current_shop_level: Label = $current_shop_level
 @onready var hero_mover: HeroMover = %hero_mover
 @onready var shop_handler: ShopHandler = %shop_handler
+@onready var area_effect_handler: AreaEffectHanlder = %area_effect_handler
 
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
 enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}

@@ -1,16 +1,16 @@
-[gd_resource type="SpriteFrames" load_steps=3 format=3 uid="uid://35wnwo1qfeqq"]
+[gd_resource type="SpriteFrames" load_steps=3 format=3 uid="uid://cawlvab26b8wv"]
 
-[ext_resource type="Texture2D" uid="uid://bwg7k274esmhw" path="res://asset/sprite/Arrow01(32x32).png" id="1_6k7e2"]
+[ext_resource type="Texture2D" uid="uid://q00xautyud6v" path="res://asset/sprite/MiniFolks/MinifolksHumans/HumansProjectiles.png" id="1_6k7e2"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_sd3ls"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_6k7e2"]
 atlas = ExtResource("1_6k7e2")
-region = Rect2(7, 13, 19, 7)
+region = Rect2(0, 0, 16, 16)
 
 [resource]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_sd3ls")
+"texture": SubResource("AtlasTexture_6k7e2")
 }],
 "loop": true,
 "name": &"default",
