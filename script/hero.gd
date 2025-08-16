@@ -498,6 +498,7 @@ func _handle_attack():
 				hero_projectile.projectile_vanished.connect(_on_animated_sprite_2d_animation_finished)
 			else:
 				ranged_attack_animation.play("ranged_attack")
+			return
 		elif current_distance_to_target < ranged_attack_threshold:
 			if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
 				stat = STATUS.MELEE_ATTACK
@@ -506,6 +507,7 @@ func _handle_attack():
 				stat = STATUS.RANGED_ATTACK
 				animated_sprite_2d.play("attack")
 				hero_target.take_damage(damage, self)	
+			return
 	action_timer.start()
 
 func _handle_action_timeout():
@@ -789,10 +791,10 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 		
 	elif stat == STATUS.RANGED_ATTACK:
 		if remain_attack_count <= 0:
-			if ResourceLoader.exists("res://asset/animation/%s/%s%s_projectile.tres" % [faction, faction, hero_name]):
-				pass
-			else:
-				action_timer.start()
+			#if ResourceLoader.exists("res://asset/animation/%s/%s%s_projectile.tres" % [faction, faction, hero_name]):
+				#pass
+			#else:
+			action_timer.start()
 			ranged_attack_finished.emit()
 		elif hero_target and hero_target.stat != STATUS.DIE:
 			_handle_attack()

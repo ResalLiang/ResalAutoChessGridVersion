@@ -2193,6 +2193,7 @@ offset_top = 266.0
 offset_right = 127.0
 offset_bottom = 289.0
 theme_override_fonts/font = ExtResource("9_17rxn")
+text = "Current shop level = "
 
 [node name="shop_handler" type="Node2D" parent="."]
 unique_name_in_owner = true

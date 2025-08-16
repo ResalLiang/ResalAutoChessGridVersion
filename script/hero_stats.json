@@ -12,7 +12,7 @@
 	  "skill_description": "Deals 100 magic damage to all enemies within 3 cells and reduces their magic resistance by 15 for 3 turns",
 	  "flavor_text": "\"You shall not pass!\" - Gandalf, The Lord of the Rings",
 	  "rarity": "Epic",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"ArcherMan": {
@@ -27,7 +27,7 @@
 	  "skill_description": "Shoots an arrow that penetrates through targets, dealing 45 damage to up to 3 enemies in a line",
 	  "flavor_text": "\"Aim small, miss small.\" - Benjamin Martin, The Patriot",
 	  "rarity": "Common",
-	  "target_priority": "WEAK",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "WEAK"
 	},
 	"CavalierMan": {
@@ -57,7 +57,7 @@
 	  "skill_description": "Rapidly fires 3 bolts at random enemies within range, each dealing 30 damage",
 	  "flavor_text": "\"I love the smell of napalm in the morning.\" - Lt. Kilgore, Apocalypse Now",
 	  "rarity": "Common",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"HalberMan": {
@@ -117,7 +117,7 @@
 	  "skill_description": "Launches an ice projectile that deals 80 damage and reduces target's speed by 2 for 2 turns",
 	  "flavor_text": "\"Winter is coming.\" - Eddard Stark, Game of Thrones",
 	  "rarity": "Uncommon",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "WEAK"
 	},
 	"PrinceMan": {
@@ -132,7 +132,7 @@
 	  "skill_description": "Deals 60 damage and heals self for 50% of damage dealt",
 	  "flavor_text": "\"Courage is not the absence of fear, but the triumph over it.\" - Nelson Mandela",
 	  "rarity": "Rare",
-	  "target_priority": "STRONG",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "STRONG"
 	},
 	"ShieldMan": {
@@ -162,7 +162,7 @@
 	  "skill_description": "Throws spear to farthest enemy in range, dealing 100% damage ignoring armor",
 	  "flavor_text": "\"This is Sparta!\" - King Leonidas, 300",
 	  "rarity": "Uncommon",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	}
   },
@@ -239,7 +239,7 @@
 	  "skill_description": "Lobs grenade that deals 100 splash damage in 2-cell radius",
 	  "flavor_text": "\"I have come here to chew bubblegum and kick ass... and I'm all out of bubblegum.\" - Nada, They Live",
 	  "rarity": "Rare",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"Hunter": {
@@ -254,7 +254,7 @@
 	  "skill_description": "Deals 70 damage and marks target, increasing damage taken by 20% for 3 turns",
 	  "flavor_text": "\"I'll be back.\" - The Terminator",
 	  "rarity": "Common",
-	  "target_priority": "STRONG",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "STRONG"
 	},
 	"King": {
@@ -269,7 +269,7 @@
 	  "skill_description": "Increases max health of all dwarf allies by 25% for 3 turns",
 	  "flavor_text": "\"The man who passes the sentence should swing the sword.\" - Eddard Stark, Game of Thrones",
 	  "rarity": "Legendary",
-	  "target_priority": "STRONG",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"Miner": {
@@ -299,7 +299,7 @@
 	  "skill_description": "25% chance to instantly kill non-boss enemies",
 	  "flavor_text": "\"Do I feel lucky? Well, do ya, punk?\" - Harry Callahan, Dirty Harry",
 	  "rarity": "Rare",
-	  "target_priority": "WEAK",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "WEAK"
 	},
 	"Shieldbreaker": {
@@ -314,7 +314,7 @@
 	  "skill_description": "Attacks ignore 75% of target's armor",
 	  "flavor_text": "\"I drink your milkshake!\" - Daniel Plainview, There Will Be Blood",
 	  "rarity": "Uncommon",
-	  "target_priority": "STRONG",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "STRONG"
 	},
 	"Warrior": {
@@ -346,7 +346,7 @@
 	  "skill_description": "Arrows pierce targets and explode for 40 splash damage on impact",
 	  "flavor_text": "\"You have my bow.\" - Legolas, The Lord of the Rings",
 	  "rarity": "Rare",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"Archer": {
@@ -361,7 +361,7 @@
 	  "skill_description": "Can move after attacking",
 	  "flavor_text": "\"Run, Forrest, run!\" - Jenny, Forrest Gump",
 	  "rarity": "Common",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"HorseMan": {
@@ -391,7 +391,7 @@
 	  "skill_description": "Summons roots that immobilize enemies in 3-cell radius for 1 turn",
 	  "flavor_text": "\"The force will be with you, always.\" - Obi-Wan Kenobi, Star Wars",
 	  "rarity": "Uncommon",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"PegasusRider": {
@@ -421,7 +421,7 @@
 	  "skill_description": "Heals all allies within 5 cells for 100 health",
 	  "flavor_text": "\"After all this time? Always.\" - Severus Snape, Harry Potter",
 	  "rarity": "Legendary",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"SpearMan": {
@@ -481,7 +481,7 @@
 	  "skill_description": "Creates barrier absorbing 300 damage for allies within 3 cells",
 	  "flavor_text": "\"With great power comes great responsibility.\" - Uncle Ben, Spider-Man",
 	  "rarity": "Epic",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	}
   },
@@ -498,7 +498,7 @@
 	  "skill_description": "Spawns healing flowers restoring 50 HP/turn in adjacent cells",
 	  "flavor_text": "\"Life finds a way.\" - Dr. Ian Malcolm, Jurassic Park",
 	  "rarity": "Rare",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"DryadEnchantress": {
@@ -513,7 +513,7 @@
 	  "skill_description": "Charms enemy to fight for your side for 2 turns",
 	  "flavor_text": "\"I'm also just a girl, standing in front of a boy, asking him to love her.\" - Anna, Notting Hill",
 	  "rarity": "Epic",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"DryadHuntress": {
@@ -528,7 +528,7 @@
 	  "skill_description": "Arrows inflict poison dealing 30 damage/turn for 3 turns",
 	  "flavor_text": "\"I volunteer as tribute!\" - Katniss Everdeen, The Hunger Games",
 	  "rarity": "Uncommon",
-	  "target_priority": "WEAK",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "WEAK"
 	},
 	"Fairy": {
@@ -543,7 +543,7 @@
 	  "skill_description": "Blinds target, reducing its attack range to melee for 2 turns",
 	  "flavor_text": "\"I do believe in fairies!\" - Peter Pan",
 	  "rarity": "Common",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"Pixie": {
@@ -558,7 +558,7 @@
 	  "skill_description": "Causes target to attack nearest ally next turn",
 	  "flavor_text": "\"Oh, yes... the past can hurt. But the way I see it, you can either run from it or learn from it.\" - Rafiki, The Lion King",
 	  "rarity": "Common",
-	  "target_priority": "WEAK",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "WEAK"
 	},
 	"SatyrDruid": {
@@ -573,7 +573,7 @@
 	  "skill_description": "Heals all allies for 15% max HP over 3 turns",
 	  "flavor_text": "\"The woods are lovely, dark and deep.\" - Robert Frost, Stopping by Woods on a Snowy Evening",
 	  "rarity": "Rare",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"SatyrWarrior": {
@@ -603,7 +603,7 @@
 	  "skill_description": "Roots self to gain 50 armor but cannot move for 3 turns",
 	  "flavor_text": "\"I am Groot.\" - Groot, Guardians of the Galaxy",
 	  "rarity": "Epic",
-	  "target_priority": "STRONG",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "STRONG"
 	},
 	"TreantGuard": {
@@ -648,7 +648,7 @@
 	  "skill_description": "Heals self for 30 HP when ending turn in sunlight",
 	  "flavor_text": "\"The sun'll come out tomorrow.\" - Annie",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	}
   },
@@ -665,7 +665,7 @@
 	  "skill_description": "Revives one dead ally with 50% HP",
 	  "flavor_text": "\"Get busy living, or get busy dying.\" - Andy Dufresne, The Shawshank Redemption",
 	  "rarity": "Legendary",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"ArchAngel": {
@@ -680,7 +680,7 @@
 	  "skill_description": "Calls down holy light dealing 150 damage to all enemies in line of sight",
 	  "flavor_text": "\"I am vengeance! I am the night! I am Batman!\" - Batman",
 	  "rarity": "Legendary",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"BattlePriest": {
@@ -725,7 +725,7 @@
 	  "skill_description": "Removes all buffs from target before dealing damage",
 	  "flavor_text": "\"You can't handle the truth!\" - Colonel Jessup, A Few Good Men",
 	  "rarity": "Common",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"CrusaderCaptain": {
@@ -755,7 +755,7 @@
 	  "skill_description": "Cannot be stunned or moved against will",
 	  "flavor_text": "\"I'm not locked in here with you. You're locked in here with me!\" - Rorschach, Watchmen",
 	  "rarity": "Rare",
-	  "target_priority": "STRONG",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "STRONG"
 	},
 	"CrusaderFlag": {
@@ -770,7 +770,7 @@
 	  "skill_description": "Increases critical chance of all allies by 15% while alive",
 	  "flavor_text": "\"A day may come when the courage of men fails... but it is not this day.\" - Aragorn, The Lord of the Rings",
 	  "rarity": "Rare",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"CrusaderHorseMan": {
@@ -800,7 +800,7 @@
 	  "skill_description": "Revives all dead allies in 5-cell radius with 30% HP",
 	  "flavor_text": "\"E.T. phone home.\" - E.T.",
 	  "rarity": "Epic",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"Paladin1": {
@@ -815,7 +815,7 @@
 	  "skill_description": "Deals 100 damage and silences target for 2 turns",
 	  "flavor_text": "\"May the Force be with you.\" - Star Wars",
 	  "rarity": "Rare",
-	  "target_priority": "STRONG",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "STRONG"
 	},
 	"Paladin2": {
@@ -830,7 +830,7 @@
 	  "skill_description": "Heals target ally for 150 HP",
 	  "flavor_text": "\"I'm your huckleberry.\" - Doc Holliday, Tombstone",
 	  "rarity": "Uncommon",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"Paladin3": {
@@ -845,7 +845,7 @@
 	  "skill_description": "Reduces magic damage taken by nearby allies by 30%",
 	  "flavor_text": "\"Hasta la vista, baby.\" - The Terminator",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"Priest": {
@@ -860,7 +860,7 @@
 	  "skill_description": "Heals target for 120 HP and removes debuffs",
 	  "flavor_text": "\"Here's looking at you, kid.\" - Rick, Casablanca",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	}
   },
@@ -892,7 +892,7 @@
 	  "skill_description": "Summons fire pillars dealing 50 damage/turn in 3 cells",
 	  "flavor_text": "\"All work and no play makes Jack a dull boy.\" - Jack Torrance, The Shining",
 	  "rarity": "Epic",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"DemonFireThrower": {
@@ -907,7 +907,7 @@
 	  "skill_description": "Throws firebomb dealing 80 damage and creating burning zone",
 	  "flavor_text": "\"I am serious. And don't call me Shirley.\" - Dr. Rumack, Airplane!",
 	  "rarity": "Uncommon",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"DemonLord": {
@@ -922,7 +922,7 @@
 	  "skill_description": "Deals 200 damage to all enemies and heals self for 50% of damage",
 	  "flavor_text": "\"I see dead people.\" - Cole, The Sixth Sense",
 	  "rarity": "Legendary",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"DemonTormentor": {
@@ -937,7 +937,7 @@
 	  "skill_description": "Reduces target's damage by 50% and armor by 10 for 3 turns",
 	  "flavor_text": "\"We all go a little mad sometimes.\" - Norman Bates, Psycho",
 	  "rarity": "Rare",
-	  "target_priority": "WEAK",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "WEAK"
 	},
 	"Demoness": {
@@ -952,7 +952,7 @@
 	  "skill_description": "Steals 50 mana from target per attack",
 	  "flavor_text": "\"I'm not bad. I'm just drawn that way.\" - Jessica Rabbit, Who Framed Roger Rabbit",
 	  "rarity": "Epic",
-	  "target_priority": "STRONG",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "STRONG"
 	},
 	"FireBall": {
@@ -982,7 +982,7 @@
 	  "skill_description": "Shoots fireballs that splash for 20 damage to nearby enemies",
 	  "flavor_text": "\"I'm the king of the world!\" - Jack, Titanic",
 	  "rarity": "Common",
-	  "target_priority": "WEAK",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "WEAK"
 	},
 	"HighDemon": {
@@ -1012,7 +1012,7 @@
 	  "skill_description": "Reduces target's attack speed by 0.5 for 2 turns",
 	  "flavor_text": "\"I'm walking here!\" - Midnight Cowboy",
 	  "rarity": "Common",
-	  "target_priority": "WEAK",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "WEAK"
 	},
 	"Succubus": {
@@ -1027,7 +1027,7 @@
 	  "skill_description": "Charms enemy to move toward her for 1 turn",
 	  "flavor_text": "\"They call me Mister Tibbs!\" - Virgil Tibbs, In the Heat of the Night",
 	  "rarity": "Rare",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"Trident": {
@@ -1042,7 +1042,7 @@
 	  "skill_description": "When carried by demon, increases their damage by 30%",
 	  "flavor_text": "\"My precious.\" - Gollum, The Lord of the Rings",
 	  "rarity": "Rare",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	}
   },
@@ -1059,7 +1059,7 @@
 	  "skill_description": "Creates decaying zone dealing 100 damage/turn for 3 turns",
 	  "flavor_text": "\"The stuff that dreams are made of.\" - Sam Spade, The Maltese Falcon",
 	  "rarity": "Epic",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"Banshee": {
@@ -1074,7 +1074,7 @@
 	  "skill_description": "Stuns all enemies in cone for 1 turn",
 	  "flavor_text": "\"I'm the king of the world!\" - Jack, Titanic",
 	  "rarity": "Rare",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"BansheeQueen": {
@@ -1089,7 +1089,7 @@
 	  "skill_description": "Deals 150 damage and silences enemies in large area",
 	  "flavor_text": "\"Frankly, my dear, I don't give a damn.\" - Rhett Butler, Gone with the Wind",
 	  "rarity": "Legendary",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"DeathKnight": {
@@ -1119,7 +1119,7 @@
 	  "skill_description": "Nearby undead regenerate 5% HP per turn",
 	  "flavor_text": "\"I am your father.\" - Darth Vader, Star Wars",
 	  "rarity": "Legendary",
-	  "target_priority": "STRONG",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "STRONG"
 	},
 	"DreadKnight": {
@@ -1164,7 +1164,7 @@
 	  "skill_description": "Heals self for 100% of damage dealt to living units",
 	  "flavor_text": "\"Brains...\" - Various Zombies",
 	  "rarity": "Common",
-	  "target_priority": "WEAK",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "WEAK"
 	},
 	"Lich": {
@@ -1179,7 +1179,7 @@
 	  "skill_description": "Freezes enemies in 3-cell radius, rooting them for 2 turns",
 	  "flavor_text": "\"Winter is coming.\" - Eddard Stark, Game of Thrones",
 	  "rarity": "Rare",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"Necromancer": {
@@ -1194,7 +1194,7 @@
 	  "skill_description": "Resurrects nearby corpses as Skeleton Warriors",
 	  "flavor_text": "\"The dead know only one thing: it is better to be alive.\" - Joker, Full Metal Jacket",
 	  "rarity": "Epic",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"Reaper": {
@@ -1209,7 +1209,7 @@
 	  "skill_description": "Instantly kills enemies below 25% health",
 	  "flavor_text": "\"I am death, destroyer of worlds.\" - J. Robert Oppenheimer",
 	  "rarity": "Legendary",
-	  "target_priority": "WEAK",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "WEAK"
 	},
 	"Skeleton": {
@@ -1239,7 +1239,7 @@
 	  "skill_description": "Arrows reduce target's armor by 5 per hit",
 	  "flavor_text": "\"You talkin' to me?\" - Travis Bickle, Taxi Driver",
 	  "rarity": "Common",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"SkeletonHorseman": {
@@ -1269,7 +1269,7 @@
 	  "skill_description": "Bolt steals 30 mana from target",
 	  "flavor_text": "\"Magic is just science we don't understand yet.\" - Arthur C. Clarke",
 	  "rarity": "Uncommon",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"SkeletonWarrior": {
@@ -1299,7 +1299,7 @@
 	  "skill_description": "Steals 50 mana from all enemies within 5 cells per turn",
 	  "flavor_text": "\"I drink your milkshake!\" - Daniel Plainview, There Will Be Blood",
 	  "rarity": "Rare",
-	  "target_priority": "FAR",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "FAR"
 	},
 	"SpikedGhoul": {
@@ -1344,7 +1344,7 @@
 	  "skill_description": "Critical hits dismember target, reducing max HP by 20%",
 	  "flavor_text": "\"Heeeeere's Johnny!\" - Jack Torrance, The Shining",
 	  "rarity": "Rare",
-	  "target_priority": "WEAK",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "WEAK"
 	},
 	"ZombieCrusher": {
@@ -1359,7 +1359,7 @@
 	  "skill_description": "Stuns target for 1 turn on hit",
 	  "flavor_text": "\"Hulk smash!\" - Hulk, The Avengers",
 	  "rarity": "Uncommon",
-	  "target_priority": "STRONG",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "STRONG"
 	},
 	"ZombieCrusher2": {
@@ -1404,7 +1404,7 @@
 	  "skill_description": "Gains +50% speed when chasing wounded prey",
 	  "flavor_text": "\"Bad dogs! Bad dogs! Whatcha gonna do?\" - Various",
 	  "rarity": "Common",
-	  "target_priority": "WEAK",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "WEAK"
 	},
 	"ZombieRunner": {
@@ -1419,7 +1419,7 @@
 	  "skill_description": "Reduces target's speed by 3 for 2 turns",
 	  "flavor_text": "\"Run, Forrest, run!\" - Jenny, Forrest Gump",
 	  "rarity": "Common",
-	  "target_priority": "WEAK",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "WEAK"
 	},
 	"ZombieWarrior": {
@@ -1451,7 +1451,7 @@
 	  "skill_description": "Increases quality of items crafted by blacksmiths",
 	  "flavor_text": "\"If you build it, he will come.\" - Field of Dreams",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"Blacksmith": {
@@ -1466,7 +1466,7 @@
 	  "skill_description": "Repairs 20 armor per turn for adjacent mechanical units",
 	  "flavor_text": "\"A man's got to know his limitations.\" - Harry Callahan, Dirty Harry",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"Gatherer": {
@@ -1481,7 +1481,7 @@
 	  "skill_description": "Collects 10 resources per turn from forests/mines",
 	  "flavor_text": "\"Elementary, my dear Watson.\" - Sherlock Holmes",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"GraveDigger": {
@@ -1496,7 +1496,7 @@
 	  "skill_description": "Prevents corpses from rising as undead",
 	  "flavor_text": "\"Rest in peace.\" - Common epitaph",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"Hunter": {
@@ -1511,7 +1511,7 @@
 	  "skill_description": "Places trap that roots first enemy stepping on it",
 	  "flavor_text": "\"It's a trap!\" - Admiral Ackbar, Star Wars",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"Lumberjack": {
@@ -1526,7 +1526,7 @@
 	  "skill_description": "Gathers double wood from trees",
 	  "flavor_text": "\"I'm the king of the world!\" - Jack, Titanic",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"Merchant": {
@@ -1541,7 +1541,7 @@
 	  "skill_description": "Generates 20 gold per turn",
 	  "flavor_text": "\"Show me the money!\" - Jerry Maguire",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"Miner": {
@@ -1556,7 +1556,7 @@
 	  "skill_description": "Mines minerals 50% faster",
 	  "flavor_text": "\"We dig coal.\" - Coal Miner's Daughter",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"NobleMan": {
@@ -1571,7 +1571,7 @@
 	  "skill_description": "Generates 15 gold per turn from nearby houses",
 	  "flavor_text": "\"A penny saved is a penny earned.\" - Benjamin Franklin",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"NobleWoman": {
@@ -1586,7 +1586,7 @@
 	  "skill_description": "Heals adjacent villagers for 20 HP per turn",
 	  "flavor_text": "\"No one is useless in this world.\" - The Secret Garden",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"Nun": {
@@ -1601,7 +1601,7 @@
 	  "skill_description": "Heals adjacent units for 30 HP per turn",
 	  "flavor_text": "\"God forgives. I don't.\" - Lara Croft, Tomb Raider",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"OldMan": {
@@ -1616,7 +1616,7 @@
 	  "skill_description": "Increases XP gain of nearby units by 20%",
 	  "flavor_text": "\"With age comes wisdom.\" - Common proverb",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"OldWoman": {
@@ -1631,7 +1631,7 @@
 	  "skill_description": "Reduces fear effects on nearby units by 50%",
 	  "flavor_text": "\"I'm too old for this shit.\" - Roger Murtaugh, Lethal Weapon",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"Peasant": {
@@ -1646,7 +1646,7 @@
 	  "skill_description": "Produces 10 food per turn",
 	  "flavor_text": "\"You reap what you sow.\" - Bible, Galatians 6:7",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"Princess": {
@@ -1661,7 +1661,7 @@
 	  "skill_description": "Prevents first death of adjacent ally each battle",
 	  "flavor_text": "\"A princess is never late. Everyone else is simply early.\" - Princess Diaries",
 	  "rarity": "Rare",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"Queen": {
@@ -1676,7 +1676,7 @@
 	  "skill_description": "Doubles resource generation in kingdom",
 	  "flavor_text": "\"I am the queen of all I survey.\" - Various",
 	  "rarity": "Epic",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"SuspiciousMerchant": {
@@ -1691,7 +1691,7 @@
 	  "skill_description": "Sells illegal items with 50% discount",
 	  "flavor_text": "\"Follow the money.\" - Deep Throat, All the President's Men",
 	  "rarity": "Rare",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"Thief": {
@@ -1706,7 +1706,7 @@
 	  "skill_description": "Steals 10 gold per turn from enemies in melee",
 	  "flavor_text": "\"I'll take that.\" - Various thieves",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"VillagerMan": {
@@ -1721,7 +1721,7 @@
 	  "skill_description": "Constructs buildings 50% faster",
 	  "flavor_text": "\"If you build it, they will come.\" - Field of Dreams",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"VillagerWoman": {
@@ -1736,7 +1736,7 @@
 	  "skill_description": "Gathers healing herbs restoring 25 HP per turn",
 	  "flavor_text": "\"A spoonful of sugar helps the medicine go down.\" - Mary Poppins",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	},
 	"Worker": {
@@ -1751,7 +1751,7 @@
 	  "skill_description": "Completes tasks 30% faster",
 	  "flavor_text": "\"I like to work. I enjoy work.\" - Various",
 	  "rarity": "Common",
-	  "target_priority": "ALLY",
+	  "target_priority": "CLOSE",
 	  "spell_target_priority": "ALLY"
 	}
   }

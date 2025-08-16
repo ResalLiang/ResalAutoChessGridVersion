@@ -180,12 +180,12 @@ func start_new_turn():
 	team_dict[Team.TEAM1] = []
 	team_dict[Team.TEAM2] = []
 	for hero1 in team_dict[Team.TEAM1_FULL]:
-		team_dict[Team.TEAM1].append(hero1)
 		if hero1.stat != hero_class.STATUS.DIE and hero1.current_play_area == hero1.play_areas.arena:
+			team_dict[Team.TEAM1].append(hero1)
 			team1_alive_cnt += 1
 	for hero2 in team_dict[Team.TEAM2_FULL]:
-		team_dict[Team.TEAM2].append(hero2)
 		if hero2.stat != hero_class.STATUS.DIE and hero2.current_play_area == hero2.play_areas.arena:
+			team_dict[Team.TEAM2].append(hero2)
 			team2_alive_cnt += 1
 			
 	if team1_alive_cnt == 0:
