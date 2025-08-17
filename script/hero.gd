@@ -301,6 +301,11 @@ func _process(delta: float) -> void:
 			animated_sprite_2d.flip_h = false
 		else:
 			animated_sprite_2d.flip_h = true
+			
+	if stat == STATUS.IDLE:
+		idle_timer.start()
+	else:
+		idle_timer.stop()
 		
 func _physics_process(delta):
 	return
@@ -504,14 +509,17 @@ func _handle_attack():
 				stat = STATUS.MELEE_ATTACK
 				melee_attack_animation.play("melee_attack")
 			elif animated_sprite_2d.sprite_frames.has_animation("attack"):
-				stat = STATUS.RANGED_ATTACK
+				stat = STATUS.MELEE_ATTACK
 				animated_sprite_2d.play("attack")
 				hero_target.take_damage(damage, self)	
 			return
-	action_timer.start()
+	else:
+		stat = STATUS.IDLE
+		action_timer.start()
 
 func _handle_action_timeout():
 	animated_sprite_2d.play("idle")
+	print("%s action has finished." % hero_name)
 	action_finished.emit()
 	action_timer.stop()
 
@@ -579,12 +587,12 @@ func _find_new_target(tgt) -> Hero:
 
 # Comparator for sorting by distance
 func _compare_distance(a: Node2D, b: Node2D) -> bool:
-	return a.global_position.distance_to(global_position) < b.global_position.distance_to(global_position)
+	return a.global_position.distance_to(global_position) > b.global_position.distance_to(global_position)
 
 
 # Handle idle timer timeout
 func _on_idle_timeout():
-	if stat == STATUS.IDLE:
+	if stat != STATUS.IDLE:
 		animated_sprite_2d.play("idle")
 
 
@@ -750,6 +758,7 @@ func _handle_dragging_state(stating_position: Vector2, drag_action: String):
 			_:
 				stat = STATUS.IDLE
 		animated_sprite_2d.play("idle")
+		
 func update_buff_debuff():
 	
 	buff_handler.start_turn_update()
@@ -784,10 +793,12 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 
 	elif stat == STATUS.HIT:
 		is_hit.emit()
+		stat = STATUS.IDLE
 
 	elif stat == STATUS.SPELL:
 		spell_casted.emit()
 		action_timer.start()
+		stat = STATUS.IDLE
 		
 	elif stat == STATUS.RANGED_ATTACK:
 		if remain_attack_count <= 0:
@@ -796,6 +807,7 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 			#else:
 			action_timer.start()
 			ranged_attack_finished.emit()
+			stat = STATUS.IDLE
 		elif hero_target and hero_target.stat != STATUS.DIE:
 			_handle_attack()
 		else:
@@ -806,6 +818,7 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 		if remain_attack_count <= 0:
 			melee_attack_finished.emit()
 			action_timer.start()
+			stat = STATUS.IDLE
 		elif hero_target and hero_target.stat != STATUS.DIE:
 			_handle_attack()
 		else:
@@ -813,7 +826,7 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 			_handle_attack()
 
 
-	stat = STATUS.IDLE
+	
 
 
 

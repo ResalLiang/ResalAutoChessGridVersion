@@ -283,7 +283,7 @@ func generate_enemy(difficulty : int) -> void:
 		if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
 			var character = hero_scene.instantiate()
 			character.team = 2
-			character.faction = hero_data.keys()[randi_range(0, hero_data.keys().size() - 1)]
+			character.faction = hero_data.keys()[randi_range(0, hero_data.keys().size() - 2)] # remove villager
 			character.hero_name = get_random_character(character.faction)
 			add_child(character)
 			hero_mover.setup_hero(character)

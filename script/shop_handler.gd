@@ -4,6 +4,7 @@ extends Node2D
 const max_shop_level := 6
 
 @onready var hero_mover: HeroMover = %hero_mover
+@onready var shop: PlayArea = %shop
 
 
 var shop_buy_price := 3
@@ -40,7 +41,9 @@ func shop_refresh() -> void:
 				node.queue_free()	
 
 		for i in range(shop_level + 2):
-			var rand_faction_index = randi_range(0, get_parent().hero_data.keys().size() - 1)
+			var shop_col_index = i % shop.unit_grid.size.x
+			var shop_row_index = floor(i / shop.unit_grid.size.x)
+			var rand_faction_index = randi_range(0, get_parent().hero_data.keys().size() - 2) # remove villager
 			var rand_faction = get_parent().hero_data.keys()[rand_faction_index]
 			var character = get_parent().hero_scene.instantiate()
 			character.faction = rand_faction
@@ -48,7 +51,18 @@ func shop_refresh() -> void:
 			character.team = 1
 			add_child(character)
 			hero_mover.setup_hero(character)
-			hero_mover._move_hero(character, get_parent().shop, Vector2(0, i))
+			hero_mover._move_hero(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
+			
+		var debug_hero_faction = ["human", "human", "human", "human", "demon"]
+		var debug_hero_name = ["ArcherMan", "CrossBowMan", "Mage", "ArchMage", "FireImp"]
+		for debug_index in range(debug_hero_faction.size()):
+			var character = get_parent().hero_scene.instantiate()
+			character.faction = debug_hero_faction[debug_index]
+			character.hero_name = debug_hero_name[debug_index]
+			character.team = 1
+			add_child(character)
+			hero_mover.setup_hero(character)
+			hero_mover._move_hero(character, get_parent().shop, Vector2(debug_index, 3))
 	
 func shop_freeze() -> void:
 	if is_shop_frozen:
