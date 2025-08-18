@@ -26,6 +26,7 @@ const hero_class = preload("res://script/hero.gd")
 @onready var debug_handler: DebugHandler = %debug_handler
 
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
+var hero_data_array: Dictionary
 enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
 enum SelectionMode { HIGH_HP, LOW_HP, NEAR_CENTER, FAR_CENTER }
 var current_team: Team
@@ -104,6 +105,14 @@ const RARITY_WEIGHTS = {
 	}
 }
 
+const RARITY_COUNTS = {
+	"Common": 50,
+	"Uncommon": 40,
+	"Rare": 30,
+	"Epic": 20,
+	"Legendary": 10
+}
+
 signal game_finished
 
 func _ready():
@@ -161,6 +170,7 @@ func new_round_prepare_start():
 		load_arena_team()
 	hero_mover.setup_before_turn_start()
 	current_round += 1
+	shop_handler.turn_start_income(current_round)
 
 func new_round_prepare_end():
 	if not saved_arena_team:
@@ -284,8 +294,9 @@ func generate_enemy(difficulty : int) -> void:
 		if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
 			var character = hero_scene.instantiate()
 			character.team = 2
-			character.faction = hero_data.keys()[randi_range(0, hero_data.keys().size() - 2)] # remove villager
-			character.hero_name = get_random_character(character.faction)
+			[character.faction, character.hero_name] = generate_random_hero()
+			# character.faction = hero_data.keys()[randi_range(0, hero_data.keys().size() - 2)] # remove villager
+			# character.hero_name = get_random_character(character.faction)
 			add_child(character)
 			debug_handler.connect_to_hero_signal(character)
 			hero_mover.setup_hero(character)
@@ -351,4 +362,77 @@ func save_arena_team():
 	for hero_index in arena.unit_grid.units.keys():
 		if arena.unit_grid.units[hero_index]:
 			saved_arena_team[hero_index] = [arena.unit_grid.units[hero_index].faction, arena.unit_grid.units[hero_index].hero_name]
+
+# Generates random hero based on shop level and rarity weights
+func generate_random_hero():
+	# --- Rarity Selection Phase ---
+	# Calculate total weight for current shop level
+	var total_rarity_weight := 0
+	for weight in RARITY_WEIGHTS[shop_handler.shop_level].values():
+		total_rarity_weight += weight
+	
+	# Get random value within weight range
+	var random_rarity_threshold := randi_range(0, total_rarity_weight - 1)
+	
+	# Determine selected rarity tier
+	var accumulated_rarity_weight := 0
+	var selected_rarity: String
+	for rarity_type in RARITY_WEIGHTS[shop_handler.shop_level]:
+		accumulated_rarity_weight += RARITY_WEIGHTS[shop_handler.shop_level][rarity_type]
+		if accumulated_rarity_weight > random_rarity_threshold:
+			selected_rarity = rarity_type
+			break
+
+	# --- Existing Heroes Tracking ---
+	# Count existing hero instances (faction+name pairs)
+	var existing_hero_counts := {}
+	for node in get_tree().get_nodes_in_group("hero_group"):
+		if node is Hero:
+			var composite_key = "%s_%s" % [node.faction, node.hero_name]
+			existing_hero_counts[composite_key] = existing_hero_counts.get(composite_key, 0) + 1
+
+	# --- Eligible Heroes Filtering ---
+	var candidate_heroes := []
+	var total_weight_pool := 0
+	
+	# Pre-process all eligible heroes with calculated weights
+	for faction in hero_data:
+		# Skip special faction
+		if faction == "villager":
+			continue
+			
+		for hero_name in hero_data[faction]:
+			var hero_attributes = hero_data[faction][hero_name]
+			
+			# Validation checks
+			if hero_attributes["spd"] == 0 || hero_attributes["rarity"] != selected_rarity:
+				continue
+				
+			# Calculate dynamic weight with duplicate penalty
+			var hero_identifier = "%s_%s" % [faction, hero_name]
+			var base_weight = RARITY_WEIGHTS[hero_attributes["rarity"]]
+			var duplicate_penalty = existing_hero_counts.get(hero_identifier, 0)
+			var final_weight = max(base_weight - duplicate_penalty, 1)  # Ensure minimum weight
+			
+			# Register candidate hero
+			total_weight_pool += final_weight
+			candidate_heroes.append({
+				"faction": faction,
+				"name": hero_name,
+				"weight": final_weight,
+				"cumulative_weight": total_weight_pool
+			})
+
+	# --- Weighted Random Selection ---
+	if candidate_heroes.size() == 0:
+		push_warning("No eligible heroes found for rarity: %s" % selected_rarity)
+		return ["human", "ShieldMan"]  # Fallback
+	
+	var random_hero_point := randi_range(0, total_weight_pool - 1)
+	for hero in candidate_heroes:
+		if hero["cumulative_weight"] > random_hero_point:
+			return [hero["faction"], hero["name"]]
+	
+	# Should never reach here if candidates exist
+	return ["human", "ShieldMan"]
 
