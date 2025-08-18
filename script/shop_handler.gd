@@ -5,6 +5,7 @@ const max_shop_level := 6
 
 @onready var hero_mover: HeroMover = %hero_mover
 @onready var shop: PlayArea = %shop
+@onready var debug_handler: DebugHandler = %debug_handler
 
 
 var shop_buy_price := 3
@@ -50,6 +51,7 @@ func shop_refresh() -> void:
 			character.hero_name = get_parent().get_random_character(rand_faction)
 			character.team = 1
 			add_child(character)
+			debug_handler.connect_to_hero_signal(character)
 			hero_mover.setup_hero(character)
 			hero_mover._move_hero(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
 			
@@ -61,6 +63,7 @@ func shop_refresh() -> void:
 			character.hero_name = debug_hero_name[debug_index]
 			character.team = 1
 			add_child(character)
+			debug_handler.connect_to_hero_signal(character)
 			hero_mover.setup_hero(character)
 			hero_mover._move_hero(character, get_parent().shop, Vector2(debug_index, 3))
 	
