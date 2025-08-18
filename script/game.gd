@@ -191,11 +191,11 @@ func start_new_turn():
 	team_dict[Team.TEAM1] = []
 	team_dict[Team.TEAM2] = []
 	for hero1 in team_dict[Team.TEAM1_FULL]:
-		if hero1.stat != hero_class.STATUS.DIE and hero1.current_play_area == hero1.play_areas.arena:
+		if hero1.status != hero_class.STATUS.DIE and hero1.current_play_area == hero1.play_areas.arena:
 			team_dict[Team.TEAM1].append(hero1)
 			team1_alive_cnt += 1
 	for hero2 in team_dict[Team.TEAM2_FULL]:
-		if hero2.stat != hero_class.STATUS.DIE and hero2.current_play_area == hero2.play_areas.arena:
+		if hero2.status != hero_class.STATUS.DIE and hero2.current_play_area == hero2.play_areas.arena:
 			team_dict[Team.TEAM2].append(hero2)
 			team2_alive_cnt += 1
 			
@@ -294,7 +294,9 @@ func generate_enemy(difficulty : int) -> void:
 		if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
 			var character = hero_scene.instantiate()
 			character.team = 2
-			[character.faction, character.hero_name] = generate_random_hero()
+			var rand_character_result = generate_random_hero()
+			character.faction = rand_character_result[0]
+			character.hero_name = rand_character_result[1]
 			# character.faction = hero_data.keys()[randi_range(0, hero_data.keys().size() - 2)] # remove villager
 			# character.hero_name = get_random_character(character.faction)
 			add_child(character)
@@ -410,7 +412,7 @@ func generate_random_hero():
 				
 			# Calculate dynamic weight with duplicate penalty
 			var hero_identifier = "%s_%s" % [faction, hero_name]
-			var base_weight = RARITY_WEIGHTS[hero_attributes["rarity"]]
+			var base_weight = RARITY_WEIGHTS[shop_handler.shop_level][hero_attributes["rarity"]]
 			var duplicate_penalty = existing_hero_counts.get(hero_identifier, 0)
 			var final_weight = max(base_weight - duplicate_penalty, 1)  # Ensure minimum weight
 			
@@ -435,4 +437,3 @@ func generate_random_hero():
 	
 	# Should never reach here if candidates exist
 	return ["human", "ShieldMan"]
-

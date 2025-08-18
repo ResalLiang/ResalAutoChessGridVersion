@@ -12,7 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://crj21hmdkcij7" path="res://asset/sprite/SpinningCoin/Spinning Coin.png" id="10_yq8tf"]
 [ext_resource type="Script" uid="uid://bnobjccy7mbl1" path="res://script/shop_handler.gd" id="11_ym5sv"]
 [ext_resource type="Script" uid="uid://c101twvdkyo0l" path="res://script/area_effect_handler.gd" id="12_sng2h"]
-[ext_resource type="Script" uid="uid://ci55opsee022y" path="res://scene/node.gd" id="13_5g16k"]
+[ext_resource type="Script" uid="uid://c741ay1j7xpf4" path="res://script/debug_handler.gd" id="13_5g16k"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qpk70"]
 texture = ExtResource("5_xlg7c")
@@ -2201,10 +2201,10 @@ text = "Current shop level = "
 unique_name_in_owner = true
 script = ExtResource("11_ym5sv")
 
-[node name="area_effect_handler" type="Node" parent="."]
+[node name="area_effect_handler" type="Node2D" parent="."]
 unique_name_in_owner = true
 script = ExtResource("12_sng2h")
 
-[node name="debug_handler" type="Node" parent="."]
+[node name="debug_handler" type="Node2D" parent="."]
 unique_name_in_owner = true
 script = ExtResource("13_5g16k")

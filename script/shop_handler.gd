@@ -31,35 +31,35 @@ signal shop_upgraded
 func _ready():
 	shop_refreshed.connect(
 		func():
-			debug_handler.write_log("Shop refreshed.")
+			debug_handler.write_log("LOG", "Shop refreshed.")
 	)
 	shop_freezed.connect(
 		func():
-			debug_handler.write_log("Shop freezed.")
+			debug_handler.write_log("LOG", "Shop freezed.")
 	)
 	shop_unfreezed.connect(
 		func():
-			debug_handler.write_log("Shop unfreezed.")
+			debug_handler.write_log("LOG", "Shop unfreezed.")
 	)
 	hero_bought.connect(
 		func(hero_name):
-			debug_handler.write_log(hero_name + " is bought.")
+			debug_handler.write_log("LOG", hero_name + " is bought.")
 	)
 	hero_sold.connect(
 		func(hero_name):
-			debug_handler.write_log(hero_name + " is sold.")
+			debug_handler.write_log("LOG", hero_name + " is sold.")
 	)
 	coins_increased.connect(
 		func(value, reason):
-			debug_handler.write_log("Coins increase by " + value + " because of " + reason + ".")
+			debug_handler.write_log("LOG", "Coins increase by " + str(value) + " because of " + reason + ".")
 	)
 	coins_decreased.connect(
 		func(value, reason):
-			debug_handler.write_log("Coins decrease by " + value + " because of " + reason + ".")
+			debug_handler.write_log("LOG", "Coins decrease by " + str(value) + " because of " + reason + ".")
 	)
 	shop_upgraded.connect(
 		func(value):
-			debug_handler.write_log("Shop upgrade to level: " + value + ".")
+			debug_handler.write_log("LOG", "Shop upgrade to level: " + str(value) + ".")
 	)
 
 func shop_init():
@@ -85,7 +85,9 @@ func shop_refresh() -> void:
 			var character = get_parent().hero_scene.instantiate()
 			# character.faction = rand_faction
 			# character.hero_name = get_parent().get_random_character(rand_faction)
-			[character.faction, character.hero_name] = get_parent().generate_random_hero()
+			var rand_character_result = get_parent().generate_random_hero()
+			character.faction = rand_character_result[0]
+			character.hero_name = rand_character_result[1]
 			character.team = 1
 			add_child(character)
 			debug_handler.connect_to_hero_signal(character)
@@ -141,7 +143,7 @@ func get_hero_price(hero: Hero):
 	return shop_buy_price
 
 func turn_start_income(current_round: int):
-	turn_start_interest = floor(remain_coins / 5)
+	var turn_start_interest = floor(remain_coins / 5)
 	remain_coins += turn_start_interest
 	coins_increased.emit(turn_start_interest, "interest")
 	remain_coins += current_round + 2

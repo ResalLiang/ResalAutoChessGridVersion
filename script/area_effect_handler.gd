@@ -1,5 +1,5 @@
 class_name AreaEffectHanlder
-extends Node
+extends Node2D
 
 func find_affected_units(origin: Vector2i, rotate_index: int, unit_grid: Dictionary, template: Array) -> Array:
 	var affected = []

@@ -1,41 +1,36 @@
-extends Node
 class_name DebugHandler
+extends Node2D
 
 var debug_mode := false
 
 # File handler and path configuration
-var log_file : File
+var log_file : FileAccess
 var log_path = "user://logs/"
 
 func _ready():
-    _init_log_file()
+	_init_log_file()
 
 # Initialize log file with timestamp
 func _init_log_file():
-    var dir = Directory.new()
-    if !dir.dir_exists(log_path):
-        dir.make_dir_recursive(log_path)
-    
-    # Generate filename using current datetime (YYYYMMDD_HHMMSS format)
-    var datetime = OS.get_datetime()
-    var filename = "log_%04d%02d%02d_%02d%02d%02d.txt" % [
-        datetime.year, datetime.month, datetime.day,
-        datetime.hour, datetime.minute, datetime.second
-    ]
-    
-    log_file = File.new()
-    if log_file.open(log_path + filename, File.WRITE) == OK:
-        print("Log file created: ", filename)
-    else:
-        push_error("Failed to create log file")
+	var dir = DirAccess.open("user://")
+	if dir != null:
+		dir.make_dir_recursive(log_path)
+		
+	var datetime = Time.get_datetime_dict_from_system()
+	var filename = "log_%04d%02d%02d_%02d%02d%02d.txt" % [
+		datetime.year, datetime.month, datetime.day,
+		datetime.hour, datetime.minute, datetime.second
+	]
+	
+	log_file = FileAccess.open(log_path + filename, FileAccess.WRITE)
 
 # Write message with timestamp to log file
 func write_log(log_type: String, message: String):
-    if log_file.is_open():
-        var time = OS.get_time()
-        log_file.store_string("[%02d:%02d:%02d] [%s]: %s\n" % [
-            time.hour, time.minute, time.second, log_type, message])
-        log_file.flush()
+	if log_file.is_open():
+		var time = Time.get_datetime_dict_from_system()
+		log_file.store_string("[%02d:%02d:%02d] [%s]: %s\n" % [
+			time.hour, time.minute, time.second, log_type, message])
+		log_file.flush()
 
 func connect_to_hero_signal(hero: Hero):
 	hero.died.connect(
@@ -52,7 +47,7 @@ func connect_to_hero_signal(hero: Hero):
 	)
 	hero.action_started.connect(
 		func(hero_name, end_position):
-			write_log("LOG", hero_name + " action started."))
+			write_log("LOG", hero_name + " action started.")
 	)
 	hero.action_finished.connect(
 		func(hero_name):
@@ -114,7 +109,7 @@ func connect_to_hero_signal(hero: Hero):
 	)
 	hero.attack_evased.connect(
 		func(hero_name, attacker_name):
-			write_log("LOG", hero_name + " has EVASED " + attacker_name "'s attack.")
+			write_log("LOG", hero_name + " has EVASED " + attacker_name + "'s attack.")
 	)
 	hero.target_lost.connect(
 		func(hero_name):
@@ -126,10 +121,9 @@ func connect_to_hero_signal(hero: Hero):
 	)
 	hero.tween_moving.connect(
 		func(hero_name, start_pos, target_pos):
-			write_log("LOG", hero_name + " starts tweeming move from " + start_pos + " to " + target_pos + ".")
+			write_log("LOG", hero_name + " starts tweeming move from " + str(start_pos) + " to " + str(target_pos) + ".")
 	)
 	hero.projectile_lauched.connect(
 		func(hero_name):
 			write_log("LOG", hero_name + " has lauched a projectile.")
 	)
-)

@@ -18,7 +18,6 @@ const projectile_scene = preload("res://scene/projectile.tscn")
 @export_enum("human", "dwarf", "elf", "forestProtector", "holy", "demon", "undead", "villager") var faction := "human":
 	set(value):
 		faction = value
-		_update_hero_name_options()  # Update hero name options when faction changes
 
 # Hero name with property observer
 @export var hero_name := "ShieldMan":
@@ -29,7 +28,7 @@ const projectile_scene = preload("res://scene/projectile.tscn")
 		# Load animation resource in editor mode
 		if ResourceLoader.exists("res://asset/animation/" + faction + "/" + faction + hero_name + ".tres"):
 			animated_sprite_2d.sprite_frames = ResourceLoader.load("res://asset/animation/" + faction + "/" + faction + hero_name + ".tres")
-		_update_hero_stat()
+		_load_hero_stats()
 
 var base_max_hp := 100  # Maximum health points
 var base_max_mp := 50   # Maximum magic points
@@ -75,7 +74,7 @@ var remain_attack_count
 @onready var drag_handler: Node2D = $drag_handler
 @onready var move_timer: Timer = $move_timer
 @onready var action_timer: Timer = $action_timer
-
+@onready var debug_handler: DebugHandler = $debug_handler
 # ========================
 # Member Variables
 # ========================
@@ -497,7 +496,7 @@ func _handle_attack():
 				projectile_lauched.emit(hero_name)
 				hero_projectile.projectile_vanished.connect(_on_animated_sprite_2d_animation_finished)
 				hero_projectile.projectile_vanished.connect(
-					func():
+					func(hero_name):
 						debug_handler.write_log("LOG", hero_name + "'s projectile has vanished.")
 				)
 			else:
@@ -673,7 +672,7 @@ func _apply_damage(damage_target: Hero = hero_target, damage_value: int = damage
 func _apply_heal(heal_target: Hero = hero_spell_target, heal_value: int = damage):
 	if heal_target:
 		heal_target.take_heal(heal_value, self)
-		heal_applied.emit(hero_name, heal_target, heal_value)
+		heal_applied.emit(hero_name, heal_value, heal_target.hero_name)
 		
 func snap(value: float, grid_size: int) -> int:
 	return floor(value / grid_size)
