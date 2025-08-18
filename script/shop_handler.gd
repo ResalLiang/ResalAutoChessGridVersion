@@ -44,11 +44,12 @@ func shop_refresh() -> void:
 		for i in range(shop_level + 2):
 			var shop_col_index = i % shop.unit_grid.size.x
 			var shop_row_index = floor(i / shop.unit_grid.size.x)
-			var rand_faction_index = randi_range(0, get_parent().hero_data.keys().size() - 2) # remove villager
-			var rand_faction = get_parent().hero_data.keys()[rand_faction_index]
+			# var rand_faction_index = randi_range(0, get_parent().hero_data.keys().size() - 2) # remove villager
+			# var rand_faction = get_parent().hero_data.keys()[rand_faction_index]
 			var character = get_parent().hero_scene.instantiate()
-			character.faction = rand_faction
-			character.hero_name = get_parent().get_random_character(rand_faction)
+			# character.faction = rand_faction
+			# character.hero_name = get_parent().get_random_character(rand_faction)
+			[character.faction, character.hero_name] = get_parent().generate_random_hero()
 			character.team = 1
 			add_child(character)
 			debug_handler.connect_to_hero_signal(character)
