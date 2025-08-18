@@ -85,20 +85,11 @@ var hero_target_choice := TARGET_CHOICE.CLOSE  # Target selection strategy
 var hero_target: Hero  # Current attack target
 var hero_spell_target_choice := TARGET_CHOICE.CLOSE  # Target selection strategy
 var hero_spell_target: Hero # Current spell target
-var stat := STATUS.IDLE         # Current character state
+var status := STATUS.IDLE         # Current character state
 
 var skill_name := "Place holder."
 var skill_description := "Place holder."
 
-
-# Dictionary mapping factions to available hero names
-var faction_hero_dict = {
-	"human": ["ArchMage", "ArcherMan", "CavalierMan", "CrossBowMan", "HalberMan", "HorseMan", "KingMan", "Mage", "PrinceMan", "ShieldMan", "SpearMan"],
-	"dwarf": ["ArmoredBearRider", "BearRider", "Demolitionist", "Grenade", "Grenadier", "Hunter", "King", "Miner", "Rifleman", "Shieldbreaker", "Warrior"],
-	"elf": ["ArcaneArcher", "Archer", "HorseMan", "Mage", "PegasusRider", "Queen", "SpearMan", "SpellSword", "SwordMan", "Warden"],
-	"forestProtector": ["DryadDeer", "DryadEnchantress", "DryadHuntress", "Fairy", "Pixie", "SatyrDruid", "SatyrWarrior", "Treant", "TreantGuard", "Satyr", "YoungDryad"],
-	"holy": ["Angel", "ArchAngel", "BattlePriest", "Crusader", "CrusaderArcher", "CrusaderCaptain", "CrusaderCaptainFlagless", "CrusaderFlag", "CrusaderHorseMan", "HighPriestess", "Paladin1", "Paladin2", "Paladin3", "Priest"]
-}
 
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
 var rng = RandomNumberGenerator.new() # Random number generator
@@ -140,8 +131,22 @@ signal heal_taken
 
 signal is_hit
 signal spell_casted
+signal ranged_attack_started
+signal melee_attack_started
 signal ranged_attack_finished
 signal melee_attack_finished
+
+signal critical_damage_applied
+signal damage_applied
+signal heal_applied
+signal attack_evased #attack_evased.emit(hero_name, attacker.hero_name)
+signal projectile_lauched
+
+signal animated_sprite_loaded
+signal stats_loaded
+signal target_lost	#target_lost.emit(hero_name)
+signal target_found	#target_found.emit(hero_name, hero_target.hero_name)
+signal tween_moving	#tween_moving.emit(hero_name, _position, target_pos)
 
 # ========================
 # Projectile Properties
@@ -166,9 +171,6 @@ var current_play_area = play_areas.arena
 # Initialization
 # ========================
 func _ready():
-	# Skip initialization in editor mode
-	if Engine.is_editor_hint():
-		return
 		
 	drag_handler.dragging_enabled = dragging_enabled
 	
@@ -254,6 +256,8 @@ func _process(delta: float) -> void:
 
 	hp_bar.value = hp
 	mp_bar.value = mp
+
+	hp_bar.visible = hp != max_hp
 		
 	# Update attack indicator line
 	if hero_target and line_visible:
@@ -283,7 +287,7 @@ func _process(delta: float) -> void:
 			else:
 				new_material.set_shader_parameter("outline_color", Color(1, 1, 1, 0.33))
 
-	if stat == STATUS.HIT:			
+	if status == STATUS.HIT:			
 		if is_active:
 			new_material.set_shader_parameter("outline_color", Color(1, 0, 0, 1))
 		else:
@@ -301,23 +305,6 @@ func _process(delta: float) -> void:
 			animated_sprite_2d.flip_h = false
 		else:
 			animated_sprite_2d.flip_h = true
-			
-	if stat == STATUS.IDLE:
-		idle_timer.start()
-	else:
-		idle_timer.stop()
-		
-func _physics_process(delta):
-	return
-
-# ========================
-# Input Handling
-# ========================
-func _input(event):
-	# Skip input processing in editor mode
-	if Engine.is_editor_hint():
-		return
-
 
 # ========================
 # Private Functions
@@ -372,6 +359,7 @@ func _load_animations():
 			else:
 				frames.set_animation_loop(anim_name, false)
 			frames.set_animation_speed(anim_name, 8.0)
+			animated_sprite_loaded.emit(hero_name, anim_name)
 		animated_sprite_2d.sprite_frames = frames
 	else:
 		push_error("Animation resource not found: " + path)
@@ -399,13 +387,12 @@ func _load_hero_stats():
 		base_attack_spd = stats.get("attack_speed", base_attack_spd)
 		skill_name = stats.get("skill_name", skill_name)
 		skill_description = stats.get("skill_description", skill_description)
-		print("Loaded stats for %s: spd=%d, hp=%d, range=%d, atk_speed=%d" % 
-			[hero_name, base_spd, base_max_hp, base_attack_range, base_attack_spd])
+		stats_loaded.emit(hero_name, stats)
 	else:
 		push_error("Stats not found for %s/%s" % [faction, hero_name])
 
 func start_turn():
-	if stat == STATUS.DIE:
+	if status == STATUS.DIE:
 		visible = false
 		action_timer.start()
 		return
@@ -417,22 +404,24 @@ func start_turn():
 
 	remain_attack_count = attack_spd
 
-	if not hero_target or hero_target.stat == STATUS.DIE:
+	if not hero_target or hero_target.status == STATUS.DIE:
+		target_lost.emit(hero_name)
 		_handle_targeting()
 		
-	if hero_target and hero_target.stat != STATUS.DIE:
+	if hero_target and hero_target.status != STATUS.DIE:
+		target_found.emit(hero_name, hero_target.hero_name)
 		_handle_movement()
 	else:
 		action_timer.start()
 
 func _handle_movement():
 
-	move_started.emit()
+	move_started.emit(hero_name, position_id)
 
 	animated_sprite_2d.play("move")
 
 	if global_position.distance_to(hero_target.global_position) <= attack_range or debuff_handler.is_stunned:
-		#move_finished.emit()
+		move_finished.emit(hero_name, position_id)
 		move_timer.start()
 	else:
 		astar_grid.set_point_solid(position_id, false)
@@ -451,7 +440,7 @@ func _handle_movement():
 			move_path = get_safe_path(position_id, hero_target.position_id)
 		if move_path.is_empty():
 			astar_grid.set_point_solid(hero_target.position_id, true)
-			#move_finished.emit()
+			move_finished.emit(hero_name, position_id)
 			move_timer.start()
 		else:
 			var move_steps = min(spd, move_path.size() - 1)
@@ -464,6 +453,7 @@ func _handle_movement():
 				var target_pos = move_path[current_step + 1] + grid_offset
 				if !astar_grid.is_point_solid(target_pos):
 					position_tween.tween_property(self, "_position", target_pos, 0.1)
+					tween_moving.emit(hero_name, _position, target_pos)
 					remain_step -= 1
 
 func _on_move_completed():
@@ -473,18 +463,21 @@ func _on_move_completed():
 		position_tween.kill()
 		astar_grid.set_point_solid(position_id, true)
 		astar_grid.set_point_solid(hero_target.position_id, true)
+		move_finished.emit(hero_name, _position)
 		move_timer.start()
 						
 func _handle_action():
 	move_timer.stop()
+	action_started.emit(hero_name)
 	astar_grid.set_point_solid(position_id, true)
 	if !hero_target or !is_instance_valid(hero_target):
+		target_lost.emit(hero_name)
 		action_timer.start()
 	if mp >= max_mp and animated_sprite_2d.sprite_frames.has_animation("spell") and (!debuff_handler.is_silenced or !debuff_handler.is_stunned):
 		if !hero_spell_target:
 			hero_spell_target = _find_new_target(hero_spell_target_choice)
 		if hero_spell_target:
-			stat = STATUS.SPELL
+			status = STATUS.SPELL
 			animated_sprite_2d.play("spell")
 			_cast_spell(hero_spell_target)
 			mp = 0
@@ -496,37 +489,45 @@ func _handle_attack():
 	remain_attack_count -= 1
 	if current_distance_to_target <= attack_range and (!debuff_handler.is_stunned or !debuff_handler.is_disarmed):
 		if current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
-			stat = STATUS.RANGED_ATTACK
+			status = STATUS.RANGED_ATTACK
 			if ResourceLoader.exists("res://asset/animation/%s/%s%s_projectile.tres" % [faction, faction, hero_name]):
 				animated_sprite_2d.play("ranged_attack")
+				ranged_attack_started.emit(hero_name)
 				var hero_projectile = _launch_projectile(hero_target)
+				projectile_lauched.emit(hero_name)
 				hero_projectile.projectile_vanished.connect(_on_animated_sprite_2d_animation_finished)
+				hero_projectile.projectile_vanished.connect(
+					func():
+						debug_handler.write_log("LOG", hero_name + "'s projectile has vanished.")
+				)
 			else:
 				ranged_attack_animation.play("ranged_attack")
+				ranged_attack_started.emit(hero_name)
 			return
 		elif current_distance_to_target < ranged_attack_threshold:
 			if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
-				stat = STATUS.MELEE_ATTACK
+				status = STATUS.MELEE_ATTACK
 				melee_attack_animation.play("melee_attack")
+				melee_attack_started.emit(hero_name)
 			elif animated_sprite_2d.sprite_frames.has_animation("attack"):
-				stat = STATUS.MELEE_ATTACK
+				status = STATUS.MELEE_ATTACK
 				animated_sprite_2d.play("attack")
+				melee_attack_started.emit(hero_name)
 				hero_target.take_damage(damage, self)	
 			return
 	else:
-		stat = STATUS.IDLE
+		status = STATUS.IDLE
 		action_timer.start()
 
 func _handle_action_timeout():
 	animated_sprite_2d.play("idle")
-	print("%s action has finished." % hero_name)
-	action_finished.emit()
+	action_finished.emit(hero_name)
 	action_timer.stop()
 
 # Handle target selection and tracking
 func _handle_targeting():
 	# Clear invalid targets (dead or invalid instances)
-	if !hero_target or hero_target.stat == STATUS.DIE:
+	if !hero_target or hero_target.status == STATUS.DIE:
 		line.visible = false
 		hero_target = _find_new_target(hero_target_choice)
 		
@@ -535,7 +536,7 @@ func _find_new_target(tgt) -> Hero:
 	# Get all heroes in the scene
 	var all_heroes: Array[Hero] = []
 	for node in get_tree().get_nodes_in_group("hero_group"):
-		if (node is Hero and node.stat != STATUS.DIE) and node.current_play_area == play_areas.arena:
+		if (node is Hero and node.status != STATUS.DIE) and node.current_play_area == play_areas.arena:
 			all_heroes.append(node)
 	var enemy_heroes: Array[Hero] = []
 	var ally_heroes: Array[Hero] = []
@@ -587,12 +588,12 @@ func _find_new_target(tgt) -> Hero:
 
 # Comparator for sorting by distance
 func _compare_distance(a: Node2D, b: Node2D) -> bool:
-	return a.global_position.distance_to(global_position) > b.global_position.distance_to(global_position)
+	return a.global_position.distance_to(global_position) < b.global_position.distance_to(global_position)
 
 
 # Handle idle timer timeout
 func _on_idle_timeout():
-	if stat != STATUS.IDLE:
+	if status == STATUS.IDLE:
 		animated_sprite_2d.play("idle")
 
 
@@ -624,6 +625,9 @@ func _launch_projectile(target: Hero):
 	projectile.initial_flip = is_flipped
 	projectile.attacker = self
 	
+
+	projectile_damage = damage
+
 	# Configure projectile properties
 	projectile.speed = projectile_speed
 	projectile.damage = projectile_damage
@@ -637,59 +641,39 @@ func _launch_projectile(target: Hero):
 func take_damage(damage_value: int, attacker: Hero):
 	if rng.randf() > evasion_rate or !buff_handler.is_immunity:
 		var real_damage_value = damage_value - armor
-		hp -= max(0, damage_value)
+		hp -= max(0, real_damage_value)
 		attacker.mp += real_damage_value
-		damage_taken.emit(damage_value)
+		damage_taken.emit(hero_name, real_damage_value, attacker.hero_name)
 	else:
-		print("%s's attack was evased!" % hero_name)
+		attack_evased.emit(hero_name, attacker.hero_name)
 
 
 func take_heal(heal_value: int, healer: Hero):
 		hp += max(0, heal_value)
 		healer.mp += heal_value
-		heal_taken.emit(heal_value)
-
-# ========================
-# Editor Helper Functions
-# ========================
-# Update hero name options when faction changes (editor only)
-func _update_hero_name_options():
-	if not Engine.is_editor_hint():
-		return
-		
-	# Get valid names for current faction
-	var valid_names = faction_hero_dict.get(faction, [])
-	var hint_string = ",".join(valid_names)
-	
-	# Notify editor of property changes
-	notify_property_list_changed()
-	
-	# Ensure hero name is valid for current faction
-	if not hero_name in valid_names and valid_names.size() > 0:
-		hero_name = valid_names[0]
-
-# Update hero stats (editor only)
-func _update_hero_stat():
-	pass  # Placeholder for editor-specific stat updates
+		heal_taken.emit(hero_name, heal_value, healer.hero_name)
 
 
 func _cast_spell(spell_tgt: Hero):
 	print("%s casts a spell %s to %s." % [hero_name, skill_name, spell_tgt])
 	print("\"%s\"" % skill_description)
+	spell_casted.emit(hero_name, skill_name)
 
 func _apply_damage(damage_target: Hero = hero_target, damage_value: int = damage):
 	if hero_target:
 		if rng.randf() <= critical_rate:
 			var real_damage_value =  damage * 2
 			hero_target.take_damage(real_damage_value, self)
-			print("%s's apply a critical attack!" % hero_name)
+			critical_damage_applied.emit(hero_name, damage_target)
 		else:
 			var real_damage_value =  damage
-			hero_target.take_damage(real_damage_value, self)			
+			hero_target.take_damage(real_damage_value, self)
+			damage_applied.emit(hero_name, damage_target)		
 
 func _apply_heal(heal_target: Hero = hero_spell_target, heal_value: int = damage):
 	if heal_target:
 		heal_target.take_heal(heal_value, self)
+		heal_applied.emit(hero_name, heal_target, heal_value)
 		
 func snap(value: float, grid_size: int) -> int:
 	return floor(value / grid_size)
@@ -724,12 +708,12 @@ func get_points_in_radius(target: Vector2i, radius: int) -> Array[Vector2i]:
 
 func _on_damage_taken(damage_value):
 	if hp <= 0:
-		stat = STATUS.DIE
+		status = STATUS.DIE
 		animated_sprite_2d.stop()
 		animated_sprite_2d.play("die")
 		return
 	else:
-		stat = STATUS.HIT
+		status = STATUS.HIT
 		animated_sprite_2d.play("hit")
 	
 func _on_died():
@@ -741,23 +725,24 @@ func update_solid_map():
 	astar_grid.update()
 
 	for node in get_tree().get_nodes_in_group("hero_group"):
-		if node.stat != STATUS.DIE and current_play_area == play_areas.arena:
+		if node.status != STATUS.DIE and current_play_area == play_areas.arena:
 			astar_grid.set_point_solid(node.position_id, true)
 
 func _handle_dragging_state(stating_position: Vector2, drag_action: String):
 	if !is_active:
 		match drag_action:
 			"started":
-				stat = STATUS.JUMP
+				status = STATUS.JUMP
 				animated_sprite_2d.play("jump")
 				return
 			"dropped":
-				stat = STATUS.IDLE
+				status = STATUS.IDLE
 			"canceled":
-				stat = STATUS.IDLE
+				status = STATUS.IDLE
 			_:
-				stat = STATUS.IDLE
+				status = STATUS.IDLE
 		animated_sprite_2d.play("idle")
+		action_timer.start()
 		
 func update_buff_debuff():
 	
@@ -785,50 +770,40 @@ func update_buff_debuff():
 	return
 
 func _on_animated_sprite_2d_animation_finished() -> void:
-	if stat == STATUS.DIE:
-		died.emit()
+	if status == STATUS.DIE:
+		died.emit(hero_name)
 		if is_active:
 			action_timer.start()
 		return
 
-	elif stat == STATUS.HIT:
-		is_hit.emit()
-		stat = STATUS.IDLE
+	elif status == STATUS.HIT:
+		is_hit.emit(hero_name)
 
-	elif stat == STATUS.SPELL:
-		spell_casted.emit()
+	elif status == STATUS.SPELL:
 		action_timer.start()
-		stat = STATUS.IDLE
 		
-	elif stat == STATUS.RANGED_ATTACK:
+	elif status == STATUS.RANGED_ATTACK:
 		if remain_attack_count <= 0:
 			#if ResourceLoader.exists("res://asset/animation/%s/%s%s_projectile.tres" % [faction, faction, hero_name]):
 				#pass
 			#else:
 			action_timer.start()
-			ranged_attack_finished.emit()
-			stat = STATUS.IDLE
-		elif hero_target and hero_target.stat != STATUS.DIE:
+			ranged_attack_finished.emit(hero_name)
+		elif hero_target and hero_target.status != STATUS.DIE:
 			_handle_attack()
 		else:
 			hero_target = _find_new_target(TARGET_CHOICE.CLOSE)
 			_handle_attack()
 
-	elif stat == STATUS.MELEE_ATTACK:
+	elif status == STATUS.MELEE_ATTACK:
 		if remain_attack_count <= 0:
-			melee_attack_finished.emit()
+			melee_attack_finished.emit(hero_name)
 			action_timer.start()
-			stat = STATUS.IDLE
-		elif hero_target and hero_target.stat != STATUS.DIE:
+		elif hero_target and hero_target.status != STATUS.DIE:
 			_handle_attack()
 		else:
 			hero_target = _find_new_target(TARGET_CHOICE.CLOSE)
 			_handle_attack()
-
-
-	
-
-
 
 func _on_melee_attack_animation_animation_finished(anim_name: StringName) -> void:
 	_on_animated_sprite_2d_animation_finished()
