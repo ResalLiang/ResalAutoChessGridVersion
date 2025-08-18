@@ -21,10 +21,46 @@ var shop_level := 1
 signal shop_refreshed
 signal shop_freezed
 signal shop_unfreezed
+signal hero_bought
+signal hero_sold
+signal coins_increased
+signal coins_decreased
+signal shop_upgraded
 
-func _init():
-	#shop_init()
-	pass
+
+func _ready():
+	shop_refreshed.connect(
+		func():
+			debug_handler.write_log("Shop refreshed.")
+	)
+	shop_freezed.connect(
+		func():
+			debug_handler.write_log("Shop freezed.")
+	)
+	shop_unfreezed.connect(
+		func():
+			debug_handler.write_log("Shop unfreezed.")
+	)
+	hero_bought.connect(
+		func(hero_name):
+			debug_handler.write_log(hero_name + " is bought.")
+	)
+	hero_sold.connect(
+		func(hero_name):
+			debug_handler.write_log(hero_name + " is sold.")
+	)
+	coins_increased.connect(
+		func(value, reason):
+			debug_handler.write_log("Coins increase by " + value + " because of " + reason + ".")
+	)
+	coins_decreased.connect(
+		func(value, reason):
+			debug_handler.write_log("Coins decrease by " + value + " because of " + reason + ".")
+	)
+	shop_upgraded.connect(
+		func(value):
+			debug_handler.write_log("Shop upgrade to level: " + value + ".")
+	)
 
 func shop_init():
 	remain_coins = game_start_coins
@@ -80,11 +116,33 @@ func shop_freeze() -> void:
 func shop_upgrade() -> void:
 	if remain_coins >= shop_upgrade_price and shop_level < max_shop_level:
 		remain_coins -= shop_upgrade_price
+		coins_decreased.emit(shop_upgrade_price, "upgrading shop")
 		shop_level += 1
+		shop_upgraded.emit(shop_level)
+		shop_upgrade_price += 3
 
-func can_pay_hero() -> bool:
-	if shop_buy_price >= remain_coins:
+func can_pay_hero(hero: Hero) -> bool:
+	if get_hero_price(hero) > remain_coins:
 		return false
 	else:
-		remain_coins -= shop_buy_price
 		return true
+
+func buy_hero(hero: Hero):
+	hero_bought.emit(hero.hero_name)
+	remain_coins -= get_hero_price(hero)
+	coins_decreased.emit(get_hero_price(hero), "buyinging hero")
+
+func sell_hero(hero: Hero):
+	hero_sold.emit(hero.hero_name)
+	remain_coins += get_hero_price(hero)
+	coins_increased.emit(get_hero_price(hero), "selling hero")
+
+func get_hero_price(hero: Hero):
+	return shop_buy_price
+
+func turn_start_income(current_round: int):
+	turn_start_interest = floor(remain_coins / 5)
+	remain_coins += turn_start_interest
+	coins_increased.emit(turn_start_interest, "interest")
+	remain_coins += current_round + 2
+	coins_increased.emit(current_round + 2, "routine income")
