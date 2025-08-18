@@ -286,6 +286,7 @@ func generate_enemy(difficulty : int) -> void:
 			character.faction = hero_data.keys()[randi_range(0, hero_data.keys().size() - 2)] # remove villager
 			character.hero_name = get_random_character(character.faction)
 			add_child(character)
+			connect_to_hero_signal(character)
 			hero_mover.setup_hero(character)
 			hero_mover._move_hero(character, arena, Vector2(rand_x, rand_y))
 			current_difficulty += character.max_hp
@@ -340,13 +341,110 @@ func load_arena_team():
 				character.hero_name = saved_arena_team[tile_index][1]
 				character.team = 1
 				add_child(character)
+				connect_to_hero_signal(character)
 				hero_mover._move_hero(character, arena, tile_index) 
 				team_dict[Team.TEAM1_FULL].append(character)
 		
-
-
 func save_arena_team():
 	saved_arena_team = {}
 	for hero_index in arena.unit_grid.units.keys():
 		if arena.unit_grid.units[hero_index]:
 			saved_arena_team[hero_index] = [arena.unit_grid.units[hero_index].faction, arena.unit_grid.units[hero_index].hero_name]
+
+
+func connect_to_hero_signal(hero: Hero):
+	hero.died.connect(
+		func(hero_name):
+			debug_handler.write_log("LOG", hero_name + " died.")
+	)
+	hero.move_started.connect(
+		func(hero_name, start_position):
+			debug_handler.write_log("LOG", hero_name + " started to move from " + str(start_position.x) + "," + str(start_position.y))
+	)
+	hero.move_finished.connect(
+		func(hero_name, end_position):
+			debug_handler.write_log("LOG", hero_name + " ended to move from " + str(end_position.x) + "," + str(end_position.y))
+	)
+	hero.action_started.connect(
+		func(hero_name, end_position):
+			debug_handler.write_log("LOG", hero_name + " action started."))
+	)
+	hero.action_finished.connect(
+		func(hero_name):
+			debug_handler.write_log("LOG", hero_name + " action finished.")
+	)
+	hero.damage_taken.connect(
+		func(hero_name, damage_value, attacker_name):
+			debug_handler.write_log("LOG", hero_name + " has taken " + str(damage_value) + "points damage from " + attacker_name + ".")
+	)
+	hero.heal_taken.connect(
+		func(hero_name, heal_value, healer_name):
+			debug_handler.write_log("LOG", hero_name + " has taken " + str(heal_value) + "points heal from " + healer_name + ".")
+	)
+	hero.is_hit.connect(
+		func(hero_name):
+			debug_handler.write_log("LOG", hero_name + " gets hit.")
+	)
+	hero.spell_casted.connect(
+		func(hero_name, spell_name):
+			debug_handler.write_log("LOG", hero_name + "has casted a spell called " + spell_name + ".")
+	)
+	hero.ranged_attack_started.connect(
+		func(hero_name):
+			debug_handler.write_log("LOG", hero_name + "'s ranged attack has started.")
+	)
+	hero.melee_attack_started.connect(
+		func(hero_name):
+			debug_handler.write_log("LOG", hero_name + "'s melee attack has started.")
+	)
+	hero.ranged_attack_finished.connect(
+		func(hero_name):
+			debug_handler.write_log("LOG", hero_name + "'s ranged attack has finished.")
+	)
+	hero.melee_attack_finished.connect(
+		func(hero_name):
+			debug_handler.write_log("LOG", hero_name + "'s melee attack has finished.")
+	)
+	hero.damage_applied.connect(
+		func(hero_name, damage_value, target_name):
+			debug_handler.write_log("LOG", hero_name + " has applied damage " + str(damage_value) + " points to " + target_name)
+	)
+	hero.critical_damage_applied.connect(
+		func(hero_name, damage_value, target_name):
+			debug_handler.write_log("LOG", hero_name + " has applied CRITICAL damage " + str(damage_value) + " points to " + target_name)
+	)
+	hero.heal_applied.connect(
+		func(hero_name, heal_value, target_name):
+			debug_handler.write_log("LOG", hero_name + " has applied heal " + str(heal_value) + " points to " + target_name)
+	)
+	hero.animated_sprite_loaded.connect(
+		func(hero_name, anim_name):
+			debug_handler.write_log("LOG", hero_name + "'s animtion sprtie: " + anim_name + " has loaded.")
+	)
+	hero.stats_loaded.connect(
+		func(hero_name, hero_stats):
+			debug_handler.write_log("LOG", hero_name + "'s stats has loaded as belows:")
+			for i in range(hero_stats.size()):
+				debug_handler.write_log("LOG", hero_stats.keys()[i] + " = " + hero_stats.values()[i])
+	)
+	hero.attack_evased.connect(
+		func(hero_name, attacker_name):
+			debug_handler.write_log("LOG", hero_name + " has EVASED " + attacker_name "'s attack.")
+	)
+	hero.target_lost.connect(
+		func(hero_name):
+			debug_handler.write_log("LOG", hero_name + "does not have a target or target lost.")
+	)
+	hero.target_found.connect(
+		func(hero_name, target_name):
+			debug_handler.write_log("LOG", hero_name + " has found a new target: " + target_name + ".")
+	)
+	hero.tween_moving.connect(
+		func(hero_name, start_pos, target_pos):
+			debug_handler.write_log("LOG", hero_name + " starts tweeming move from " + start_pos + " to " + target_pos + ".")
+	)
+	hero.projectile_lauched.connect(
+		func(hero_name):
+			debug_handler.write_log("LOG", hero_name + " has lauched a projectile.")
+	)
+)
