@@ -74,23 +74,45 @@ func _on_hero_dropped(starting_position: Vector2, status: String, hero: Hero) ->
 	
 	var old_area_index := _get_play_area_for_position(starting_position)
 	var drop_area_index := _get_play_area_for_position(hero.get_global_mouse_position())
+	# area_index :
+	# 	-1: forbidden area
+	# 	0:	arena area
+	# 	1:	bench area
+	# 	2:	shop area
+	# 	3:	sell area
 
-	if drop_area_index == -1 or (old_area_index != 2 and drop_area_index == 2): # cannot move hero back to shop
+	if drop_area_index == -1:
 		_reset_hero_to_starting_position(starting_position, hero)
 		return
+	elif old_area_index != 2 and drop_area_index == 2: # cannot move hero back to shop
+		_reset_hero_to_starting_position(starting_position, hero)
+		return
+	elif drop_area_index == 3 and old_area_index == 2:
+		_reset_hero_to_starting_position(starting_position, hero)
+		return
+	elif old_area_index == 3:
+		_reset_hero_to_starting_position(starting_position, hero)
+		return
+
 		
 	var old_area := play_areas[old_area_index]
 	var old_tile := old_area.get_tile_from_global(starting_position)
 	var new_area := play_areas[drop_area_index]
 	var new_tile := new_area.get_hovered_tile()
 
-	if old_area_index == 2 and drop_area_index != 2:
-		if shop_handler.can_pay_hero() and not new_area.unit_grid.is_tile_occupied(new_tile):
+	if old_area_index == 2 and (drop_area_index != 2 and drop_area_index != 3): # buy heros
+		if shop_handler.can_pay_hero(hero) and not new_area.unit_grid.is_tile_occupied(new_tile):
+			shop_handler.buy_hero(hero)
 			_move_hero(hero, new_area, new_tile)
 			return
 		else:
 			_reset_hero_to_starting_position(starting_position, hero)
 			return
+
+	if (old_area_index == 1 or old_area_index == 2) and drop_area_index == 3:
+		pass
+
+
 
 	if new_area.unit_grid.is_tile_occupied(new_tile):
 		var old_hero: Hero = new_area.unit_grid.units[new_tile]
