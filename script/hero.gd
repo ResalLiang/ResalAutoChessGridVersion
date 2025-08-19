@@ -881,7 +881,7 @@ func human_mage_taunt(spell_duration: int) -> bool:
 	var hero_affected := false
 	buff_handler.taunt_duration = spell_duration
 	var arena_unitgrid = get_parent().unit_grid
-	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, arena_unitgrid, area_effect_handler.human_mage_taunt_template)
+	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.human_mage_taunt_template)
 	if affected_index_array.size() != 0:
 		for affected_index in affected_index_array:
 			if arena_unitgrid.has(affected_index) and arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team != team:
@@ -892,7 +892,7 @@ func human_mage_taunt(spell_duration: int) -> bool:
 func human_archmage_heal(spell_duration: int, heal_value: int) -> bool:
 	var hero_affected := false
 	var arena_unitgrid = get_parent().unit_grid
-	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, arena_unitgrid, area_effect_handler.human_archmage_heal_template)
+	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.human_archmage_heal_template)
 	if affected_index_array.size() != 0:
 		for affected_index in affected_index_array:
 			if arena_unitgrid.has(affected_index) and arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team != team:
@@ -904,7 +904,7 @@ func human_archmage_heal(spell_duration: int, heal_value: int) -> bool:
 func elf_queen_stun(spell_duration: int, damage_value: int) -> bool:
 	var hero_affected := false
 	var arena_unitgrid = get_parent().unit_grid
-	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, arena_unitgrid, area_effect_handler.human_archmage_heal_template)
+	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.human_archmage_heal_template)
 	if affected_index_array.size() != 0:
 		for affected_index in affected_index_array:
 			if arena_unitgrid.has(affected_index) and arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team != team:
