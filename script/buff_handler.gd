@@ -7,6 +7,26 @@ var immunity_duration := 0:
 		if value > 0:
 			immunity_duration = value
 			is_immunity = true
+		else:
+			is_immunity = false
+
+var is_taunt := false
+var taunt_duration := 0:
+	set(value):
+		if value > 0:
+			taunt_duration = value
+			is_taunt = true
+		else:
+			is_taunt = false
+
+var is_stealth := false
+var stealth_duration := 0:
+	set(value):
+		if value > 0:
+			stealth_duration = value
+			is_stealth = true
+		else:
+			is_stealth = false
 
 var spd_modifier := 0
 var spd_modifier_duration := 0
@@ -74,6 +94,12 @@ func start_turn_update():
 	evasion_rate_modifier_duration = max(0, evasion_rate_modifier_duration - 1)
 	evasion_rate_modifier = 0.0 if evasion_rate_modifier_duration <= 0 else evasion_rate_modifier_duration
 
+	taunt_duration = max(0, taunt_duration - 1)
+	is_taunt = taunt_duration > 0
+
+	stealth_duration = max(0, stealth_duration - 1)
+	is_stealth = stealth_duration > 0
+
 func buff_clean():
 
 	immunity_duration = 0
@@ -87,4 +113,6 @@ func buff_clean():
 	max_hp_modifier_duration = 0
 	critical_rate_modifier_duration = 0
 	evasion_rate_modifier_duration = 0
+	taunt_duration = 0
+	stealth_duration = 0
 	start_turn_update()
