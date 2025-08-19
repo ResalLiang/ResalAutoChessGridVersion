@@ -1,6 +1,7 @@
 # Hero character class with movement, dragging functionality and state management
-extends Node2D
 class_name Hero
+extends Node2D
+
 
 # ========================
 # Constants and Enums
@@ -72,8 +73,8 @@ var taunt_range := 70
 @onready var area_2d: Area2D = $Area2D
 @onready var idle_timer: Timer = $idle_timer
 @onready var attack_timer: Timer = $attack_timer
-@onready var attck_target_line := $Line2D  # Attack range indicator
-@onready var spell_target_line := $Line2D  # Spell range indicator
+@onready var attack_target_line: Line2D = $attack_target_line  # Attack range indicator
+@onready var spell_target_line: Line2D = $spell_target_line  # Spell range indicator
 @onready var drag_handler: Node2D = $drag_handler
 @onready var move_timer: Timer = $move_timer
 @onready var action_timer: Timer = $action_timer
@@ -271,8 +272,8 @@ func _process(delta: float) -> void:
 		
 	# Update attack indicator line
 	if hero_target and line_visible:
-		attack_target.points = [Vector2.ZERO, to_local(hero_target.global_position)]
-		attack_target.visible = true
+		attack_target_line.points = [Vector2.ZERO, to_local(hero_target.global_position)]
+		attack_target_line.visible = true
 		
 	# Update attack indicator line
 	if hero_spell_target and line_visible:
@@ -523,20 +524,26 @@ func _handle_attack():
 					func(hero_name):
 						debug_handler.write_log("LOG", hero_name + "'s projectile has vanished.")
 				)
-			else:
+				return
+			elif animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
 				ranged_attack_animation.play("ranged_attack")
 				ranged_attack_started.emit(hero_name)
+				return
+			action_timer.start()
 			return
 		elif current_distance_to_target < ranged_attack_threshold:
 			if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
 				status = STATUS.MELEE_ATTACK
 				melee_attack_animation.play("melee_attack")
 				melee_attack_started.emit(hero_name)
+				return
 			elif animated_sprite_2d.sprite_frames.has_animation("attack"):
 				status = STATUS.MELEE_ATTACK
 				animated_sprite_2d.play("attack")
 				melee_attack_started.emit(hero_name)
 				hero_target.take_damage(damage, self)	
+				return
+			action_timer.start()
 			return
 	else:
 		status = STATUS.IDLE
@@ -557,6 +564,7 @@ func _handle_targeting():
 		
 # Find a new target based on selection strategy
 func _find_new_target(tgt) -> Hero:
+	var new_target
 	var all_heroes = get_tree().get_nodes_in_group("hero_group").filter(
 		func(node): 
 			return (node is Hero and 
@@ -572,7 +580,7 @@ func _find_new_target(tgt) -> Hero:
 	)
 	
 	# Select target based on strategy
-	match new_target_choice:
+	match tgt:
 		TARGET_CHOICE.FAR:
 			if enemy_heroes.size() > 0:
 				enemy_heroes.sort_custom(func(a, b): return _compare_distance)
@@ -726,7 +734,7 @@ func _cast_spell(spell_tgt: Hero) -> bool:
 	elif hero_name == "Queen" and faction == "elf":
 		cast_spell_result = elf_queen_stun(2, 5)
 	elif hero_name == "Mage" and faction == "elf":
-		elf_mage_damage(spell_target, 0.2, 10, 80)
+		cast_spell_result = elf_mage_damage(spell_tgt, 0.2, 10, 80)
 	elif spell_tgt !=  self:
 		cast_spell_result = true
 
@@ -820,7 +828,7 @@ func _handle_dragging_state(stating_position: Vector2, drag_action: String):
 			_:
 				status = STATUS.IDLE
 		animated_sprite_2d.play("idle")
-		action_timer.start()
+		# action_timer.start()
 		
 func update_buff_debuff():
 	

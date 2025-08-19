@@ -49,10 +49,10 @@ func connect_to_hero_signal(hero: Hero):
 		func(hero_name, end_position):
 			write_log("LOG", hero_name + " action started.")
 	)
-	hero.action_finished.connect(
-		func(hero_name):
-			write_log("LOG", hero_name + " action finished.")
-	)
+	#hero.action_finished.connect(
+		#func(hero_name):
+			#write_log("LOG", hero_name + " action finished.")
+	#)
 	hero.damage_taken.connect(
 		func(hero_name, damage_value, attacker_name):
 			write_log("LOG", hero_name + " has taken " + str(damage_value) + "points damage from " + attacker_name + ".")

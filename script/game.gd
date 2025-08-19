@@ -22,7 +22,7 @@ const hero_class = preload("res://script/hero.gd")
 @onready var current_shop_level: Label = $current_shop_level
 @onready var hero_mover: HeroMover = %hero_mover
 @onready var shop_handler: ShopHandler = %shop_handler
-@onready var area_effect_handler: AreaEffectHanlder = %area_effect_handler
+@onready var area_effect_handler: AreaEffectHandler = %area_effect_handler
 @onready var debug_handler: DebugHandler = %debug_handler
 
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
@@ -146,6 +146,9 @@ func _ready():
 
 	shop_handler.shop_refresh()
 	current_round = 0
+	
+	debug_handler.write_log("LOG", "Game Start.")
+	
 	start_new_game()
 
 func _process(delta: float) -> void:
@@ -221,16 +224,16 @@ func start_hero_turn(team: Team):
 		#active_hero.start_turn()
 		# 连接信号等待行动完成
 		active_hero.action_finished.connect(_on_character_action_finished)
-		_on_character_action_finished()
+		_on_character_action_finished(active_hero.hero_name)
 
 func process_character_turn(hero):
 	active_hero = hero
 	active_hero.is_active = true
+	active_hero.action_finished.connect(_on_character_action_finished)
 	active_hero.start_turn()
 	# 连接信号等待行动完成
-	active_hero.action_finished.connect(_on_character_action_finished)
 
-func _on_character_action_finished():
+func _on_character_action_finished(hero_name: String):
 	active_hero.is_active = false
 	active_hero.action_finished.disconnect(_on_character_action_finished)
 		

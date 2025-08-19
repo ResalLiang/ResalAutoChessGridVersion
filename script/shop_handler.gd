@@ -94,8 +94,8 @@ func shop_refresh() -> void:
 			hero_mover.setup_hero(character)
 			hero_mover._move_hero(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
 			
-		var debug_hero_faction = ["human", "human", "human", "human", "demon", "elf"]
-		var debug_hero_name = ["ArcherMan", "CrossBowMan", "Mage", "ArchMage", "FireImp", "Queen"]
+		var debug_hero_faction = ["human", "human", "human", "human", "demon", "elf", "elf"]
+		var debug_hero_name = ["ArcherMan", "CrossBowMan", "Mage", "ArchMage", "FireImp", "Queen", "Mage"]
 		for debug_index in range(debug_hero_faction.size()):
 			var character = get_parent().hero_scene.instantiate()
 			character.faction = debug_hero_faction[debug_index]

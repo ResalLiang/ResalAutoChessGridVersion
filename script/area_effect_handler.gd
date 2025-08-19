@@ -1,7 +1,7 @@
-class_name AreaEffectHanlder
+class_name AreaEffectHandler
 extends Node2D
 
-@onready arena: PlayArea = %arena
+@onready var arena: PlayArea = %arena
 
 func find_affected_units(origin: Vector2i, rotate_index: int, template: Array) -> Array:
 	var affected = []
