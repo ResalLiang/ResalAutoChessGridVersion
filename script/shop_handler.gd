@@ -94,8 +94,8 @@ func shop_refresh() -> void:
 			hero_mover.setup_hero(character)
 			hero_mover._move_hero(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
 			
-		var debug_hero_faction = ["human", "human", "human", "human", "demon"]
-		var debug_hero_name = ["ArcherMan", "CrossBowMan", "Mage", "ArchMage", "FireImp"]
+		var debug_hero_faction = ["human", "human", "human", "human", "demon", "elf"]
+		var debug_hero_name = ["ArcherMan", "CrossBowMan", "Mage", "ArchMage", "FireImp", "Queen"]
 		for debug_index in range(debug_hero_faction.size()):
 			var character = get_parent().hero_scene.instantiate()
 			character.faction = debug_hero_faction[debug_index]
@@ -104,7 +104,11 @@ func shop_refresh() -> void:
 			add_child(character)
 			debug_handler.connect_to_hero_signal(character)
 			hero_mover.setup_hero(character)
-			hero_mover._move_hero(character, get_parent().shop, Vector2(debug_index, 3))
+
+			var shop_col_index = debug_index % shop.unit_grid.size.x
+			var shop_row_index = floor(debug_index / shop.unit_grid.size.x) + 2
+
+			hero_mover._move_hero(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
 	
 func shop_freeze() -> void:
 	if is_shop_frozen:
