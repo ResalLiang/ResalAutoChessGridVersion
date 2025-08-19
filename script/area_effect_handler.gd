@@ -1,8 +1,11 @@
 class_name AreaEffectHanlder
 extends Node2D
 
-func find_affected_units(origin: Vector2i, rotate_index: int, unit_grid: Dictionary, template: Array) -> Array:
+@onready arena: PlayArea = %arena
+
+func find_affected_units(origin: Vector2i, rotate_index: int, template: Array) -> Array:
 	var affected = []
+	var unit_grid = arena.unit_grid
 	var rotated_template = _rotate_template(template, rotate_index % 4)
 
 	var template_rows = rotated_template.size()
@@ -20,8 +23,11 @@ func find_affected_units(origin: Vector2i, rotate_index: int, unit_grid: Diction
 
 func _rotate_template(template: Array, times: int) -> Array:
 	var rotated = template.duplicate(1)
-	for _i in range(times):
-		rotated = _rotate_90(rotated)
+	if times == 0:
+		pass
+	else:
+		for _i in range(times):
+			rotated = _rotate_90(rotated)
 	return rotated
 
 func _rotate_90(matrix: Array) -> Array:
@@ -56,4 +62,40 @@ var template2 := [
 	[0,	1,	0,	1,	0,	1,	0,	1,	0],	
 	[1,	0,	1,	0,	1,	0,	1,	0,	1],	
 	[0,	1,	0,	1,	0,	1,	0,	1,	0]
+	]
+
+var human_mage_taunt_template := [
+	[0,	0,	0,	0,	0,	0,	0,	0,	0],	
+	[0,	0,	0,	0,	1,	0,	0,	0,	0],	
+	[0,	0,	0,	1,	1,	1,	0,	0,	0],	
+	[0,	0,	1,	1,	1,	1,	1,	0,	0],	
+	[0,	1,	1,	1,	0,	1,	1,	1,	0],	
+	[0,	0,	1,	1,	1,	1,	1,	0,	0],	
+	[0,	0,	0,	1,	1,	1,	0,	0,	0],	
+	[0,	0,	0,	0,	1,	0,	0,	0,	0],	
+	[0,	0,	0,	0,	0,	0,	0,	0,	0]
+	]
+
+var human_archmage_heal_template := [
+	[0,	0,	0,	0,	0,	0,	0,	0,	0],	
+	[0,	0,	0,	0,	1,	0,	0,	0,	0],	
+	[0,	0,	0,	1,	1,	1,	0,	0,	0],	
+	[0,	0,	1,	1,	1,	1,	1,	0,	0],	
+	[0,	1,	1,	1,	0,	1,	1,	1,	0],	
+	[0,	0,	1,	1,	1,	1,	1,	0,	0],	
+	[0,	0,	0,	1,	1,	1,	0,	0,	0],	
+	[0,	0,	0,	0,	1,	0,	0,	0,	0],	
+	[0,	0,	0,	0,	0,	0,	0,	0,	0]
+	]
+
+var elf_queen_stun_template := [
+	[0,	0,	0,	0,	1,	0,	0,	0,	0],	
+	[0,	0,	0,	1,	1,	1,	0,	0,	0],	
+	[0,	0,	1,	1,	1,	1,	1,	0,	0],	
+	[0,	1,	1,	1,	1,	1,	1,	1,	0],	
+	[1,	1,	1,	1,	0,	1,	1,	1,	1],	
+	[0,	1,	1,	1,	1,	1,	1,	1,	0],	
+	[0,	0,	1,	1,	1,	1,	1,	0,	0],	
+	[0,	0,	0,	1,	1,	1,	0,	0,	0],	
+	[0,	0,	0,	0,	1,	0,	0,	0,	0]
 	]
