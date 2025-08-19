@@ -72,7 +72,8 @@ var taunt_range := 70
 @onready var area_2d: Area2D = $Area2D
 @onready var idle_timer: Timer = $idle_timer
 @onready var attack_timer: Timer = $attack_timer
-@onready var line := $Line2D  # Attack range indicator
+@onready var attck_target_line := $Line2D  # Attack range indicator
+@onready var spell_target_line := $Line2D  # Spell range indicator
 @onready var drag_handler: Node2D = $drag_handler
 @onready var move_timer: Timer = $move_timer
 @onready var action_timer: Timer = $action_timer
@@ -218,12 +219,17 @@ func _ready():
 	add_to_group("hero_group")
 	
 	# Configure attack indicator line
-	line.width = 0.5
+	attack_target_line.width = 0.5
 	if hero_target_choice == TARGET_CHOICE.ALLY:
-		line.default_color = Color(0, 1, 0)
+		attack_target_line.default_color = Color(0, 1, 0)
 	else:
-		line.default_color = Color(1, 0, 0)
-	line.visible = true
+		attack_target_line.default_color = Color(1, 0, 0)
+	attack_target_line.visible = true
+	
+	# Configure attack indicator line
+	spell_target_line.width = 0.5
+	spell_target_line.default_color = Color(0, 0, 1)
+	spell_target_line.visible = false
 	
 	# Load hero stats from JSON
 	_load_hero_stats()
@@ -265,8 +271,13 @@ func _process(delta: float) -> void:
 		
 	# Update attack indicator line
 	if hero_target and line_visible:
-		line.points = [Vector2.ZERO, to_local(hero_target.global_position)]
-		line.visible = true
+		attack_target.points = [Vector2.ZERO, to_local(hero_target.global_position)]
+		attack_target.visible = true
+		
+	# Update attack indicator line
+	if hero_spell_target and line_visible:
+		spell_target_line.points = [Vector2.ZERO, to_local(hero_spell_target.global_position)]
+		spell_target_line.visible = true
 		
 	var new_material = animated_sprite_2d.material.duplicate()
 	match team:
@@ -541,7 +552,7 @@ func _handle_action_timeout():
 func _handle_targeting():
 	# Clear invalid targets (dead or invalid instances)
 	if !hero_target or hero_target.status == STATUS.DIE:
-		line.visible = false
+		attack_target_line.visible = false
 		hero_target = _find_new_target(hero_target_choice)
 		
 # Find a new target based on selection strategy
@@ -714,6 +725,8 @@ func _cast_spell(spell_tgt: Hero) -> bool:
 		cast_spell_result = human_archmage_heal(2, 20)
 	elif hero_name == "Queen" and faction == "elf":
 		cast_spell_result = elf_queen_stun(2, 5)
+	elif hero_name == "Mage" and faction == "elf":
+		elf_mage_damage(spell_target, 0.2, 10, 80)
 	elif spell_tgt !=  self:
 		cast_spell_result = true
 
@@ -913,3 +926,16 @@ func elf_queen_stun(spell_duration: int, damage_value: int) -> bool:
 				hero_affected =  true
 	return hero_affected
 
+func elf_mage_damage(spell_target:Hero, damage_threshold: float, min_damage_value: int, spell_range: int) -> bool:
+	var hero_affected := false
+	if spell_target.status != STATUS.DIE and spell_target.team != team and spell_target.global_position.distance_to(global_position) <= spell_range:
+
+		if spell_target.hp <= spell_target.max_hp * damage_threshold:
+			_apply_damage(spell_target, spell_target.hp)
+			
+		else:
+			_apply_damage(spell_target, min_damage_value)
+
+		hero_affected = true
+
+	return hero_affected
