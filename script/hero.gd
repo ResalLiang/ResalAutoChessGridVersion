@@ -7,7 +7,7 @@ class_name Hero
 # ========================
 # Character states
 enum STATUS {IDLE, MOVE, MELEE_ATTACK, RANGED_ATTACK, JUMP, HIT, DIE, SPELL}
-enum TARGET_CHOICE {CLOSE, FAR, STRONG, WEAK, ALLY}
+enum TARGET_CHOICE {CLOSE, FAR, STRONG, WEAK, ALLY, SELF}
 
 const MAX_SEARCH_RADIUS = 3
 const projectile_scene = preload("res://scene/projectile.tscn")
@@ -58,6 +58,8 @@ var attack_spd = base_attack_spd
 var attack_range = base_attack_range
 var remain_attack_count
 
+var taunt_range := 70
+
 @onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D
 @onready var melee_attack_animation: AnimationPlayer = $melee_attack_animation
 @onready var ranged_attack_animation: AnimationPlayer = $ranged_attack_animation
@@ -74,7 +76,10 @@ var remain_attack_count
 @onready var drag_handler: Node2D = $drag_handler
 @onready var move_timer: Timer = $move_timer
 @onready var action_timer: Timer = $action_timer
-@onready var debug_handler: DebugHandler = $debug_handler
+
+@onready var debug_handler: DebugHandler = %debug_handler
+@onready var area_effect_handler: AreaEffectHandler = %area_effect_handler
+
 # ========================
 # Member Variables
 # ========================
@@ -469,19 +474,27 @@ func _handle_action():
 	move_timer.stop()
 	action_started.emit(hero_name)
 	astar_grid.set_point_solid(position_id, true)
-	if !hero_target or !is_instance_valid(hero_target):
-		target_lost.emit(hero_name)
-		action_timer.start()
+
 	if mp >= max_mp and animated_sprite_2d.sprite_frames.has_animation("spell") and (!debuff_handler.is_silenced or !debuff_handler.is_stunned):
+		if hero_spell_target_choice == TARGET_CHOICE.SELF:
+			status = STATUS.SPELL
+			animated_sprite_2d.play("spell")
+			_cast_spell(self)
+			return
 		if !hero_spell_target:
 			hero_spell_target = _find_new_target(hero_spell_target_choice)
 		if hero_spell_target:
 			status = STATUS.SPELL
 			animated_sprite_2d.play("spell")
 			_cast_spell(hero_spell_target)
-			mp = 0
 			return
-	_handle_attack()
+
+	if !hero_target or !is_instance_valid(hero_target):
+		target_lost.emit(hero_name)
+		action_timer.start()
+		return
+	else:
+		_handle_attack()
 
 func _handle_attack():
 	var current_distance_to_target = global_position.distance_to(hero_target.global_position)
@@ -519,7 +532,8 @@ func _handle_attack():
 		action_timer.start()
 
 func _handle_action_timeout():
-	animated_sprite_2d.play("idle")
+	# animated_sprite_2d.play("idle")
+	status = STATUS.IDLE
 	action_finished.emit(hero_name)
 	action_timer.stop()
 
@@ -532,52 +546,47 @@ func _handle_targeting():
 		
 # Find a new target based on selection strategy
 func _find_new_target(tgt) -> Hero:
-	# Get all heroes in the scene
-	var all_heroes: Array[Hero] = []
-	for node in get_tree().get_nodes_in_group("hero_group"):
-		if (node is Hero and node.status != STATUS.DIE) and node.current_play_area == play_areas.arena:
-			all_heroes.append(node)
-	var enemy_heroes: Array[Hero] = []
-	var ally_heroes: Array[Hero] = []
-	var new_target: Hero
-	var new_target_choice = tgt
-	
-	# Classify heroes as enemies or allies
-	for hero in all_heroes:
-		if hero == self:  # Skip self
-			continue
-		if hero.team == team:
-			ally_heroes.append(hero as Hero)
-		else:
-			enemy_heroes.append(hero as Hero)
+	var all_heroes = get_tree().get_nodes_in_group("hero_group").filter(
+		func(node): 
+			return (node is Hero and 
+				   node.status != STATUS.DIE and 
+				   node.current_play_area == play_areas.arena)
+	)
+
+	var enemy_heroes = all_heroes.filter(
+		func(hero): return hero != self and hero.team != team
+	)
+	var ally_heroes = all_heroes.filter(
+		func(hero): return hero != self and hero.team == team
+	)
 	
 	# Select target based on strategy
 	match new_target_choice:
 		TARGET_CHOICE.FAR:
 			if enemy_heroes.size() > 0:
-				enemy_heroes.sort_custom(_compare_distance)
+				enemy_heroes.sort_custom(func(a, b): return _compare_distance)
 				new_target = enemy_heroes.front()  # Farthest enemy
 		
 		TARGET_CHOICE.CLOSE:
 			if enemy_heroes.size() > 0:
-				enemy_heroes.sort_custom(_compare_distance)
+				enemy_heroes.sort_custom(func(a, b): return _compare_distance)
 				new_target = enemy_heroes.back() # Closest enemy
 		
 		TARGET_CHOICE.STRONG:
 			if enemy_heroes.size() > 0:
 				# Sort by max HP descending
-				enemy_heroes.sort_custom(func(a, b): return a.max_hp > b.max_hp)
+				enemy_heroes.sort_custom(_compare_hp)
 				new_target = enemy_heroes.front()  # Strongest enemy
 		
 		TARGET_CHOICE.WEAK:
 			if enemy_heroes.size() > 0:
 				# Sort by max HP ascending
-				enemy_heroes.sort_custom(func(a, b): return a.max_hp < b.max_hp)
+				enemy_heroes.sort_custom(_compare_hp)
 				new_target = enemy_heroes.back()  # Weakest enemy
 		
 		TARGET_CHOICE.ALLY:
 			if ally_heroes.size() > 0:
-				ally_heroes.sort_custom(func(a, b): return a.max_hp > b.max_hp)
+				ally_heroes.sort_custom(_compare_hp)
 				new_target = ally_heroes.front()  # Strongest ally
 	
 	if new_target:
@@ -585,10 +594,53 @@ func _find_new_target(tgt) -> Hero:
 	else:
 		return null  # No valid target found
 
-# Comparator for sorting by distance
-func _compare_distance(a: Node2D, b: Node2D) -> bool:
-	return a.global_position.distance_to(global_position) < b.global_position.distance_to(global_position)
+func _compare_distance(a: Hero, b: Hero) -> bool:
 
+	# handling taunt
+	if (a.buffer_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range) and (not b.buffer_handler.is_taunt or b.global_position.distance_to(global_position) > taunt_range):
+		return true
+	if (not a.buffer_handler.is_taunt or a.global_position.distance_to(global_position) > taunt_range) and (b.buffer_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range):
+		return false
+		
+	# handling stealth hero
+	if a.buffer_handler.is_stealth and not b.buffer_handler.is_stealth:
+		return false
+	if not a.buffer_handler.is_stealth and b.buffer_handler.is_stealth:
+		return true
+	
+	return a.global_position.distance_to(global_position) > b.global_position.distance_to(global_position)
+
+func _compare_hp(a: Hero, b: Hero) -> bool:
+
+	# handling taunt
+	if (a.buffer_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range) and (not b.buffer_handler.is_taunt or b.global_position.distance_to(global_position) > taunt_range):
+		return true
+	if (not a.buffer_handler.is_taunt or a.global_position.distance_to(global_position) > taunt_range) and (b.buffer_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range):
+		return false
+		
+	# handling stealth hero
+	if a.buffer_handler.is_stealth and not b.buffer_handler.is_stealth:
+		return false
+	if not a.buffer_handler.is_stealth and b.buffer_handler.is_stealth:
+		return true
+	
+	return a.max_hp > b.max_hp
+
+func _compare_damage(a: Hero, b: Hero) -> bool:
+
+	# handling taunt
+	if (a.buffer_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range) and (not b.buffer_handler.is_taunt or b.global_position.distance_to(global_position) > taunt_range):
+		return true
+	if (not a.buffer_handler.is_taunt or a.global_position.distance_to(global_position) > taunt_range) and (b.buffer_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range):
+		return false
+		
+	# handling stealth hero
+	if a.buffer_handler.is_stealth and not b.buffer_handler.is_stealth:
+		return false
+	if not a.buffer_handler.is_stealth and b.buffer_handler.is_stealth:
+		return true
+	
+	return a.damage > b.damage
 
 # Handle idle timer timeout
 func _on_idle_timeout():
@@ -653,10 +705,24 @@ func take_heal(heal_value: int, healer: Hero):
 		heal_taken.emit(hero_name, heal_value, healer.hero_name)
 
 
-func _cast_spell(spell_tgt: Hero):
-	print("%s casts a spell %s to %s." % [hero_name, skill_name, spell_tgt])
-	print("\"%s\"" % skill_description)
-	spell_casted.emit(hero_name, skill_name)
+func _cast_spell(spell_tgt: Hero) -> bool:
+	var cast_spell_result := false
+
+	if hero_name == "Mage" and faction == "human":
+		cast_spell_result = human_mage_taunt(2)
+	elif hero_name == "ArchMage" and faction == "human":
+		cast_spell_result = human_archmage_heal(2, 20)
+	elif hero_name == "Queen" and faction == "elf":
+		cast_spell_result = elf_queen_stun(2, 5)
+	elif spell_tgt !=  self:
+		cast_spell_result = true
+
+	if cast_spell_result:
+		spell_casted.emit(hero_name, skill_name)
+		mp = 0
+
+	return cast_spell_result
+
 
 func _apply_damage(damage_target: Hero = hero_target, damage_value: int = damage):
 	if hero_target:
@@ -810,3 +876,40 @@ func _on_melee_attack_animation_animation_finished(anim_name: StringName) -> voi
 
 func _on_ranged_attack_animation_animation_finished(anim_name: StringName) -> void:
 	_on_animated_sprite_2d_animation_finished()
+
+func human_mage_taunt(spell_duration: int) -> bool:
+	var hero_affected := false
+	buff_handler.taunt_duration = spell_duration
+	var arena_unitgrid = get_parent().unit_grid
+	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, arena_unitgrid, area_effect_handler.human_mage_taunt_template)
+	if affected_index_array.size() != 0:
+		for affected_index in affected_index_array:
+			if arena_unitgrid.has(affected_index) and arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team != team:
+				arena_unitgrid[affected_index].target = self
+		hero_affected = true
+	return hero_affected
+
+func human_archmage_heal(spell_duration: int, heal_value: int) -> bool:
+	var hero_affected := false
+	var arena_unitgrid = get_parent().unit_grid
+	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, arena_unitgrid, area_effect_handler.human_archmage_heal_template)
+	if affected_index_array.size() != 0:
+		for affected_index in affected_index_array:
+			if arena_unitgrid.has(affected_index) and arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team != team:
+				arena_unitgrid[affected_index].buff_handler.continuous_hp_modifier = heal_value
+				arena_unitgrid[affected_index].buff_handler.continuous_hp_modifier_duration = spell_duration
+				hero_affected =  true
+	return hero_affected
+
+func elf_queen_stun(spell_duration: int, damage_value: int) -> bool:
+	var hero_affected := false
+	var arena_unitgrid = get_parent().unit_grid
+	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, arena_unitgrid, area_effect_handler.human_archmage_heal_template)
+	if affected_index_array.size() != 0:
+		for affected_index in affected_index_array:
+			if arena_unitgrid.has(affected_index) and arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team != team:
+				arena_unitgrid[affected_index].debuff_handler.stunned_duration  = spell_duration
+				_apply_damage(arena_unitgrid[affected_index], damage_value)
+				hero_affected =  true
+	return hero_affected
+
