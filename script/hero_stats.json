@@ -13,7 +13,7 @@
 	  "flavor_text": "\"You shall not pass!\" - Gandalf, The Lord of the Rings",
 	  "rarity": "Epic",
 	  "target_priority": "CLOSE",
-	  "spell_target_priority": "FAR"
+	  "spell_target_priority": "SELF"
 	},
 	"ArcherMan": {
 	  "spd": 5,
@@ -118,7 +118,7 @@
 	  "flavor_text": "\"Winter is coming.\" - Eddard Stark, Game of Thrones",
 	  "rarity": "Uncommon",
 	  "target_priority": "CLOSE",
-	  "spell_target_priority": "WEAK"
+	  "spell_target_priority": "SELF"
 	},
 	"PrinceMan": {
 	  "spd": 5,
@@ -392,7 +392,7 @@
 	  "flavor_text": "\"The force will be with you, always.\" - Obi-Wan Kenobi, Star Wars",
 	  "rarity": "Uncommon",
 	  "target_priority": "CLOSE",
-	  "spell_target_priority": "FAR"
+	  "spell_target_priority": "WEAK"
 	},
 	"PegasusRider": {
 	  "spd": 10,
@@ -422,7 +422,7 @@
 	  "flavor_text": "\"After all this time? Always.\" - Severus Snape, Harry Potter",
 	  "rarity": "Legendary",
 	  "target_priority": "CLOSE",
-	  "spell_target_priority": "ALLY"
+	  "spell_target_priority": "SELF"
 	},
 	"SpearMan": {
 	  "spd": 6,
