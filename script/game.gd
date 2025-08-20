@@ -4,12 +4,9 @@ extends Node2D
 const hero_scene = preload("res://scene/hero.tscn")
 const hero_class = preload("res://script/hero.gd")
 
-
-@export_enum("human", "dwarf", "elf", "forestProtector", "holy", "undead", "demon") var team1_faction := "human"
-@export_enum("human", "dwarf", "elf", "forestProtector", "holy", "undead", "demon") var team2_faction := "human"
-@onready var arena: PlayArea = $tilemap/arena
-@onready var bench: PlayArea = $tilemap/bench
-@onready var shop: PlayArea = $tilemap/shop
+@onready var arena: PlayArea = %arena
+@onready var bench: PlayArea = %bench
+@onready var shop: PlayArea = %shop
 @onready var arena_unit_grid: UnitGrid = $ArenaUnitGrid
 @onready var bench_unit_grid: UnitGrid = $BenchUnitGrid
 @onready var game_start_button: Button = $game_start_button
@@ -25,10 +22,15 @@ const hero_class = preload("res://script/hero.gd")
 @onready var area_effect_handler: AreaEffectHandler = %area_effect_handler
 @onready var debug_handler: DebugHandler = %debug_handler
 
+@onready var hero_order_hp_high: Button = $hero_order_hp_high
+@onready var hero_order_hp_low: Button = $hero_order_hp_low
+@onready var hero_order_near_center: Button = $hero_order_near_center
+@onready var hero_order_far_center: Button = $hero_order_far_center
+
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
 var hero_data_array: Dictionary
 enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
-enum SelectionMode { HIGH_HP, LOW_HP, NEAR_CENTER, FAR_CENTER }
+enum HeroActiveOrder { HIGH_HP, LOW_HP, NEAR_CENTER, FAR_CENTER }
 var current_team: Team
 var active_hero
 var team_chars
@@ -38,6 +40,7 @@ var team_dict: Dictionary = {
 	Team.TEAM1_FULL: [],
 	Team.TEAM2_FULL: []
 }
+var current_hero_active_order := HeroActiveOrder.HIGH_HP
 var center_point: Vector2
 var board_width:= 216
 var board_height:= 216
@@ -58,6 +61,7 @@ var lose_rounds := 0
 const max_lose_rounds := 5
 
 var saved_arena_team
+var appearance_tween
 
 # Define rarity weights dictionary
 const RARITY_WEIGHTS = {
@@ -114,6 +118,7 @@ const RARITY_COUNTS = {
 }
 
 signal game_finished
+signal hero_appearance_finished
 
 func _ready():
 	if Engine.is_editor_hint():
@@ -140,7 +145,44 @@ func _ready():
 	shop_refresh_button.pressed.connect(shop_handler.shop_refresh)
 	shop_freeze_button.pressed.connect(shop_handler.shop_freeze)
 	shop_upgrade_button.pressed.connect(shop_handler.shop_upgrade)
+	hero_order_hp_high.pressed.connect(
+		func():
+			current_hero_active_order = HeroActiveOrder.HIGH_HP
+	)
+	hero_order_hp_low.pressed.connect(
+		func():
+			current_hero_active_order = HeroActiveOrder.LOW_HP
+	)
+	hero_order_near_center.pressed.connect(
+		func():
+			current_hero_active_order = HeroActiveOrder.NEAR_CENTER
+	)
+	hero_order_far_center.pressed.connect(
+		func():
+			current_hero_active_order = HeroActiveOrder.FAR_CENTER
+	)
 
+	shop_handler.coins_increased.connect(
+		func(value):
+			remain_coins_label.text = "Remaining Coins    = " + str(shop_handler.remain_coins)
+			if shop_handler.remain_coins >= shop_handler.shop_upgrade_price:
+				shop_refresh_button.disabled = false
+		)
+	shop_handler.coins_decreased.connect(
+		func(value):
+			remain_coins_label.text = "Remaining Coins = " + str(shop_handler.remain_coins)
+			if shop_handler.remain_coins < shop_handler.shop_upgrade_price:
+				shop_refresh_button.disabled = true
+		)
+	shop_handler.shop_upgraded.connect(
+		func(value):
+			current_shop_level.text = "Current Shop Level is :" + str(value)
+		)
+	hero_appearance_finished.connect(
+		func(play_area):
+			if play_area == arena:
+				start_new_turn()
+		)
 
 	center_point = Vector2(tile_size.x * grid_count / 2, tile_size.y * grid_count / 2)
 
@@ -151,17 +193,15 @@ func _ready():
 	
 	start_new_game()
 
-func _process(delta: float) -> void:
-	remain_coins_label.text = "Remaining Coins    = " + str(shop_handler.remain_coins)
-	if shop_handler.remain_coins < shop_handler.shop_buy_price:
-		shop_refresh_button.disabled = true
-	current_shop_level.text = "Current Shop Level is :" + str(shop_handler.shop_level)
-
 
 func start_new_game() -> void:
 	clear_play_area(arena)
 	clear_play_area(shop)
 	clear_play_area(bench)
+
+	current_round = 0
+	won_rounds = 0
+	lose_rounds = 0
 
 	shop_handler.shop_init()
 	new_round_prepare_start()
@@ -183,7 +223,10 @@ func new_round_prepare_end():
 				team_dict[Team.TEAM1_FULL].append(node)
 	save_arena_team()
 	generate_enemy(current_round * 500)
-	start_new_turn()
+
+	connect_died_signal()
+
+	hero_appearance(arena)
 
 func start_new_turn():
 	# if start new turn, it will be fully auto.
@@ -193,13 +236,13 @@ func start_new_turn():
 	var team2_alive_cnt = 0
 	team_dict[Team.TEAM1] = []
 	team_dict[Team.TEAM2] = []
-	for hero1 in team_dict[Team.TEAM1_FULL]:
-		if hero1.status != hero_class.STATUS.DIE and hero1.current_play_area == hero1.play_areas.arena:
-			team_dict[Team.TEAM1].append(hero1)
+	for hero_index in team_dict[Team.TEAM1_FULL]:
+		if hero_index.status != hero_class.STATUS.DIE and hero_index.current_play_area == hero_index.play_areas.arena:
+			team_dict[Team.TEAM1].append(hero_index)
 			team1_alive_cnt += 1
-	for hero2 in team_dict[Team.TEAM2_FULL]:
-		if hero2.status != hero_class.STATUS.DIE and hero2.current_play_area == hero2.play_areas.arena:
-			team_dict[Team.TEAM2].append(hero2)
+	for hero_index in team_dict[Team.TEAM2_FULL]:
+		if hero_index.status != hero_class.STATUS.DIE and hero_index.current_play_area == hero_index.play_areas.arena:
+			team_dict[Team.TEAM2].append(hero_index)
 			team2_alive_cnt += 1
 			
 	if team1_alive_cnt == 0:
@@ -209,12 +252,14 @@ func start_new_turn():
 		game_finished.emit("team1")
 		return
 		
-	current_team = [Team.TEAM1, Team.TEAM2][randi() % 2]
+	# current_team = [Team.TEAM1, Team.TEAM2][randi() % 2]
 	
+	current_team = Team.TEAM1
+
 	start_hero_turn(current_team)
 
 func start_hero_turn(team: Team):
-	team_chars = sort_characters(team, SelectionMode.HIGH_HP)
+	team_chars = sort_characters(team, current_hero_active_order)
 	var current_hero = team_chars.pop_front()
 	if hero_mover._get_play_area_for_position(current_hero.global_position) == 0:
 		process_character_turn(current_hero)
@@ -236,18 +281,17 @@ func process_character_turn(hero):
 func _on_character_action_finished(hero_name: String):
 	active_hero.is_active = false
 	active_hero.action_finished.disconnect(_on_character_action_finished)
-		
-	var opposing_team = Team.TEAM2 if current_team == Team.TEAM1 else Team.TEAM1
-	if team_dict[opposing_team] != []:
-		start_hero_turn(opposing_team)
-		var backup_team = opposing_team
-		opposing_team = current_team
-		current_team = backup_team
-		#opposing_team, current_team = current_team, opposing_team
-	elif team_dict[opposing_team] == [] and team_dict[current_team] != []:
+
+	if current_team == Team.TEAM1 and Team.TEAM2 != []:
+		current_team = Team.TEAM2
 		start_hero_turn(current_team)
-	else:
-		start_new_turn()
+		return
+	elif current_team == Team.TEAM2 and Team.TEAM1 != []:
+		current_team = Team.TEAM1
+		start_hero_turn(current_team)
+		return
+
+	start_new_turn()
 
 func _on_round_finished(msg):
 	if msg == "team1":
@@ -268,17 +312,17 @@ func _on_round_finished(msg):
 
 	new_round_prepare_start()
 
-func sort_characters(team: Team, mode: SelectionMode) -> Array:
+func sort_characters(team: Team, mode: HeroActiveOrder) -> Array:
 	var heroes_team = team_dict[team]
 	match mode:
-		SelectionMode.HIGH_HP:
-			heroes_team.sort_custom(func(a, b): return a.hp > b.hp)
-		SelectionMode.LOW_HP:
-			heroes_team.sort_custom(func(a, b): return a.hp < b.hp)
-		SelectionMode.NEAR_CENTER:
+		HeroActiveOrder.HIGH_HP:
+			heroes_team.sort_custom(func(a, b): return a.max_hp > b.max_hp)
+		HeroActiveOrder.LOW_HP:
+			heroes_team.sort_custom(func(a, b): return a.max_hp < b.max_hp)
+		HeroActiveOrder.NEAR_CENTER:
 			heroes_team.sort_custom(func(a, b): 
 				return a.position.distance_to(center_point) < b.position.distance_to(center_point))
-		SelectionMode.FAR_CENTER:
+		HeroActiveOrder.FAR_CENTER:
 			heroes_team.sort_custom(func(a, b): 
 				return a.position.distance_to(center_point) > b.position.distance_to(center_point))
 	return heroes_team
@@ -319,10 +363,10 @@ func get_random_character(faction_name: String) -> String:
 	var weights = []
 	
 	# Prepare candidate list and weight list
-	for char_name in hero_data[faction_name]:
-		var rarity = hero_data[faction_name][char_name]["rarity"]
-		if RARITY_WEIGHTS[shop_handler.shop_level].has(rarity) and hero_data[faction_name][char_name]["spd"] != 0:
-			candidates.append(char_name)
+	for hero_name_index in hero_data[faction_name]:
+		var rarity = hero_data[faction_name][hero_name_index]["rarity"]
+		if RARITY_WEIGHTS[shop_handler.shop_level].has(rarity) and hero_data[faction_name][hero_name_index]["spd"] != 0:
+			candidates.append(hero_name_index)
 			weights.append(RARITY_WEIGHTS[shop_handler.shop_level][rarity])
 	
 	if candidates.size() == 0:
@@ -365,7 +409,7 @@ func load_arena_team():
 func save_arena_team():
 	saved_arena_team = {}
 	for hero_index in arena.unit_grid.units.keys():
-		if arena.unit_grid.units[hero_index]:
+		if arena.unit_grid.units[hero_index] is Hero:
 			saved_arena_team[hero_index] = [arena.unit_grid.units[hero_index].faction, arena.unit_grid.units[hero_index].hero_name]
 
 # Generates random hero based on shop level and rarity weights
@@ -440,3 +484,57 @@ func generate_random_hero():
 	
 	# Should never reach here if candidates exist
 	return ["human", "ShieldMan"]
+
+func connect_died_signal() -> void:
+
+	for hero_index in team_dict[Team.TEAM1_FULL]:
+		hero_index.died.connect(
+			func(hero):
+				if team_dict[Team.TEAM1_FULL].has(hero):
+					team_dict[Team.TEAM1_FULL].erase(hero)
+		)
+
+	for hero_index in team_dict[Team.TEAM2_FULL]:
+		hero_index.died.connect(
+			func(hero):
+				if team_dict[Team.TEAM2_FULL].has(hero):
+					team_dict[Team.TEAM2_FULL].erase(hero)
+		)
+
+func hero_appearance(play_area: PlayArea):
+
+	var area_hero_count = 0
+	var current_hero_count := 0
+
+	for hero_index in team_dict[Team.TEAM1_FULL]:
+		area_hero_count += 1
+		hero_index.visible = false
+	for hero_index in team_dict[Team.TEAM2_FULL]:
+		area_hero_count += 1
+		hero_index.visible = false
+
+
+	if appearance_tween:
+		appearance_tween.kill() # Abort the previous animation.
+	appearance_tween = create_tween()
+	appearance_tween.connect("finished", 
+		func():
+			if current_hero_count >= area_hero_count:
+				hero_appearance_finished.emit(play_area)
+	)
+
+	for hero_index in team_dict[Team.TEAM1_FULL]:
+		current_hero_count += 1
+		hero_index._postion.y -= 16
+		hero_index.visible = true
+		position_tween.tween_property(hero_index, "_position", hero_index._position + Vector2(0, 16) , 0.5)
+
+	for hero_index in team_dict[Team.TEAM2_FULL]:
+		current_hero_count += 1
+		hero_index._postion.y -= 16
+		hero_index.visible = true
+		position_tween.tween_property(hero_index, "_position", hero_index._position + Vector2(0, 16) , 0.5)
+
+	# position_tween.tween_property(self, "_position", target_pos, 0.1)
+
+	
