@@ -11,6 +11,8 @@ var demon_bonus := false
 
 var faction_list = ["elf", "human", "dwarf", "holy", "forestProtector", "undead", "demon"]
 
+@onready var arena: PlayArea = %arena
+
 var bonus_level_list : Dictionary = {
 	"elf" : [2, 4, 6],
 	"human" : [2, 4, 6],
@@ -38,7 +40,7 @@ var bonus_level_dict : Dictionary = {
 		"holy" : 0,
 		"forestProtector" : 0,
 		"undead" : 0,
-		"demon" : 0}
+		"demon" : 0
 	}
 }
 

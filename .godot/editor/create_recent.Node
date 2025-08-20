@@ -1,8 +1,8 @@
+Button
 Node2D
 Node
 AnimatedSprite2D
 Label
-Button
 CollisionShape2D
 Area2D
 AnimationPlayer

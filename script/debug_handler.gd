@@ -54,12 +54,12 @@ func connect_to_hero_signal(hero: Hero):
 			write_log("LOG", hero.hero_name + " action finished.")
 	)
 	hero.damage_taken.connect(
-		func(hero, damage_value, attacker_name):
-			write_log("LOG", hero.hero_name + " has taken " + str(damage_value) + "points damage from " + attacker_name + ".")
+		func(hero, damage_value, attacker):
+			write_log("LOG", hero.hero_name + " has taken " + str(damage_value) + "points damage from " + attacker.hero_name + ".")
 	)
 	hero.heal_taken.connect(
-		func(hero, heal_value, healer_name):
-			write_log("LOG", hero.hero_name + " has taken " + str(heal_value) + "points heal from " + healer_name + ".")
+		func(hero, heal_value, healer):
+			write_log("LOG", hero.hero_name + " has taken " + str(heal_value) + "points heal from " + healer.hero_name + ".")
 	)
 	hero.is_hit.connect(
 		func(hero):
@@ -86,16 +86,16 @@ func connect_to_hero_signal(hero: Hero):
 			write_log("LOG", hero.hero_name + "'s melee attack has finished.")
 	)
 	hero.damage_applied.connect(
-		func(hero, damage_value, target_name):
-			write_log("LOG", hero.hero_name + " has applied damage " + str(damage_value) + " points to " + target_name)
+		func(hero, damage_value, target):
+			write_log("LOG", hero.hero_name + " has applied damage " + str(damage_value) + " points to " + target.hero_name)
 	)
 	hero.critical_damage_applied.connect(
-		func(hero, damage_value, target_name):
-			write_log("LOG", hero.hero_name + " has applied CRITICAL damage " + str(damage_value) + " points to " + target_name)
+		func(hero, damage_value, target):
+			write_log("LOG", hero.hero_name + " has applied CRITICAL damage " + str(damage_value) + " points to " + target.hero_name)
 	)
 	hero.heal_applied.connect(
-		func(hero, heal_value, target_name):
-			write_log("LOG", hero.hero_name + " has applied heal " + str(heal_value) + " points to " + target_name)
+		func(hero, heal_value, target):
+			write_log("LOG", hero.hero_name + " has applied heal " + str(heal_value) + " points to " + target.hero_name)
 	)
 	hero.animated_sprite_loaded.connect(
 		func(hero, anim_name):
@@ -108,16 +108,16 @@ func connect_to_hero_signal(hero: Hero):
 				write_log("LOG", hero_stats.keys()[i] + " = " + hero_stats.values()[i])
 	)
 	hero.attack_evased.connect(
-		func(hero, attacker_name):
-			write_log("LOG", hero.hero_name + " has EVASED " + attacker_name + "'s attack.")
+		func(hero, attacker):
+			write_log("LOG", hero.hero_name + " has EVASED " + attacker.hero_name + "'s attack.")
 	)
 	hero.target_lost.connect(
 		func(hero):
 			write_log("LOG", hero.hero_name + "does not have a target or target lost.")
 	)
 	hero.target_found.connect(
-		func(hero, target_name):
-			write_log("LOG", hero.hero_name + " has found a new target: " + target_name + ".")
+		func(hero, target):
+			write_log("LOG", hero.hero_name + " has found a new target: " + target.hero_name + ".")
 	)
 	hero.tween_moving.connect(
 		func(hero, start_pos, target_pos):

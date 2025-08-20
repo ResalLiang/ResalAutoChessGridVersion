@@ -163,26 +163,26 @@ func _ready():
 	)
 
 	shop_handler.coins_increased.connect(
-		func(value):
+		func(value, reason):
 			remain_coins_label.text = "Remaining Coins    = " + str(shop_handler.remain_coins)
 			if shop_handler.remain_coins >= shop_handler.shop_upgrade_price:
 				shop_refresh_button.disabled = false
-		)
+	)
 	shop_handler.coins_decreased.connect(
-		func(value):
+		func(value, reason):
 			remain_coins_label.text = "Remaining Coins = " + str(shop_handler.remain_coins)
 			if shop_handler.remain_coins < shop_handler.shop_upgrade_price:
 				shop_refresh_button.disabled = true
-		)
+	)
 	shop_handler.shop_upgraded.connect(
 		func(value):
 			current_shop_level.text = "Current Shop Level is :" + str(value)
-		)
+	)
 	hero_appearance_finished.connect(
 		func(play_area):
 			if play_area == arena:
 				start_new_turn()
-		)
+	)
 
 	center_point = Vector2(tile_size.x * grid_count / 2, tile_size.y * grid_count / 2)
 
@@ -271,22 +271,22 @@ func start_hero_turn(team: Team):
 		active_hero.action_finished.connect(_on_character_action_finished)
 		_on_character_action_finished(active_hero.hero_name)
 
-func process_character_turn(hero):
+func process_character_turn(hero: Hero):
 	active_hero = hero
 	active_hero.is_active = true
 	active_hero.action_finished.connect(_on_character_action_finished)
 	active_hero.start_turn()
 	# 连接信号等待行动完成
 
-func _on_character_action_finished(hero_name: String):
+func _on_character_action_finished(hero: Hero):
 	active_hero.is_active = false
 	active_hero.action_finished.disconnect(_on_character_action_finished)
 
-	if current_team == Team.TEAM1 and Team.TEAM2 != []:
+	if current_team == Team.TEAM1 and team_dict[Team.TEAM2] != []:
 		current_team = Team.TEAM2
 		start_hero_turn(current_team)
 		return
-	elif current_team == Team.TEAM2 and Team.TEAM1 != []:
+	elif current_team == Team.TEAM2 and team_dict[Team.TEAM1] != []:
 		current_team = Team.TEAM1
 		start_hero_turn(current_team)
 		return
@@ -488,14 +488,14 @@ func generate_random_hero():
 func connect_died_signal() -> void:
 
 	for hero_index in team_dict[Team.TEAM1_FULL]:
-		hero_index.died.connect(
+		hero_index.is_died.connect(
 			func(hero):
 				if team_dict[Team.TEAM1_FULL].has(hero):
 					team_dict[Team.TEAM1_FULL].erase(hero)
 		)
 
 	for hero_index in team_dict[Team.TEAM2_FULL]:
-		hero_index.died.connect(
+		hero_index.is_died.connect(
 			func(hero):
 				if team_dict[Team.TEAM2_FULL].has(hero):
 					team_dict[Team.TEAM2_FULL].erase(hero)
@@ -519,21 +519,21 @@ func hero_appearance(play_area: PlayArea):
 	appearance_tween = create_tween()
 	appearance_tween.connect("finished", 
 		func():
-			if current_hero_count >= area_hero_count:
+			if current_hero_count >= area_hero_count or true:
 				hero_appearance_finished.emit(play_area)
 	)
 
 	for hero_index in team_dict[Team.TEAM1_FULL]:
 		current_hero_count += 1
-		hero_index._postion.y -= 16
+		hero_index._position.y -= 16
 		hero_index.visible = true
-		position_tween.tween_property(hero_index, "_position", hero_index._position + Vector2(0, 16) , 0.5)
+		appearance_tween.tween_property(hero_index, "_position", hero_index._position + Vector2(0, 16) , 0.5)
 
 	for hero_index in team_dict[Team.TEAM2_FULL]:
 		current_hero_count += 1
-		hero_index._postion.y -= 16
+		hero_index._position.y -= 16
 		hero_index.visible = true
-		position_tween.tween_property(hero_index, "_position", hero_index._position + Vector2(0, 16) , 0.5)
+		appearance_tween.tween_property(hero_index, "_position", hero_index._position + Vector2(0, 16) , 0.5)
 
 	# position_tween.tween_property(self, "_position", target_pos, 0.1)
 

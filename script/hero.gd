@@ -42,6 +42,10 @@ var base_attack_range := 20 # Attack range (pixels)
 var sprite_frames: SpriteFrames  # Custom sprite frames
 @export var line_visible:= false
 
+@onready var arena: PlayArea = %arena
+@onready var bench: PlayArea = %bench
+@onready var shop: PlayArea = %shop
+
 var evasion_rate := 0.10
 var critical_rate := 0.10
 
@@ -145,14 +149,14 @@ signal melee_attack_finished
 signal critical_damage_applied
 signal damage_applied
 signal heal_applied
-signal attack_evased #attack_evased.emit(hero_name, attacker.hero_name)
+signal attack_evased #attack_evased.emit(self, attacker.hero_name)
 signal projectile_lauched
 
 signal animated_sprite_loaded
 signal stats_loaded
-signal target_lost	#target_lost.emit(hero_name)
-signal target_found	#target_found.emit(hero_name, hero_target.hero_name)
-signal tween_moving	#tween_moving.emit(hero_name, _position, target_pos)
+signal target_lost	#target_lost.emit(self)
+signal target_found	#target_found.emit(self, hero_target.hero_name)
+signal tween_moving	#tween_moving.emit(self, _position, target_pos)
 
 # ========================
 # Projectile Properties
@@ -375,7 +379,7 @@ func _load_animations():
 			else:
 				frames.set_animation_loop(anim_name, false)
 			frames.set_animation_speed(anim_name, 8.0)
-			animated_sprite_loaded.emit(hero_name, anim_name)
+			animated_sprite_loaded.emit(self, anim_name)
 		animated_sprite_2d.sprite_frames = frames
 	else:
 		push_error("Animation resource not found: " + path)
@@ -403,7 +407,7 @@ func _load_hero_stats():
 		base_attack_spd = stats.get("attack_speed", base_attack_spd)
 		skill_name = stats.get("skill_name", skill_name)
 		skill_description = stats.get("skill_description", skill_description)
-		stats_loaded.emit(hero_name, stats)
+		stats_loaded.emit(self, stats)
 	else:
 		push_error("Stats not found for %s/%s" % [faction, hero_name])
 
@@ -421,23 +425,23 @@ func start_turn():
 	remain_attack_count = attack_spd
 
 	if not hero_target or hero_target.status == STATUS.DIE:
-		target_lost.emit(hero_name)
+		target_lost.emit(self)
 		_handle_targeting()
 		
 	if hero_target and hero_target.status != STATUS.DIE:
-		target_found.emit(hero_name, hero_target.hero_name)
+		target_found.emit(self, hero_target)
 		_handle_movement()
 	else:
 		action_timer.start()
 
 func _handle_movement():
 
-	move_started.emit(hero_name, position_id)
+	move_started.emit(self, position_id)
 
 	animated_sprite_2d.play("move")
 
 	if global_position.distance_to(hero_target.global_position) <= attack_range or debuff_handler.is_stunned:
-		move_finished.emit(hero_name, position_id)
+		move_finished.emit(self, position_id)
 		move_timer.start()
 	else:
 		astar_grid.set_point_solid(position_id, false)
@@ -456,7 +460,7 @@ func _handle_movement():
 			move_path = get_safe_path(position_id, hero_target.position_id)
 		if move_path.is_empty():
 			astar_grid.set_point_solid(hero_target.position_id, true)
-			move_finished.emit(hero_name, position_id)
+			move_finished.emit(self, position_id)
 			move_timer.start()
 		else:
 			var move_steps = min(spd, move_path.size() - 1)
@@ -469,7 +473,7 @@ func _handle_movement():
 				var target_pos = move_path[current_step + 1] + grid_offset
 				if !astar_grid.is_point_solid(target_pos):
 					position_tween.tween_property(self, "_position", target_pos, 0.1)
-					tween_moving.emit(hero_name, _position, target_pos)
+					tween_moving.emit(self, _position, target_pos)
 					remain_step -= 1
 
 func _on_move_completed():
@@ -479,12 +483,12 @@ func _on_move_completed():
 		position_tween.kill()
 		astar_grid.set_point_solid(position_id, true)
 		astar_grid.set_point_solid(hero_target.position_id, true)
-		move_finished.emit(hero_name, _position)
+		move_finished.emit(self, _position)
 		move_timer.start()
 						
 func _handle_action():
 	move_timer.stop()
-	action_started.emit(hero_name)
+	action_started.emit(self)
 	astar_grid.set_point_solid(position_id, true)
 
 	if mp >= max_mp and animated_sprite_2d.sprite_frames.has_animation("spell") and (!debuff_handler.is_silenced or !debuff_handler.is_stunned):
@@ -502,7 +506,7 @@ func _handle_action():
 			return
 
 	if !hero_target or !is_instance_valid(hero_target):
-		target_lost.emit(hero_name)
+		target_lost.emit(self)
 		action_timer.start()
 		return
 	else:
@@ -516,9 +520,9 @@ func _handle_attack():
 			status = STATUS.RANGED_ATTACK
 			if ResourceLoader.exists("res://asset/animation/%s/%s%s_projectile.tres" % [faction, faction, hero_name]):
 				animated_sprite_2d.play("ranged_attack")
-				ranged_attack_started.emit(hero_name)
+				ranged_attack_started.emit(self)
 				var hero_projectile = _launch_projectile(hero_target)
-				projectile_lauched.emit(hero_name)
+				projectile_lauched.emit(self)
 				hero_projectile.projectile_vanished.connect(_on_animated_sprite_2d_animation_finished)
 				hero_projectile.projectile_vanished.connect(
 					func(hero_name):
@@ -527,7 +531,7 @@ func _handle_attack():
 				return
 			elif animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
 				ranged_attack_animation.play("ranged_attack")
-				ranged_attack_started.emit(hero_name)
+				ranged_attack_started.emit(self)
 				return
 			action_timer.start()
 			return
@@ -535,12 +539,12 @@ func _handle_attack():
 			if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
 				status = STATUS.MELEE_ATTACK
 				melee_attack_animation.play("melee_attack")
-				melee_attack_started.emit(hero_name)
+				melee_attack_started.emit(self)
 				return
 			elif animated_sprite_2d.sprite_frames.has_animation("attack"):
 				status = STATUS.MELEE_ATTACK
 				animated_sprite_2d.play("attack")
-				melee_attack_started.emit(hero_name)
+				melee_attack_started.emit(self)
 				hero_target.take_damage(damage, self)	
 				return
 			action_timer.start()
@@ -552,7 +556,7 @@ func _handle_attack():
 func _handle_action_timeout():
 	# animated_sprite_2d.play("idle")
 	status = STATUS.IDLE
-	action_finished.emit(hero_name)
+	action_finished.emit(self)
 	action_timer.stop()
 
 # Handle target selection and tracking
@@ -713,15 +717,15 @@ func take_damage(damage_value: int, attacker: Hero):
 		var real_damage_value = damage_value - armor
 		hp -= max(0, real_damage_value)
 		attacker.mp += real_damage_value
-		damage_taken.emit(hero_name, real_damage_value, attacker.hero_name)
+		damage_taken.emit(self, real_damage_value, attacker)
 	else:
-		attack_evased.emit(hero_name, attacker.hero_name)
+		attack_evased.emit(self, attacker)
 
 
 func take_heal(heal_value: int, healer: Hero):
 		hp += max(0, heal_value)
 		healer.mp += heal_value
-		heal_taken.emit(hero_name, heal_value, healer.hero_name)
+		heal_taken.emit(self, heal_value, healer)
 
 
 func _cast_spell(spell_tgt: Hero) -> bool:
@@ -739,7 +743,7 @@ func _cast_spell(spell_tgt: Hero) -> bool:
 		cast_spell_result = true
 
 	if cast_spell_result:
-		spell_casted.emit(hero_name, skill_name)
+		spell_casted.emit(self, skill_name)
 		mp = 0
 
 	return cast_spell_result
@@ -750,16 +754,16 @@ func _apply_damage(damage_target: Hero = hero_target, damage_value: int = damage
 		if rng.randf() <= critical_rate:
 			var real_damage_value =  damage * 2
 			hero_target.take_damage(real_damage_value, self)
-			critical_damage_applied.emit(hero_name, damage_target)
+			critical_damage_applied.emit(self, damage_target)
 		else:
 			var real_damage_value =  damage
 			hero_target.take_damage(real_damage_value, self)
-			damage_applied.emit(hero_name, damage_target)		
+			damage_applied.emit(self, damage_target)		
 
 func _apply_heal(heal_target: Hero = hero_spell_target, heal_value: int = damage):
 	if heal_target:
 		heal_target.take_heal(heal_value, self)
-		heal_applied.emit(hero_name, heal_value, heal_target.hero_name)
+		heal_applied.emit(self, heal_value, heal_target)
 		
 func snap(value: float, grid_size: int) -> int:
 	return floor(value / grid_size)
@@ -792,7 +796,7 @@ func get_points_in_radius(target: Vector2i, radius: int) -> Array[Vector2i]:
 				points.append(Vector2i(x,y))
 	return points
 
-func _on_damage_taken(damage_value):
+func _on_damage_taken(taker: Hero, damage_value: int, attacker: Hero):
 	if hp <= 0:
 		status = STATUS.DIE
 		animated_sprite_2d.stop()
@@ -862,12 +866,11 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 
 		await get_tree().process_frame
 
-		await get_tree().process_frame
-
 		queue_free()
+		return
 
 	elif status == STATUS.HIT:
-		is_hit.emit(hero_name)
+		is_hit.emit(self)
 
 	elif status == STATUS.SPELL:
 		action_timer.start()
@@ -878,7 +881,7 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 				#pass
 			#else:
 			action_timer.start()
-			ranged_attack_finished.emit(hero_name)
+			ranged_attack_finished.emit(self)
 		elif hero_target and hero_target.status != STATUS.DIE:
 			_handle_attack()
 		else:
@@ -887,7 +890,7 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 
 	elif status == STATUS.MELEE_ATTACK:
 		if remain_attack_count <= 0:
-			melee_attack_finished.emit(hero_name)
+			melee_attack_finished.emit(self)
 			action_timer.start()
 		elif hero_target and hero_target.status != STATUS.DIE:
 			_handle_attack()
@@ -905,7 +908,7 @@ func _on_ranged_attack_animation_animation_finished(anim_name: StringName) -> vo
 func human_mage_taunt(spell_duration: int) -> bool:
 	var hero_affected := false
 	buff_handler.taunt_duration = spell_duration
-	var arena_unitgrid = get_parent().unit_grid
+	var arena_unitgrid = arena.unit_grid
 	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.human_mage_taunt_template)
 	if affected_index_array.size() != 0:
 		for affected_index in affected_index_array:
