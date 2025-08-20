@@ -124,7 +124,7 @@ var astar_grid_region = Rect2i(0, 0, 16, 16)
 # ========================
 
 signal attack_landed(target: Hero, damage: int)  # Emitted when attack hits target
-signal died                                      # Emitted when die
+signal is_died                                      # Emitted when die
 signal turn_finished
 
 signal move_started
@@ -203,7 +203,7 @@ func _ready():
 	
 	damage_taken.connect(_on_damage_taken)
 
-	died.connect(_on_died)
+	is_died.connect(_on_died)
 	
 	# Initialize random number generator
 	rng.randomize()
@@ -857,10 +857,14 @@ func update_buff_debuff():
 
 func _on_animated_sprite_2d_animation_finished() -> void:
 	if status == STATUS.DIE:
-		died.emit(hero_name)
-		if is_active:
-			action_timer.start()
-		return
+		
+		is_died.emit(self)
+
+		await get_tree().process_frame
+
+		await get_tree().process_frame
+
+		queue_free()
 
 	elif status == STATUS.HIT:
 		is_hit.emit(hero_name)
