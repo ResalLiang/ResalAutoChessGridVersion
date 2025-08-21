@@ -49,11 +49,11 @@ func _move_hero(hero: Hero, play_area: PlayArea, tile: Vector2i) -> void:
 	hero.reparent(play_area.unit_grid)
 	hero._position = play_area.to_local(play_area.get_global_from_tile(tile))
 	if _get_play_area_for_position(hero.global_position) == 0:
-		hero.current_play_area = hero.play_areas.arena
+		hero.current_play_area = hero.play_areas.playarea_arena
 	elif _get_play_area_for_position(hero.global_position) == 1:
-		hero.current_play_area = hero.play_areas.bench
+		hero.current_play_area = hero.play_areas.playarea_bench
 	elif _get_play_area_for_position(hero.global_position) == 2:
-		hero.current_play_area = hero.play_areas.shop
+		hero.current_play_area = hero.play_areas.playarea_shop
 
 		
 func _on_hero_drag_started(starting_position: Vector2, status: String, hero: Hero) -> void:

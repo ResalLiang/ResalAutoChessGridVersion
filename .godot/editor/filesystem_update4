@@ -1,11 +1,12 @@
+res://script/debug_handler.gd
 res://scene/game.tscn
+res://script/game.gd
 res://asset/animation/elf/elfArcaneArcher_projectile.tres
 res://asset/shader/LightweightPixelPerfectOutline.gdshader
 res://asset/animation/elf/elfArcaneArcher.tres
-res://script/game.gd
 res://asset/tileset/dungeon_tileset.tres
-res://script/faction_bonus_manager.gd
 res://scene/hero.tscn
 res://scene/projectile.tscn
 res://script/hero.gd
-res://script/debug_handler.gd
+res://script/hero_mover.gd
+res://script/shop_handler.gd

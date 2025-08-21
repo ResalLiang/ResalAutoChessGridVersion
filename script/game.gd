@@ -219,7 +219,7 @@ func new_round_prepare_end():
 	if not saved_arena_team:
 		team_dict[Team.TEAM1_FULL] = []
 		for node in get_tree().get_nodes_in_group("hero_group"):
-			if node is Hero and node.current_play_area == node.play_areas.arena and node.team == 1:
+			if node is Hero and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
 				team_dict[Team.TEAM1_FULL].append(node)
 	save_arena_team()
 	generate_enemy(current_round * 500)
@@ -237,11 +237,11 @@ func start_new_turn():
 	team_dict[Team.TEAM1] = []
 	team_dict[Team.TEAM2] = []
 	for hero_index in team_dict[Team.TEAM1_FULL]:
-		if hero_index.status != hero_class.STATUS.DIE and hero_index.current_play_area == hero_index.play_areas.arena:
+		if hero_index.status != hero_class.STATUS.DIE and hero_index.current_play_area == hero_index.play_areas.playarea_arena:
 			team_dict[Team.TEAM1].append(hero_index)
 			team1_alive_cnt += 1
 	for hero_index in team_dict[Team.TEAM2_FULL]:
-		if hero_index.status != hero_class.STATUS.DIE and hero_index.current_play_area == hero_index.play_areas.arena:
+		if hero_index.status != hero_class.STATUS.DIE and hero_index.current_play_area == hero_index.play_areas.playarea_arena:
 			team_dict[Team.TEAM2].append(hero_index)
 			team2_alive_cnt += 1
 			
@@ -330,7 +330,7 @@ func sort_characters(team: Team, mode: HeroActiveOrder) -> Array:
 func generate_enemy(difficulty : int) -> void:
 	team_dict[Team.TEAM2_FULL] = []
 	for node in get_tree().get_nodes_in_group("hero_group"):
-		if node is Hero and node.current_play_area == node.play_areas.arena and node.team != 1:
+		if node is Hero and node.current_play_area == node.play_areas.playarea_arena and node.team != 1:
 			node.queue_free()
 	var current_difficulty := 0
 	var current_enemy_cnt := 0
@@ -341,6 +341,9 @@ func generate_enemy(difficulty : int) -> void:
 		if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
 			var character = hero_scene.instantiate()
 			character.team = 2
+			character.arena = arena
+			character.bench = bench
+			character.shop = shop
 			var rand_character_result = generate_random_hero()
 			character.faction = rand_character_result[0]
 			character.hero_name = rand_character_result[1]
@@ -401,6 +404,9 @@ func load_arena_team():
 				character.faction = saved_arena_team[tile_index][0]
 				character.hero_name = saved_arena_team[tile_index][1]
 				character.team = 1
+				character.arena = arena
+				character.bench = bench
+				character.shop = shop
 				add_child(character)
 				debug_handler.connect_to_hero_signal(character)
 				hero_mover._move_hero(character, arena, tile_index) 
@@ -490,6 +496,8 @@ func connect_died_signal() -> void:
 	for hero_index in team_dict[Team.TEAM1_FULL]:
 		hero_index.is_died.connect(
 			func(hero):
+				if team_dict[Team.TEAM1].has(hero):
+					team_dict[Team.TEAM1].erase(hero)
 				if team_dict[Team.TEAM1_FULL].has(hero):
 					team_dict[Team.TEAM1_FULL].erase(hero)
 		)
@@ -497,6 +505,8 @@ func connect_died_signal() -> void:
 	for hero_index in team_dict[Team.TEAM2_FULL]:
 		hero_index.is_died.connect(
 			func(hero):
+				if team_dict[Team.TEAM2].has(hero):
+					team_dict[Team.TEAM2].erase(hero)
 				if team_dict[Team.TEAM2_FULL].has(hero):
 					team_dict[Team.TEAM2_FULL].erase(hero)
 		)

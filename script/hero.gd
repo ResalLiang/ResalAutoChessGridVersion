@@ -42,9 +42,9 @@ var base_attack_range := 20 # Attack range (pixels)
 var sprite_frames: SpriteFrames  # Custom sprite frames
 @export var line_visible:= false
 
-@onready var arena: PlayArea = %arena
-@onready var bench: PlayArea = %bench
-@onready var shop: PlayArea = %shop
+var arena: PlayArea
+var bench: PlayArea
+var shop: PlayArea
 
 var evasion_rate := 0.10
 var critical_rate := 0.10
@@ -174,8 +174,8 @@ var projectile
 var buff_handler = Buff_handler.new()
 var debuff_handler = Debuff_handler.new()
 
-enum play_areas {arena, bench, shop}
-var current_play_area = play_areas.arena
+enum play_areas {playarea_arena, playarea_bench, playarea_shop}
+var current_play_area = play_areas.playarea_arena
 
 # ========================
 # Initialization
@@ -573,7 +573,7 @@ func _find_new_target(tgt) -> Hero:
 		func(node): 
 			return (node is Hero and 
 				   node.status != STATUS.DIE and 
-				   node.current_play_area == play_areas.arena)
+				   node.current_play_area == play_areas.playarea_arena)
 	)
 
 	var enemy_heroes = all_heroes.filter(
@@ -815,7 +815,7 @@ func update_solid_map():
 	astar_grid.update()
 
 	for node in get_tree().get_nodes_in_group("hero_group"):
-		if node.status != STATUS.DIE and current_play_area == play_areas.arena:
+		if node.status != STATUS.DIE and current_play_area == play_areas.playarea_arena:
 			astar_grid.set_point_solid(node.position_id, true)
 
 func _handle_dragging_state(stating_position: Vector2, drag_action: String):
@@ -863,6 +863,7 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 	if status == STATUS.DIE:
 		
 		is_died.emit(self)
+		arena.unit_grid.remove_unit(position_id)
 
 		await get_tree().process_frame
 
@@ -931,7 +932,7 @@ func human_archmage_heal(spell_duration: int, heal_value: int) -> bool:
 
 func elf_queen_stun(spell_duration: int, damage_value: int) -> bool:
 	var hero_affected := false
-	var arena_unitgrid = get_parent().unit_grid
+	var arena_unitgrid = arena.unit_grid
 	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.human_archmage_heal_template)
 	if affected_index_array.size() != 0:
 		for affected_index in affected_index_array:

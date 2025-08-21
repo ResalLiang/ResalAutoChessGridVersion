@@ -4,6 +4,8 @@ extends Node2D
 const max_shop_level := 6
 
 @onready var hero_mover: HeroMover = %hero_mover
+@onready var arena: PlayArea = %arena
+@onready var bench: PlayArea = %bench
 @onready var shop: PlayArea = %shop
 @onready var debug_handler: DebugHandler = %debug_handler
 
@@ -74,7 +76,7 @@ func shop_refresh() -> void:
 		shop_refreshed.emit()
 
 		for node in get_tree().get_nodes_in_group("hero_group"):
-			if node is Hero and node.current_play_area == node.play_areas.shop:
+			if node is Hero and node.current_play_area == node.play_areas.playarea_shop:
 				node.queue_free()	
 
 		for i in range(shop_level + 2):
@@ -89,6 +91,9 @@ func shop_refresh() -> void:
 			character.faction = rand_character_result[0]
 			character.hero_name = rand_character_result[1]
 			character.team = 1
+			character.arena = arena
+			character.bench = bench
+			character.shop = shop
 			add_child(character)
 			debug_handler.connect_to_hero_signal(character)
 			hero_mover.setup_hero(character)
@@ -101,6 +106,9 @@ func shop_refresh() -> void:
 			character.faction = debug_hero_faction[debug_index]
 			character.hero_name = debug_hero_name[debug_index]
 			character.team = 1
+			character.arena = arena
+			character.bench = bench
+			character.shop = shop
 			add_child(character)
 			debug_handler.connect_to_hero_signal(character)
 			hero_mover.setup_hero(character)
