@@ -2,38 +2,6 @@
 
 [ext_resource type="Texture2D" uid="uid://bed03ge224urg" path="res://asset/sprite/MiniFolks/MinifolksForestProtectors/Outline/MiniYoungDryad.png" id="1_54nig"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_4w3fy"]
-atlas = ExtResource("1_54nig")
-region = Rect2(0, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cpl0m"]
-atlas = ExtResource("1_54nig")
-region = Rect2(32, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_c3ncx"]
-atlas = ExtResource("1_54nig")
-region = Rect2(64, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_kl8qs"]
-atlas = ExtResource("1_54nig")
-region = Rect2(96, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_h7mdx"]
-atlas = ExtResource("1_54nig")
-region = Rect2(128, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_vfkva"]
-atlas = ExtResource("1_54nig")
-region = Rect2(160, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_acu0k"]
-atlas = ExtResource("1_54nig")
-region = Rect2(192, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ymtkf"]
-atlas = ExtResource("1_54nig")
-region = Rect2(224, 96, 32, 32)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_f5g45"]
 atlas = ExtResource("1_54nig")
 region = Rect2(0, 160, 32, 32)
@@ -102,6 +70,38 @@ region = Rect2(32, 64, 32, 32)
 atlas = ExtResource("1_54nig")
 region = Rect2(64, 64, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_4w3fy"]
+atlas = ExtResource("1_54nig")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cpl0m"]
+atlas = ExtResource("1_54nig")
+region = Rect2(32, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c3ncx"]
+atlas = ExtResource("1_54nig")
+region = Rect2(64, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kl8qs"]
+atlas = ExtResource("1_54nig")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h7mdx"]
+atlas = ExtResource("1_54nig")
+region = Rect2(128, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vfkva"]
+atlas = ExtResource("1_54nig")
+region = Rect2(160, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_acu0k"]
+atlas = ExtResource("1_54nig")
+region = Rect2(192, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ymtkf"]
+atlas = ExtResource("1_54nig")
+region = Rect2(224, 96, 32, 32)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_psmu4"]
 atlas = ExtResource("1_54nig")
 region = Rect2(0, 32, 32, 32)
@@ -128,35 +128,6 @@ region = Rect2(160, 32, 32, 32)
 
 [resource]
 animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_4w3fy")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cpl0m")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_c3ncx")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_kl8qs")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_h7mdx")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_vfkva")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_acu0k")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ymtkf")
-}],
-"loop": false,
-"name": &"attack",
-"speed": 8.0
-}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_f5g45")
@@ -226,6 +197,35 @@ animations = [{
 }],
 "loop": false,
 "name": &"jump",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4w3fy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cpl0m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c3ncx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kl8qs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h7mdx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vfkva")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_acu0k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ymtkf")
+}],
+"loop": false,
+"name": &"melee_attack",
 "speed": 8.0
 }, {
 "frames": [{

@@ -4,7 +4,7 @@
 #   └── CollisionShape2D
 extends Area2D
 
-@export var speed: float = 300.0
+@export var speed: float = 600.0
 @export var damage: int = 20
 @export var penetration: int = 1  # 穿透次数
 @export var max_distance: float = 300.0  # 最大飞行距离

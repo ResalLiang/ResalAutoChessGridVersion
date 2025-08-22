@@ -2,30 +2,6 @@
 
 [ext_resource type="Texture2D" uid="uid://i4w0tfkrpeox" path="res://asset/sprite/MiniFolks/MinifolksForestProtectors/Outline/MiniFairy.png" id="1_uxvi0"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_6vigq"]
-atlas = ExtResource("1_uxvi0")
-region = Rect2(0, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_khaqs"]
-atlas = ExtResource("1_uxvi0")
-region = Rect2(32, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_xdpcn"]
-atlas = ExtResource("1_uxvi0")
-region = Rect2(64, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_0cmkt"]
-atlas = ExtResource("1_uxvi0")
-region = Rect2(96, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_0230a"]
-atlas = ExtResource("1_uxvi0")
-region = Rect2(128, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_2atwd"]
-atlas = ExtResource("1_uxvi0")
-region = Rect2(160, 96, 32, 32)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_sm8jd"]
 atlas = ExtResource("1_uxvi0")
 region = Rect2(0, 160, 32, 32)
@@ -74,6 +50,30 @@ region = Rect2(32, 64, 32, 32)
 atlas = ExtResource("1_uxvi0")
 region = Rect2(64, 64, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_6vigq"]
+atlas = ExtResource("1_uxvi0")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_khaqs"]
+atlas = ExtResource("1_uxvi0")
+region = Rect2(32, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xdpcn"]
+atlas = ExtResource("1_uxvi0")
+region = Rect2(64, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0cmkt"]
+atlas = ExtResource("1_uxvi0")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0230a"]
+atlas = ExtResource("1_uxvi0")
+region = Rect2(128, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2atwd"]
+atlas = ExtResource("1_uxvi0")
+region = Rect2(160, 96, 32, 32)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_r1o78"]
 atlas = ExtResource("1_uxvi0")
 region = Rect2(0, 0, 32, 32)
@@ -88,29 +88,6 @@ region = Rect2(64, 0, 32, 32)
 
 [resource]
 animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_6vigq")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_khaqs")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_xdpcn")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_0cmkt")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_0230a")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_2atwd")
-}],
-"loop": false,
-"name": &"attack",
-"speed": 8.0
-}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_sm8jd")
@@ -165,6 +142,29 @@ animations = [{
 }],
 "loop": false,
 "name": &"jump",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6vigq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_khaqs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xdpcn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0cmkt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0230a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2atwd")
+}],
+"loop": false,
+"name": &"melee_attack",
 "speed": 8.0
 }, {
 "frames": [{

@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=4 uid="uid://cthbjvirwy2mg"]
+[gd_scene load_steps=27 format=4 uid="uid://cthbjvirwy2mg"]
 
 [ext_resource type="Script" uid="uid://c7rtc63knhqn2" path="res://script/game.gd" id="1_ll5lq"]
 [ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="2_dbls1"]
@@ -11,7 +11,6 @@
 [ext_resource type="FontFile" uid="uid://cll5ig7kupxpi" path="res://asset/font/PixelOperator-Bold.ttf" id="9_17rxn"]
 [ext_resource type="Texture2D" uid="uid://crj21hmdkcij7" path="res://asset/sprite/SpinningCoin/Spinning Coin.png" id="10_yq8tf"]
 [ext_resource type="Script" uid="uid://bnobjccy7mbl1" path="res://script/shop_handler.gd" id="11_ym5sv"]
-[ext_resource type="Script" uid="uid://c101twvdkyo0l" path="res://script/area_effect_handler.gd" id="12_sng2h"]
 [ext_resource type="Script" uid="uid://c741ay1j7xpf4" path="res://script/debug_handler.gd" id="13_5g16k"]
 [ext_resource type="Script" uid="uid://dg6lmvt5ro8u8" path="res://script/faction_bonus_manager.gd" id="14_81276"]
 [ext_resource type="FontFile" uid="uid://d4n0wpkyooixk" path="res://asset/font/PixelOperatorMono-Bold.ttf" id="15_ve786"]
@@ -2227,10 +2226,6 @@ text = "Current shop level = "
 [node name="shop_handler" type="Node2D" parent="."]
 unique_name_in_owner = true
 script = ExtResource("11_ym5sv")
-
-[node name="area_effect_handler" type="Node2D" parent="."]
-unique_name_in_owner = true
-script = ExtResource("12_sng2h")
 
 [node name="debug_handler" type="Node2D" parent="."]
 unique_name_in_owner = true

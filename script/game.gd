@@ -222,7 +222,7 @@ func new_round_prepare_end():
 			if node is Hero and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
 				team_dict[Team.TEAM1_FULL].append(node)
 	save_arena_team()
-	generate_enemy(current_round * 500)
+	generate_enemy(current_round * 300)
 
 	connect_died_signal()
 
@@ -415,7 +415,9 @@ func load_arena_team():
 func save_arena_team():
 	saved_arena_team = {}
 	for hero_index in arena.unit_grid.units.keys():
-		if arena.unit_grid.units[hero_index] is Hero:
+		if not is_instance_valid(arena.unit_grid.units[hero_index]):
+			arena.unit_grid.units[hero_index] = null
+		elif arena.unit_grid.units[hero_index] is Hero:
 			saved_arena_team[hero_index] = [arena.unit_grid.units[hero_index].faction, arena.unit_grid.units[hero_index].hero_name]
 
 # Generates random hero based on shop level and rarity weights
@@ -515,6 +517,7 @@ func hero_appearance(play_area: PlayArea):
 
 	var area_hero_count = 0
 	var current_hero_count := 0
+	var before_appreance_height := 999
 
 	for hero_index in team_dict[Team.TEAM1_FULL]:
 		area_hero_count += 1
@@ -535,15 +538,15 @@ func hero_appearance(play_area: PlayArea):
 
 	for hero_index in team_dict[Team.TEAM1_FULL]:
 		current_hero_count += 1
-		hero_index._position.y -= 16
+		hero_index._position.y -= before_appreance_height
 		hero_index.visible = true
-		appearance_tween.tween_property(hero_index, "_position", hero_index._position + Vector2(0, 16) , 0.5)
+		appearance_tween.tween_property(hero_index, "_position", hero_index._position + Vector2(0, before_appreance_height) , 0.5)
 
 	for hero_index in team_dict[Team.TEAM2_FULL]:
 		current_hero_count += 1
-		hero_index._position.y -= 16
+		hero_index._position.y -= before_appreance_height
 		hero_index.visible = true
-		appearance_tween.tween_property(hero_index, "_position", hero_index._position + Vector2(0, 16) , 0.5)
+		appearance_tween.tween_property(hero_index, "_position", hero_index._position + Vector2(0, before_appreance_height) , 0.5)
 
 	# position_tween.tween_property(self, "_position", target_pos, 0.1)
 

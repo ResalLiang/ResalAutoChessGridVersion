@@ -2,26 +2,6 @@
 
 [ext_resource type="Texture2D" uid="uid://bid1jq4mxnbff" path="res://asset/sprite/MiniFolks/MinifolksForestProtectors/Outline/MiniTreantGuard.png" id="1_jefwq"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_lrhn3"]
-atlas = ExtResource("1_jefwq")
-region = Rect2(0, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_pibes"]
-atlas = ExtResource("1_jefwq")
-region = Rect2(32, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_l0k0j"]
-atlas = ExtResource("1_jefwq")
-region = Rect2(64, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_xe266"]
-atlas = ExtResource("1_jefwq")
-region = Rect2(96, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_351h1"]
-atlas = ExtResource("1_jefwq")
-region = Rect2(128, 96, 32, 32)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_eynx0"]
 atlas = ExtResource("1_jefwq")
 region = Rect2(0, 192, 32, 32)
@@ -73,6 +53,26 @@ region = Rect2(32, 64, 32, 32)
 [sub_resource type="AtlasTexture" id="AtlasTexture_8nfkq"]
 atlas = ExtResource("1_jefwq")
 region = Rect2(64, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lrhn3"]
+atlas = ExtResource("1_jefwq")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pibes"]
+atlas = ExtResource("1_jefwq")
+region = Rect2(32, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l0k0j"]
+atlas = ExtResource("1_jefwq")
+region = Rect2(64, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xe266"]
+atlas = ExtResource("1_jefwq")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_351h1"]
+atlas = ExtResource("1_jefwq")
+region = Rect2(128, 96, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3m3t4"]
 atlas = ExtResource("1_jefwq")
@@ -134,26 +134,6 @@ region = Rect2(224, 128, 32, 32)
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_lrhn3")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_pibes")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_l0k0j")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_xe266")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_351h1")
-}],
-"loop": false,
-"name": &"attack",
-"speed": 8.0
-}, {
-"frames": [{
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_eynx0")
 }, {
 "duration": 1.0,
@@ -209,6 +189,26 @@ animations = [{
 }],
 "loop": false,
 "name": &"jump",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lrhn3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pibes")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l0k0j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xe266")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_351h1")
+}],
+"loop": false,
+"name": &"melee_attack",
 "speed": 8.0
 }, {
 "frames": [{

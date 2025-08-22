@@ -1,7 +1,7 @@
 class_name AreaEffectHandler
 extends Node2D
 
-@onready var arena: PlayArea = %arena
+var arena: PlayArea
 
 func find_affected_units(origin: Vector2i, rotate_index: int, template: Array) -> Array:
 	var affected = []
@@ -17,7 +17,7 @@ func find_affected_units(origin: Vector2i, rotate_index: int, template: Array) -
 		for x in range(template_cols):
 			if rotated_template[y - template_row_ceneter][x - template_col_ceneter] == 1:
 				var result_pos = origin + Vector2i(x, y) - Vector2i(template_col_ceneter, template_row_ceneter)
-				if unit_grid.has(result_pos):
+				if unit_grid.units.has(result_pos):
 					affected.append(result_pos)
 	return affected
 

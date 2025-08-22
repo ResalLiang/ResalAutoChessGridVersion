@@ -2,38 +2,6 @@
 
 [ext_resource type="Texture2D" uid="uid://s4wlmefdt728" path="res://asset/sprite/MiniFolks/MinifolksForestProtectors/Outline/MiniDryadEnchantress.png" id="1_jb10e"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_xcyjk"]
-atlas = ExtResource("1_jb10e")
-region = Rect2(0, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fkhh0"]
-atlas = ExtResource("1_jb10e")
-region = Rect2(32, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_dm4ij"]
-atlas = ExtResource("1_jb10e")
-region = Rect2(64, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_pn1fk"]
-atlas = ExtResource("1_jb10e")
-region = Rect2(96, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_sr8kv"]
-atlas = ExtResource("1_jb10e")
-region = Rect2(128, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_n6fom"]
-atlas = ExtResource("1_jb10e")
-region = Rect2(160, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_w3mpf"]
-atlas = ExtResource("1_jb10e")
-region = Rect2(192, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ei0uu"]
-atlas = ExtResource("1_jb10e")
-region = Rect2(224, 96, 32, 32)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_g8q0o"]
 atlas = ExtResource("1_jb10e")
 region = Rect2(0, 192, 32, 32)
@@ -126,6 +94,38 @@ region = Rect2(32, 64, 32, 32)
 atlas = ExtResource("1_jb10e")
 region = Rect2(64, 64, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_xcyjk"]
+atlas = ExtResource("1_jb10e")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fkhh0"]
+atlas = ExtResource("1_jb10e")
+region = Rect2(32, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dm4ij"]
+atlas = ExtResource("1_jb10e")
+region = Rect2(64, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pn1fk"]
+atlas = ExtResource("1_jb10e")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sr8kv"]
+atlas = ExtResource("1_jb10e")
+region = Rect2(128, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n6fom"]
+atlas = ExtResource("1_jb10e")
+region = Rect2(160, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w3mpf"]
+atlas = ExtResource("1_jb10e")
+region = Rect2(192, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ei0uu"]
+atlas = ExtResource("1_jb10e")
+region = Rect2(224, 96, 32, 32)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_ll7sp"]
 atlas = ExtResource("1_jb10e")
 region = Rect2(0, 32, 32, 32)
@@ -188,35 +188,6 @@ region = Rect2(256, 128, 32, 32)
 
 [resource]
 animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_xcyjk")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_fkhh0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_dm4ij")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_pn1fk")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_sr8kv")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_n6fom")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_w3mpf")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ei0uu")
-}],
-"loop": false,
-"name": &"attack",
-"speed": 8.0
-}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_g8q0o")
@@ -304,6 +275,35 @@ animations = [{
 }],
 "loop": false,
 "name": &"jump",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xcyjk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fkhh0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dm4ij")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pn1fk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sr8kv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n6fom")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w3mpf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ei0uu")
+}],
+"loop": false,
+"name": &"melee_attack",
 "speed": 8.0
 }, {
 "frames": [{

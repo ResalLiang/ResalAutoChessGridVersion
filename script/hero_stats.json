@@ -199,8 +199,8 @@
 	},
 	"Demolitionist": {
 	  "spd": 4,
-	  "attack_damage": 0,
-	  "attack_range": 0,
+	  "attack_damage": 20,
+	  "attack_range": 25,
 	  "attack_speed": 0,
 	  "max_health": 90,
 	  "max_mana": 100,
@@ -851,7 +851,7 @@
 	"Priest": {
 	  "spd": 4,
 	  "attack_damage": 20,
-	  "attack_range": 150,
+	  "attack_range": 30,
 	  "attack_speed": 1,
 	  "max_health": 90,
 	  "max_mana": 170,

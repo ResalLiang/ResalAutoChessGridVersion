@@ -84,8 +84,8 @@ var taunt_range := 70
 @onready var action_timer: Timer = $action_timer
 
 @onready var debug_handler: DebugHandler = %debug_handler
-@onready var area_effect_handler: AreaEffectHandler = %area_effect_handler
 
+@onready var area_effect_handler: AreaEffectHandler = $area_effect_handler
 # ========================
 # Member Variables
 # ========================
@@ -161,7 +161,7 @@ signal tween_moving	#tween_moving.emit(self, _position, target_pos)
 # ========================
 # Projectile Properties
 # ========================
-var projectile_speed: float = 100.0  # Projectile speed
+var projectile_speed: float = 300.0  # Projectile speed
 var projectile_damage: int = 15  # Projectile damage
 var projectile_penetration: int = 3  # Number of enemies projectile can penetrate
 var ranged_attack_threshold: float = 32.0  # Minimum distance for ranged attack
@@ -260,6 +260,7 @@ func _ready():
 	if not animated_sprite_2d.sprite_frames.has_animation("spell") :
 		mp_bar.visible = false
 		
+	area_effect_handler.arena = arena
 # ========================
 # Process Functions
 # ========================
@@ -872,6 +873,7 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 
 	elif status == STATUS.HIT:
 		is_hit.emit(self)
+		status = STATUS.IDLE
 
 	elif status == STATUS.SPELL:
 		action_timer.start()
@@ -909,37 +911,40 @@ func _on_ranged_attack_animation_animation_finished(anim_name: StringName) -> vo
 func human_mage_taunt(spell_duration: int) -> bool:
 	var hero_affected := false
 	buff_handler.taunt_duration = spell_duration
-	var arena_unitgrid = arena.unit_grid
+	var arena_unitgrid = arena.unit_grid.units
 	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.human_mage_taunt_template)
 	if affected_index_array.size() != 0:
 		for affected_index in affected_index_array:
-			if arena_unitgrid.has(affected_index) and arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team != team:
-				arena_unitgrid[affected_index].target = self
-		hero_affected = true
+			if arena_unitgrid.has(affected_index) and is_instance_valid(arena_unitgrid[affected_index]):
+				if arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team != team:
+					arena_unitgrid[affected_index].target = self
+					hero_affected = true
 	return hero_affected
 
 func human_archmage_heal(spell_duration: int, heal_value: int) -> bool:
 	var hero_affected := false
-	var arena_unitgrid = get_parent().unit_grid
+	var arena_unitgrid = arena.unit_grid.units
 	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.human_archmage_heal_template)
 	if affected_index_array.size() != 0:
 		for affected_index in affected_index_array:
-			if arena_unitgrid.has(affected_index) and arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team != team:
-				arena_unitgrid[affected_index].buff_handler.continuous_hp_modifier = heal_value
-				arena_unitgrid[affected_index].buff_handler.continuous_hp_modifier_duration = spell_duration
-				hero_affected =  true
+			if arena_unitgrid.has(affected_index) and is_instance_valid(arena_unitgrid[affected_index]):
+				if arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team != team:
+					arena_unitgrid[affected_index].buff_handler.continuous_hp_modifier = heal_value
+					arena_unitgrid[affected_index].buff_handler.continuous_hp_modifier_duration = spell_duration
+					hero_affected =  true
 	return hero_affected
 
 func elf_queen_stun(spell_duration: int, damage_value: int) -> bool:
 	var hero_affected := false
-	var arena_unitgrid = arena.unit_grid
+	var arena_unitgrid = arena.unit_grid.units
 	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.human_archmage_heal_template)
 	if affected_index_array.size() != 0:
 		for affected_index in affected_index_array:
-			if arena_unitgrid.has(affected_index) and arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team != team:
-				arena_unitgrid[affected_index].debuff_handler.stunned_duration  = spell_duration
-				_apply_damage(arena_unitgrid[affected_index], damage_value)
-				hero_affected =  true
+			if arena_unitgrid.has(affected_index) and  is_instance_valid(arena_unitgrid[affected_index]):
+				if arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team != team:
+					arena_unitgrid[affected_index].debuff_handler.stunned_duration  = spell_duration
+					_apply_damage(arena_unitgrid[affected_index], damage_value)
+					hero_affected =  true
 	return hero_affected
 
 func elf_mage_damage(spell_target:Hero, damage_threshold: float, min_damage_value: int, spell_range: int) -> bool:
