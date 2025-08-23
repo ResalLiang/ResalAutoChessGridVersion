@@ -153,9 +153,9 @@ func connect_to_hero_signal(hero: Hero):
 	)
 	hero.target_lost.connect(
 		func(hero):
-			write_log("LOG", hero.hero_name + "does not have a target or target lost.")
+			write_log("LOG", hero.hero_name + " does not have a target or target lost.")
 			if debug_mode:
-				print(hero.hero_name + "does not have a target or target lost.")
+				print(hero.hero_name + " does not have a target or target lost.")
 	)
 	hero.target_found.connect(
 		func(hero, target):

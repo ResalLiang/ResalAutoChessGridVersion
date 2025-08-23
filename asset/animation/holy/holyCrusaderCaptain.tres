@@ -227,7 +227,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_djisg")
 }],
 "loop": false,
-"name": &"attack_1",
+"name": &"crit_melee_attack",
 "speed": 8.0
 }, {
 "frames": [{

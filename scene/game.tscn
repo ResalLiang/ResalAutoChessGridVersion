@@ -2106,7 +2106,7 @@ position = Vector2(304, 95)
 tile_map_data = PackedByteArray("AAAAAAAAAgAWAA4AAAAAAAEAAgAVABAAAAAAAAIAAgAVABAAAAAAAAMAAgAVABEAAAABAAAAAgAXAA4AAAACAAAAAgAXAA4AAAACAAEAAAAXABEAAAABAAEAAAAXABAAAAACAAIAAAAXABEAAAABAAIAAAAXABEAAAABAAMAAgAXABIAAAACAAMAAgAXABIAAAADAAAAAgAYAA4AAAADAAEAAgAZABAAAAADAAMAAgAYABIAAAADAAIAAgAZABAAAAA=")
 tile_set = ExtResource("2_dbls1")
 script = ExtResource("3_xwcet")
-unit_grid = NodePath("../../SellUnitGridw")
+unit_grid = NodePath("../../SellUnitGrid")
 tile_highlighter = NodePath("tile_highlighter")
 
 [node name="tile_highlighter" type="Node" parent="tilemap/sell" node_paths=PackedStringArray("play_area", "highlight_layer")]
@@ -2141,7 +2141,7 @@ position = Vector2(304, 0)
 script = ExtResource("3_33cqm")
 size = Vector2i(4, 4)
 
-[node name="SellUnitGridw" type="Node2D" parent="."]
+[node name="SellUnitGrid" type="Node2D" parent="."]
 z_index = 2
 position = Vector2(304, 95)
 script = ExtResource("3_33cqm")
@@ -2150,7 +2150,7 @@ size = Vector2i(4, 4)
 [node name="hero_mover" type="Node2D" parent="." node_paths=PackedStringArray("play_areas")]
 unique_name_in_owner = true
 script = ExtResource("7_ll5lq")
-play_areas = [NodePath("../tilemap/arena"), NodePath("../tilemap/bench"), NodePath("../tilemap/shop")]
+play_areas = [NodePath("../tilemap/arena"), NodePath("../tilemap/bench"), NodePath("../tilemap/shop"), NodePath("../tilemap/sell")]
 
 [node name="game_start_button" type="Button" parent="."]
 z_index = 2
@@ -2221,6 +2221,7 @@ offset_top = 266.0
 offset_right = 127.0
 offset_bottom = 289.0
 theme_override_fonts/font = ExtResource("9_17rxn")
+theme_override_font_sizes/font_size = 0
 text = "Current shop level = "
 
 [node name="shop_handler" type="Node2D" parent="."]

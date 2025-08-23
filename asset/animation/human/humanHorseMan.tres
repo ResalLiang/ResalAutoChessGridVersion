@@ -2,34 +2,6 @@
 
 [ext_resource type="Texture2D" uid="uid://8hxr1o66tiex" path="res://asset/sprite/MiniFolks/MinifolksHumans/Outline/MiniHorseMan.png" id="1_hv4rc"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_02epd"]
-atlas = ExtResource("1_hv4rc")
-region = Rect2(0, 128, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_wf0ko"]
-atlas = ExtResource("1_hv4rc")
-region = Rect2(32, 128, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_5r6ir"]
-atlas = ExtResource("1_hv4rc")
-region = Rect2(64, 128, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_x47rb"]
-atlas = ExtResource("1_hv4rc")
-region = Rect2(96, 128, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_outtk"]
-atlas = ExtResource("1_hv4rc")
-region = Rect2(128, 128, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_vnq2a"]
-atlas = ExtResource("1_hv4rc")
-region = Rect2(160, 128, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_xniyg"]
-atlas = ExtResource("1_hv4rc")
-region = Rect2(192, 128, 32, 32)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_8jjpa"]
 atlas = ExtResource("1_hv4rc")
 region = Rect2(0, 192, 32, 32)
@@ -106,6 +78,34 @@ region = Rect2(32, 96, 32, 32)
 atlas = ExtResource("1_hv4rc")
 region = Rect2(64, 96, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_02epd"]
+atlas = ExtResource("1_hv4rc")
+region = Rect2(0, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wf0ko"]
+atlas = ExtResource("1_hv4rc")
+region = Rect2(32, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5r6ir"]
+atlas = ExtResource("1_hv4rc")
+region = Rect2(64, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x47rb"]
+atlas = ExtResource("1_hv4rc")
+region = Rect2(96, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_outtk"]
+atlas = ExtResource("1_hv4rc")
+region = Rect2(128, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vnq2a"]
+atlas = ExtResource("1_hv4rc")
+region = Rect2(160, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xniyg"]
+atlas = ExtResource("1_hv4rc")
+region = Rect2(192, 128, 32, 32)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_mkxog"]
 atlas = ExtResource("1_hv4rc")
 region = Rect2(0, 32, 32, 32)
@@ -156,32 +156,6 @@ region = Rect2(160, 64, 32, 32)
 
 [resource]
 animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_02epd")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_wf0ko")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_5r6ir")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_x47rb")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_outtk")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_vnq2a")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_xniyg")
-}],
-"loop": false,
-"name": &"attack",
-"speed": 8.0
-}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_8jjpa")
@@ -257,6 +231,32 @@ animations = [{
 }],
 "loop": false,
 "name": &"jump",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_02epd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wf0ko")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5r6ir")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x47rb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_outtk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vnq2a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xniyg")
+}],
+"loop": false,
+"name": &"melee_attack",
 "speed": 8.0
 }, {
 "frames": [{

@@ -639,7 +639,7 @@
 	"YoungDryad": {
 	  "spd": 7,
 	  "attack_damage": 20,
-	  "attack_range": 100,
+	  "attack_range": 30,
 	  "attack_speed": 1,
 	  "max_health": 70,
 	  "max_mana": 100,
@@ -1546,9 +1546,9 @@
 	},
 	"Miner": {
 	  "spd": 3,
-	  "attack_damage": 0,
-	  "attack_range": 0,
-	  "attack_speed": 0,
+	  "attack_damage": 10,
+	  "attack_range": 30,
+	  "attack_speed": 1,
 	  "max_health": 115,
 	  "max_mana": 0,
 	  "armor": 5,

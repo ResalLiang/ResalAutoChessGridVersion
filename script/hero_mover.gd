@@ -39,8 +39,8 @@ func _reset_hero_to_starting_position(starting_position: Vector2, hero: Hero) ->
 	#hero.reset_after_dragging(starting_position)
 	play_areas[i].unit_grid.add_unit(tile, hero)
 	# hero.global_position = play_areas[i].get_global_from_tile(tile)
-	hero._position = get_parent().to_local(play_areas[i].get_global_from_tile(tile))
 	hero.reparent(play_areas[i].unit_grid)
+	hero._position = hero.get_parent().to_local(play_areas[i].get_global_from_tile(tile))
 
 
 func _move_hero(hero: Hero, play_area: PlayArea, tile: Vector2i) -> void:

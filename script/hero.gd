@@ -76,7 +76,6 @@ var taunt_range := 70
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var area_2d: Area2D = $Area2D
 @onready var idle_timer: Timer = $idle_timer
-@onready var attack_timer: Timer = $attack_timer
 @onready var attack_target_line: Line2D = $attack_target_line  # Attack range indicator
 @onready var spell_target_line: Line2D = $spell_target_line  # Spell range indicator
 @onready var drag_handler: Node2D = $drag_handler
@@ -196,7 +195,6 @@ func _ready():
 	
 	# Connect signals
 	idle_timer.timeout.connect(_on_idle_timeout)
-	#attack_timer.timeout.connect(_on_attack_timeout)
 	move_timer.timeout.connect(_handle_action)
 	action_timer.timeout.connect(_handle_action_timeout)
 	
@@ -344,10 +342,6 @@ func _validate_node_references() -> bool:
 	
 	if not idle_timer:
 		push_error("IdleTimer reference is missing!")
-		valid = false
-	
-	if not attack_timer:
-		push_error("AttackTimer reference is missing!")
 		valid = false
 
 	if not animated_sprite_2d.sprite_frames.has_animation("move"):
@@ -550,6 +544,9 @@ func _handle_attack():
 				return
 			action_timer.start()
 			return
+		else:
+			status = STATUS.IDLE
+			action_timer.start()
 	else:
 		status = STATUS.IDLE
 		action_timer.start()
@@ -869,7 +866,6 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 		await get_tree().process_frame
 
 		queue_free()
-		return
 
 	elif status == STATUS.HIT:
 		is_hit.emit(self)

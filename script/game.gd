@@ -282,11 +282,11 @@ func _on_character_action_finished(hero: Hero):
 	active_hero.is_active = false
 	active_hero.action_finished.disconnect(_on_character_action_finished)
 
-	if current_team == Team.TEAM1 and team_dict[Team.TEAM2] != []:
+	if current_team == Team.TEAM1 and team_dict[Team.TEAM2].size() != 0:
 		current_team = Team.TEAM2
 		start_hero_turn(current_team)
 		return
-	elif current_team == Team.TEAM2 and team_dict[Team.TEAM1] != []:
+	elif current_team == Team.TEAM2 and team_dict[Team.TEAM1].size() != 0:
 		current_team = Team.TEAM1
 		start_hero_turn(current_team)
 		return

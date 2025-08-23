@@ -2,30 +2,6 @@
 
 [ext_resource type="Texture2D" uid="uid://dhxvrxhunebo3" path="res://asset/sprite/MiniFolks/MinifolksHolyWarriors/Original/Outline/MiniCrusaderCaptainFlagless.png" id="1_ti3ab"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_e2367"]
-atlas = ExtResource("1_ti3ab")
-region = Rect2(0, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_5613y"]
-atlas = ExtResource("1_ti3ab")
-region = Rect2(32, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_1g4ql"]
-atlas = ExtResource("1_ti3ab")
-region = Rect2(64, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_3551p"]
-atlas = ExtResource("1_ti3ab")
-region = Rect2(96, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_nbkxa"]
-atlas = ExtResource("1_ti3ab")
-region = Rect2(128, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_c70j1"]
-atlas = ExtResource("1_ti3ab")
-region = Rect2(160, 96, 32, 32)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_u11aq"]
 atlas = ExtResource("1_ti3ab")
 region = Rect2(0, 128, 32, 32)
@@ -102,6 +78,30 @@ region = Rect2(32, 64, 32, 32)
 atlas = ExtResource("1_ti3ab")
 region = Rect2(64, 64, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_e2367"]
+atlas = ExtResource("1_ti3ab")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5613y"]
+atlas = ExtResource("1_ti3ab")
+region = Rect2(32, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1g4ql"]
+atlas = ExtResource("1_ti3ab")
+region = Rect2(64, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3551p"]
+atlas = ExtResource("1_ti3ab")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nbkxa"]
+atlas = ExtResource("1_ti3ab")
+region = Rect2(128, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c70j1"]
+atlas = ExtResource("1_ti3ab")
+region = Rect2(160, 96, 32, 32)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_fngup"]
 atlas = ExtResource("1_ti3ab")
 region = Rect2(0, 32, 32, 32)
@@ -130,29 +130,6 @@ region = Rect2(160, 32, 32, 32)
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_e2367")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_5613y")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_1g4ql")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_3551p")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_nbkxa")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_c70j1")
-}],
-"loop": false,
-"name": &"attack",
-"speed": 8.0
-}, {
-"frames": [{
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_u11aq")
 }, {
 "duration": 1.0,
@@ -171,7 +148,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_m8din")
 }],
 "loop": false,
-"name": &"attack2",
+"name": &"crit_melee_attack",
 "speed": 8.0
 }, {
 "frames": [{
@@ -231,6 +208,29 @@ animations = [{
 }],
 "loop": false,
 "name": &"jump",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e2367")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5613y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1g4ql")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3551p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nbkxa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c70j1")
+}],
+"loop": false,
+"name": &"melee_attack",
 "speed": 8.0
 }, {
 "frames": [{
