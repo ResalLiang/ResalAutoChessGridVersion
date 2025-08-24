@@ -22,10 +22,10 @@ const hero_class = preload("res://script/hero.gd")
 @onready var area_effect_handler: AreaEffectHandler = %area_effect_handler
 @onready var debug_handler: DebugHandler = %debug_handler
 
-@onready var hero_order_hp_high: Button = $hero_order_hp_high
-@onready var hero_order_hp_low: Button = $hero_order_hp_low
-@onready var hero_order_near_center: Button = $hero_order_near_center
-@onready var hero_order_far_center: Button = $hero_order_far_center
+@onready var hero_order_hp_high: Button = $hero_order_control/hero_order_hp_high
+@onready var hero_order_hp_low: Button = $hero_order_control/hero_order_hp_low
+@onready var hero_order_near_center: Button = $hero_order_control/hero_order_near_center
+@onready var hero_order_far_center: Button = $hero_order_control/hero_order_far_center
 
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
 var hero_data_array: Dictionary
@@ -60,7 +60,7 @@ const max_won_rounds := 5
 var lose_rounds := 0
 const max_lose_rounds := 5
 
-var saved_arena_team
+var saved_arena_team = {}
 var appearance_tween
 
 # Define rarity weights dictionary
@@ -209,18 +209,18 @@ func start_new_game() -> void:
 func new_round_prepare_start():
 	game_start_button.disabled = false
 	clear_play_area(arena)
-	if saved_arena_team:
+	if saved_arena_team.size() != 0:
 		load_arena_team()
 	hero_mover.setup_before_turn_start()
 	current_round += 1
 	shop_handler.turn_start_income(current_round)
 
 func new_round_prepare_end():
-	if not saved_arena_team:
-		team_dict[Team.TEAM1_FULL] = []
-		for node in get_tree().get_nodes_in_group("hero_group"):
-			if node is Hero and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
-				team_dict[Team.TEAM1_FULL].append(node)
+	#if saved_arena_team.size() == 0:
+	team_dict[Team.TEAM1_FULL] = []
+	for node in get_tree().get_nodes_in_group("hero_group"):
+		if node is Hero and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
+			team_dict[Team.TEAM1_FULL].append(node)
 	save_arena_team()
 	generate_enemy(current_round * 300)
 
@@ -290,8 +290,10 @@ func _on_character_action_finished(hero: Hero):
 		current_team = Team.TEAM1
 		start_hero_turn(current_team)
 		return
-
-	start_new_turn()
+	elif team_dict[Team.TEAM2].size() != 0 or team_dict[Team.TEAM1].size() != 0:
+		start_hero_turn(current_team)
+	else:
+		start_new_turn()
 
 func _on_round_finished(msg):
 	if msg == "team1":
@@ -397,7 +399,7 @@ func clear_play_area(play_area_to_clear: PlayArea):
 
 func load_arena_team():
 	team_dict[Team.TEAM1_FULL] = []
-	if saved_arena_team:
+	if saved_arena_team.size() != 0:
 		for tile_index in saved_arena_team.keys():
 			if saved_arena_team[tile_index]:
 				var character = hero_scene.instantiate()

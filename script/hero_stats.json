@@ -274,9 +274,9 @@
 	},
 	"Miner": {
 	  "spd": 4,
-	  "attack_damage": 0,
-	  "attack_range": 0,
-	  "attack_speed": 0,
+	  "attack_damage": 10,
+	  "attack_range": 30,
+	  "attack_speed": 1,
 	  "max_health": 80,
 	  "max_mana": 0,
 	  "armor": 0,
