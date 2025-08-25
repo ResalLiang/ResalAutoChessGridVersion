@@ -1,7 +1,3 @@
-# projectile.gd
-# Projectile (Area2D)
-#   ├── AnimatedSprite2D
-#   └── CollisionShape2D
 extends Area2D
 
 @export var speed: float = 600.0
@@ -30,6 +26,7 @@ var attacker: Hero = null:
 			animated_sprite_2d.sprite_frames = ResourceLoader.load("res://asset/animation/default_projectile.tres")
 
 signal projectile_vanished
+signal projectile_hit
 
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 
@@ -67,6 +64,7 @@ func _physics_process(delta):
 func _on_area_entered(area):
 	if area.get_parent().is_in_group("hero_group"):
 		var hero = area.get_parent()
+		projectile_hit.emit(hero, attacker)
 		# 只伤害敌方队伍
 		if hero.team != source_team and attacker != null:
 			hero.take_damage(damage, attacker)
