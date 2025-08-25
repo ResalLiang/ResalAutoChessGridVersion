@@ -9,16 +9,32 @@ extends Node2D
 # Character states
 enum STATUS {IDLE, MOVE, MELEE_ATTACK, RANGED_ATTACK, JUMP, HIT, DIE, SPELL}
 enum TARGET_CHOICE {CLOSE, FAR, STRONG, WEAK, ALLY, SELF}
+enum play_areas {playarea_arena, playarea_bench, playarea_shop}
 
 const MAX_SEARCH_RADIUS = 3
 const projectile_scene = preload("res://scene/projectile.tscn")
+
+@onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D
+@onready var melee_attack_animation: AnimationPlayer = $melee_attack_animation
+@onready var ranged_attack_animation: AnimationPlayer = $ranged_attack_animation
+@onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
+@onready var area_2d: Area2D = $Area2D
+@onready var idle_timer: Timer = $idle_timer
+@onready var attack_target_line: Line2D = $attack_target_line  # Attack range indicator
+@onready var spell_target_line: Line2D = $spell_target_line  # Spell range indicator
+@onready var drag_handler: Node2D = $drag_handler
+@onready var move_timer: Timer = $move_timer
+@onready var action_timer: Timer = $action_timer
+@onready var debug_handler: DebugHandler = %debug_handler
+@onready var area_effect_handler: AreaEffectHandler = $area_effect_handler
+@onready var hp_bar: ProgressBar = $hp_bar
+@onready var mp_bar: ProgressBar = $mp_bar
+
 # ========================
 # Exported Variables
 # ========================
 # Character faction with property observer
-@export_enum("human", "dwarf", "elf", "forestProtector", "holy", "demon", "undead", "villager") var faction := "human":
-	set(value):
-		faction = value
+@export_enum("human", "dwarf", "elf", "forestProtector", "holy", "demon", "undead", "villager") var faction := "human"
 
 # Hero name with property observer
 @export var hero_name := "ShieldMan":
@@ -31,79 +47,61 @@ const projectile_scene = preload("res://scene/projectile.tscn")
 			animated_sprite_2d.sprite_frames = ResourceLoader.load("res://asset/animation/" + faction + "/" + faction + hero_name + ".tres")
 		_load_hero_stats()
 
+#============================================
+# Basic attack statics
+#============================================
 var base_max_hp := 100  # Maximum health points
 var base_max_mp := 50   # Maximum magic points
-var base_spd := 8      # Movement speed (pixels/second)
+var base_spd := 8      # Movement speed (grid/turn)
 var base_damage := 20   # Attack damage
-var base_attack_spd := 1 # Attack speed (attacks per second)
+var base_attack_spd := 1 # Attack speed (attacks per turn)
 var base_attack_range := 20 # Attack range (pixels)
-@export var team: int      # 0 for player, 1~7 for AI enemy
-@export var dragging_enabled: bool = true # Enable/disable dragging
-var sprite_frames: SpriteFrames  # Custom sprite frames
-@export var line_visible:= false
-
-var arena: PlayArea
-var bench: PlayArea
-var shop: PlayArea
-
-var evasion_rate := 0.10
-var critical_rate := 0.10
-
 var base_evasion_rate := 0.10
 var base_critical_rate := 0.10
-
-var armor := 0
 var base_armor := 0
 
-var spd = base_spd
 var max_hp = base_max_hp
 var max_mp = base_max_mp
+var spd = base_spd
 var damage = base_damage
 var attack_spd = base_attack_spd
 var attack_range = base_attack_range
-var remain_attack_count
+var evasion_rate := 0.10
+var critical_rate := 0.10
+var armor := 0
 
-var taunt_range := 70
-
-@onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D
-@onready var melee_attack_animation: AnimationPlayer = $melee_attack_animation
-@onready var ranged_attack_animation: AnimationPlayer = $ranged_attack_animation
-
-
-# ========================
-# Node References
-# ========================
-@onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
-@onready var area_2d: Area2D = $Area2D
-@onready var idle_timer: Timer = $idle_timer
-@onready var attack_target_line: Line2D = $attack_target_line  # Attack range indicator
-@onready var spell_target_line: Line2D = $spell_target_line  # Spell range indicator
-@onready var drag_handler: Node2D = $drag_handler
-@onready var move_timer: Timer = $move_timer
-@onready var action_timer: Timer = $action_timer
-
-@onready var debug_handler: DebugHandler = %debug_handler
-
-@onready var area_effect_handler: AreaEffectHandler = $area_effect_handler
-# ========================
-# Member Variables
-# ========================
 var hp: int                # Current health points
 var mp: int                # Current magic points
+
+var remain_attack_count
+
+var hero_data: Dictionary  # Stores hero stats loaded from JSON
+
+var buff_handler = Buff_handler.new()
+var debuff_handler = Debuff_handler.new()
+
+#============================================
+# Target setting
+#============================================
 var hero_target_choice := TARGET_CHOICE.CLOSE  # Target selection strategy
 var hero_target: Hero  # Current attack target
 var hero_spell_target_choice := TARGET_CHOICE.CLOSE  # Target selection strategy
 var hero_spell_target: Hero # Current spell target
-var status := STATUS.IDLE         # Current character state
 
-var skill_name := "Place holder."
-var skill_description := "Place holder."
+@export var team: int      # 0 for player, 1~7 for AI enemy
 
+#============================================
+# Play Area Related
+#============================================
+var arena: PlayArea
+var bench: PlayArea
+var shop: PlayArea
 
-var hero_data: Dictionary  # Stores hero stats loaded from JSON
-var rng = RandomNumberGenerator.new() # Random number generator
+var current_play_area = play_areas.playarea_arena
 
-#Astar navigation related
+#============================================
+# Movement Related
+#============================================
 var move_path: PackedVector2Array
 var position_id := Vector2i.ZERO
 var _position := Vector2.ZERO:
@@ -116,16 +114,42 @@ var _position := Vector2.ZERO:
 		)
 var astar_grid
 var position_tween
-
 var is_active: bool = false
 var grid_offset =Vector2(8, 8)
 var remain_step:= 0
-
 var astar_grid_region = Rect2i(0, 0, 16, 16)
-# ========================
-# Signal Definitions
-# ========================
 
+var dragging_enabled: bool = true # Enable/disable dragging
+
+#============================================
+#Appreance Related
+#============================================
+@export var line_visible:= false
+var sprite_frames: SpriteFrames  # Custom sprite frames
+
+#============================================
+# Skill or Spell Related
+#============================================
+var skill_name := "Place holder."
+var skill_description := "Place holder."
+
+var taunt_range := 70
+
+# Projectile Related
+var projectile_speed: float = 300.0  # Projectile speed
+var projectile_damage: int = 15  # Projectile damage
+var projectile_penetration: int = 3  # Number of enemies projectile can penetrate
+var ranged_attack_threshold: float = 32.0  # Minimum distance for ranged attack
+var projectile
+
+
+var status := STATUS.IDLE         # Current character state
+
+var rng = RandomNumberGenerator.new() # Random number generator
+
+#============================================
+# Signals
+#============================================
 signal attack_landed(target: Hero, damage: int)  # Emitted when attack hits target
 signal is_died                                      # Emitted when die
 signal turn_finished
@@ -158,25 +182,6 @@ signal target_found	#target_found.emit(self, hero_target.hero_name)
 signal tween_moving	#tween_moving.emit(self, _position, target_pos)
 
 # ========================
-# Projectile Properties
-# ========================
-var projectile_speed: float = 300.0  # Projectile speed
-var projectile_damage: int = 15  # Projectile damage
-var projectile_penetration: int = 3  # Number of enemies projectile can penetrate
-var ranged_attack_threshold: float = 32.0  # Minimum distance for ranged attack
-var projectile
-
-@export var melee_range: float = 16.0  # Melee attack range
-@onready var hp_bar: ProgressBar = $hp_bar
-@onready var mp_bar: ProgressBar = $mp_bar
-
-var buff_handler = Buff_handler.new()
-var debuff_handler = Debuff_handler.new()
-
-enum play_areas {playarea_arena, playarea_bench, playarea_shop}
-var current_play_area = play_areas.playarea_arena
-
-# ========================
 # Initialization
 # ========================
 func _ready():
@@ -201,7 +206,6 @@ func _ready():
 	drag_handler.drag_started.connect(_handle_dragging_state)
 	drag_handler.drag_canceled.connect(_handle_dragging_state)
 	drag_handler.drag_dropped.connect(_handle_dragging_state)
-
 	
 	damage_taken.connect(_on_damage_taken)
 
@@ -259,15 +263,12 @@ func _ready():
 		mp_bar.visible = false
 		
 	area_effect_handler.arena = arena
+
 # ========================
 # Process Functions
 # ========================
 func _process(delta: float) -> void:
 	
-	# Skip processing in editor mode
-	if Engine.is_editor_hint():
-		return
-
 	hp_bar.value = hp
 	mp_bar.value = mp
 
@@ -368,7 +369,6 @@ func _load_animations():
 	if ResourceLoader.exists(path):
 		var frames = ResourceLoader.load(path)
 		for anim_name in frames.get_animation_names():
-			# 根据需求设置不同循环条件
 			if anim_name == "move" or anim_name == "jump":
 				frames.set_animation_loop(anim_name, true)
 			else:
@@ -407,10 +407,6 @@ func _load_hero_stats():
 		push_error("Stats not found for %s/%s" % [faction, hero_name])
 
 func start_turn():
-	if status == STATUS.DIE:
-		visible = false
-		action_timer.start()
-		return
 
 	update_solid_map()
 	await get_tree().process_frame
@@ -440,12 +436,6 @@ func _handle_movement():
 		move_timer.start()
 	else:
 		astar_grid.set_point_solid(position_id, false)
-		#astar_grid.set_point_solid(hero_target.position_id, false)
-		var solid_sum = 0
-		for y in range(-8, 8, 1):
-			for x in range(-8, 8, 1):
-				var solid_result = 1 if astar_grid.is_point_solid(Vector2i(x, y)) else 0
-				solid_sum += solid_result
 		await get_tree().process_frame
 		await get_tree().process_frame
 		await get_tree().process_frame
@@ -453,6 +443,7 @@ func _handle_movement():
 			
 		if move_path.is_empty():
 			move_path = get_safe_path(position_id, hero_target.position_id)
+
 		if move_path.is_empty():
 			astar_grid.set_point_solid(hero_target.position_id, true)
 			move_finished.emit(self, position_id)
@@ -486,21 +477,22 @@ func _handle_action():
 	action_started.emit(self)
 	astar_grid.set_point_solid(position_id, true)
 
-	if mp >= max_mp and animated_sprite_2d.sprite_frames.has_animation("spell") and (!debuff_handler.is_silenced or !debuff_handler.is_stunned):
+	if mp >= max_mp and animated_sprite_2d.sprite_frames.has_animation("spell") and (!debuff_handler.is_silenced and !debuff_handler.is_stunned):
 		if hero_spell_target_choice == TARGET_CHOICE.SELF:
 			status = STATUS.SPELL
 			animated_sprite_2d.play("spell")
-			_cast_spell(self)
-			return
-		if !hero_spell_target:
+			if _cast_spell(self):
+				return
+		elif !hero_spell_target:
 			hero_spell_target = _find_new_target(hero_spell_target_choice)
+
 		if hero_spell_target:
 			status = STATUS.SPELL
 			animated_sprite_2d.play("spell")
-			_cast_spell(hero_spell_target)
-			return
+			if _cast_spell(hero_spell_target):
+				return
 
-	if !hero_target or !is_instance_valid(hero_target):
+	if !hero_target or !is_instance_valid(hero_target) or hero_target.status == STATUS.DIE:
 		target_lost.emit(self)
 		action_timer.start()
 		return
@@ -510,44 +502,61 @@ func _handle_action():
 func _handle_attack():
 	var current_distance_to_target = global_position.distance_to(hero_target.global_position)
 	remain_attack_count -= 1
-	if current_distance_to_target <= attack_range and (!debuff_handler.is_stunned or !debuff_handler.is_disarmed):
+	if current_distance_to_target <= attack_range and (not debuff_handler.is_stunned and not debuff_handler.is_disarmed):
 		if current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
 			status = STATUS.RANGED_ATTACK
 			if ResourceLoader.exists("res://asset/animation/%s/%s%s_projectile.tres" % [faction, faction, hero_name]):
+				
 				animated_sprite_2d.play("ranged_attack")
 				ranged_attack_started.emit(self)
 				var hero_projectile = _launch_projectile(hero_target)
 				projectile_lauched.emit(self)
+
 				hero_projectile.projectile_vanished.connect(_on_animated_sprite_2d_animation_finished)
 				hero_projectile.projectile_vanished.connect(
 					func(hero_name):
 						debug_handler.write_log("LOG", hero_name + "'s projectile has vanished.")
 				)
+				hero_projectile.projectile_hit(handle_special_effect)
+
 				return
-			elif animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
+			else:
+
 				ranged_attack_animation.play("ranged_attack")
 				ranged_attack_started.emit(self)
+
+				handle_special_effect(hero_target, self)
+
 				return
-			action_timer.start()
-			return
+
 		elif current_distance_to_target < ranged_attack_threshold:
 			if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
 				status = STATUS.MELEE_ATTACK
 				melee_attack_animation.play("melee_attack")
 				melee_attack_started.emit(self)
+
+				handle_special_effect(hero_target, self)
+
 				return
 			elif animated_sprite_2d.sprite_frames.has_animation("attack"):
 				status = STATUS.MELEE_ATTACK
 				animated_sprite_2d.play("attack")
 				melee_attack_started.emit(self)
 				hero_target.take_damage(damage, self)	
+
+				handle_special_effect(hero_target, self)
+				
 				return
-			action_timer.start()
-			return
+			else:
+				# No required attack animation
+				action_timer.start()
+				return
 		else:
+			# Long distance but no ranged attack animation
 			status = STATUS.IDLE
 			action_timer.start()
 	else:
+		# Out of attack range
 		status = STATUS.IDLE
 		action_timer.start()
 
@@ -609,6 +618,9 @@ func _find_new_target(tgt) -> Hero:
 			if ally_heroes.size() > 0:
 				ally_heroes.sort_custom(_compare_hp)
 				new_target = ally_heroes.front()  # Strongest ally
+
+		TARGET_CHOICE.SELF:
+			new_target = self
 	
 	if new_target:
 		return new_target 
@@ -667,6 +679,7 @@ func _compare_damage(a: Hero, b: Hero) -> bool:
 func _on_idle_timeout():
 	if status == STATUS.IDLE:
 		animated_sprite_2d.play("idle")
+		idle_timer.set_wait_time(rng.randf_range(1.0,5.0))
 
 
 # Launch projectile at target
@@ -830,7 +843,6 @@ func _handle_dragging_state(stating_position: Vector2, drag_action: String):
 			_:
 				status = STATUS.IDLE
 		animated_sprite_2d.play("idle")
-		# action_timer.start()
 		
 func update_buff_debuff():
 	
@@ -856,6 +868,9 @@ func update_buff_debuff():
 	hp = min(hp, max_hp)
 	
 	return
+
+func handle_projectile_hit(hero:Hero, attacker:Hero):
+	pass
 
 func _on_animated_sprite_2d_animation_finished() -> void:
 	if status == STATUS.DIE:
@@ -908,9 +923,13 @@ func human_mage_taunt(spell_duration: int) -> bool:
 	var hero_affected := false
 	buff_handler.taunt_duration = spell_duration
 	var arena_unitgrid = arena.unit_grid.units
-	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.human_mage_taunt_template)
-	if affected_index_array.size() != 0:
-		for affected_index in affected_index_array:
+	# var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.human_mage_taunt_template)
+	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.default_template)
+	
+	if affected_index_array.size() == 0:
+		return false
+
+	for affected_index in affected_index_array:
 			if arena_unitgrid.has(affected_index) and is_instance_valid(arena_unitgrid[affected_index]):
 				if arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team != team:
 					arena_unitgrid[affected_index].target = self
@@ -920,9 +939,13 @@ func human_mage_taunt(spell_duration: int) -> bool:
 func human_archmage_heal(spell_duration: int, heal_value: int) -> bool:
 	var hero_affected := false
 	var arena_unitgrid = arena.unit_grid.units
-	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.human_archmage_heal_template)
-	if affected_index_array.size() != 0:
-		for affected_index in affected_index_array:
+	# var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.human_archmage_heal_template)
+	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.default_template)
+	
+	if affected_index_array.size() == 0:
+		return false
+
+	for affected_index in affected_index_array:
 			if arena_unitgrid.has(affected_index) and is_instance_valid(arena_unitgrid[affected_index]):
 				if arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team != team:
 					arena_unitgrid[affected_index].buff_handler.continuous_hp_modifier = heal_value
@@ -933,14 +956,18 @@ func human_archmage_heal(spell_duration: int, heal_value: int) -> bool:
 func elf_queen_stun(spell_duration: int, damage_value: int) -> bool:
 	var hero_affected := false
 	var arena_unitgrid = arena.unit_grid.units
-	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.human_archmage_heal_template)
-	if affected_index_array.size() != 0:
-		for affected_index in affected_index_array:
-			if arena_unitgrid.has(affected_index) and  is_instance_valid(arena_unitgrid[affected_index]):
-				if arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team != team:
-					arena_unitgrid[affected_index].debuff_handler.stunned_duration  = spell_duration
-					_apply_damage(arena_unitgrid[affected_index], damage_value)
-					hero_affected =  true
+	# var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.human_archmage_heal_template)
+	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.default_template)
+
+	if affected_index_array.size() == 0:
+		return false
+
+	for affected_index in affected_index_array:
+		if arena_unitgrid.has(affected_index) and  is_instance_valid(arena_unitgrid[affected_index]):
+			if arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team != team:
+				arena_unitgrid[affected_index].debuff_handler.stunned_duration  = spell_duration
+				_apply_damage(arena_unitgrid[affected_index], damage_value)
+				hero_affected =  true
 	return hero_affected
 
 func elf_mage_damage(spell_target:Hero, damage_threshold: float, min_damage_value: int, spell_range: int) -> bool:
