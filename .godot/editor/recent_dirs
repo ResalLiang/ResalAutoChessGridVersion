@@ -1,12 +1,15 @@
+res://scene
+res://script
+res://asset/animation/forestProtector
+res://asset/animation/human
+res://asset/sprite/MiniFolks/MinifolksHumans/Without Outline
 res://asset/font
 res://asset/cursor/cursors
 res://asset/sprite/MiniFolks/MinifolksHumans
 res://asset/sprite/MiniFolks/MinifolksUndead
-res://asset/sprite/MiniFolks/MinifolksHumans/Without Outline
 res://asset/sprite/SpinningCoin
 res://asset/animation/elf
 res://asset/sprite
-res://script
 res://asset
 res://
 res://asset/animation/villager
@@ -14,7 +17,5 @@ res://asset/shader
 res://asset/animation/demon
 res://asset/animation/undead
 D:/LearningGodot/ResalAutoChess/script/hero_stats_raw
-res://scene
 D:/LearningGodot/ResalAutoChess/script
 res://asset/tileset
-res://asset/animation/forestProtector

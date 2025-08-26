@@ -1,0 +1,52 @@
+[gd_scene load_steps=5 format=3 uid="uid://d2yhcwylpopef"]
+
+[ext_resource type="Script" uid="uid://bnr8mv8yg14k2" path="res://script/damage_meter_bar.gd" id="1_tslr8"]
+[ext_resource type="FontFile" uid="uid://d3b2vvdpmh8cc" path="res://asset/font/Everyday_Tiny_Original.ttf" id="2_ma13r"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rmtta"]
+bg_color = Color(0.00392157, 0.0392157, 0.168627, 0)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mnego"]
+bg_color = Color(0, 1, 0, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8, 0.8, 0.8, 0)
+
+[node name="damage_meter_bar" type="HBoxContainer"]
+offset_right = 102.0
+offset_bottom = 17.0
+size_flags_horizontal = 0
+script = ExtResource("1_tslr8")
+damage_value = 20
+
+[node name="TextureRect" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource("2_ma13r")
+theme_override_font_sizes/font_size = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_rmtta")
+theme_override_styles/fill = SubResource("StyleBoxFlat_mnego")
+max_value = 500.0
+page = 1.0
+value = 200.0
+show_percentage = false
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_fonts/font = ExtResource("2_ma13r")
+theme_override_font_sizes/font_size = 4
+text = "1234"

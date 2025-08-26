@@ -517,7 +517,7 @@ func _handle_attack():
 					func(hero_name):
 						debug_handler.write_log("LOG", hero_name + "'s projectile has vanished.")
 				)
-				hero_projectile.projectile_hit(handle_special_effect)
+				hero_projectile.projectile_hit.emit(handle_special_effect)
 
 				return
 			else:
@@ -919,6 +919,9 @@ func _on_melee_attack_animation_animation_finished(anim_name: StringName) -> voi
 func _on_ranged_attack_animation_animation_finished(anim_name: StringName) -> void:
 	_on_animated_sprite_2d_animation_finished()
 
+func handle_special_effect(target: Hero, attacker: Hero):
+	pass
+	
 func human_mage_taunt(spell_duration: int) -> bool:
 	var hero_affected := false
 	buff_handler.taunt_duration = spell_duration

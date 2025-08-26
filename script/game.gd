@@ -120,10 +120,9 @@ const RARITY_COUNTS = {
 signal game_finished
 signal hero_appearance_finished
 
+var cursor_texture = preload("res://asset/cursor/cursors/cursor1.png")
+
 func _ready():
-	if Engine.is_editor_hint():
-		return
-	# 棋盘参数
 	var tile_size = Vector2(16, 16)
 	
 	var file = FileAccess.open("res://script/hero_stats.json", FileAccess.READ)
