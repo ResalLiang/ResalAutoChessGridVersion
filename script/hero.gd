@@ -47,6 +47,8 @@ const projectile_scene = preload("res://scene/projectile.tscn")
 			animated_sprite_2d.sprite_frames = ResourceLoader.load("res://asset/animation/" + faction + "/" + faction + hero_name + ".tres")
 		_load_hero_stats()
 
+var hero_serial := 1001
+
 #============================================
 # Basic attack statics
 #============================================
@@ -485,6 +487,8 @@ func _handle_action():
 				return
 		elif !hero_spell_target:
 			hero_spell_target = _find_new_target(hero_spell_target_choice)
+			if hero_target:
+				hero_target.is_died.connect(handle_target_death)
 
 		if hero_spell_target:
 			status = STATUS.SPELL
@@ -572,6 +576,8 @@ func _handle_targeting():
 	if !hero_target or hero_target.status == STATUS.DIE:
 		attack_target_line.visible = false
 		hero_target = _find_new_target(hero_target_choice)
+		if hero_target:
+			hero_target.is_died.connect(handle_target_death)
 		
 # Find a new target based on selection strategy
 func _find_new_target(tgt) -> Hero:
@@ -855,7 +861,7 @@ func update_buff_debuff():
 	_apply_heal(self, max(0, buff_handler.continuous_hp_modifier))
 	_apply_damage(self, max(0, debuff_handler.continuous_hp_modifier))
 
-	mp += max(0, buff_handler.continuous_hp_modifier) - max(0, debuff_handler.continuous_hp_modifier)
+	mp += max(0, buff_handler.continuous_mp_modifier) - max(0, debuff_handler.continuous_mp_modifier)
 	mp = max(0, mp)
 
 	armor = base_armor + max(0, buff_handler.armor_modifier) - max(0, debuff_handler.armor_modifier)
@@ -900,6 +906,8 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 			_handle_attack()
 		else:
 			hero_target = _find_new_target(TARGET_CHOICE.CLOSE)
+			if hero_target:
+				hero_target.is_died.connect(handle_target_death)
 			_handle_attack()
 
 	elif status == STATUS.MELEE_ATTACK:
@@ -910,6 +918,8 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 			_handle_attack()
 		else:
 			hero_target = _find_new_target(TARGET_CHOICE.CLOSE)
+			if hero_target:
+				hero_target.is_died.connect(handle_target_death)
 			_handle_attack()
 
 func _on_melee_attack_animation_animation_finished(anim_name: StringName) -> void:
@@ -918,6 +928,11 @@ func _on_melee_attack_animation_animation_finished(anim_name: StringName) -> voi
 
 func _on_ranged_attack_animation_animation_finished(anim_name: StringName) -> void:
 	_on_animated_sprite_2d_animation_finished()
+
+func handle_target_death():
+	hero_target = null
+	attack_target_line.visible = false
+	spell_target_line.visible = false
 
 func handle_special_effect(target: Hero, attacker: Hero):
 	pass
