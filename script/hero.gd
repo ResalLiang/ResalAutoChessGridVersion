@@ -400,6 +400,7 @@ func _load_hero_stats():
 		var stats = hero_data[faction][hero_name]
 		base_spd = stats.get("spd", base_spd)
 		base_max_hp = stats.get("hp", base_max_hp)
+		base_damage = stats.get("attack_damage", base_damage)
 		base_attack_range = stats.get("attack_range", base_attack_range)
 		base_attack_spd = stats.get("attack_speed", base_attack_spd)
 		skill_name = stats.get("skill_name", skill_name)
