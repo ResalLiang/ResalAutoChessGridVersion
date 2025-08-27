@@ -1,8 +1,8 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1756214901
+::res://::1756297169
 dungeontileset-extended.png::CompressedTexture2D/CompressedTexture2D::5386095999095507831::1754401131::1754401131::1::::<><><>0<>0<>1e7832a8be6d1e2aa86e8cfa9e764124<>res://.godot/imported/dungeontileset-extended.png-40bb72ba04191d75cadea69acbb68a1d.ctex::
 icon.svg::CompressedTexture2D/CompressedTexture2D::3978766711659692636::1754401131::1754401131::1::::<><><>0<>0<>118e60a3562b828ffb0cc8d00366e4fe<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
-README.md::TextFile/TextFile::-1::1754401130::0::1::::<><><>0<>0<><>::
+README.md::TextFile/TextFile::-1::1756296493::0::1::::<><><>0<>0<><>::
 ::res://addons/::1754401130
 ::res://addons/AS2P/::1754401130
 InspectorConvertor.gd::GDScript/GDScript::3965255246405464599::1754401130::0::1::::<>EditorInspectorPlugin<><>0<>1<><>::
@@ -25,7 +25,7 @@ demonImp.tres::SpriteFrames/SpriteFrames::391774751968541117::1755961734::0::1::
 demonSuccubus.tres::SpriteFrames/SpriteFrames::2171363700418838237::1755961734::0::1::::<><><>0<>0<><>::uid://bp1jf7fxxl7ru::::res://asset/sprite/MiniFolks/MinifolksDemons/Without outline/MiniSuccubus.png
 demonTrident.tres::SpriteFrames/SpriteFrames::8291033176996865698::1755961734::0::1::::<><><>0<>0<><>::uid://co88x3mibg3lp::::res://asset/sprite/MiniFolks/MinifolksDemons/Without outline/MiniTrident.png
 ::res://asset/animation/dwarf/::1756214329
-dwarfArmoredBearRider.tres::AnimatedTexture::3199139428002020398::1756214329::0::1::::<><><>0<>0<><>::
+dwarfArmoredBearRider.tres::AnimatedTexture/AnimatedTexture::3199139428002020398::1756214329::0::1::::<><><>0<>0<><>::
 dwarfBearRider.tres::SpriteFrames/SpriteFrames::8808100290484198700::1755961734::0::1::::<><><>0<>0<><>::uid://cpqfeoyat32ju::::res://asset/sprite/MiniFolks/MinifolksDwarfs/Without Outline/MiniDwarfBearRider.png
 dwarfDemolitionist.tres::SpriteFrames/SpriteFrames::5604356668036371138::1755961734::0::1::::<><><>0<>0<><>::uid://b333vrgempt7x::::res://asset/sprite/MiniFolks/MinifolksDwarfs/Without Outline/MiniDwarfDemolitionist.png
 dwarfDemolitionist_boom.tres::SpriteFrames/SpriteFrames::566381432785691868::1755961734::0::1::::<><><>0<>0<><>::uid://b33moj3tihrg4::::res://asset/sprite/MiniFolks/MinifolksDwarfs/Without Outline/MiniGrenade.png
@@ -37,9 +37,9 @@ dwarfMiner.tres::SpriteFrames/SpriteFrames::865416758791178268::1754794325::0::1
 dwarfRifleman.tres::SpriteFrames/SpriteFrames::7709946603440882585::1754794325::0::1::::<><><>0<>0<><>::uid://lr46l2m3imuj::::res://asset/sprite/MiniFolks/MinifolksDwarfs/Without Outline/MiniDwarfRifleman.png
 dwarfShieldbreaker.tres::SpriteFrames/SpriteFrames::1381622888173854538::1754914755::0::1::::<><><>0<>0<><>::uid://p50wgkd4v3c7::::res://asset/sprite/MiniFolks/MinifolksDwarfs/Without Outline/MiniDwarfShieldbreaker.png
 dwarfWarrior.tres::SpriteFrames/SpriteFrames::6818113167081916860::1754794325::0::1::::<><><>0<>0<><>::uid://bvbdt0h0hpkre::::res://asset/sprite/MiniFolks/MinifolksDwarfs/Without Outline/MiniDwarfWarrior.png
-::res://asset/animation/elf/::1756214329
-elfArcaneArcher.tres::SpriteFrames::4658328857424583924::1756214329::0::1::::<><><>0<>0<><>::uid://buwi0fhlamx8o::::res://asset/sprite/MiniFolks/MinifolksElves/Without outline/MiniElfArcaneArcher.png
-elfArcaneArcher_projectile.tres::SpriteFrames::8953270805362883309::1756214329::0::1::::<><><>0<>0<><>::uid://q00xautyud6v::::res://asset/sprite/MiniFolks/MinifolksHumans/HumansProjectiles.png
+::res://asset/animation/elf/::1756296570
+elfArcaneArcher.tres::SpriteFrames/SpriteFrames::4658328857424583924::1756296570::0::1::::<><><>0<>0<><>::uid://buwi0fhlamx8o::::res://asset/sprite/MiniFolks/MinifolksElves/Without outline/MiniElfArcaneArcher.png
+elfArcaneArcher_projectile.tres::SpriteFrames/SpriteFrames::8953270805362883309::1756296569::0::1::::<><><>0<>0<><>::uid://q00xautyud6v::::res://asset/sprite/MiniFolks/MinifolksHumans/HumansProjectiles.png
 elfArcher.tres::SpriteFrames/SpriteFrames::5677442047223286254::1755961734::0::1::::<><><>0<>0<><>::uid://b77qjclgcyi6n::::res://asset/sprite/MiniFolks/MinifolksElves/Without outline/MiniElfArcher.png
 elfArcher_projectile.tres::SpriteFrames/SpriteFrames::4818963069381016605::1755961734::0::1::::<><><>0<>0<><>::uid://q00xautyud6v::::res://asset/sprite/MiniFolks/MinifolksHumans/HumansProjectiles.png
 elfHorseMan.tres::SpriteFrames/SpriteFrames::1397130948151325524::1755872907::0::1::::<><><>0<>0<><>::uid://cg3fxwdl4ekki::::res://asset/sprite/MiniFolks/MinifolksElves/Without outline/MiniElfHorseman.png
@@ -975,8 +975,8 @@ PixelOperatorMonoHB8.ttf::FontFile/FontFile::6528891703676251988::1755088140::17
 PixelOperatorMonoHB.ttf::FontFile/FontFile::5550502960114954065::1755088140::1755088140::1::::<><><>0<>0<>45ca544f9f599a667d59a7332e24de97<>res://.godot/imported/PixelOperatorMonoHB.ttf-a825ae1f1bb71203f6756e5bbaf153fe.fontdata::
 PixelOperatorSC-Bold.ttf::FontFile/FontFile::2762117088044731021::1755088140::1755088140::1::::<><><>0<>0<>23c8e24a173189821c946b2fa9836c68<>res://.godot/imported/PixelOperatorSC-Bold.ttf-5b05e6099ef5f6321f7e832d13308f2b.fontdata::
 PixelOperatorSC.ttf::FontFile/FontFile::3031360301932211762::1755088140::1755088140::1::::<><><>0<>0<>d299286d7a7387fcea04bf3dc810aefc<>res://.godot/imported/PixelOperatorSC.ttf-e596ad265e7a4e9eb9048c3615eb51b0.fontdata::
-::res://asset/shader/::1756214874
-LightweightPixelPerfectOutline.gdshader::Shader::9165260713726825370::1756214874::0::1::::<><><>0<>0<><>::
+::res://asset/shader/::1756297169
+LightweightPixelPerfectOutline.gdshader::Shader::9165260713726825370::1756297169::0::1::::<><><>0<>0<><>::
 ::res://asset/sprite/::1754916138
 Arrow01(32x32).png::CompressedTexture2D/CompressedTexture2D::3944923780849637412::1754916137::1754916138::1::::<><><>0<>0<>0e0c5ed097041437035f39763f99df9f<>res://.godot/imported/Arrow01(32x32).png-863f91eb126c9cdc6bf72772a2530835.ctex::
 ::res://asset/sprite/GrassTiles/::1754794092
@@ -1630,35 +1630,35 @@ MiniSuspiciousMerchant.png::CompressedTexture2D/CompressedTexture2D::24187586297
 MiniThief.png::CompressedTexture2D/CompressedTexture2D::1759030041707771109::1754401131::1754794327::1::::<><><>0<>0<>1f4f25d17ee3d293a9fa7be228f9c10c<>res://.godot/imported/MiniThief.png-b0f3fc46186e0f3871c6f6d6b77d4dba.ctex::
 ::res://asset/sprite/SpinningCoin/::1754794296
 Spinning Coin.png::CompressedTexture2D/CompressedTexture2D::5986317284816374274::1754794295::1754794296::1::::<><><>0<>0<>5c722dc565a7ea53e41cdbe7b9e54a38<>res://.godot/imported/Spinning Coin.png-2d2585459c9a0a0363948bdb6361dbe8.ctex::
-::res://asset/tileset/::1756214329
+::res://asset/tileset/::1756296952
 0x72_DungeonTilesetII_v1.7.png::CompressedTexture2D/CompressedTexture2D::274666399948365277::1754401130::1754794367::1::::<><><>0<>0<>7b19e5528c9fc3a37984b9ce18a9842d<>res://.godot/imported/0x72_DungeonTilesetII_v1.7.png-c32712dc5579929fb8b98a9e4dbbc40a.ctex::
-dungeon_tileset.tres::TileSet::4800758838690454208::1756214329::0::1::::<><><>0<>0<><>::uid://ci0chjunkkyw2::::res://dungeontileset-extended.png<>uid://bj8r1mq64aqwi::::res://asset/tileset/Final_Tileset.png<>uid://g8k2q0fol0um::::res://asset/tileset/Full_Tileset_Background.png<>uid://cekuw2eyqfdjb::::res://asset/tileset/Grass.png<>uid://cple1kveswqsn::::res://asset/tileset/Grass_Light.png
+dungeon_tileset.tres::TileSet/TileSet::4800758838690454208::1756296952::0::1::::<><><>0<>0<><>::uid://ci0chjunkkyw2::::res://dungeontileset-extended.png<>uid://bj8r1mq64aqwi::::res://asset/tileset/Final_Tileset.png<>uid://g8k2q0fol0um::::res://asset/tileset/Full_Tileset_Background.png<>uid://cekuw2eyqfdjb::::res://asset/tileset/Grass.png<>uid://cple1kveswqsn::::res://asset/tileset/Grass_Light.png
 Final_Tileset.png::CompressedTexture2D/CompressedTexture2D::3087324018282265828::1754821590::1754821606::1::::<><><>0<>0<>6c7c3f82e2053fd48016f0b0f4673224<>res://.godot/imported/Final_Tileset.png-57c0c4f761c20917a4704286f2b67f34.ctex::
 Full_Tileset_Background.png::CompressedTexture2D/CompressedTexture2D::489913793315324208::1754821594::1754821595::1::::<><><>0<>0<>319b1216897e674cdd8c9af2a7feb0df<>res://.godot/imported/Full_Tileset_Background.png-48afc3b052e12339588386fe3d19f34b.ctex::
 Grass.png::CompressedTexture2D/CompressedTexture2D::5075495572221869799::1754833067::1754833068::1::::<><><>0<>0<>a9d9b65eb3e410584b0fd0356fbd2427<>res://.godot/imported/Grass.png-0cb33431b4f3121cd32b3f239eab0df9.ctex::
 Grass_Light.png::CompressedTexture2D/CompressedTexture2D::5848672033745012289::1754833063::1754833064::1::::<><><>0<>0<>adbd299bcd240d6e9664472844d7f854<>res://.godot/imported/Grass_Light.png-2f4a29da9a928e3f034f381f74d83783.ctex::
 Spinning Coin.png::CompressedTexture2D/CompressedTexture2D::1864530950598099691::1754833055::1754833055::1::::<><><>0<>0<>b7933b824d120cb867f4e128bc15a345<>res://.godot/imported/Spinning Coin.png-f3f2a7130bc9316c023644f6f102e43e.ctex::
-::res://scene/::1756214827
-damage_meter.tscn::PackedScene::710875673853802040::1756214827::0::1::::<><><>0<>0<><>::uid://bnr8mv8yg14k2::::res://script/damage_meter_bar.gd<>uid://d3b2vvdpmh8cc::::res://asset/font/Everyday_Tiny_Original.ttf
-game.tscn::PackedScene::6120957946076711242::1756214827::0::1::::<><><>0<>0<><>::uid://c7rtc63knhqn2::::res://script/game.gd<>uid://canr2c7puh78g::::res://asset/tileset/dungeon_tileset.tres<>uid://bf8ewc86eld58::::res://script/unit_grid.gd<>uid://d3fjiohmxfkv2::::res://script/play_area.gd<>uid://k66qmjhfvp2w::::res://script/tile_highlighter.gd<>uid://d6bylde4el1n::::res://asset/tileset/0x72_DungeonTilesetII_v1.7.png<>uid://bj8r1mq64aqwi::::res://asset/tileset/Final_Tileset.png<>uid://rxa6ts4scjj8::::res://script/hero_mover.gd<>uid://d3b2vvdpmh8cc::::res://asset/font/Everyday_Tiny_Original.ttf<>uid://crj21hmdkcij7::::res://asset/sprite/SpinningCoin/Spinning Coin.png<>uid://bnobjccy7mbl1::::res://script/shop_handler.gd<>uid://c741ay1j7xpf4::::res://script/debug_handler.gd<>uid://dg6lmvt5ro8u8::::res://script/faction_bonus_manager.gd
-hero.tscn::PackedScene::2983999331985799886::1756214827::0::1::::<><><>0<>0<><>::uid://cmj65pa4j3u1u::::res://script/hero.gd<>uid://d3tyrfwlw2c1g::::res://asset/shader/LightweightPixelPerfectOutline.gdshader<>uid://b7mr84awj2n53::::res://asset/animation/elf/elfArcaneArcher.tres<>uid://pmtyv1bl3nog::::res://script/drag_handler.gd<>uid://bwyapus01e2fk::::res://script/buff_handler.gd<>uid://clowjrn7v3b1m::::res://script/debuff_handler.gd<>uid://c101twvdkyo0l::::res://script/area_effect_handler.gd
-projectile.tscn::PackedScene::8151043276450003148::1756214827::0::1::::<><><>0<>0<><>::uid://cbu8k8poy2ls3::::res://script/projectile.gd<>uid://d0tbcd02gdeu4::::res://asset/animation/elf/elfArcaneArcher_projectile.tres
-::res://script/::1756214694
+::res://scene/::1756297169
+battle_meter.tscn::PackedScene::710875673853802040::1756297149::0::1::::<><><>0<>0<><>::uid://clbdihywm3w1j::::res://script/battle_meter.gd<>uid://d2yhcwylpopef::::res://scene/damage_meter_bar.tscn
+damage_meter_bar.tscn::PackedScene::9104335679050198793::1756297157::0::1::::<><><>0<>0<><>::uid://bnr8mv8yg14k2::::res://script/battle_meter_bar.gd<>uid://d3b2vvdpmh8cc::::res://asset/font/Everyday_Tiny_Original.ttf<>uid://c2bn1mph5qkp6::::res://asset/sprite/MiniFolks/MinifolksHumans/Outline/MiniShieldMan.png
+game.tscn::PackedScene::6120957946076711242::1756297169::0::1::::<><><>0<>0<><>::uid://c7rtc63knhqn2::::res://script/game.gd<>uid://canr2c7puh78g::::res://asset/tileset/dungeon_tileset.tres<>uid://bf8ewc86eld58::::res://script/unit_grid.gd<>uid://d3fjiohmxfkv2::::res://script/play_area.gd<>uid://k66qmjhfvp2w::::res://script/tile_highlighter.gd<>uid://d6bylde4el1n::::res://asset/tileset/0x72_DungeonTilesetII_v1.7.png<>uid://bj8r1mq64aqwi::::res://asset/tileset/Final_Tileset.png<>uid://rxa6ts4scjj8::::res://script/hero_mover.gd<>uid://d3b2vvdpmh8cc::::res://asset/font/Everyday_Tiny_Original.ttf<>uid://crj21hmdkcij7::::res://asset/sprite/SpinningCoin/Spinning Coin.png<>uid://bnobjccy7mbl1::::res://script/shop_handler.gd<>uid://c741ay1j7xpf4::::res://script/debug_handler.gd<>uid://dg6lmvt5ro8u8::::res://script/faction_bonus_manager.gd<>uid://kemavmwmkxpo::::res://scene/battle_meter.tscn<>uid://clbdihywm3w1j::::res://script/battle_meter.gd
+hero.tscn::PackedScene::2983999331985799886::1756297035::0::1::::<><><>0<>0<><>::uid://cmj65pa4j3u1u::::res://script/hero.gd<>uid://d3tyrfwlw2c1g::::res://asset/shader/LightweightPixelPerfectOutline.gdshader<>uid://b7mr84awj2n53::::res://asset/animation/elf/elfArcaneArcher.tres<>uid://pmtyv1bl3nog::::res://script/drag_handler.gd<>uid://bwyapus01e2fk::::res://script/buff_handler.gd<>uid://clowjrn7v3b1m::::res://script/debuff_handler.gd<>uid://c101twvdkyo0l::::res://script/area_effect_handler.gd
+projectile.tscn::PackedScene::8151043276450003148::1756297035::0::1::::<><><>0<>0<><>::uid://cbu8k8poy2ls3::::res://script/projectile.gd<>uid://d0tbcd02gdeu4::::res://asset/animation/elf/elfArcaneArcher_projectile.tres
+::res://script/::1756297034
 area_effect_handler.gd::GDScript/GDScript::6650974505827885461::1756210884::0::1::::AreaEffectHandler<>Node2D<><>0<>0<><>::
+battle_meter.gd::GDScript::5547179868243655861::1756297034::0::1::::BattleMeter<>VBoxContainer<><>0<>0<><>::
+battle_meter_bar.gd::GDScript::3335996318163113043::1756297034::0::1::::BattleMeterBar<>HBoxContainer<><>0<>1<><>::
 buff_handler.gd::GDScript/GDScript::3980148176180122880::1755612966::0::1::::Buff_handler<>Node<><>0<>0<><>::
-damage_meter1.gd::GDScript::2663720829534896150::1756214329::0::1::::DamageMeter<>Node2D<><>0<>0<><>::
-damage_meter.gd::GDScript::5547179868243655861::1756214494::0::1::::<>HBoxContainer<><>0<>1<><>::
-damage_meter_bar.gd::GDScript::3335996318163113043::1756214563::0::1::::<>HBoxContainer<><>0<>0<><>::
 debuff_handler.gd::GDScript/GDScript::5575172696409910516::1754572202::0::1::::Debuff_handler<>Node<><>0<>0<><>::
 debug_handler.gd::GDScript/GDScript::7080331261660821339::1755962974::0::1::::DebugHandler<>Node2D<><>0<>0<><>::
 drag_handler.gd::GDScript/GDScript::1078802812752002374::1755004064::0::1::::DragHandler<>Node2D<><>0<>0<><>::
 faction_bonus_manager.gd::GDScript/GDScript::7645081273458646861::1755700286::0::1::::FactionBonusManager<>Node2D<><>0<>0<><>::
-game.gd::GDScript::7055137652023026013::1756214329::0::1::::<>Node2D<><>0<>0<><>::
-hero.gd::GDScript::5635623480603066984::1756214694::0::1::::Hero<>Node2D<><>0<>0<><>::
+game.gd::GDScript/GDScript::7055137652023026013::1756296910::0::1::::<>Node2D<><>0<>0<><>::
+hero.gd::GDScript/GDScript::5635623480603066984::1756296493::0::1::::Hero<>Node2D<><>0<>0<><>::
 hero_mover.gd::GDScript/GDScript::1240747416892880071::1755958058::0::1::::HeroMover<>Node<><>0<>0<><>::
 hero_stats.json::JSON/JSON::-1::1756043475::0::1::::<><><>0<>0<><>::
 play_area.gd::GDScript/GDScript::9135433047717348709::1755003552::0::1::::PlayArea<>TileMapLayer<><>0<>0<><>::
-projectile.gd::GDScript/GDScript::4886341041917635844::1756210884::0::1::::<>Area2D<><>0<>0<><>::
-shop_handler.gd::GDScript/GDScript::3327853837952264692::1755789379::0::1::::ShopHandler<>Node2D<><>0<>0<><>::
+projectile.gd::GDScript/GDScript::4886341041917635844::1756217440::0::1::::<>Area2D<><>0<>0<><>::
+shop_handler.gd::GDScript/GDScript::3327853837952264692::1756296493::0::1::::ShopHandler<>Node2D<><>0<>0<><>::
 tile_highlighter.gd::GDScript/GDScript::767795590743430400::1755004227::0::1::::TileHighlighter<>Node<><>0<>0<><>::
 unit_grid.gd::GDScript/GDScript::2805771680643735521::1755004754::0::1::::UnitGrid<>Node2D<><>0<>0<><>::

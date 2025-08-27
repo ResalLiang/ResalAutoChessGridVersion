@@ -13,7 +13,7 @@
 [ext_resource type="Script" uid="uid://bnobjccy7mbl1" path="res://script/shop_handler.gd" id="11_ym5sv"]
 [ext_resource type="Script" uid="uid://c741ay1j7xpf4" path="res://script/debug_handler.gd" id="13_5g16k"]
 [ext_resource type="Script" uid="uid://dg6lmvt5ro8u8" path="res://script/faction_bonus_manager.gd" id="14_81276"]
-[ext_resource type="PackedScene" uid="uid://kemavmwmkxpo" path="res://scene/damage_meter.tscn" id="14_ve786"]
+[ext_resource type="PackedScene" uid="uid://kemavmwmkxpo" path="res://scene/battle_meter.tscn" id="14_ve786"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qpk70"]
 texture = ExtResource("5_xlg7c")
@@ -2302,9 +2302,9 @@ theme_override_fonts/font = ExtResource("9_81276")
 theme_override_font_sizes/font_size = 4
 text = "far_center"
 
-[node name="damage_meter" parent="." instance=ExtResource("14_ve786")]
+[node name="battle_meter" parent="." instance=ExtResource("14_ve786")]
 z_index = 2
-offset_left = 285.0
-offset_top = 103.0
-offset_right = 326.0
-offset_bottom = 139.0
+offset_left = 273.0
+offset_top = 89.0
+offset_right = 411.0
+offset_bottom = 171.0

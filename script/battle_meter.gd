@@ -1,12 +1,12 @@
-class_name DamageMeter
+class_name BattleMeter
 extends VBoxContainer
 
-const damage_meter_bar_scene = preload("res://scene/damage_meter_bar.tscn")
+const battle_meter_bar_scene = preload("res://scene/battle_meter_bar.tscn")
 
 enum DAMAGE_TYPE {DAMAGE_APPLIED, DAMAGE_TAKEN, HEAL_APPLIED, HEAL_TAKEN}
 
 var battle_data: Dictionary = {}
-var damage_meter_type := DAMAGE_TYPE.DAMAGE_APPLIED
+var battle_meter_type := DAMAGE_TYPE.DAMAGE_APPLIED
 
 
 func get_damage_data(hero: Hero, value: int, attacker: Hero):
@@ -27,7 +27,7 @@ func get_damage_data(hero: Hero, value: int, attacker: Hero):
 
 	update_ranking()
 
-func get_heal_data(hero: Hero, heal_value: int, healer: Hero):
+func get_heal_data(hero: Hero, value: int, healer: Hero):
 	var healer_index = [healer.faction, healer.hero_name, healer.hero_serial]
 	var hero_index = [hero.faction, hero.hero_name, hero.hero_serial]
 
@@ -52,19 +52,19 @@ func update_ranking():
 	
 	var battle_array = []
 
-	if damage_meter_type = DAMAGE_TYPE.DAMAGE_APPLIED:
+	if battle_meter_type == DAMAGE_TYPE.DAMAGE_APPLIED:
 		battle_array = battle_data.keys().map(func(key): return [key, battle_data[key][0]])
-	elif damage_meter_type = DAMAGE_TYPE.DAMAGE_TAKEN:
+	elif battle_meter_type == DAMAGE_TYPE.DAMAGE_TAKEN:
 		battle_array = battle_data.keys().map(func(key): return [key, battle_data[key][1]])
-	elif damage_meter_type = DAMAGE_TYPE.HEAL_APPLIED:
+	elif battle_meter_type == DAMAGE_TYPE.HEAL_APPLIED:
 		battle_array = battle_data.keys().map(func(key): return [key, battle_data[key][2]])
-	elif damage_meter_type = DAMAGE_TYPE.HEAL_TAKEN:
+	elif battle_meter_type == DAMAGE_TYPE.HEAL_TAKEN:
 		battle_array = battle_data.keys().map(func(key): return [key, battle_data[key][3]])
 
 	battle_array.sort_custom(func(a, b): return a[1] > b[1])
 	var battle_array_sliced = battle_array.slice(0, min(10, battle_array.size()))
 	
 	for hero in battle_array_sliced:
-		var item = damage_meter_bar_scene.instantiate()
-		item.init(hero[0], hero[1], battle_array_sliced[0][1], hero[1])
+		var item = battle_meter_bar_scene.instantiate()
+		item.init(hero[0][0], hero[0][1], 200, hero[1])
 		add_child(item)

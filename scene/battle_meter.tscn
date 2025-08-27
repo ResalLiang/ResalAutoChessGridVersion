@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://kemavmwmkxpo"]
+
+[ext_resource type="Script" uid="uid://clbdihywm3w1j" path="res://script/battle_meter.gd" id="1_2mymq"]
+[ext_resource type="PackedScene" uid="uid://d2yhcwylpopef" path="res://scene/battle_meter_bar.tscn" id="1_88spv"]
+
+[node name="battle_meter" type="VBoxContainer"]
+offset_right = 167.0
+offset_bottom = 68.0
+script = ExtResource("1_2mymq")
+
+[node name="damage_meter_bar" parent="." instance=ExtResource("1_88spv")]
+layout_mode = 2
+size_flags_horizontal = 1
+sprite_name = "Mage"
+
+[node name="damage_meter_bar2" parent="." instance=ExtResource("1_88spv")]
+layout_mode = 2
+size_flags_horizontal = 1
+damage_value = 20
+highest_damage_value = 200

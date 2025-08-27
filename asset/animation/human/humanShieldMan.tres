@@ -1,6 +1,7 @@
-[gd_resource type="SpriteFrames" load_steps=34 format=3 uid="uid://pvu8xcp5ahdu"]
+[gd_resource type="SpriteFrames" load_steps=35 format=3 uid="uid://pvu8xcp5ahdu"]
 
 [ext_resource type="Texture2D" uid="uid://c2bn1mph5qkp6" path="res://asset/sprite/MiniFolks/MinifolksHumans/Outline/MiniShieldMan.png" id="1_lvvko"]
+[ext_resource type="Texture2D" uid="uid://djnrv3fbswxcb" path="res://asset/sprite/MiniFolks/MinifolksHumans/Without Outline/MiniShieldMan.png" id="2_shpde"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ct60i"]
 atlas = ExtResource("1_lvvko")
@@ -54,20 +55,20 @@ region = Rect2(32, 160, 32, 32)
 atlas = ExtResource("1_lvvko")
 region = Rect2(64, 160, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_3brgb"]
-atlas = ExtResource("1_lvvko")
+[sub_resource type="AtlasTexture" id="AtlasTexture_jbr0h"]
+atlas = ExtResource("2_shpde")
 region = Rect2(0, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_02oct"]
-atlas = ExtResource("1_lvvko")
+[sub_resource type="AtlasTexture" id="AtlasTexture_q3ir8"]
+atlas = ExtResource("2_shpde")
 region = Rect2(32, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_amgwf"]
-atlas = ExtResource("1_lvvko")
+[sub_resource type="AtlasTexture" id="AtlasTexture_qf43u"]
+atlas = ExtResource("2_shpde")
 region = Rect2(64, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_43epd"]
-atlas = ExtResource("1_lvvko")
+[sub_resource type="AtlasTexture" id="AtlasTexture_58kbi"]
+atlas = ExtResource("2_shpde")
 region = Rect2(96, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_s5ajy"]
@@ -188,16 +189,16 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_3brgb")
+"texture": SubResource("AtlasTexture_jbr0h")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_02oct")
+"texture": SubResource("AtlasTexture_q3ir8")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_amgwf")
+"texture": SubResource("AtlasTexture_qf43u")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_43epd")
+"texture": SubResource("AtlasTexture_58kbi")
 }],
 "loop": true,
 "name": &"idle",

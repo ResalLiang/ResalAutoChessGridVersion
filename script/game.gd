@@ -19,13 +19,14 @@ const hero_class = preload("res://script/hero.gd")
 @onready var current_shop_level: Label = $current_shop_level
 @onready var hero_mover: HeroMover = %hero_mover
 @onready var shop_handler: ShopHandler = %shop_handler
-@onready var area_effect_handler: AreaEffectHandler = %area_effect_handler
 @onready var debug_handler: DebugHandler = %debug_handler
 
 @onready var hero_order_hp_high: Button = $hero_order_control/hero_order_hp_high
 @onready var hero_order_hp_low: Button = $hero_order_control/hero_order_hp_low
 @onready var hero_order_near_center: Button = $hero_order_control/hero_order_near_center
 @onready var hero_order_far_center: Button = $hero_order_control/hero_order_far_center
+
+@onready var battle_meter: BattleMeter = $battle_meter
 
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
 var hero_data_array: Dictionary
@@ -230,7 +231,7 @@ func new_round_prepare_end():
 	save_arena_team()
 	generate_enemy(current_round * 300)
 
-	connect_died_signal()
+	connect_hero_signals()
 
 	hero_appearance(arena)
 
@@ -503,9 +504,10 @@ func generate_random_hero():
 	# Should never reach here if candidates exist
 	return ["human", "ShieldMan"]
 
-func connect_died_signal() -> void:
+func connect_hero_signals() -> void:
 
 	for hero_index in team_dict[Team.TEAM1_FULL]:
+		hero_index.damage_taken.connect(battle_meter.get_damage_data)
 		hero_index.is_died.connect(
 			func(hero):
 				if team_dict[Team.TEAM1].has(hero):
@@ -515,6 +517,7 @@ func connect_died_signal() -> void:
 		)
 
 	for hero_index in team_dict[Team.TEAM2_FULL]:
+		hero_index.damage_taken.connect(battle_meter.get_damage_data)
 		hero_index.is_died.connect(
 			func(hero):
 				if team_dict[Team.TEAM2].has(hero):
