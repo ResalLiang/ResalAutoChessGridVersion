@@ -11,6 +11,7 @@ const max_shop_level := 6
 
 
 var shop_buy_price := 3
+var shop_sell_price := 1
 var shop_refresh_price := 3
 var shop_upgrade_price := 3
 
@@ -94,6 +95,7 @@ func shop_refresh() -> void:
 			character.arena = arena
 			character.bench = bench
 			character.shop = shop
+			character.hero_serial = get_parent().get_next_serial()
 			add_child(character)
 			debug_handler.connect_to_hero_signal(character)
 			hero_mover.setup_hero(character)
@@ -109,6 +111,7 @@ func shop_refresh() -> void:
 			character.arena = arena
 			character.bench = bench
 			character.shop = shop
+			character.hero_serial = get_parent().get_next_serial()
 			add_child(character)
 			debug_handler.connect_to_hero_signal(character)
 			hero_mover.setup_hero(character)
@@ -136,23 +139,26 @@ func shop_upgrade() -> void:
 		shop_upgrade_price += 3
 
 func can_pay_hero(hero: Hero) -> bool:
-	if get_hero_price(hero) > remain_coins:
+	if get_hero_buy_price(hero) > remain_coins:
 		return false
 	else:
 		return true
 
 func buy_hero(hero: Hero):
 	hero_bought.emit(hero.hero_name)
-	remain_coins -= get_hero_price(hero)
-	coins_decreased.emit(get_hero_price(hero), "buyinging hero")
+	remain_coins -= get_hero_buy_price(hero)
+	coins_decreased.emit(get_hero_buy_price(hero), "buyinging hero")
 
 func sell_hero(hero: Hero):
 	hero_sold.emit(hero.hero_name)
-	remain_coins += get_hero_price(hero)
-	coins_increased.emit(get_hero_price(hero), "selling hero")
+	remain_coins += get_hero_buy_price(hero)
+	coins_increased.emit(get_hero_buy_price(hero), "selling hero")
 
-func get_hero_price(hero: Hero):
+func get_hero_buy_price(hero: Hero):
 	return shop_buy_price
+
+func get_hero_sell_price(hero: Hero):
+	return shop_sell_price
 
 func turn_start_income(current_round: int):
 	var turn_start_interest = floor(remain_coins / 5)
