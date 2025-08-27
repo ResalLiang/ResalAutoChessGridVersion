@@ -40,6 +40,9 @@ var team_dict: Dictionary = {
 	Team.TEAM1_FULL: [],
 	Team.TEAM2_FULL: []
 }
+
+var hero_serial := 1000
+
 var current_hero_active_order := HeroActiveOrder.HIGH_HP
 var center_point: Vector2
 var board_width:= 216
@@ -198,6 +201,10 @@ func start_new_game() -> void:
 	clear_play_area(shop)
 	clear_play_area(bench)
 
+	hero_serial = 1000
+
+	battle_meter.battle_data = {}
+
 	current_round = 0
 	won_rounds = 0
 	lose_rounds = 0
@@ -348,6 +355,7 @@ func generate_enemy(difficulty : int) -> void:
 			var rand_character_result = generate_random_hero()
 			character.faction = rand_character_result[0]
 			character.hero_name = rand_character_result[1]
+			character.hero_serial = get_next_serial()
 			# character.faction = hero_data.keys()[randi_range(0, hero_data.keys().size() - 2)] # remove villager
 			# character.hero_name = get_random_character(character.faction)
 			add_child(character)
@@ -408,6 +416,7 @@ func load_arena_team():
 				character.arena = arena
 				character.bench = bench
 				character.shop = shop
+				character.hero_serial = get_next_serial()
 				add_child(character)
 				debug_handler.connect_to_hero_signal(character)
 				hero_mover._move_hero(character, arena, tile_index) 
@@ -552,3 +561,6 @@ func hero_appearance(play_area: PlayArea):
 	# position_tween.tween_property(self, "_position", target_pos, 0.1)
 
 	
+func get_next_serial() -> int:
+	hero_serial += 1
+	return hero_serial
