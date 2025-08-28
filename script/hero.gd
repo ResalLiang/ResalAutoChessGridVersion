@@ -13,6 +13,7 @@ enum play_areas {playarea_arena, playarea_bench, playarea_shop}
 
 const MAX_SEARCH_RADIUS = 3
 const projectile_scene = preload("res://scene/projectile.tscn")
+const hero_scene = preload("res://scene/hero.tscn")
 
 @onready var navigation_agent_2d: NavigationAgent2D = $NavigationAgent2D
 @onready var melee_attack_animation: AnimationPlayer = $melee_attack_animation
@@ -410,6 +411,7 @@ func _load_hero_stats():
 		push_error("Stats not found for %s/%s" % [faction, hero_name])
 
 func start_turn():
+	#Placeholder for hero passive ability on start turn
 
 	update_solid_map()
 	await get_tree().process_frame
@@ -429,6 +431,7 @@ func start_turn():
 		action_timer.start()
 
 func _handle_movement():
+	#Placeholder for hero passive ability on movement
 
 	move_started.emit(self, position_id)
 
@@ -472,6 +475,7 @@ func _on_move_completed():
 		position_tween.kill()
 		astar_grid.set_point_solid(position_id, true)
 		astar_grid.set_point_solid(hero_target.position_id, true)
+		#Placeholder for hero passive ability on move finish
 		move_finished.emit(self, _position)
 		move_timer.start()
 						
@@ -479,6 +483,7 @@ func _handle_action():
 	move_timer.stop()
 	action_started.emit(self)
 	astar_grid.set_point_solid(position_id, true)
+	#Placeholder for hero passive ability on action start
 
 	if mp >= max_mp and animated_sprite_2d.sprite_frames.has_animation("spell") and (!debuff_handler.is_silenced and !debuff_handler.is_stunned):
 		if hero_spell_target_choice == TARGET_CHOICE.SELF:
@@ -505,6 +510,7 @@ func _handle_action():
 		_handle_attack()
 
 func _handle_attack():
+	#Placeholder for hero passive ability on attack
 	var current_distance_to_target = global_position.distance_to(hero_target.global_position)
 	remain_attack_count -= 1
 	if current_distance_to_target <= attack_range and (not debuff_handler.is_stunned and not debuff_handler.is_disarmed):
@@ -566,7 +572,7 @@ func _handle_attack():
 		action_timer.start()
 
 func _handle_action_timeout():
-	# animated_sprite_2d.play("idle")
+	#Placeholder for hero passive ability on action finish
 	status = STATUS.IDLE
 	action_finished.emit(self)
 	action_timer.stop()
@@ -582,6 +588,7 @@ func _handle_targeting():
 		
 # Find a new target based on selection strategy
 func _find_new_target(tgt) -> Hero:
+	#Placeholder for hero passive ability on find target
 	var new_target
 	var all_heroes = get_tree().get_nodes_in_group("hero_group").filter(
 		func(node): 
@@ -731,7 +738,11 @@ func _launch_projectile(target: Hero):
 
 # Add damage handling method
 func take_damage(damage_value: int, attacker: Hero):
-	if rng.randf() > evasion_rate or !buff_handler.is_immunity:
+	#Placeholder for hero passive ability on take damage
+	if damage_value <= 0:
+		return
+
+	if rng.randf() > evasion_rate and !buff_handler.is_immunity:
 		var real_damage_value = damage_value - armor
 		hp -= max(0, real_damage_value)
 		attacker.mp += real_damage_value
@@ -741,12 +752,17 @@ func take_damage(damage_value: int, attacker: Hero):
 
 
 func take_heal(heal_value: int, healer: Hero):
-		hp += max(0, heal_value)
-		healer.mp += heal_value
-		heal_taken.emit(self, heal_value, healer)
+	#Placeholder for hero passive ability on take heal
+	if heal_value <= 0:
+		return
+
+	hp += max(0, heal_value)
+	healer.mp += heal_value
+	heal_taken.emit(self, heal_value, healer)
 
 
 func _cast_spell(spell_tgt: Hero) -> bool:
+	#Placeholder for hero passive ability on cast spell
 	var cast_spell_result := false
 
 	if hero_name == "Mage" and faction == "human":
@@ -757,6 +773,8 @@ func _cast_spell(spell_tgt: Hero) -> bool:
 		cast_spell_result = elf_queen_stun(2, 5)
 	elif hero_name == "Mage" and faction == "elf":
 		cast_spell_result = elf_mage_damage(spell_tgt, 0.2, 10, 80)
+	elif hero_name == "Necromancer" and faction == "undead":
+		cast_spell_result = undead_necromancer_summon("Skeleton", 3)
 	elif spell_tgt !=  self:
 		cast_spell_result = true
 
@@ -768,18 +786,19 @@ func _cast_spell(spell_tgt: Hero) -> bool:
 
 
 func _apply_damage(damage_target: Hero = hero_target, damage_value: int = damage):
-	if hero_target:
+	if hero_target and damage_value > 0:
+		#Placeholder for hero passive ability on apply damage
+		var crit_damage_value =  damage * 2
 		if rng.randf() <= critical_rate:
-			var real_damage_value =  damage * 2
-			hero_target.take_damage(real_damage_value, self)
+			hero_target.take_damage(crit_damage_value, self)
 			critical_damage_applied.emit(self, damage_target)
 		else:
-			var real_damage_value =  damage
-			hero_target.take_damage(real_damage_value, self)
+			hero_target.take_damage(damage_value, self)
 			damage_applied.emit(self, damage_target)		
 
 func _apply_heal(heal_target: Hero = hero_spell_target, heal_value: int = damage):
-	if heal_target:
+	if heal_target and heal_value > 0:
+		#Placeholder for hero passive ability on apply heal
 		heal_target.take_heal(heal_value, self)
 		heal_applied.emit(self, heal_value, heal_target)
 		
@@ -821,10 +840,12 @@ func _on_damage_taken(taker: Hero, damage_value: int, attacker: Hero):
 		animated_sprite_2d.play("die")
 		return
 	else:
+		#Placeholder for hero passive ability on hit
 		status = STATUS.HIT
 		animated_sprite_2d.play("hit")
 	
 func _on_died():
+		#Placeholder for hero passive ability on died
 	self.visible = false
 
 func update_solid_map():
@@ -877,6 +898,7 @@ func update_buff_debuff():
 	return
 
 func handle_projectile_hit(hero:Hero, attacker:Hero):
+	#Placeholder for hero passive ability on projectile hit
 	pass
 
 func _on_animated_sprite_2d_animation_finished() -> void:
@@ -936,6 +958,7 @@ func handle_target_death():
 	spell_target_line.visible = false
 
 func handle_special_effect(target: Hero, attacker: Hero):
+	#Placeholder for hero passive ability on special attack effect
 	pass
 	
 func human_mage_taunt(spell_duration: int) -> bool:
@@ -1001,4 +1024,27 @@ func elf_mage_damage(spell_target:Hero, damage_threshold: float, min_damage_valu
 
 		hero_affected = true
 
+	return hero_affected
+
+func undead_necromancer_summon(summoned_hero_name: String, summon_unit_count: int) -> bool:
+	var hero_affected := false
+	var attempt_summon_count := 20
+	var summoned_hero_count := 0
+	if summoned_hero_name in hero_data[undead].keys():
+		while attempt_summon_count>= 0 and summoned_hero_count < summon_unit_count:
+			var rand_x = randi_range(0, arena.unit_grid.size.x / 2 - 1)
+			var rand_y = randi_range(0, arena.unit_grid.size.y - 1)
+			attempt_summon_count -= 1
+			if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
+
+				var summoned_character = get_tree.root.summon_hero("undead", "Skeleton", team, arena, Vector2i(rand_x, rand_y))
+				if team == 1:
+					get_tree.root.team_dict[TEAM1_FULL].append(summoned_character)
+					get_tree.root.team_dict[TEAM1].append(summoned_character)
+				else:
+					get_tree.root.team_dict[TEAM2_FULL].append(summoned_character)
+					get_tree.root.team_dict[TEAM2].append(summoned_character)
+
+				summoned_hero_count += 1
+				hero_affected = true
 	return hero_affected
