@@ -45,12 +45,12 @@ func _ready():
 			debug_handler.write_log("LOG", "Shop unfreezed.")
 	)
 	hero_bought.connect(
-		func(hero_name):
-			debug_handler.write_log("LOG", hero_name + " is bought.")
+		func(hero):
+			debug_handler.write_log("LOG", hero.hero_name + " is bought.")
 	)
 	hero_sold.connect(
-		func(hero_name):
-			debug_handler.write_log("LOG", hero_name + " is sold.")
+		func(hero):
+			debug_handler.write_log("LOG", hero.hero_name + " is sold.")
 	)
 	coins_increased.connect(
 		func(value, reason):
@@ -65,68 +65,75 @@ func _ready():
 			debug_handler.write_log("LOG", "Shop upgrade to level: " + str(value) + ".")
 	)
 
+	shop_init()
+
 func shop_init():
 	remain_coins = game_start_coins
 	shop_level = 1
 	is_shop_frozen = false
 	shop_refresh()
 
-func shop_refresh() -> void:
+func shop_manual_refresh() -> void:
 	if remain_coins >= shop_refresh_price:
 		remain_coins -= shop_refresh_price
-		shop_refreshed.emit()
+		shop_refresh()	
 
-		for node in get_tree().get_nodes_in_group("hero_group"):
-			if node is Hero and node.current_play_area == node.play_areas.playarea_shop:
-				node.queue_free()	
+func shop_refresh() -> void:
 
-		for i in range(shop_level + 2):
-			var shop_col_index = i % shop.unit_grid.size.x
-			var shop_row_index = floor(i / shop.unit_grid.size.x)
-			# var rand_faction_index = randi_range(0, get_parent().hero_data.keys().size() - 2) # remove villager
-			# var rand_faction = get_parent().hero_data.keys()[rand_faction_index]
-			var character = get_parent().hero_scene.instantiate()
-			# character.faction = rand_faction
-			# character.hero_name = get_parent().get_random_character(rand_faction)
-			var rand_character_result = get_parent().generate_random_hero()
-			character.faction = rand_character_result[0]
-			character.hero_name = rand_character_result[1]
-			character.team = 1
-			character.arena = arena
-			character.bench = bench
-			character.shop = shop
-			character.hero_serial = get_parent().get_next_serial()
-			add_child(character)
-			debug_handler.connect_to_hero_signal(character)
-			hero_mover.setup_hero(character)
-			hero_mover._move_hero(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
-			
-		var debug_hero_faction = ["human", "human", "human", "human", "demon", "elf", "elf"]
-		var debug_hero_name = ["ArcherMan", "CrossBowMan", "Mage", "ArchMage", "FireImp", "Queen", "Mage"]
-		for debug_index in range(debug_hero_faction.size()):
-			var character = get_parent().hero_scene.instantiate()
-			character.faction = debug_hero_faction[debug_index]
-			character.hero_name = debug_hero_name[debug_index]
-			character.team = 1
-			character.arena = arena
-			character.bench = bench
-			character.shop = shop
-			character.hero_serial = get_parent().get_next_serial()
-			add_child(character)
-			debug_handler.connect_to_hero_signal(character)
-			hero_mover.setup_hero(character)
+	shop_refreshed.emit()
 
-			var shop_col_index = debug_index % shop.unit_grid.size.x
-			var shop_row_index = floor(debug_index / shop.unit_grid.size.x) + 2
+	is_shop_frozen = false
+	shop_unfreezed.emit()
 
-			hero_mover._move_hero(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
+	for node in get_tree().get_nodes_in_group("hero_group"):
+		if node is Hero and node.current_play_area == node.play_areas.playarea_shop:
+			node.queue_free()	
+
+	for i in range(shop_level + 2):
+		var shop_col_index = i % shop.unit_grid.size.x
+		var shop_row_index = floor(i / shop.unit_grid.size.x)
+		# var rand_faction_index = randi_range(0, get_parent().hero_data.keys().size() - 2) # remove villager
+		# var rand_faction = get_parent().hero_data.keys()[rand_faction_index]
+		var character = get_parent().hero_scene.instantiate()
+		# character.faction = rand_faction
+		# character.hero_name = get_parent().get_random_character(rand_faction)
+		var rand_character_result = get_parent().generate_random_hero()
+		character.faction = rand_character_result[0]
+		character.hero_name = rand_character_result[1]
+		character.team = 1
+		character.arena = arena
+		character.bench = bench
+		character.shop = shop
+		character.hero_serial = get_parent().get_next_serial()
+		add_child(character)
+		debug_handler.connect_to_hero_signal(character)
+		hero_mover.setup_hero(character)
+		hero_mover._move_hero(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
+		
+	var debug_hero_faction = ["human", "human", "human", "human", "demon", "elf", "elf", "undead"]
+	var debug_hero_name = ["ArcherMan", "CrossBowMan", "Mage", "ArchMage", "FireImp", "Queen", "Necromancer"]
+	for debug_index in range(debug_hero_faction.size()):
+		var character = get_parent().hero_scene.instantiate()
+		character.faction = debug_hero_faction[debug_index]
+		character.hero_name = debug_hero_name[debug_index]
+		character.team = 1
+		character.arena = arena
+		character.bench = bench
+		character.shop = shop
+		character.hero_serial = get_parent().get_next_serial()
+		add_child(character)
+		debug_handler.connect_to_hero_signal(character)
+		hero_mover.setup_hero(character)
+
+		var shop_col_index = debug_index % shop.unit_grid.size.x
+		var shop_row_index = floor(debug_index / shop.unit_grid.size.x) + 2
+
+		hero_mover._move_hero(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
 	
 func shop_freeze() -> void:
 	if is_shop_frozen:
-		get_parent().shop_refresh_button.disabled = false
 		shop_unfreezed.emit()
 	else:
-		get_parent().shop_refresh_button.disabled = true
 		shop_freezed.emit()
 	is_shop_frozen = not is_shop_frozen 
 
@@ -145,14 +152,15 @@ func can_pay_hero(hero: Hero) -> bool:
 		return true
 
 func buy_hero(hero: Hero):
-	hero_bought.emit(hero.hero_name)
+	hero_bought.emit(hero)
 	remain_coins -= get_hero_buy_price(hero)
 	coins_decreased.emit(get_hero_buy_price(hero), "buyinging hero")
 
 func sell_hero(hero: Hero):
-	hero_sold.emit(hero.hero_name)
+	hero_sold.emit(hero)
 	remain_coins += get_hero_buy_price(hero)
 	coins_increased.emit(get_hero_buy_price(hero), "selling hero")
+	hero.queue_free()
 
 func get_hero_buy_price(hero: Hero):
 	return shop_buy_price
