@@ -66,5 +66,5 @@ func update_ranking():
 	
 	for hero in battle_array_sliced:
 		var item = battle_meter_bar_scene.instantiate()
-		item.init(hero[0][0], hero[0][1], 200, hero[1])
+		item.init(hero[0][0], hero[0][1], battle_array_sliced[0][1], hero[1])
 		add_child(item)
