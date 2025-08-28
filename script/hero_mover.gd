@@ -72,6 +72,7 @@ func _on_hero_drag_canceled(starting_position: Vector2, status: String, hero: He
 	
 func _on_hero_dropped(starting_position: Vector2, status: String, hero: Hero) -> void:
 	
+	_set_highlighters(false)
 	var old_area_index := _get_play_area_for_position(starting_position)
 	var drop_area_index := _get_play_area_for_position(hero.get_global_mouse_position())
 	# area_index :
@@ -79,19 +80,12 @@ func _on_hero_dropped(starting_position: Vector2, status: String, hero: Hero) ->
 	# 	0:	arena area
 	# 	1:	bench area
 	# 	2:	shop area
-	# 	3:	sell area
 
 	if drop_area_index == -1:
 		_reset_hero_to_starting_position(starting_position, hero)
 		return
-	elif old_area_index != 2 and drop_area_index == 2: # cannot move hero back to shop
-		_reset_hero_to_starting_position(starting_position, hero)
-		return
-	elif drop_area_index == 3 and old_area_index == 2:
-		_reset_hero_to_starting_position(starting_position, hero)
-		return
-	elif old_area_index == 3:
-		_reset_hero_to_starting_position(starting_position, hero)
+	elif (old_area_index == 0 or old_area_index == 1) and drop_area_index == 2: # move hero back to shop means sell
+		shop_handler.sell_hero(hero)
 		return
 
 		
@@ -100,7 +94,7 @@ func _on_hero_dropped(starting_position: Vector2, status: String, hero: Hero) ->
 	var new_area := play_areas[drop_area_index]
 	var new_tile := new_area.get_hovered_tile()
 
-	if old_area_index == 2 and (drop_area_index != 2 and drop_area_index != 3): # buy heros
+	if (old_area_index == 2 and drop_area_index == 0 and not get_parent().is_game_turn_start) or (old_area_index == 2 and drop_area_index == 1): # buy heros
 		if shop_handler.can_pay_hero(hero) and not new_area.unit_grid.is_tile_occupied(new_tile):
 			shop_handler.buy_hero(hero)
 			_move_hero(hero, new_area, new_tile)
@@ -108,11 +102,6 @@ func _on_hero_dropped(starting_position: Vector2, status: String, hero: Hero) ->
 		else:
 			_reset_hero_to_starting_position(starting_position, hero)
 			return
-
-	if (old_area_index == 1 or old_area_index == 2) and drop_area_index == 3:
-		pass
-
-
 
 	if new_area.unit_grid.is_tile_occupied(new_tile):
 		var old_hero: Hero = new_area.unit_grid.units[new_tile]
