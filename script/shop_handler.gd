@@ -8,6 +8,7 @@ const max_shop_level := 6
 @onready var bench: PlayArea = %bench
 @onready var shop: PlayArea = %shop
 @onready var debug_handler: DebugHandler = %debug_handler
+@onready var hero_information: HeroInformation = $"../hero_information"
 
 
 var shop_buy_price := 3
@@ -65,7 +66,6 @@ func _ready():
 			debug_handler.write_log("LOG", "Shop upgrade to level: " + str(value) + ".")
 	)
 
-	shop_init()
 
 func shop_init():
 	remain_coins = game_start_coins
@@ -109,9 +109,10 @@ func shop_refresh() -> void:
 		debug_handler.connect_to_hero_signal(character)
 		hero_mover.setup_hero(character)
 		hero_mover._move_hero(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
+		hero_information.setup_hero(character)
 		
 	var debug_hero_faction = ["human", "human", "human", "human", "demon", "elf", "elf", "undead"]
-	var debug_hero_name = ["ArcherMan", "CrossBowMan", "Mage", "ArchMage", "FireImp", "Queen", "Necromancer"]
+	var debug_hero_name = ["ArcherMan", "CrossBowMan", "Mage", "ArchMage", "FireImp", "Queen", "Mage", "Necromancer"]
 	for debug_index in range(debug_hero_faction.size()):
 		var character = get_parent().hero_scene.instantiate()
 		character.faction = debug_hero_faction[debug_index]
@@ -124,6 +125,7 @@ func shop_refresh() -> void:
 		add_child(character)
 		debug_handler.connect_to_hero_signal(character)
 		hero_mover.setup_hero(character)
+		hero_information.setup_hero(character)
 
 		var shop_col_index = debug_index % shop.unit_grid.size.x
 		var shop_row_index = floor(debug_index / shop.unit_grid.size.x) + 2

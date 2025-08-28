@@ -246,7 +246,7 @@ func _ready():
 	
 	# Initialize character properties
 	hp = max_hp
-	mp = 0
+	mp = max_mp
 
 	hp_bar.min_value = 0
 	hp_bar.max_value = max_hp
@@ -974,7 +974,7 @@ func human_mage_taunt(spell_duration: int) -> bool:
 	for affected_index in affected_index_array:
 			if arena_unitgrid.has(affected_index) and is_instance_valid(arena_unitgrid[affected_index]):
 				if arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team != team:
-					arena_unitgrid[affected_index].target = self
+					arena_unitgrid[affected_index].hero_target = self
 					hero_affected = true
 	return hero_affected
 
@@ -1030,20 +1030,22 @@ func undead_necromancer_summon(summoned_hero_name: String, summon_unit_count: in
 	var hero_affected := false
 	var attempt_summon_count := 20
 	var summoned_hero_count := 0
-	if summoned_hero_name in hero_data[undead].keys():
+	if summoned_hero_name in hero_data["undead"].keys():
 		while attempt_summon_count>= 0 and summoned_hero_count < summon_unit_count:
 			var rand_x = randi_range(0, arena.unit_grid.size.x / 2 - 1)
 			var rand_y = randi_range(0, arena.unit_grid.size.y - 1)
 			attempt_summon_count -= 1
 			if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
+				
+				var game_root_scene = arena.get_parent().get_parent()
+				var summoned_character = game_root_scene.summon_hero("undead", "Skeleton", team, arena, Vector2i(rand_x, rand_y))
 
-				var summoned_character = get_tree.root.summon_hero("undead", "Skeleton", team, arena, Vector2i(rand_x, rand_y))
 				if team == 1:
-					get_tree.root.team_dict[TEAM1_FULL].append(summoned_character)
-					get_tree.root.team_dict[TEAM1].append(summoned_character)
+					game_root_scene.team_dict[game_root_scene.Team.TEAM1_FULL].append(summoned_character)
+					game_root_scene.team_dict[game_root_scene.Team.TEAM1].append(summoned_character)
 				else:
-					get_tree.root.team_dict[TEAM2_FULL].append(summoned_character)
-					get_tree.root.team_dict[TEAM2].append(summoned_character)
+					game_root_scene.team_dict[game_root_scene.Team.TEAM2_FULL].append(summoned_character)
+					game_root_scene.team_dict[game_root_scene.Team.TEAM2].append(summoned_character)
 
 				summoned_hero_count += 1
 				hero_affected = true

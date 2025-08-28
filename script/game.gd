@@ -15,11 +15,11 @@ const hero_class = preload("res://script/hero.gd")
 @onready var shop_freeze_button: Button = $shop_freeze_button
 @onready var shop_upgrade_button: Button = $shop_upgrade_button
 
+@onready var debug_handler: DebugHandler = %debug_handler
 @onready var remain_coins_label: Label = $remain_coins_label
 @onready var current_shop_level: Label = $current_shop_level
 @onready var hero_mover: HeroMover = %hero_mover
 @onready var shop_handler: ShopHandler = %shop_handler
-@onready var debug_handler: DebugHandler = %debug_handler
 
 @onready var hero_order_hp_high: Button = $hero_order_control/hero_order_hp_high
 @onready var hero_order_hp_low: Button = $hero_order_control/hero_order_hp_low
@@ -27,6 +27,7 @@ const hero_class = preload("res://script/hero.gd")
 @onready var hero_order_far_center: Button = $hero_order_control/hero_order_far_center
 
 @onready var battle_meter: BattleMeter = $battle_meter
+@onready var hero_information: HeroInformation = $hero_information
 
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
 var hero_data_array: Dictionary
@@ -148,11 +149,11 @@ func _ready():
 	game_finished.connect(_on_round_finished)
 	game_turn_started.connect(
 		func():
-			game_start_button.disable = true
-			hero_order_hp_high.disable = true
-			hero_order_hp_low.disable = true
-			hero_order_near_center.disable = true
-			hero_order_far_center.disable = true
+			game_start_button.disabled = true
+			hero_order_hp_high.disabled = true
+			hero_order_hp_low.disabled = true
+			hero_order_near_center.disabled = true
+			hero_order_far_center.disabled = true
 			is_game_turn_start = true
 			for node in get_tree().get_nodes_in_group("hero_group"):
 				if node is Hero:
@@ -160,11 +161,11 @@ func _ready():
 	)
 	game_turn_finished.connect(
 		func():
-			game_start_button.disable = false
-			hero_order_hp_high.disable = false
-			hero_order_hp_low.disable = false
-			hero_order_near_center.disable = false
-			hero_order_far_center.disable = false
+			game_start_button.disabled = false
+			hero_order_hp_high.disabled = false
+			hero_order_hp_low.disabled = false
+			hero_order_near_center.disabled = false
+			hero_order_far_center.disabled = false
 			is_game_turn_start = false
 			for node in get_tree().get_nodes_in_group("hero_group"):
 				if node is Hero:
@@ -241,9 +242,10 @@ func start_new_game() -> void:
 	new_round_prepare_start()
 
 func new_round_prepare_start():
+	
 
-	if not shop_hander.is_shop_frozen:
-		shop_hander.shop_refresh()
+	if not shop_handler.is_shop_frozen:
+		shop_handler.shop_refresh()
 
 	game_turn_finished.emit()
 
@@ -255,6 +257,7 @@ func new_round_prepare_start():
 	shop_handler.turn_start_income(current_round)
 
 func new_round_prepare_end():
+	battle_meter.battle_data = {}
 	#if saved_arena_team.size() == 0:
 	team_dict[Team.TEAM1_FULL] = []
 	for node in get_tree().get_nodes_in_group("hero_group"):
@@ -276,13 +279,15 @@ func start_new_turn():
 	team_dict[Team.TEAM1] = []
 	team_dict[Team.TEAM2] = []
 	for hero_index in team_dict[Team.TEAM1_FULL]:
-		if hero_index.status != hero_class.STATUS.DIE and hero_index.current_play_area == hero_index.play_areas.playarea_arena:
-			team_dict[Team.TEAM1].append(hero_index)
-			team1_alive_cnt += 1
+		if is_instance_valid(hero_index):
+			if hero_index.status != hero_class.STATUS.DIE and hero_index.current_play_area == hero_index.play_areas.playarea_arena:
+				team_dict[Team.TEAM1].append(hero_index)
+				team1_alive_cnt += 1
 	for hero_index in team_dict[Team.TEAM2_FULL]:
-		if hero_index.status != hero_class.STATUS.DIE and hero_index.current_play_area == hero_index.play_areas.playarea_arena:
-			team_dict[Team.TEAM2].append(hero_index)
-			team2_alive_cnt += 1
+		if is_instance_valid(hero_index):
+			if hero_index.status != hero_class.STATUS.DIE and hero_index.current_play_area == hero_index.play_areas.playarea_arena:
+				team_dict[Team.TEAM2].append(hero_index)
+				team2_alive_cnt += 1
 			
 	if team1_alive_cnt == 0:
 		game_finished.emit("team2")
@@ -395,6 +400,7 @@ func generate_enemy(difficulty : int) -> void:
 			debug_handler.connect_to_hero_signal(character)
 			hero_mover.setup_hero(character)
 			hero_mover._move_hero(character, arena, Vector2(rand_x, rand_y))
+			hero_information.setup_hero(character)
 			current_difficulty += character.max_hp
 			current_enemy_cnt += 1
 			team_dict[Team.TEAM2_FULL].append(character)
@@ -620,5 +626,6 @@ func summon_hero(summon_hero_faction: String, summon_hero_name: String, team: in
 	debug_handler.connect_to_hero_signal(summoned_character)
 	hero_mover.setup_hero(summoned_character)
 	hero_mover._move_hero(summoned_character, summon_arena, summon_position)
+	hero_information.setup_hero(summoned_character)
 		
 	return summoned_character

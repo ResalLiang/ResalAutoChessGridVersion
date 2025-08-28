@@ -38,13 +38,18 @@ extends HBoxContainer
 	set(value):
 		sprite_name = value
 		_update_hero_texture()
+		
+@export var hero_team := 1:
+	set(value):
+		hero_team = value
+		_update_hero_texture()
 
 # Called when the node enters the scene tree for the first time
 func _ready():
 		
 	texture_rect.set_custom_minimum_size(Vector2(8, 8))
-	progress_bar.set_custom_minimum_size(Vector2(8, 96))
-	label.set_custom_minimum_size(Vector2(8, 24))
+	progress_bar.set_custom_minimum_size(Vector2(96, 8))
+	label.set_custom_minimum_size(Vector2(24, 8))
 	
 	texture_rect.size_flags_horizontal = 0
 	progress_bar.size_flags_horizontal = 3
@@ -85,6 +90,20 @@ func _update_hero_texture():
 	source_texture.set_atlas(sprite_frames.get_frame_texture("idle", 0))
 	source_texture.region = Rect2(12, 18, 8, 8)
 	texture_rect.texture = source_texture
+	var fill_style = StyleBoxFlat.new()
+	if hero_team == 1:
+		fill_style.bg_color = Color.GREEN  # Set fill color
+	else:
+		fill_style.bg_color = Color.RED  # Set fill color
+	fill_style.border_width_bottom = 1
+	fill_style.border_width_top = 1
+	fill_style.border_width_left = 1
+	fill_style.border_width_right = 1
+	progress_bar.add_theme_stylebox_override("fill", fill_style)
+	
+	# Apply the style to progress bar
+	progress_bar.add_theme_stylebox_override("fill", fill_style)
+
 
 # Update damage value display on progress bar and label
 func _update_damage_display():
@@ -95,9 +114,10 @@ func _update_damage_display():
 	if label:
 		label.text = str(damage_value)
 
-func init(faction: String, hero_name: String, max_value: int, value: int):
+func init(faction: String, hero_name: String, team: int, max_value: int, value: int):
 	sprite_faction = faction
 	sprite_name = hero_name
+	hero_team = team
 	highest_damage_value = max_value
 	damage_value = value
 	_update_hero_texture()

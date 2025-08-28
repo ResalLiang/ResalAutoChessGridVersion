@@ -57,6 +57,10 @@ func _move_hero(hero: Hero, play_area: PlayArea, tile: Vector2i) -> void:
 
 		
 func _on_hero_drag_started(starting_position: Vector2, status: String, hero: Hero) -> void:
+	
+	if get_parent().is_game_turn_start:
+		return
+		
 	_set_highlighters(true)
 	
 	var i := _get_play_area_for_position(hero.global_position)
@@ -66,11 +70,23 @@ func _on_hero_drag_started(starting_position: Vector2, status: String, hero: Her
 		
 		
 func _on_hero_drag_canceled(starting_position: Vector2, status: String, hero: Hero) -> void:
+	
+	if get_parent().is_game_turn_start:
+		_set_highlighters(false)
+		_reset_hero_to_starting_position(starting_position, hero)
+		return
+		
+	
 	_set_highlighters(false)
 	_reset_hero_to_starting_position(starting_position, hero)
 	
 	
 func _on_hero_dropped(starting_position: Vector2, status: String, hero: Hero) -> void:
+	
+	if get_parent().is_game_turn_start:
+		_set_highlighters(false)
+		_reset_hero_to_starting_position(starting_position, hero)
+		return
 	
 	_set_highlighters(false)
 	var old_area_index := _get_play_area_for_position(starting_position)
