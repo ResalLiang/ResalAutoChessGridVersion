@@ -41,6 +41,15 @@ extends HBoxContainer
 
 # Called when the node enters the scene tree for the first time
 func _ready():
+		
+	texture_rect.set_custom_minimum_size(Vector2(8, 8))
+	progress_bar.set_custom_minimum_size(Vector2(8, 96))
+	label.set_custom_minimum_size(Vector2(8, 24))
+	
+	texture_rect.size_flags_horizontal = 0
+	progress_bar.size_flags_horizontal = 3
+	label.size_flags_horizontal = 8
+
 	_update_hero_texture()
 	_update_damage_display()
 
@@ -71,17 +80,7 @@ func _update_hero_texture():
 	if frame_count == 0:
 		push_error("No frames found in 'idle' animation")
 		return
-	
-	#var source_texture = sprite_frames.get_frame_texture("idle", 0)
-	#if not source_texture:
-		#push_error("Failed to get frame texture from 'idle' animation")
-		#return
-	
-	# Extract and apply the texture region
-	#var extracted_texture = extract_8x8_region_optimized(source_texture, 16, 16)
-	#if extracted_texture:
-		#texture_rect.texture = extracted_texture
-		
+			
 	var source_texture = AtlasTexture.new()
 	source_texture.set_atlas(sprite_frames.get_frame_texture("idle", 0))
 	source_texture.region = Rect2(12, 18, 8, 8)
@@ -103,36 +102,3 @@ func init(faction: String, hero_name: String, max_value: int, value: int):
 	damage_value = value
 	_update_hero_texture()
 	_update_damage_display()
-
-func extract_8x8_region_optimized(source_texture: Texture2D, origin_x: int, origin_y: int) -> Texture2D:
-	# Validate input texture
-	if not source_texture:
-		push_error("Source texture is null")
-		return null
-	
-	# Get source image
-	var source_image = source_texture.get_image()
-	if not source_image:
-		push_error("Failed to get image from texture")
-		return null
-	
-	# Get source dimensions
-	var source_width = source_image.get_width()
-	var source_height = source_image.get_height()
-	
-	# Validate coordinates are within bounds
-	if origin_x < 0 or origin_y < 0 or origin_x + 8 > source_width or origin_y + 8 > source_height:
-		push_error("8x8 region exceeds texture bounds. Source: %dx%d, Region: %d,%d" % [source_width, source_height, origin_x, origin_y])
-		return null
-	
-	# Create new 8x8 image
-	var extracted_image = Image.create_empty(8, 8, false, source_image.get_format())
-	
-	# Use blit_rect for efficient pixel copying
-	extracted_image.blit_rect(source_image, Rect2i(origin_x, origin_y, 8, 8), Vector2i(0, 0))
-	
-	# Create and return new ImageTexture
-	var extracted_texture = ImageTexture.new()
-	extracted_texture.create_from_image(extracted_image)
-	
-	return extracted_texture
