@@ -67,6 +67,8 @@ const max_lose_rounds := 5
 var saved_arena_team = {}
 var appearance_tween
 
+var is_game_turn_start := false
+
 # Define rarity weights dictionary
 const RARITY_WEIGHTS = {
 	1: {
@@ -123,6 +125,8 @@ const RARITY_COUNTS = {
 
 signal game_finished
 signal hero_appearance_finished
+signal game_turn_started
+signal game_turn_finished
 
 var cursor_texture = preload("res://asset/cursor/cursors/cursor1.png")
 
@@ -142,10 +146,33 @@ func _ready():
 		return
 	
 	game_finished.connect(_on_round_finished)
-	
+	game_turn_started.connect(
+		func():
+			game_start_button.disable = true
+			hero_order_hp_high.disable = true
+			hero_order_hp_low.disable = true
+			hero_order_near_center.disable = true
+			hero_order_far_center.disable = true
+			is_game_turn_start = true
+			for node in get_tree().get_nodes_in_group("hero_group"):
+				if node is Hero:
+					node.drag_handler.dragging_enabled =  false
+	)
+	game_turn_finished.connect(
+		func():
+			game_start_button.disable = false
+			hero_order_hp_high.disable = false
+			hero_order_hp_low.disable = false
+			hero_order_near_center.disable = false
+			hero_order_far_center.disable = false
+			is_game_turn_start = false
+			for node in get_tree().get_nodes_in_group("hero_group"):
+				if node is Hero:
+					node.drag_handler.dragging_enabled =  true
+	)
 	game_start_button.pressed.connect(new_round_prepare_end)
 	game_restart_button.pressed.connect(start_new_game)
-	shop_refresh_button.pressed.connect(shop_handler.shop_refresh)
+	shop_refresh_button.pressed.connect(shop_handler.shop_manual_refresh)
 	shop_freeze_button.pressed.connect(shop_handler.shop_freeze)
 	shop_upgrade_button.pressed.connect(shop_handler.shop_upgrade)
 	hero_order_hp_high.pressed.connect(
@@ -214,7 +241,12 @@ func start_new_game() -> void:
 	new_round_prepare_start()
 
 func new_round_prepare_start():
-	game_start_button.disabled = false
+
+	if not shop_hander.is_shop_frozen:
+		shop_hander.shop_refresh()
+
+	game_turn_finished.emit()
+
 	clear_play_area(arena)
 	if saved_arena_team.size() != 0:
 		load_arena_team()
@@ -237,7 +269,7 @@ func new_round_prepare_end():
 
 func start_new_turn():
 	# if start new turn, it will be fully auto.
-	game_start_button.disabled = true
+	game_turn_started.emit()
 	print("Start new round.")
 	var team1_alive_cnt = 0
 	var team2_alive_cnt = 0
@@ -567,3 +599,26 @@ func hero_appearance(play_area: PlayArea):
 func get_next_serial() -> int:
 	hero_serial += 1
 	return hero_serial
+
+
+func summon_hero(summon_hero_faction: String, summon_hero_name: String, team: int, summon_arena: PlayArea, summon_position: Vector2i) -> Hero:
+
+	if not summon_hero_faction in hero_data.keys():
+		return null
+	if not summon_hero_name in hero_data[summon_hero_faction].keys():
+		return null
+
+	var summoned_character = hero_scene.instantiate()
+	summoned_character.hero_name = summon_hero_name
+	summoned_character.faction = summon_hero_faction
+	summoned_character.team = team
+	summoned_character.arena = arena
+	summoned_character.bench = bench
+	summoned_character.shop = shop
+	summoned_character.hero_serial = get_next_serial()
+	add_child(summoned_character)
+	debug_handler.connect_to_hero_signal(summoned_character)
+	hero_mover.setup_hero(summoned_character)
+	hero_mover._move_hero(summoned_character, summon_arena, summon_position)
+		
+	return summoned_character
