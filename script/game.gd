@@ -9,17 +9,21 @@ const hero_class = preload("res://script/hero.gd")
 @onready var shop: PlayArea = %shop
 @onready var arena_unit_grid: UnitGrid = $ArenaUnitGrid
 @onready var bench_unit_grid: UnitGrid = $BenchUnitGrid
+
+@onready var debug_handler: DebugHandler = %debug_handler
+@onready var hero_mover: HeroMover = %hero_mover
+@onready var shop_handler: ShopHandler = %shop_handler
+@onready var faction_bonus_manager: FactionBonusManager = %faction_bonus_manager
+
+@onready var remain_coins_label: Label = $remain_coins_label
+@onready var current_shop_level: Label = $current_shop_level
+@onready var population_label: Label = $population_label
+
 @onready var game_start_button: Button = $game_start_button
 @onready var game_restart_button: Button = $game_restart_button
 @onready var shop_refresh_button: Button = $shop_refresh_button
 @onready var shop_freeze_button: Button = $shop_freeze_button
 @onready var shop_upgrade_button: Button = $shop_upgrade_button
-
-@onready var debug_handler: DebugHandler = %debug_handler
-@onready var remain_coins_label: Label = $remain_coins_label
-@onready var current_shop_level: Label = $current_shop_level
-@onready var hero_mover: HeroMover = %hero_mover
-@onready var shop_handler: ShopHandler = %shop_handler
 
 @onready var hero_order_hp_high: Button = $hero_order_control/hero_order_hp_high
 @onready var hero_order_hp_low: Button = $hero_order_control/hero_order_hp_low
@@ -213,6 +217,22 @@ func _ready():
 		func(play_area):
 			if play_area == arena:
 				start_new_turn()
+	)
+	hero_mover.hero_moved.connect(
+		func(hero: Hero, play_area: PlayArea, tile: Vector2i):
+			var current_population := 0
+			for node in get_tree().get_nodes_in_group("hero_group"):
+				if node is Hero and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
+					current_population += 1
+			var max_population = shop_handler.shop_level + 2
+			population_label.text = str(current_population)	+ "/" + str(max_population)
+			if current_population > max_population:
+				population_label.color = Color.RED
+			elif current_population == max_population:
+				population_label.color = Color.YELLOW
+			else:
+				population_label.color = Color.GREEN
+			faction_bonus_manager.bonus_refresh()
 	)
 
 	center_point = Vector2(tile_size.x * grid_count / 2, tile_size.y * grid_count / 2)
