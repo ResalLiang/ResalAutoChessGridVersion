@@ -3,7 +3,7 @@ extends Node
 
 @export var play_areas: Array[PlayArea]
 @onready var shop_handler: ShopHandler = %shop_handler
-
+signal hero_moved(hero: Hero, play_area: PlayArea, tile: Vector2i)
 
 func _ready() -> void:
 	pass
@@ -54,6 +54,7 @@ func _move_hero(hero: Hero, play_area: PlayArea, tile: Vector2i) -> void:
 		hero.current_play_area = hero.play_areas.playarea_bench
 	elif _get_play_area_for_position(hero.global_position) == 2:
 		hero.current_play_area = hero.play_areas.playarea_shop
+	hero_moved.emit(hero, play_area, tile)
 
 		
 func _on_hero_drag_started(starting_position: Vector2, status: String, hero: Hero) -> void:
@@ -111,7 +112,8 @@ func _on_hero_dropped(starting_position: Vector2, status: String, hero: Hero) ->
 	var new_tile := new_area.get_hovered_tile()
 
 	if (old_area_index == 2 and drop_area_index == 0 and not get_parent().is_game_turn_start) or (old_area_index == 2 and drop_area_index == 1): # buy heros
-		if shop_handler.can_pay_hero(hero) and not new_area.unit_grid.is_tile_occupied(new_tile):
+
+		if shop_handler.can_pay_hero(hero) and not new_area.unit_grid.is_tile_occupied(new_tile) and get_parent().current_population < get_parent().max_population:
 			shop_handler.buy_hero(hero)
 			_move_hero(hero, new_area, new_tile)
 			return
