@@ -63,8 +63,26 @@ var base_evasion_rate := 0.10
 var base_critical_rate := 0.10
 var base_armor := 0
 
-var max_hp = base_max_hp
-var max_mp = base_max_mp
+var hp: int = base_max_hp:
+	set(value):
+		hp = min(value, max_hp)
+		hp = max(0, hp)
+var mp: int = 0:
+	set(value):
+		mp = min(value, max_mp)
+		mp = max(0, mp)
+
+var max_hp = base_max_hp:
+	set(value):
+		var update_hp = value * (hp / max_hp)
+		max_hp = value
+		hp = update_hp
+var max_mp = base_max_mp:
+	set(value):
+		var update_mp = value * (mp / max_mp)
+		max_mp = value
+		mp = update_mp
+
 var spd = base_spd
 var damage = base_damage
 var attack_spd = base_attack_spd
@@ -73,15 +91,12 @@ var evasion_rate := 0.10
 var critical_rate := 0.10
 var armor := 0
 
-var hp: int                # Current health points
-var mp: int                # Current magic points
 
 var remain_attack_count
 
 var hero_data: Dictionary  # Stores hero stats loaded from JSON
 
-var buff_handler = Buff_handler.new()
-var debuff_handler = Debuff_handler.new()
+var effect_handler = EffectHandler.new()
 
 #============================================
 # Target setting
@@ -207,6 +222,7 @@ func _ready():
 	action_timer.timeout.connect(_handle_action_timeout)
 	
 	drag_handler.drag_started.connect(_handle_dragging_state)
+
 	drag_handler.drag_canceled.connect(_handle_dragging_state)
 	drag_handler.drag_dropped.connect(_handle_dragging_state)
 	
@@ -275,6 +291,9 @@ func _process(delta: float) -> void:
 	hp_bar.value = hp
 	mp_bar.value = mp
 
+	hp_bar.max_value = hp_max
+	mp_bar.max_value = mp_max
+
 	hp_bar.visible = hp != max_hp
 		
 	# Update attack indicator line
@@ -315,6 +334,13 @@ func _process(delta: float) -> void:
 			new_material.set_shader_parameter("outline_color", Color(1, 0, 0, 1))
 		else:
 			new_material.set_shader_parameter("outline_color", Color(1, 0, 0, 0.33))
+
+	if drag_handler.dragging:
+		new_material.set_shader_parameter("blink_color", Color(1, 1, 1, 1))
+		new_material.set_shader_parameter("blink_time_scale ",0.3)
+	else:
+		new_material.set_shader_parameter("blink_time_scale ",0)
+
 
 	animated_sprite_2d.material = new_material
 
@@ -437,7 +463,7 @@ func _handle_movement():
 
 	animated_sprite_2d.play("move")
 
-	if global_position.distance_to(hero_target.global_position) <= attack_range or debuff_handler.is_stunned:
+	if global_position.distance_to(hero_target.global_position) <= attack_range or effect_handler.is_stunned:
 		move_finished.emit(self, position_id)
 		move_timer.start()
 	else:
@@ -485,7 +511,7 @@ func _handle_action():
 	astar_grid.set_point_solid(position_id, true)
 	#Placeholder for hero passive ability on action start
 
-	if mp >= max_mp and animated_sprite_2d.sprite_frames.has_animation("spell") and (!debuff_handler.is_silenced and !debuff_handler.is_stunned):
+	if mp >= max_mp and animated_sprite_2d.sprite_frames.has_animation("spell") and (not effect_handler.is_silenced and not effect_handler.is_stunned):
 		if hero_spell_target_choice == TARGET_CHOICE.SELF:
 			status = STATUS.SPELL
 			animated_sprite_2d.play("spell")
@@ -513,7 +539,7 @@ func _handle_attack():
 	#Placeholder for hero passive ability on attack
 	var current_distance_to_target = global_position.distance_to(hero_target.global_position)
 	remain_attack_count -= 1
-	if current_distance_to_target <= attack_range and (not debuff_handler.is_stunned and not debuff_handler.is_disarmed):
+	if current_distance_to_target <= attack_range and (not effect_handler.is_stunned and not effect_handler.is_disarmed):
 		if current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
 			status = STATUS.RANGED_ATTACK
 			if ResourceLoader.exists("res://asset/animation/%s/%s%s_projectile.tres" % [faction, faction, hero_name]):
@@ -742,7 +768,7 @@ func take_damage(damage_value: int, attacker: Hero):
 	if damage_value <= 0:
 		return
 
-	if rng.randf() > evasion_rate and !buff_handler.is_immunity:
+	if rng.randf() > evasion_rate and not effect_handler.is_immunity:
 		var real_damage_value = damage_value - armor
 		hp -= max(0, real_damage_value)
 		attacker.mp += real_damage_value
@@ -874,26 +900,25 @@ func _handle_dragging_state(stating_position: Vector2, drag_action: String):
 		
 func update_buff_debuff():
 	
-	buff_handler.start_turn_update()
-	debuff_handler.start_turn_update()
+	effect_handler.turn_start_timeout_check()
 
-	critical_rate = base_critical_rate + max(0, buff_handler.critical_rate_modifier) + min(0, debuff_handler.critical_rate_modifier)
-	evasion_rate = base_evasion_rate + max(0, buff_handler.evasion_rate_modifier) + min(0, debuff_handler.evasion_rate_modifier)
+	critical_rate = base_critical_rate + effect_handler.critical_rate_modifier)
+	evasion_rate = base_evasion_rate + effect_handler.evasion_rate_modifier
 
-	_apply_heal(self, max(0, buff_handler.continuous_hp_modifier))
-	_apply_damage(self, max(0, debuff_handler.continuous_hp_modifier))
+	if effect_handler.continuous_hp_modifier >= 0:
+		_apply_heal(self, max(0, effect_handler.continuous_hp_modifier))
+	else:
+		_apply_damage(self, max(0, effect_handler.continuous_hp_modifier))
 
-	mp += max(0, buff_handler.continuous_mp_modifier) - max(0, debuff_handler.continuous_mp_modifier)
-	mp = max(0, mp)
+	mp += effect_handler.continuous_mp_modifier
 
-	armor = base_armor + max(0, buff_handler.armor_modifier) - max(0, debuff_handler.armor_modifier)
-	spd = base_spd + max(0, buff_handler.spd_modifier) - max(0, debuff_handler.spd_modifier)
-	damage = base_damage + max(0, buff_handler.attack_dmg_modifier) - max(0, debuff_handler.attack_dmg_modifier)
-	attack_range = base_attack_range + max(0, buff_handler.attack_rng_modifier) - max(0, debuff_handler.attack_rng_modifier)
-	attack_spd = base_attack_spd + max(0, buff_handler.attack_spd_modifier) - max(0, debuff_handler.attack_spd_modifier)
+	armor = base_armor + effect_handler.armor_modifier
+	spd = base_spd + effect_handler.spd_modifier
+	damage = base_damage + effect_handler.attack_dmg_modifier
+	attack_range = base_attack_range + effect_handler.attack_rng_modifier
+	attack_spd = base_attack_spd + effect_handler.attack_spd_modifier
 
-	max_hp = base_max_hp + max(0, buff_handler.max_hp_modifier) - max(0, debuff_handler.max_hp_modifier)
-	hp = min(hp, max_hp)
+	max_hp = base_max_hp + effect_handler.max_hp_modifier
 	
 	return
 
@@ -963,7 +988,15 @@ func handle_special_effect(target: Hero, attacker: Hero):
 	
 func human_mage_taunt(spell_duration: int) -> bool:
 	var hero_affected := false
-	buff_handler.taunt_duration = spell_duration
+
+	var effect_instance = ChessEffect.new()
+	effect_instance.taunt_duration = spell_duration
+	effect_instance.effect_name = "Taunt"
+	effect_instance.effect_type = "Buff"
+	effect_instance.effect_applier = "Human Mage Spell Taunt"
+	effect_handler.effect_list.add_to_effect_array(effect_instance)
+	effect_handler.add_child(effect_instance)
+
 	var arena_unitgrid = arena.unit_grid.units
 	# var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.human_mage_taunt_template)
 	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.default_template)
@@ -989,9 +1022,17 @@ func human_archmage_heal(spell_duration: int, heal_value: int) -> bool:
 
 	for affected_index in affected_index_array:
 			if arena_unitgrid.has(affected_index) and is_instance_valid(arena_unitgrid[affected_index]):
-				if arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team != team:
-					arena_unitgrid[affected_index].buff_handler.continuous_hp_modifier = heal_value
-					arena_unitgrid[affected_index].buff_handler.continuous_hp_modifier_duration = spell_duration
+				if arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team == team:
+
+					var effect_instance = ChessEffect.new()
+					effect_instance.continuous_hp_modifier = heal_value
+					effect_instance.continuous_hp_modifier_duration = spell_duration
+					effect_instance.effect_name = "Heal"
+					effect_instance.effect_type = "Buff"
+					effect_instance.effect_applier = "Human ArchMage Spell Heal"
+					arena_unitgrid[affected_index].effect_handler.effect_list.add_to_effect_array(effect_instance)
+					arena_unitgrid[affected_index].effect_handler.add_child(effect_instance)
+
 					hero_affected =  true
 	return hero_affected
 
@@ -1007,8 +1048,17 @@ func elf_queen_stun(spell_duration: int, damage_value: int) -> bool:
 	for affected_index in affected_index_array:
 		if arena_unitgrid.has(affected_index) and  is_instance_valid(arena_unitgrid[affected_index]):
 			if arena_unitgrid[affected_index] is Hero and arena_unitgrid[affected_index].team != team:
-				arena_unitgrid[affected_index].debuff_handler.stunned_duration  = spell_duration
+
+				var effect_instance = ChessEffect.new()
+				effect_instance.stunned_duration = spell_duration
+				effect_instance.effect_name = "Stun"
+				effect_instance.effect_type = "Debuff"
+				effect_instance.effect_applier = "Elf Queen Spell Stun"
+				arena_unitgrid[affected_index].effect_handler.effect_list.add_to_effect_array(effect_instance)
+				arena_unitgrid[affected_index].effect_handler.add_child(effect_instance)
+
 				_apply_damage(arena_unitgrid[affected_index], damage_value)
+
 				hero_affected =  true
 	return hero_affected
 
@@ -1028,25 +1078,29 @@ func elf_mage_damage(spell_target:Hero, damage_threshold: float, min_damage_valu
 
 func undead_necromancer_summon(summoned_hero_name: String, summon_unit_count: int) -> bool:
 	var hero_affected := false
-	var attempt_summon_count := 20
+	var attempt_summon_count := 40
 	var summoned_hero_count := 0
 	if summoned_hero_name in hero_data["undead"].keys():
 		while attempt_summon_count>= 0 and summoned_hero_count < summon_unit_count:
-			var rand_x = randi_range(0, arena.unit_grid.size.x / 2 - 1)
-			var rand_y = randi_range(0, arena.unit_grid.size.y - 1)
-			attempt_summon_count -= 1
-			if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
-				
-				var game_root_scene = arena.get_parent().get_parent()
-				var summoned_character = game_root_scene.summon_hero("undead", "Skeleton", team, arena, Vector2i(rand_x, rand_y))
+			var rand_x = randi_range(position_id.x - 3, position_id.x + 3)
+			var rand_y = randi_range(position_id.y - 3, position_id.y + 3)
+			if arena.unit_grid.units.has(Vector2(rand_x, rand_y)):
+				attempt_summon_count -= 1
+				if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
+					
+					var game_root_scene = arena.get_parent().get_parent()
+					var summoned_character = game_root_scene.summon_hero("undead", summoned_hero_name, team, arena, Vector2i(rand_x, rand_y))
 
-				if team == 1:
-					game_root_scene.team_dict[game_root_scene.Team.TEAM1_FULL].append(summoned_character)
-					game_root_scene.team_dict[game_root_scene.Team.TEAM1].append(summoned_character)
-				else:
-					game_root_scene.team_dict[game_root_scene.Team.TEAM2_FULL].append(summoned_character)
-					game_root_scene.team_dict[game_root_scene.Team.TEAM2].append(summoned_character)
+					if summoned_character.animated_sprite_2d.sprite_frames.has_animation("rise") :
+						summoned_character.animated_sprite_2d.play("rise")
 
-				summoned_hero_count += 1
-				hero_affected = true
+					if team == 1:
+						game_root_scene.team_dict[game_root_scene.Team.TEAM1_FULL].append(summoned_character)
+						game_root_scene.team_dict[game_root_scene.Team.TEAM1].append(summoned_character)
+					else:
+						game_root_scene.team_dict[game_root_scene.Team.TEAM2_FULL].append(summoned_character)
+						game_root_scene.team_dict[game_root_scene.Team.TEAM2].append(summoned_character)
+
+					summoned_hero_count += 1
+					hero_affected = true
 	return hero_affected
