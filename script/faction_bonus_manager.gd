@@ -66,6 +66,8 @@ func bonus_refresh() -> void:
 		if not is_instance_valid(hero_index) or not hero_index is Hero:
 			continue
 
+		clean_hero_faction_bonus(hero_index)
+
 		if not player_faction_count[hero_index.team][hero_index.faction].has(hero_index.hero_name):
 			player_faction_count[hero_index.team][hero_index.faction].append(hero_index.hero_name)
 
@@ -117,7 +119,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: 1) -> 
 				effect_instance.critical_rate_modifier = 0.1 * bonus_level
 				effect_instance.critical_rate_modifier_duration = 999
 				effect_instance.effect_name = "Swift"
-				effect_instance.effect_type = "Buff"
+				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Elf Faction Bonus"
 				hero_index.effect_handler.effect_list.add_to_effect_array(effect_instance)
 				hero_index.effect_handler.add_child(effect_instance)
@@ -131,7 +133,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: 1) -> 
 				effect_instance.continuous_mp_modifier = 20 * bonus_level
 				effect_instance.continuous_mp_modifier_duration = 999
 				effect_instance.effect_name = "Wisdom"
-				effect_instance.effect_type = "Buff"
+				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Human Faction Bonus"
 				hero_index.effect_handler.effect_list.add_to_effect_array(effect_instance)
 				hero_index.effect_handler.add_child(effect_instance)
@@ -145,7 +147,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: 1) -> 
 				effect_instance.armor_modifier = 5 * bonus_level
 				effect_instance.armor_modifier_duration = 999
 				effect_instance.effect_name = "Fortress"
-				effect_instance.effect_type = "Buff"
+				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Dwarf Faction Bonus"
 				hero_index.effect_handler.effect_list.add_to_effect_array(effect_instance)
 				hero_index.effect_handler.add_child(effect_instance)
@@ -158,7 +160,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: 1) -> 
 				var effect_instance = ChessEffect.new()
 				effect_instance.immunity_duration = bonus_level
 				effect_instance.effect_name = "Holy Shield"
-				effect_instance.effect_type = "Buff"
+				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Holy Warrior Faction Bonus"
 				hero_index.effect_handler.effect_list.add_to_effect_array(effect_instance)
 				hero_index.effect_handler.add_child(effect_instance)
@@ -175,7 +177,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: 1) -> 
 				effect_instance.max_hp_modifier = 30 * bonus_level
 				effect_instance.max_hp_modifier_duration = 999
 				effect_instance.effect_name = "Strong"
-				effect_instance.effect_type = "Buff"
+				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Forest Protector Faction Bonus"
 				hero_index.effect_handler.effect_list.add_to_effect_array(effect_instance)
 				hero_index.effect_handler.add_child(effect_instance)
@@ -188,10 +190,10 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: 1) -> 
 			for hero_index in enemy_hero:
 				var effect_instance = ChessEffect.new()
 				effect_instance.continuous_hp_modifier = -5 * bonus_level
-				effect_instance.continuous_hp_modifier_duration = 3
+				effect_instance.continuous_hp_modifier_duration = bonus_level
 				effect_instance.silence_duration = bonus_level
 				effect_instance.effect_name = "Doom"
-				effect_instance.effect_type = "Debuff"
+				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Demon Faction Bonus"
 				hero_index.effect_handler.effect_list.add_to_effect_array(effect_instance)
 				hero_index.effect_handler.add_child(effect_instance)
@@ -206,9 +208,19 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: 1) -> 
 				effect_instance.armor_modifier = -5 * bonus_level
 				effect_instance.armor_modifier_duration = 999
 				effect_instance.spd_modifier = -2
-				effect_instance.spd_modifier_modifier_duration = 999
+				effect_instance.spd_modifier_modifier_duration = bonus_level
 				effect_instance.effect_name = "Weak"
-				effect_instance.effect_type = "Buff"
+				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Elf Faction Bonus"
 				hero_index.effect_handler.effect_list.add_to_effect_array(effect_instance)
 				hero_index.effect_handler.add_child(effect_instance)
+
+func clean_hero_faction_bonus(hero: Hero) -> void:
+	var hero_effect_list = hero.effect_handler.effect_list.duplicate()
+	if hero_effect_list.size() == 0:
+		return
+
+	hero.effect_handler.effect_list = []
+	for effect_index in hero_effect_list:
+		if not effect_index.effect_applier = "Faction Bonus":
+			hero.effect_handler.add_to_effect_array(effect_index)
