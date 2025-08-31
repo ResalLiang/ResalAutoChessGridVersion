@@ -27,9 +27,17 @@ func _ready() -> void:
 	effect_list_updated.connect(effect_number_refresh)
 
 func add_to_effect_array(chess_effect: ChessEffect):
-	if not chess_effect.check_effect_timeout():
-		effect_list.append(chess_effect)
-		effect_list_updated.emit()
+	if chess_effect.check_effect_timeout():
+		return
+
+	if effect_list.size() > 0:
+		for effect_index in effect_list:
+			if chess_effect.effect_name == effect_index.effect_name:
+				effect_index = chess_effect
+				return
+				
+	effect_list.append(chess_effect)
+	effect_list_updated.emit()
 
 func turn_start_timeout_check():
 	if effect_list.size() != 0:
@@ -109,4 +117,3 @@ func effect_clean():
 	effect_list = []
 
 	start_turn_update()
-
