@@ -1,8 +1,10 @@
 class_name EffectHandler
 extends Node
 
-var effect_list : Arrary[ChessEffect]
+var effect_list : Array[ChessEffect]
 
+var is_immunity := false
+var is_spell_immunity := false
 var is_taunt := false
 var is_stealth := false
 var is_silenced := false
@@ -101,9 +103,9 @@ func effect_number_refresh():
 			else effect_index.continuous_mp_modifier)
 		armor_modifier = armor_modifier + (max(0, effect_index.armor_modifier) if is_spell_immunity 
 			else effect_index.armor_modifier)
-		max_mp_modifier = (max_hp_modifier + (max(0, effect_index.(max_mp_modifier) if is_immunity or is_spell_immunity 
+		max_mp_modifier = max_hp_modifier + (max(0, effect_index.max_mp_modifier) if is_immunity or is_spell_immunity 
 			else effect_index.max_mp_modifier)
-		max_hp_modifier = (max_hp_modifier + (max(0, effect_index.(max_hp_modifier) if is_immunity or is_spell_immunity 
+		max_hp_modifier = max_hp_modifier + (max(0, effect_index.max_hp_modifier) if is_immunity or is_spell_immunity 
 			else effect_index.max_hp_modifier)
 		critical_rate_modifier = critical_rate_modifier + (max(0, effect_index.critical_rate_modifier) if is_spell_immunity 
 			else effect_index.critical_rate_modifier)
@@ -116,4 +118,4 @@ func effect_clean():
 
 	effect_list = []
 
-	start_turn_update()
+	effect_number_refresh()

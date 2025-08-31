@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://birqbeghihmpi"]
+[gd_scene load_steps=34 format=3 uid="uid://birqbeghihmpi"]
 
 [ext_resource type="Script" uid="uid://cmj65pa4j3u1u" path="res://script/hero.gd" id="1_n7ut4"]
 [ext_resource type="Shader" uid="uid://d3tyrfwlw2c1g" path="res://asset/shader/LightweightPixelPerfectOutline.gdshader" id="2_jr182"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://bwyapus01e2fk" path="res://script/buff_handler.gd" id="5_dbi3s"]
 [ext_resource type="Script" uid="uid://clowjrn7v3b1m" path="res://script/debuff_handler.gd" id="6_heiwi"]
 [ext_resource type="Script" uid="uid://c101twvdkyo0l" path="res://script/area_effect_handler.gd" id="7_heiwi"]
+[ext_resource type="Script" uid="uid://f2vi2gwgn32i" path="res://script/effect_handler.gd" id="8_huibf"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dbi3s"]
 shader = ExtResource("2_jr182")
@@ -509,7 +510,7 @@ y_sort_enabled = true
 material = SubResource("ShaderMaterial_dbi3s")
 position = Vector2(0, -11)
 sprite_frames = ExtResource("3_dbi3s")
-animation = &"move"
+animation = &"die"
 autoplay = "idle"
 
 [node name="Area2D" type="Area2D" parent="."]
@@ -535,16 +536,6 @@ visible = false
 
 [node name="drag_handler" type="Node2D" parent="."]
 script = ExtResource("3_r065v")
-
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
-path_desired_distance = 16.0
-target_desired_distance = 16.0
-avoidance_enabled = true
-radius = 8.0
-max_speed = 80.0
-
-[node name="target_timer" type="Timer" parent="."]
-wait_time = 0.1
 
 [node name="melee_attack_animation" type="AnimationPlayer" parent="."]
 libraries = {
@@ -585,9 +576,12 @@ script = ExtResource("6_heiwi")
 [node name="area_effect_handler" type="Node2D" parent="."]
 script = ExtResource("7_heiwi")
 
+[node name="effect_handler" type="Node" parent="."]
+script = ExtResource("8_huibf")
+
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
-[connection signal="timeout" from="action_timer" to="." method="_on_action_timer_timeout"]
-[connection signal="velocity_computed" from="NavigationAgent2D" to="." method="_on_navigation_agent_2d_velocity_computed"]
-[connection signal="timeout" from="target_timer" to="." method="_on_target_timer_timeout"]
+[connection signal="timeout" from="idle_timer" to="." method="_on_idle_timeout"]
+[connection signal="timeout" from="move_timer" to="." method="_handle_action"]
+[connection signal="timeout" from="action_timer" to="." method="_handle_action_timeout"]
 [connection signal="animation_finished" from="melee_attack_animation" to="." method="_on_melee_attack_animation_animation_finished"]
 [connection signal="animation_finished" from="ranged_attack_animation" to="." method="_on_ranged_attack_animation_animation_finished"]

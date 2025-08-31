@@ -2216,6 +2216,16 @@ theme_override_fonts/font = ExtResource("9_81276")
 theme_override_font_sizes/font_size = 4
 text = "Current shop level = "
 
+[node name="population_label" type="Label" parent="."]
+z_index = 1
+offset_left = 128.0
+offset_top = 267.0
+offset_right = 265.0
+offset_bottom = 290.0
+theme_override_fonts/font = ExtResource("9_81276")
+theme_override_font_sizes/font_size = 4
+text = "Current shop level = "
+
 [node name="shop_handler" type="Node2D" parent="."]
 unique_name_in_owner = true
 script = ExtResource("11_ym5sv")
@@ -2225,6 +2235,7 @@ unique_name_in_owner = true
 script = ExtResource("13_5g16k")
 
 [node name="faction_bonus_manager" type="Node2D" parent="."]
+unique_name_in_owner = true
 script = ExtResource("14_81276")
 
 [node name="hero_order_control" type="Control" parent="."]

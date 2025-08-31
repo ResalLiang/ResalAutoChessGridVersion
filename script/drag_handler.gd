@@ -21,6 +21,7 @@ const CHARACT_Z_INDEX = 2  # Default rendering layer
 signal drag_canceled(starting_position: Vector2, action: String) # Emitted when drag is canceled
 signal drag_started(starting_position: Vector2, action: String)                              # Emitted when drag starts
 signal drag_dropped(starting_position: Vector2, action: String)                                   # Emitted when character is dropped
+signal is_clicked()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -83,6 +84,9 @@ func _drop():
 # ========================
 # Handle input events on the character area
 func _on_target_input_event(_viewport, event, _shape_idx):
+	if event.is_action_pressed("select"):
+		is_clicked.emit(starting_position, "clicked")
+	
 	if not dragging_enabled:
 		return
 		
@@ -97,5 +101,5 @@ func _on_target_input_event(_viewport, event, _shape_idx):
 # Handle dragging behavior
 func _handle_dragging():
 	# Follow mouse position with offset
-	# dragging_item.global_position = get_global_mouse_position() + offset
+	dragging_item.global_position = get_global_mouse_position() + offset
 	pass

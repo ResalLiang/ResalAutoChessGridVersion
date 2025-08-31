@@ -141,9 +141,9 @@ func connect_to_hero_signal(hero: Hero):
 			if debug_mode:
 				print(hero.hero_name + "'s stats has loaded as belows:")
 			for i in range(hero_stats.size()):
-				write_log("LOG", hero_stats.keys()[i] + " = " + hero_stats.values()[i])
+				write_log("LOG", hero_stats.keys()[i] + " = " + str(hero_stats.values()[i]))
 				if debug_mode:
-					print(hero_stats.keys()[i] + " = " + hero_stats.values()[i])
+					print(hero_stats.keys()[i] + " = " + str(hero_stats.values()[i]))
 	)
 	hero.attack_evased.connect(
 		func(hero, attacker):

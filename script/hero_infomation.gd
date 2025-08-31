@@ -25,12 +25,13 @@ func _process(delta: float) -> void:
 	pass
 
 func setup_hero(hero: Hero) -> void:
-	hero.drag_handler.drag_started.connect(_on_hero_drag_started.bind(hero))
+	hero.drag_handler.drag_started.connect(show_hero_information.bind(hero))
+	hero.drag_handler.is_clicked.connect(show_hero_information.bind(hero))
 	hero.drag_handler.drag_canceled.connect(_on_hero_drag_canceled.bind(hero))
 	hero.drag_handler.drag_dropped.connect(_on_hero_dropped.bind(hero))
 	
 		
-func _on_hero_drag_started(starting_position: Vector2, status: String, hero: Hero) -> void:
+func show_hero_information(starting_position: Vector2, status: String, hero: Hero) -> void:
 	visible = true
 	hero_name.text = "Hero Name = " + hero.hero_name
 	hero_faction.text = "Faction = " + hero.faction

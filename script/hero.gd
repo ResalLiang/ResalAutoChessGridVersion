@@ -38,15 +38,13 @@ const hero_scene = preload("res://scene/hero.tscn")
 @export_enum("human", "dwarf", "elf", "forestProtector", "holy", "demon", "undead", "villager") var faction := "human"
 
 # Hero name with property observer
-@export var hero_name := "ShieldMan":
-	set(value):
-		hero_name = value
-		if not Engine.is_editor_hint():
-			return
-		# Load animation resource in editor mode
-		if ResourceLoader.exists("res://asset/animation/" + faction + "/" + faction + hero_name + ".tres"):
-			animated_sprite_2d.sprite_frames = ResourceLoader.load("res://asset/animation/" + faction + "/" + faction + hero_name + ".tres")
-		_load_hero_stats()
+@export var hero_name := "ShieldMan"
+	#set(value):
+		#hero_name = value
+		## Load animation resource in editor mode
+		#if ResourceLoader.exists("res://asset/animation/" + faction + "/" + faction + hero_name + ".tres"):
+			#animated_sprite_2d.sprite_frames = ResourceLoader.load("res://asset/animation/" + faction + "/" + faction + hero_name + ".tres")
+		#_load_hero_stats()
 
 var hero_serial := 1001
 
@@ -59,7 +57,11 @@ var obstacle_level := 0
 
 var base_max_hp := 100  # Maximum health points
 var base_max_mp := 50   # Maximum magic points
-var base_spd := 8      # Movement speed (grid/turn)
+var base_spd := 8:
+	set(value):
+		base_spd = value
+		if value == 0:
+			is_obstacle = true      # Movement speed (grid/turn)
 var base_damage := 20   # Attack damage
 var base_attack_spd := 1 # Attack speed (attacks per turn)
 var base_attack_range := 20 # Attack range (pixels)
@@ -87,11 +89,7 @@ var max_mp = base_max_mp:
 		max_mp = value
 		mp = update_mp
 
-var spd = base_spd:
-	set(value):
-		spd = value
-		if value == 0:
-			is_obstacle = true
+var spd = base_spd
 var damage = base_damage
 var attack_spd = base_attack_spd
 var attack_range = base_attack_range
@@ -153,7 +151,7 @@ var dragging_enabled: bool = true # Enable/disable dragging
 @export var line_visible:= false
 var sprite_frames: SpriteFrames  # Custom sprite frames
 var action_timer_wait_time := 0.5
-
+var move_timer_wait_time := 0.5
 #============================================
 # Skill or Spell Related
 #============================================
@@ -211,7 +209,7 @@ signal tween_moving	#tween_moving.emit(self, _position, target_pos)
 # ========================
 # Initialization
 # ========================
-func _ready():
+func ready():
 		
 	drag_handler.dragging_enabled = dragging_enabled
 	
@@ -295,13 +293,16 @@ func _ready():
 # ========================
 # Process Functions
 # ========================
+func _ready() -> void:
+	ready()
+
 func _process(delta: float) -> void:
 	
 	hp_bar.value = hp
 	mp_bar.value = mp
 
-	hp_bar.max_value = hp_max
-	mp_bar.max_value = mp_max
+	hp_bar.max_value = max_hp
+	mp_bar.max_value = max_mp
 
 	hp_bar.visible = hp != max_hp
 		
@@ -434,18 +435,21 @@ func _load_hero_stats():
 	# Safely retrieve stats if available
 	if hero_data.has(faction) and hero_data[faction].has(hero_name):
 		var stats = hero_data[faction][hero_name]
-		base_spd = stats.get("spd", base_spd)
-		base_max_hp = stats.get("hp", base_max_hp)
-		base_damage = stats.get("attack_damage", base_damage)
-		base_attack_range = stats.get("attack_range", base_attack_range)
-		base_attack_spd = stats.get("attack_speed", base_attack_spd)
-		skill_name = stats.get("skill_name", skill_name)
-		skill_description = stats.get("skill_description", skill_description)
+		base_spd = stats["spd"]
+		if base_spd == 0:
+			is_obstacle = true
+		base_max_hp = stats["max_health"]
+		base_damage = stats["attack_damage"]
+		base_attack_range = stats["attack_range"]
+		base_attack_spd = stats["attack_speed"]
+		skill_name = stats["skill_name"]
+		skill_description = stats["skill_description"]
 		stats_loaded.emit(self, stats)
 	else:
 		push_error("Stats not found for %s/%s" % [faction, hero_name])
 
 func start_turn():
+	
 	#Placeholder for hero passive ability on start turn
 
 	update_solid_map()
@@ -462,6 +466,9 @@ func start_turn():
 	if hero_target and hero_target.status != STATUS.DIE and not is_obstacle:
 		target_found.emit(self, hero_target)
 		_handle_movement()
+	elif is_obstacle:
+		move_timer.set_wait_time(move_timer_wait_time)		
+		move_timer.start()
 	else:
 		action_timer.start()
 
@@ -520,9 +527,6 @@ func _on_move_completed():
 func _handle_action():
 	move_timer.stop()
 	action_started.emit(self)
-	astar_grid.set_point_solid(position_id, true)
-	#Placeholder for hero passive ability on action start
-	var cast_spell_result := false
 
 	if is_obstacle:
 		handle_obstacle_action()
@@ -530,6 +534,10 @@ func _handle_action():
 		action_timer.set_wait_time(action_timer_wait_time)
 		action_timer.start()
 		return
+		
+	astar_grid.set_point_solid(position_id, true)
+	#Placeholder for hero passive ability on action start
+	var cast_spell_result := false
 
 	if mp >= max_mp and animated_sprite_2d.sprite_frames.has_animation("spell") and (not effect_handler.is_silenced and not effect_handler.is_stunned):
 
@@ -604,8 +612,6 @@ func _handle_attack():
 
 				handle_special_effect(hero_target, self)
 
-				await hero_projectile.projectile_vanished
-
 		elif current_distance_to_target < ranged_attack_threshold:
 			if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
 				status = STATUS.MELEE_ATTACK
@@ -614,8 +620,6 @@ func _handle_attack():
 
 				handle_special_effect(hero_target, self)
 
-				await hero_projectile.projectile_vanished
-
 			elif animated_sprite_2d.sprite_frames.has_animation("attack"):
 				status = STATUS.MELEE_ATTACK
 				animated_sprite_2d.play("attack")
@@ -623,8 +627,6 @@ func _handle_attack():
 				hero_target.take_damage(damage, self)	
 
 				handle_special_effect(hero_target, self)
-
-				await hero_projectile.projectile_vanished
 
 			else:
 				# No required attack animation
@@ -852,8 +854,8 @@ func _cast_spell(spell_tgt: Hero) -> bool:
 	elif hero_name == "Mage" and faction == "elf":
 		cast_spell_result = elf_mage_damage(spell_tgt, 0.2, 10, 80)
 	elif hero_name == "Necromancer" and faction == "undead":
-		cast_spell_result = undead_necromancer_summon("Skeleton", 3)
-	elif hero_name = "Demolitionist" and faction == "dwarf":
+		cast_spell_result = undead_necromancer_summon("Zombie", 3)
+	elif hero_name == "Demolitionist" and faction == "dwarf":
 		cast_spell_result = dwarf_demolitionist_placebomb(100)
 	elif spell_tgt !=  self:
 		cast_spell_result = true
@@ -920,8 +922,7 @@ func _on_damage_taken(taker: Hero, damage_value: int, attacker: Hero):
 		animated_sprite_2d.play("die")
 		await animated_sprite_2d.animation_finished
 		is_died.emit(self)
-
-		
+				
 	else:
 		#Placeholder for hero passive ability on hit
 		status = STATUS.HIT
@@ -935,7 +936,9 @@ func _on_died():
 	pass
 
 func update_solid_map():
-
+	if is_obstacle:
+		return
+		
 	astar_grid.fill_solid_region(astar_grid_region, false)
 	astar_grid.update()
 
@@ -962,7 +965,7 @@ func update_effect():
 	
 	effect_handler.turn_start_timeout_check()
 
-	critical_rate = base_critical_rate + effect_handler.critical_rate_modifier)
+	critical_rate = base_critical_rate + effect_handler.critical_rate_modifier
 	evasion_rate = base_evasion_rate + effect_handler.evasion_rate_modifier
 
 	if effect_handler.continuous_hp_modifier >= 0:
@@ -1069,7 +1072,7 @@ func human_mage_taunt(spell_duration: int) -> bool:
 	effect_instance.effect_name = "Taunt"
 	effect_instance.effect_type = "Buff"
 	effect_instance.effect_applier = "Human Mage Spell Taunt"
-	effect_handler.effect_list.add_to_effect_array(effect_instance)
+	effect_handler.add_to_effect_array(effect_instance)
 	effect_handler.add_child(effect_instance)
 
 	var arena_unitgrid = arena.unit_grid.units
@@ -1105,7 +1108,7 @@ func human_archmage_heal(spell_duration: int, heal_value: int) -> bool:
 					effect_instance.effect_name = "Heal"
 					effect_instance.effect_type = "Buff"
 					effect_instance.effect_applier = "Human ArchMage Spell Heal"
-					arena_unitgrid[affected_index].effect_handler.effect_list.add_to_effect_array(effect_instance)
+					arena_unitgrid[affected_index].effect_handler.add_to_effect_array(effect_instance)
 					arena_unitgrid[affected_index].effect_handler.add_child(effect_instance)
 
 					hero_affected =  true
@@ -1129,7 +1132,7 @@ func elf_queen_stun(spell_duration: int, damage_value: int) -> bool:
 				effect_instance.effect_name = "Stun"
 				effect_instance.effect_type = "Debuff"
 				effect_instance.effect_applier = "Elf Queen Spell Stun"
-				arena_unitgrid[affected_index].effect_handler.effect_list.add_to_effect_array(effect_instance)
+				arena_unitgrid[affected_index].effect_handler.add_to_effect_array(effect_instance)
 				arena_unitgrid[affected_index].effect_handler.add_child(effect_instance)
 
 				_apply_damage(arena_unitgrid[affected_index], damage_value)
@@ -1156,10 +1159,10 @@ func undead_necromancer_summon(summoned_hero_name: String, summon_unit_count: in
 	var attempt_summon_count := 40
 	var summoned_hero_count := 0
 	if summoned_hero_name in hero_data["undead"].keys():
-		while attempt_summon_count>= 0 and summoned_hero_count < summon_unit_count:
+		while attempt_summon_count > 0 and summoned_hero_count < summon_unit_count:
 			var rand_x = randi_range(position_id.x - 3, position_id.x + 3)
 			var rand_y = randi_range(position_id.y - 3, position_id.y + 3)
-			if arena.unit_grid.units.has(Vector2(rand_x, rand_y)):
+			if rand_x >=0 and rand_x < arena.unit_grid.size.x and rand_y >=0 and rand_y < arena.unit_grid.size.y:
 				attempt_summon_count -= 1
 				if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
 					
@@ -1176,11 +1179,11 @@ func undead_necromancer_summon(summoned_hero_name: String, summon_unit_count: in
 func dwarf_demolitionist_placebomb(spell_range: int) -> bool:
 	# var hero_affected := false
 	var attempt_summon_count := 10
-	if spell_target.status != STATUS.DIE and spell_target.team != team and spell_target.global_position.distance_to(global_position) <= spell_range:
+	if hero_spell_target.status != STATUS.DIE and hero_spell_target.team != team and hero_spell_target.global_position.distance_to(global_position) <= spell_range:
 		while attempt_summon_count >= 0:
-			var rand_x = randi_range(spell_target.position_id.x - 3, spell_target.position_id.x + 3)
-			var rand_y = randi_range(spell_target.position_id.y - 3, spell_target.position_id.y + 3)
-			if arena.unit_grid.units.has(Vector2(rand_x, rand_y)):
+			var rand_x = randi_range(hero_spell_target.position_id.x - 3, hero_spell_target.position_id.x + 3)
+			var rand_y = randi_range(hero_spell_target.position_id.y - 3, hero_spell_target.position_id.y + 3)
+			if rand_x >=0 and rand_x < arena.unit_grid.size.x and rand_y >=0 and rand_y < arena.unit_grid.size.y:
 				attempt_summon_count -= 1
 				if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
 					var game_root_scene = arena.get_parent().get_parent()
@@ -1201,9 +1204,9 @@ func handle_obstacle_action() -> void:
 func dwarf_bomb_boom():
 	for x in range(-obstacle_level, obstacle_level):
 		for y in range(-obstacle_level, obstacle_level):
-			if not arena.unit_grid.units.has(Vector2(x, y)):
-				continue
-
-			target_area_hero = arena.unit_grid.units(Vector2(x, y))
-			if is_instance_valid(target_area_hero) and target_area_hero is Hero and target_area_hero.status != STATUS.DIE:
-				_apply_damage(target_area_hero, 50 * obstacle_level)
+			if x >=0 and x < arena.unit_grid.size.x and y >=0 and y < arena.unit_grid.size.y:
+				var target_area_hero = arena.unit_grid.units[position_id + Vector2i(x, y)]
+				if is_instance_valid(target_area_hero) and target_area_hero is Hero and target_area_hero.status != STATUS.DIE:
+					_apply_damage(target_area_hero, 50 * obstacle_level)
+		
+	is_died.emit(self)		

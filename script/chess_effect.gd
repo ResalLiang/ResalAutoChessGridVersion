@@ -3,7 +3,7 @@ extends Node
 
 var effect_name := "Effect Name Placeholder":
 	set(value):
-		effect_name = values
+		effect_name = value
 		# Placeholder for icon load
 var effect_icon : Texture2D
 var effect_type : String # Buff/Debuff/Passive
@@ -69,76 +69,77 @@ var stunned_duration := 0:
 			is_stunned = true
 
 var spd_modifier := 0
-var spd_modifier_duration := 0
+var spd_modifier_duration := 0:
 		set(value):
 			spd_modifier_duration = value
 			if value <= 0:
 				spd_modifier = 0
 
 var attack_rng_modifier := 0
-var attack_rng_modifier_duration := 0
+var attack_rng_modifier_duration := 0:
 		set(value):
 			attack_rng_modifier_duration = value
 			if value <= 0:
 				attack_rng_modifier = 0
 
 var attack_spd_modifier := 0
-var attack_spd_modifier_duration := 0
+var attack_spd_modifier_duration := 0:
 		set(value):
 			attack_spd_modifier_duration = value
 			if value <= 0:
 				attack_spd_modifier = 0
 
 var attack_dmg_modifier := 0
-var attack_dmg_modifier_duration := 0
+var attack_dmg_modifier_duration := 0:
 		set(value):
 			attack_dmg_modifier_duration = value
 			if value <= 0:
 				attack_dmg_modifier = 0
 
 var continuous_hp_modifier := 0
-var continuous_hp_modifier_duration := 0
+var continuous_hp_modifier_duration := 0:
 		set(value):
 			continuous_hp_modifier_duration = value
 			if value <= 0:
 				continuous_hp_modifier = 0
 
 var continuous_mp_modifier := 0
-var continuous_mp_modifier_duration := 0
+var continuous_mp_modifier_duration := 0:
 		set(value):
 			continuous_mp_modifier_duration = value
 			if value <= 0:
 				continuous_mp_modifier = 0
 
 var armor_modifier := 0
-var armor_modifier_duration := 0
+var armor_modifier_duration := 0:
 		set(value):
 			armor_modifier_duration = value
 			if value <= 0:
 				armor_modifier = 0
 
 var max_mp_modifier := 0
-var max_mp_modifier_duration := 0
+var max_mp_modifier_duration := 0:
 		set(value):
 			max_mp_modifier_duration = value
 			if value <= 0:
+				max_mp_modifier = 0
 
 var max_hp_modifier := 0
-var max_hp_modifier_duration := 0
+var max_hp_modifier_duration := 0:
 		set(value):
 			max_hp_modifier_duration = value
 			if value <= 0:
 				max_hp_modifier = 0
 
 var critical_rate_modifier := 0.0
-var critical_rate_modifier_duration := 0
+var critical_rate_modifier_duration := 0:
 		set(value):
 			critical_rate_modifier_duration = value
 			if value <= 0:
 				critical_rate_modifier = 0
 
 var evasion_rate_modifier := 0.0
-var evasion_rate_modifier_duration := 0
+var evasion_rate_modifier_duration := 0:
 		set(value):
 			evasion_rate_modifier_duration = value
 			if value <= 0:
@@ -203,6 +204,8 @@ func check_effect_timeout() -> bool:
 	if spd_modifier_duration > 0 and spd_modifier != 0:
 		return true
 
+	return false
+	
 func start_turn_update():
 
 	immunity_duration = max(0, immunity_duration - 1)

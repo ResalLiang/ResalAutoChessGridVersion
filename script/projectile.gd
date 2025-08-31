@@ -73,7 +73,6 @@ func _on_area_entered(area):
 			# 穿透次数耗尽时消失
 			if penetration <= 0:
 				projectile_vanished.emit()
-				projectile_vanished.disconnect(attacker._on_animated_sprite_2d_animation_finished)
 				queue_free()
 
 # 处理离开屏幕

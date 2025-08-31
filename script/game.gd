@@ -134,9 +134,13 @@ var player_save_data = {
 	"kill_enemy_array": [],
 	"experience": 1250
 }
+
 var player_name := "player1"
 
 var save_datas : Dictionary
+
+var current_population := 0
+var max_population := 3
 
 signal game_finished
 signal hero_appearance_finished
@@ -147,7 +151,8 @@ var cursor_texture = preload("res://asset/cursor/cursors/cursor1.png")
 
 func _ready():
 	save_datas = load_game_binary()
-	player_save_data = save_datas[player_name]
+	if save_datas.has(player_name):
+		player_save_data = save_datas[player_name]
 
 	var tile_size = Vector2(16, 16)
 	
@@ -174,7 +179,7 @@ func _ready():
 			is_game_turn_start = true
 			for node in get_tree().get_nodes_in_group("hero_group"):
 				if node is Hero:
-					node.drag_handler.dragging_enabled =  false
+					node.dragging_enabled =  false
 	)
 	game_turn_finished.connect(
 		func():
@@ -186,7 +191,7 @@ func _ready():
 			is_game_turn_start = false
 			for node in get_tree().get_nodes_in_group("hero_group"):
 				if node is Hero:
-					node.drag_handler.dragging_enabled =  true
+					node.dragging_enabled =  true
 	)
 	game_start_button.pressed.connect(new_round_prepare_end)
 	game_restart_button.pressed.connect(start_new_game)
@@ -232,7 +237,10 @@ func _ready():
 			if play_area == arena:
 				start_new_turn()
 	)
-	hero_mover.hero_moved.connect(update_population)
+	hero_mover.hero_moved.connect(
+		func(hero: Hero, play_area: PlayArea, tile: Vector2i):
+			update_population()
+	)
 
 	center_point = Vector2(tile_size.x * grid_count / 2, tile_size.y * grid_count / 2)
 
@@ -284,6 +292,7 @@ func new_round_prepare_start():
 	shop_handler.turn_start_income(current_round)
 
 func new_round_prepare_end():
+	game_turn_started.emit()
 	battle_meter.battle_data = {}
 	#if saved_arena_team.size() == 0:
 	team_dict[Team.TEAM1_FULL] = []
@@ -302,7 +311,6 @@ func new_round_prepare_end():
 
 func start_new_turn():
 	# if start new turn, it will be fully auto.
-	game_turn_started.emit()
 	print("Start new round.")
 	var team1_alive_cnt = 0
 	var team2_alive_cnt = 0
@@ -344,7 +352,7 @@ func start_hero_turn(team: Team):
 		#active_hero.start_turn()
 		# 连接信号等待行动完成
 		active_hero.action_finished.connect(_on_character_action_finished)
-		_on_character_action_finished(active_hero.hero_name)
+		_on_character_action_finished(active_hero)
 
 func process_character_turn(hero: Hero):
 	active_hero = hero
@@ -449,9 +457,9 @@ func get_random_character(faction_name: String) -> String:
 	# Prepare candidate list and weight list
 	for hero_name_index in hero_data[faction_name]:
 		var rarity = hero_data[faction_name][hero_name_index]["rarity"]
-		if RARITY_WEIGHTS[shop_handler.shop_level].has(rarity) and hero_data[faction_name][hero_name_index]["spd"] != 0:
+		if RARITY_WEIGHTS[min(6, shop_handler.shop_level)].has(rarity) and hero_data[faction_name][hero_name_index]["spd"] != 0:
 			candidates.append(hero_name_index)
-			weights.append(RARITY_WEIGHTS[shop_handler.shop_level][rarity])
+			weights.append(RARITY_WEIGHTS[min(6, shop_handler.shop_level)][rarity])
 	
 	if candidates.size() == 0:
 		return ""
@@ -507,7 +515,7 @@ func generate_random_hero():
 	# --- Rarity Selection Phase ---
 	# Calculate total weight for current shop level
 	var total_rarity_weight := 0
-	for weight in RARITY_WEIGHTS[shop_handler.shop_level].values():
+	for weight in RARITY_WEIGHTS[min(6,shop_handler.shop_level)].values():
 		total_rarity_weight += weight
 	
 	# Get random value within weight range
@@ -516,8 +524,8 @@ func generate_random_hero():
 	# Determine selected rarity tier
 	var accumulated_rarity_weight := 0
 	var selected_rarity: String
-	for rarity_type in RARITY_WEIGHTS[shop_handler.shop_level]:
-		accumulated_rarity_weight += RARITY_WEIGHTS[shop_handler.shop_level][rarity_type]
+	for rarity_type in RARITY_WEIGHTS[min(6,shop_handler.shop_level)]:
+		accumulated_rarity_weight += RARITY_WEIGHTS[min(6,shop_handler.shop_level)][rarity_type]
 		if accumulated_rarity_weight > random_rarity_threshold:
 			selected_rarity = rarity_type
 			break
@@ -549,7 +557,7 @@ func generate_random_hero():
 				
 			# Calculate dynamic weight with duplicate penalty
 			var hero_identifier = "%s_%s" % [faction, hero_name]
-			var base_weight = RARITY_WEIGHTS[shop_handler.shop_level][hero_attributes["rarity"]]
+			var base_weight = RARITY_WEIGHTS[min(6, shop_handler.shop_level)][hero_attributes["rarity"]]
 			var duplicate_penalty = existing_hero_counts.get(hero_identifier, 0)
 			var final_weight = max(base_weight - duplicate_penalty, 1)  # Ensure minimum weight
 			
@@ -636,14 +644,15 @@ func summon_hero(summon_hero_faction: String, summon_hero_name: String, team: in
 		return null
 
 	var summoned_character = hero_scene.instantiate()
-	summoned_character.hero_name = summon_hero_name
 	summoned_character.faction = summon_hero_faction
+	summoned_character.hero_name = summon_hero_name
 	summoned_character.team = team
 	summoned_character.arena = arena
 	summoned_character.bench = bench
 	summoned_character.shop = shop
 	summoned_character.hero_serial = get_next_serial()
 	add_child(summoned_character)
+	summoned_character._load_hero_stats()
 	debug_handler.connect_to_hero_signal(summoned_character)
 	hero_mover.setup_hero(summoned_character)
 	hero_mover._move_hero(summoned_character, summon_arena, summon_position)
@@ -653,27 +662,30 @@ func summon_hero(summon_hero_faction: String, summon_hero_name: String, team: in
 	summoned_character.is_died.connect(hero_death_handle)
 
 	if team == 1:
-		team_dict[game_root_scene.Team.TEAM1_FULL].append(summoned_character)
-		team_dict[game_root_scene.Team.TEAM1].append(summoned_character)
+		team_dict[Team.TEAM1_FULL].append(summoned_character)
+		team_dict[Team.TEAM1].append(summoned_character)
 	else:
-		team_dict[game_root_scene.Team.TEAM2_FULL].append(summoned_character)
-		team_dict[game_root_scene.Team.TEAM2].append(summoned_character)
+		team_dict[Team.TEAM2_FULL].append(summoned_character)
+		team_dict[Team.TEAM2].append(summoned_character)
 		
 	return summoned_character
 
-func update_population(hero: Hero, play_area: PlayArea, tile: Vector2i):
-	var current_population := 0
+func update_population():
+	current_population = 0
 	for node in get_tree().get_nodes_in_group("hero_group"):
 		if node is Hero and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
 			current_population += 1
-	var max_population = shop_handler.get_max_population()
+	max_population = shop_handler.get_max_population()
 	population_label.text = str(current_population)	+ "/" + str(max_population)
+	var label_settings = LabelSettings.new()
 	if current_population > max_population:
-		population_label.color = Color.RED
+		label_settings.font_color = Color.RED
 	elif current_population == max_population:
-		population_label.color = Color.YELLOW
+		label_settings.font_color = Color.YELLOW
 	else:
-		population_label.color = Color.GREEN
+		label_settings.font_color = Color.GREEN
+	label_settings.font_size = 4
+	population_label.label_settings = label_settings
 	faction_bonus_manager.bonus_refresh()
 
 # Load save file
@@ -683,7 +695,7 @@ func load_game_binary():
 		var save_datas = file.get_var(true)
 		file.close()
 		return save_datas
-	return null
+	return {}
 
 
 func save_game_binary():
@@ -706,11 +718,18 @@ func hero_death_handle(hero: Hero):
 	if team_dict[Team.TEAM2_FULL].has(hero):
 		team_dict[Team.TEAM2_FULL].erase(hero)
 
-	if team != 1:
-		player_save_data["kill_enemy_count"] += 1
-		player_save_data["kill_enemy_array"].append([hero.faction, hero.hero_name])
+	if hero.team != 1:
+		if player_save_data.has("kill_enemy_count"):
+			player_save_data["kill_enemy_count"] += 1
+		else:
+			player_save_data["kill_enemy_count"] = 1
+			
+		if player_save_data.has("kill_enemy_array"):
+			player_save_data["kill_enemy_array"].append([hero.faction, hero.hero_name])
+		else:
+			player_save_data["kill_enemy_array"]= [hero.faction, hero.hero_name]
 
 	hero.visible = false
 	arena.unit_grid.remove_unit(hero.position_id)
-	await get_tree.process_frame
+	await get_tree().process_frame
 	hero.queue_free

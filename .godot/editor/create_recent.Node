@@ -1,3 +1,5 @@
+Node2D
+Node
 AnimatedSprite2D
 TextureRect
 HBoxContainer
@@ -8,7 +10,5 @@ ProgressBar
 Sprite2D
 Button
 Container
-Node2D
-Node
 CollisionShape2D
 Area2D

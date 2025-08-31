@@ -197,6 +197,21 @@
 	  "target_priority": "CLOSE",
 	  "spell_target_priority": "CLOSE"
 	},
+	"Bomb": {
+	  "spd": 0,
+	  "attack_damage": 0,
+	  "attack_range": 0,
+	  "attack_speed": 0,
+	  "max_health": 100,
+	  "max_mana": 0,
+	  "armor": 10,
+	  "skill_name": "Wild_Charge",
+	  "skill_description": "Charges forward 5 cells, knocking back enemies and dealing 55 damage",
+	  "flavor_text": "\"I feel the need... the need for speed!\" - Maverick, Top Gun",
+	  "rarity": "Uncommon",
+	  "target_priority": "CLOSE",
+	  "spell_target_priority": "CLOSE"
+	},
 	"Demolitionist": {
 	  "spd": 4,
 	  "attack_damage": 20,

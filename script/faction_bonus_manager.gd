@@ -79,34 +79,32 @@ func bonus_refresh() -> void:
 					bonus_level += 1
 			player_bonus_level_dict[player_index][faction_index] = min(bonus_level, 3)
 
+	for faction_index in player_bonus_level_dict[1].keys():
+		for player_index in player_faction_count.keys(): #[1, 2]
+			var curren_bonus_level = player_bonus_level_dict[player_index][faction_index]
+			if curren_bonus_level > 0:
+				apply_faction_bonus(faction_index, curren_bonus_level, player_index)
+
+func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -> void:
+
+	var friendly_faction_hero : Array[Hero]
+	var friendly_hero : Array[Hero]
+	var enemy_hero : Array[Hero]
+	
 	for hero_index in arena.unit_grid.units.values():
-		if not is_instance_valid(hero_index) or not hero_index is Hero:
-			continue
-
-		var current_bonus_level
-		for player_index in player_faction_count.keys():
-			if hero_index.team == 1 and player_bonus_level_dict[hero_index.team][hero_index.faction] > 0:
-				apply_faction_bonus(hero_index, player_bonus_level_dict[hero_index.team][hero_index.faction])
-
-func apply_faction_bonus(faction: String, bonus_level: int, applier_team: 1) -> void:
-
-	for hero_index in arena.unit_grid.units.values():
-		var friendly_faction_hero : Array[Hero]
-		var friendly_hero : Array[Hero]
-		var enemy_hero : Array[Hero]
 
 		if not is_instance_valid(hero_index) or not hero_index is Hero:
 			continue
 
 		if hero_index.team != applier_team:
 			enemy_hero.append(hero_index)
-		elif hero_index.team == applier_team and hero_index.faction = faction:
+		elif hero_index.team == applier_team and hero_index.faction == faction:
 			friendly_faction_hero.append(hero_index)
 		elif hero_index.team == applier_team:
 			friendly_hero.append(hero_index)
 
 
-	match hero.faction:
+	match faction:
 
 		"elf":
 			if friendly_faction_hero.size() <= 0:
@@ -121,7 +119,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: 1) -> 
 				effect_instance.effect_name = "Swift"
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Elf Faction Bonus"
-				hero_index.effect_handler.effect_list.add_to_effect_array(effect_instance)
+				hero_index.effect_handler.add_to_effect_array(effect_instance)
 				hero_index.effect_handler.add_child(effect_instance)
 
 		"human":
@@ -135,7 +133,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: 1) -> 
 				effect_instance.effect_name = "Wisdom"
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Human Faction Bonus"
-				hero_index.effect_handler.effect_list.add_to_effect_array(effect_instance)
+				hero_index.effect_handler.add_to_effect_array(effect_instance)
 				hero_index.effect_handler.add_child(effect_instance)
 
 		"dwarf":
@@ -149,7 +147,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: 1) -> 
 				effect_instance.effect_name = "Fortress"
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Dwarf Faction Bonus"
-				hero_index.effect_handler.effect_list.add_to_effect_array(effect_instance)
+				hero_index.effect_handler.add_to_effect_array(effect_instance)
 				hero_index.effect_handler.add_child(effect_instance)
 
 		"holy":
@@ -162,7 +160,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: 1) -> 
 				effect_instance.effect_name = "Holy Shield"
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Holy Warrior Faction Bonus"
-				hero_index.effect_handler.effect_list.add_to_effect_array(effect_instance)
+				hero_index.effect_handler.add_to_effect_array(effect_instance)
 				hero_index.effect_handler.add_child(effect_instance)
 
 
@@ -179,11 +177,10 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: 1) -> 
 				effect_instance.effect_name = "Strong"
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Forest Protector Faction Bonus"
-				hero_index.effect_handler.effect_list.add_to_effect_array(effect_instance)
+				hero_index.effect_handler.add_to_effect_array(effect_instance)
 				hero_index.effect_handler.add_child(effect_instance)
 
 		"demon":
-			match level:
 			if enemy_hero.size() <= 0:
 				return
 
@@ -195,11 +192,10 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: 1) -> 
 				effect_instance.effect_name = "Doom"
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Demon Faction Bonus"
-				hero_index.effect_handler.effect_list.add_to_effect_array(effect_instance)
+				hero_index.effect_handler.add_to_effect_array(effect_instance)
 				hero_index.effect_handler.add_child(effect_instance)
 
 		"undead":
-			match level:
 			if enemy_hero.size() <= 0:
 				return
 
@@ -208,11 +204,11 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: 1) -> 
 				effect_instance.armor_modifier = -5 * bonus_level
 				effect_instance.armor_modifier_duration = 999
 				effect_instance.spd_modifier = -2
-				effect_instance.spd_modifier_modifier_duration = bonus_level
+				effect_instance.spd_modifier_duration = bonus_level
 				effect_instance.effect_name = "Weak"
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Elf Faction Bonus"
-				hero_index.effect_handler.effect_list.add_to_effect_array(effect_instance)
+				hero_index.effect_handler.add_to_effect_array(effect_instance)
 				hero_index.effect_handler.add_child(effect_instance)
 
 func clean_hero_faction_bonus(hero: Hero) -> void:
@@ -222,5 +218,5 @@ func clean_hero_faction_bonus(hero: Hero) -> void:
 
 	hero.effect_handler.effect_list = []
 	for effect_index in hero_effect_list:
-		if not effect_index.effect_applier = "Faction Bonus":
+		if not effect_index.effect_applier == "Faction Bonus":
 			hero.effect_handler.add_to_effect_array(effect_index)
