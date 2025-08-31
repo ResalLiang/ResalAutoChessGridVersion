@@ -1,7 +1,7 @@
 class_name ShopHandler
 extends Node2D
 
-const max_shop_level := 6
+const max_shop_level := 7
 
 @onready var hero_mover: HeroMover = %hero_mover
 @onready var arena: PlayArea = %arena
@@ -111,8 +111,8 @@ func shop_refresh() -> void:
 		hero_mover._move_hero(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
 		hero_information.setup_hero(character)
 		
-	var debug_hero_faction = ["human", "human", "human", "human", "demon", "elf", "elf", "undead"]
-	var debug_hero_name = ["ArcherMan", "CrossBowMan", "Mage", "ArchMage", "FireImp", "Queen", "Mage", "Necromancer"]
+	var debug_hero_faction = ["human", "human", "human", "demon", "elf", "elf", "undead", "dwarf"]
+	var debug_hero_name = ["CrossBowMan", "Mage", "ArchMage", "FireImp", "Queen", "Mage", "Necromancer", "Demolitionist"]
 	for debug_index in range(debug_hero_faction.size()):
 		var character = get_parent().hero_scene.instantiate()
 		character.faction = debug_hero_faction[debug_index]
@@ -140,12 +140,21 @@ func shop_freeze() -> void:
 	is_shop_frozen = not is_shop_frozen 
 
 func shop_upgrade() -> void:
-	if remain_coins >= shop_upgrade_price and shop_level < max_shop_level:
-		remain_coins -= shop_upgrade_price
-		coins_decreased.emit(shop_upgrade_price, "upgrading shop")
+	var current_upgrade_price = get_shop_upgrade_price()
+	if remain_coins >= current_upgrade_price and shop_level < max_shop_level:
+		remain_coins -= current_upgrade_price
+		coins_decreased.emit(current_upgrade_price, "upgrading shop")
 		shop_level += 1
 		shop_upgraded.emit(shop_level)
-		shop_upgrade_price += 3
+
+func get_shop_upgrade_price():
+	return shop_level + 2 
+
+func get_current_difficulty():
+	return shop_level * 200
+
+func get_max_population():
+	return 999 if shop_level == 7 else shop_level + 2
 
 func can_pay_hero(hero: Hero) -> bool:
 	if get_hero_buy_price(hero) > remain_coins:
