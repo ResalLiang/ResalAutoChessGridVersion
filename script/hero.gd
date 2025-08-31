@@ -53,6 +53,10 @@ var hero_serial := 1001
 #============================================
 # Basic attack statics
 #============================================
+var is_obstacle := false
+var obstacle_counter := 0
+var obstacle_level := 0
+
 var base_max_hp := 100  # Maximum health points
 var base_max_mp := 50   # Maximum magic points
 var base_spd := 8      # Movement speed (grid/turn)
@@ -83,7 +87,11 @@ var max_mp = base_max_mp:
 		max_mp = value
 		mp = update_mp
 
-var spd = base_spd
+var spd = base_spd:
+	set(value):
+		spd = value
+		if value == 0:
+			is_obstacle = true
 var damage = base_damage
 var attack_spd = base_attack_spd
 var attack_range = base_attack_range
@@ -144,6 +152,7 @@ var dragging_enabled: bool = true # Enable/disable dragging
 #============================================
 @export var line_visible:= false
 var sprite_frames: SpriteFrames  # Custom sprite frames
+var action_timer_wait_time := 0.5
 
 #============================================
 # Skill or Spell Related
@@ -442,7 +451,7 @@ func start_turn():
 	update_solid_map()
 	await get_tree().process_frame
 
-	update_buff_debuff()
+	update_effect()
 
 	remain_attack_count = attack_spd
 
@@ -450,7 +459,7 @@ func start_turn():
 		target_lost.emit(self)
 		_handle_targeting()
 		
-	if hero_target and hero_target.status != STATUS.DIE:
+	if hero_target and hero_target.status != STATUS.DIE and not is_obstacle:
 		target_found.emit(self, hero_target)
 		_handle_movement()
 	else:
@@ -465,6 +474,7 @@ func _handle_movement():
 
 	if global_position.distance_to(hero_target.global_position) <= attack_range or effect_handler.is_stunned:
 		move_finished.emit(self, position_id)
+		move_timer.set_wait_time(move_timer_wait_time)			
 		move_timer.start()
 	else:
 		astar_grid.set_point_solid(position_id, false)
@@ -479,6 +489,7 @@ func _handle_movement():
 		if move_path.is_empty():
 			astar_grid.set_point_solid(hero_target.position_id, true)
 			move_finished.emit(self, position_id)
+			move_timer.set_wait_time(move_timer_wait_time)
 			move_timer.start()
 		else:
 			var move_steps = min(spd, move_path.size() - 1)
@@ -503,6 +514,7 @@ func _on_move_completed():
 		astar_grid.set_point_solid(hero_target.position_id, true)
 		#Placeholder for hero passive ability on move finish
 		move_finished.emit(self, _position)
+		move_timer.set_wait_time(move_timer_wait_time)
 		move_timer.start()
 						
 func _handle_action():
@@ -510,22 +522,42 @@ func _handle_action():
 	action_started.emit(self)
 	astar_grid.set_point_solid(position_id, true)
 	#Placeholder for hero passive ability on action start
+	var cast_spell_result := false
+
+	if is_obstacle:
+		handle_obstacle_action()
+		status = STATUS.IDLE
+		action_timer.set_wait_time(action_timer_wait_time)
+		action_timer.start()
+		return
 
 	if mp >= max_mp and animated_sprite_2d.sprite_frames.has_animation("spell") and (not effect_handler.is_silenced and not effect_handler.is_stunned):
-		if hero_spell_target_choice == TARGET_CHOICE.SELF:
-			status = STATUS.SPELL
-			animated_sprite_2d.play("spell")
-			if _cast_spell(self):
-				return
-		elif !hero_spell_target:
-			hero_spell_target = _find_new_target(hero_spell_target_choice)
-			if hero_target:
-				hero_target.is_died.connect(handle_target_death)
+
+		hero_spell_target = _find_new_target(hero_spell_target_choice)
 
 		if hero_spell_target:
-			status = STATUS.SPELL
-			animated_sprite_2d.play("spell")
-			if _cast_spell(hero_spell_target):
+			if hero_spell_target_choice == TARGET_CHOICE.SELF:
+				status = STATUS.SPELL
+				animated_sprite_2d.play("spell")
+				cast_spell_result = _cast_spell(self)
+				if not cast_spell_result:
+					animated_sprite_2d.stop()
+				else:
+					await animated_sprite_2d.animation_finished
+
+
+			if hero_spell_target:
+				status = STATUS.SPELL
+				animated_sprite_2d.play("spell")
+				cast_spell_result = _cast_spell(hero_spell_target)
+				if not cast_spell_result:
+					animated_sprite_2d.stop()
+				else:
+					await animated_sprite_2d.animation_finished
+
+			if cast_spell_result:
+				action_timer.set_wait_time(action_timer_wait_time)
+				action_timer.start()
 				return
 
 	if !hero_target or !is_instance_valid(hero_target) or hero_target.status == STATUS.DIE:
@@ -536,6 +568,13 @@ func _handle_action():
 		_handle_attack()
 
 func _handle_attack():
+
+	if !hero_target or !is_instance_valid(hero_target) or hero_target.status == STATUS.DIE:
+		target_lost.emit(self)
+		action_timer.set_wait_time(action_timer_wait_time)
+		action_timer.start()
+		return
+
 	#Placeholder for hero passive ability on attack
 	var current_distance_to_target = global_position.distance_to(hero_target.global_position)
 	remain_attack_count -= 1
@@ -549,14 +588,15 @@ func _handle_attack():
 				var hero_projectile = _launch_projectile(hero_target)
 				projectile_lauched.emit(self)
 
-				hero_projectile.projectile_vanished.connect(_on_animated_sprite_2d_animation_finished)
+				# hero_projectile.projectile_vanished.connect(_on_animated_sprite_2d_animation_finished)
 				hero_projectile.projectile_vanished.connect(
 					func(hero_name):
 						debug_handler.write_log("LOG", hero_name + "'s projectile has vanished.")
 				)
 				hero_projectile.projectile_hit.emit(handle_special_effect)
 
-				return
+				await hero_projectile.projectile_vanished
+
 			else:
 
 				ranged_attack_animation.play("ranged_attack")
@@ -564,7 +604,7 @@ func _handle_attack():
 
 				handle_special_effect(hero_target, self)
 
-				return
+				await hero_projectile.projectile_vanished
 
 		elif current_distance_to_target < ranged_attack_threshold:
 			if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
@@ -574,7 +614,8 @@ func _handle_attack():
 
 				handle_special_effect(hero_target, self)
 
-				return
+				await hero_projectile.projectile_vanished
+
 			elif animated_sprite_2d.sprite_frames.has_animation("attack"):
 				status = STATUS.MELEE_ATTACK
 				animated_sprite_2d.play("attack")
@@ -582,19 +623,32 @@ func _handle_attack():
 				hero_target.take_damage(damage, self)	
 
 				handle_special_effect(hero_target, self)
-				
-				return
+
+				await hero_projectile.projectile_vanished
+
 			else:
 				# No required attack animation
+				status = STATUS.IDLE
+				action_timer.set_wait_time(action_timer_wait_time)
 				action_timer.start()
-				return
+				
 		else:
 			# Long distance but no ranged attack animation
 			status = STATUS.IDLE
+			action_timer.set_wait_time(action_timer_wait_time)
 			action_timer.start()
+
 	else:
 		# Out of attack range
 		status = STATUS.IDLE
+		action_timer.set_wait_time(action_timer_wait_time)
+		action_timer.start()
+
+	if remain_attack_count > 0:
+		_handle_attack()
+	else:
+		status = STATUS.IDLE
+		action_timer.set_wait_time(action_timer_wait_time)
 		action_timer.start()
 
 func _handle_action_timeout():
@@ -606,11 +660,11 @@ func _handle_action_timeout():
 # Handle target selection and tracking
 func _handle_targeting():
 	# Clear invalid targets (dead or invalid instances)
-	if !hero_target or hero_target.status == STATUS.DIE:
-		attack_target_line.visible = false
-		hero_target = _find_new_target(hero_target_choice)
-		if hero_target:
-			hero_target.is_died.connect(handle_target_death)
+	attack_target_line.visible = false
+	hero_target = _find_new_target(hero_target_choice)
+	if hero_target:
+		hero_target.is_died.connect(handle_target_death)
+	attack_target_line.visible = true
 		
 # Find a new target based on selection strategy
 func _find_new_target(tgt) -> Hero:
@@ -725,7 +779,6 @@ func _on_idle_timeout():
 # Launch projectile at target
 func _launch_projectile(target: Hero):
 	
-	
 	# Calculate direction to target
 	var direction = (target.global_position - global_position).normalized()
 	
@@ -750,7 +803,6 @@ func _launch_projectile(target: Hero):
 	projectile.initial_flip = is_flipped
 	projectile.attacker = self
 	
-
 	projectile_damage = damage
 
 	# Configure projectile properties
@@ -801,6 +853,8 @@ func _cast_spell(spell_tgt: Hero) -> bool:
 		cast_spell_result = elf_mage_damage(spell_tgt, 0.2, 10, 80)
 	elif hero_name == "Necromancer" and faction == "undead":
 		cast_spell_result = undead_necromancer_summon("Skeleton", 3)
+	elif hero_name = "Demolitionist" and faction == "dwarf":
+		cast_spell_result = dwarf_demolitionist_placebomb(100)
 	elif spell_tgt !=  self:
 		cast_spell_result = true
 
@@ -864,15 +918,21 @@ func _on_damage_taken(taker: Hero, damage_value: int, attacker: Hero):
 		status = STATUS.DIE
 		animated_sprite_2d.stop()
 		animated_sprite_2d.play("die")
-		return
+		await animated_sprite_2d.animation_finished
+		is_died.emit(self)
+
+		
 	else:
 		#Placeholder for hero passive ability on hit
 		status = STATUS.HIT
 		animated_sprite_2d.play("hit")
+		await animated_sprite_2d.animation_finished
+		status = STATUS.IDLE
+
 	
 func _on_died():
-		#Placeholder for hero passive ability on died
-	self.visible = false
+	#Placeholder for hero passive ability on died
+	pass
 
 func update_solid_map():
 
@@ -898,7 +958,7 @@ func _handle_dragging_state(stating_position: Vector2, drag_action: String):
 				status = STATUS.IDLE
 		animated_sprite_2d.play("idle")
 		
-func update_buff_debuff():
+func update_effect():
 	
 	effect_handler.turn_start_timeout_check()
 
@@ -913,12 +973,14 @@ func update_buff_debuff():
 	mp += effect_handler.continuous_mp_modifier
 
 	armor = base_armor + effect_handler.armor_modifier
-	spd = base_spd + effect_handler.spd_modifier
+	if not is_obstacle:
+		spd = base_spd + effect_handler.spd_modifier
 	damage = base_damage + effect_handler.attack_dmg_modifier
 	attack_range = base_attack_range + effect_handler.attack_rng_modifier
 	attack_spd = base_attack_spd + effect_handler.attack_spd_modifier
 
 	max_hp = base_max_hp + effect_handler.max_hp_modifier
+	max_mp = base_max_mp + effect_handler.max_mp_modifier
 	
 	return
 
@@ -926,60 +988,73 @@ func handle_projectile_hit(hero:Hero, attacker:Hero):
 	#Placeholder for hero passive ability on projectile hit
 	pass
 
-func _on_animated_sprite_2d_animation_finished() -> void:
-	if status == STATUS.DIE:
+# func _on_animated_sprite_2d_animation_finished() -> void:
+# 	if status == STATUS.DIE:
 		
-		is_died.emit(self)
-		arena.unit_grid.remove_unit(position_id)
+# 		is_died.emit(self)
+# 		arena.unit_grid.remove_unit(position_id)
 
-		await get_tree().process_frame
+# 		await get_tree().process_frame
 
-		queue_free()
+# 		queue_free()
 
-	elif status == STATUS.HIT:
-		is_hit.emit(self)
-		status = STATUS.IDLE
+# 	elif status == STATUS.HIT:
+# 		is_hit.emit(self)
+# 		status = STATUS.IDLE
 
-	elif status == STATUS.SPELL:
-		action_timer.start()
+# 	elif status == STATUS.SPELL:
+# 		action_timer.start()
 		
-	elif status == STATUS.RANGED_ATTACK:
-		if remain_attack_count <= 0:
-			#if ResourceLoader.exists("res://asset/animation/%s/%s%s_projectile.tres" % [faction, faction, hero_name]):
-				#pass
-			#else:
-			action_timer.start()
-			ranged_attack_finished.emit(self)
-		elif hero_target and hero_target.status != STATUS.DIE:
-			_handle_attack()
-		else:
-			hero_target = _find_new_target(TARGET_CHOICE.CLOSE)
-			if hero_target:
-				hero_target.is_died.connect(handle_target_death)
-			_handle_attack()
+# 	elif status == STATUS.RANGED_ATTACK:
+# 		if remain_attack_count <= 0:
+# 			#if ResourceLoader.exists("res://asset/animation/%s/%s%s_projectile.tres" % [faction, faction, hero_name]):
+# 				#pass
+# 			#else:
+# 			action_timer.start()
+# 			ranged_attack_finished.emit(self)
+# 		elif hero_target and hero_target.status != STATUS.DIE:
+# 			_handle_attack()
+# 		else:
+# 			hero_target = _find_new_target(TARGET_CHOICE.CLOSE)
+# 			if hero_target:
+# 				hero_target.is_died.connect(handle_target_death)
+# 			_handle_attack()
 
-	elif status == STATUS.MELEE_ATTACK:
-		if remain_attack_count <= 0:
-			melee_attack_finished.emit(self)
-			action_timer.start()
-		elif hero_target and hero_target.status != STATUS.DIE:
-			_handle_attack()
-		else:
-			hero_target = _find_new_target(TARGET_CHOICE.CLOSE)
-			if hero_target:
-				hero_target.is_died.connect(handle_target_death)
-			_handle_attack()
+# 	elif status == STATUS.MELEE_ATTACK:
+# 		if remain_attack_count <= 0:
+# 			melee_attack_finished.emit(self)
+# 			action_timer.start()
+# 		elif hero_target and hero_target.status != STATUS.DIE:
+# 			_handle_attack()
+# 		else:
+# 			hero_target = _find_new_target(TARGET_CHOICE.CLOSE)
+# 			if hero_target:
+# 				hero_target.is_died.connect(handle_target_death)
+# 			_handle_attack()
 
-func _on_melee_attack_animation_animation_finished(anim_name: StringName) -> void:
-	_on_animated_sprite_2d_animation_finished()
+# func _on_melee_attack_animation_animation_finished(anim_name: StringName) -> void:
+# 	_on_animated_sprite_2d_animation_finished()
 
 
-func _on_ranged_attack_animation_animation_finished(anim_name: StringName) -> void:
-	_on_animated_sprite_2d_animation_finished()
+# func _on_ranged_attack_animation_animation_finished(anim_name: StringName) -> void:
+# 	_on_animated_sprite_2d_animation_finished()
 
 func handle_target_death():
-	hero_target = null
-	attack_target_line.visible = false
+	if status == STATUS.RANGED_ATTACK or status == STATUS.MELEE_ATTACK:
+		hero_target = null
+		attack_target_line.visible = false
+		hero_target = _find_new_target(TARGET_CHOICE.CLOSE)
+	else:
+		hero_target = null
+		attack_target_line.visible = false
+		hero_target = _find_new_target(hero_target_choice)
+
+	if hero_target:
+		hero_target.is_died.connect(handle_target_death)
+		attack_target_line.visible = true
+
+func handle_spell_target_death():
+	hero_spell_target = null
 	spell_target_line.visible = false
 
 func handle_special_effect(target: Hero, attacker: Hero):
@@ -987,7 +1062,7 @@ func handle_special_effect(target: Hero, attacker: Hero):
 	pass
 	
 func human_mage_taunt(spell_duration: int) -> bool:
-	var hero_affected := false
+	var hero_affected := true
 
 	var effect_instance = ChessEffect.new()
 	effect_instance.taunt_duration = spell_duration
@@ -1012,7 +1087,7 @@ func human_mage_taunt(spell_duration: int) -> bool:
 	return hero_affected
 
 func human_archmage_heal(spell_duration: int, heal_value: int) -> bool:
-	var hero_affected := false
+	var hero_affected := true
 	var arena_unitgrid = arena.unit_grid.units
 	# var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.human_archmage_heal_template)
 	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.default_template)
@@ -1037,7 +1112,7 @@ func human_archmage_heal(spell_duration: int, heal_value: int) -> bool:
 	return hero_affected
 
 func elf_queen_stun(spell_duration: int, damage_value: int) -> bool:
-	var hero_affected := false
+	var hero_affected := true
 	var arena_unitgrid = arena.unit_grid.units
 	# var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.human_archmage_heal_template)
 	var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.default_template)
@@ -1094,13 +1169,41 @@ func undead_necromancer_summon(summoned_hero_name: String, summon_unit_count: in
 					if summoned_character.animated_sprite_2d.sprite_frames.has_animation("rise") :
 						summoned_character.animated_sprite_2d.play("rise")
 
-					if team == 1:
-						game_root_scene.team_dict[game_root_scene.Team.TEAM1_FULL].append(summoned_character)
-						game_root_scene.team_dict[game_root_scene.Team.TEAM1].append(summoned_character)
-					else:
-						game_root_scene.team_dict[game_root_scene.Team.TEAM2_FULL].append(summoned_character)
-						game_root_scene.team_dict[game_root_scene.Team.TEAM2].append(summoned_character)
-
 					summoned_hero_count += 1
 					hero_affected = true
 	return hero_affected
+
+func dwarf_demolitionist_placebomb(spell_range: int) -> bool:
+	# var hero_affected := false
+	var attempt_summon_count := 10
+	if spell_target.status != STATUS.DIE and spell_target.team != team and spell_target.global_position.distance_to(global_position) <= spell_range:
+		while attempt_summon_count >= 0:
+			var rand_x = randi_range(spell_target.position_id.x - 3, spell_target.position_id.x + 3)
+			var rand_y = randi_range(spell_target.position_id.y - 3, spell_target.position_id.y + 3)
+			if arena.unit_grid.units.has(Vector2(rand_x, rand_y)):
+				attempt_summon_count -= 1
+				if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
+					var game_root_scene = arena.get_parent().get_parent()
+					var summoned_character = game_root_scene.summon_hero("dwarf", "Bomb", team, arena, Vector2i(rand_x, rand_y))	
+					summoned_character.obstacle_counter = 2
+					summoned_character.obstacle_level = 1
+
+					return true				
+	return false
+
+func handle_obstacle_action() -> void:
+	if obstacle_counter <= 0:
+		if hero_name == "Bomb" and faction == "dwarf":
+			dwarf_bomb_boom()
+	else:
+		obstacle_counter -= 1
+
+func dwarf_bomb_boom():
+	for x in range(-obstacle_level, obstacle_level):
+		for y in range(-obstacle_level, obstacle_level):
+			if not arena.unit_grid.units.has(Vector2(x, y)):
+				continue
+
+			target_area_hero = arena.unit_grid.units(Vector2(x, y))
+			if is_instance_valid(target_area_hero) and target_area_hero is Hero and target_area_hero.status != STATUS.DIE:
+				_apply_damage(target_area_hero, 50 * obstacle_level)
