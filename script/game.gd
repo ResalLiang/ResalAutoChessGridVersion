@@ -239,15 +239,23 @@ func _ready():
 	shop_handler.shop_refresh()
 	current_round = 0
 	
-	debug_handler.write_log("LOG", "Game Start.")
 	
 	start_new_game()
 
 
 func start_new_game() -> void:
+
+
+	debug_handler.write_log("LOG", "Game Start.")
+	
 	clear_play_area(arena)
 	clear_play_area(shop)
 	clear_play_area(bench)
+
+	team_dict[Team.TEAM1] = []
+	team_dict[Team.TEAM2] = []
+	team_dict[Team.TEAM1_FULL] = []
+	team_dict[Team.TEAM2_FULL] = []
 
 	hero_serial = 1000
 
@@ -286,6 +294,8 @@ func new_round_prepare_end():
 
 	generate_enemy(shop_handler.get_current_difficulty())
 
+	faction_bonus_manager.bonus_refresh()
+
 	connect_hero_signals()
 
 	hero_appearance(arena)
@@ -318,7 +328,6 @@ func start_new_turn():
 		
 	# current_team = [Team.TEAM1, Team.TEAM2][randi() % 2]
 
-	faction_bonus_manager.bonus_refresh()
 	
 	current_team = Team.TEAM1
 
