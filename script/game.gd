@@ -128,6 +128,16 @@ const RARITY_COUNTS = {
 	"Legendary": 10
 }
 
+var player_save_data = {
+	"coins": 0,
+	"kill_enemy_count": 0,
+	"kill_enemy_array": [],
+	"experience": 1250
+}
+var player_name := "player1"
+
+var save_datas : Dictionary
+
 signal game_finished
 signal hero_appearance_finished
 signal game_turn_started
@@ -136,6 +146,9 @@ signal game_turn_finished
 var cursor_texture = preload("res://asset/cursor/cursors/cursor1.png")
 
 func _ready():
+	save_datas = load_game_binary()
+	player_save_data = save_datas[player_name]
+
 	var tile_size = Vector2(16, 16)
 	
 	var file = FileAccess.open("res://script/hero_stats.json", FileAccess.READ)
@@ -212,28 +225,14 @@ func _ready():
 	shop_handler.shop_upgraded.connect(
 		func(value):
 			current_shop_level.text = "Current Shop Level is :" + str(value)
+			update_population()
 	)
 	hero_appearance_finished.connect(
 		func(play_area):
 			if play_area == arena:
 				start_new_turn()
 	)
-	hero_mover.hero_moved.connect(
-		func(hero: Hero, play_area: PlayArea, tile: Vector2i):
-			var current_population := 0
-			for node in get_tree().get_nodes_in_group("hero_group"):
-				if node is Hero and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
-					current_population += 1
-			var max_population = shop_handler.shop_level + 2
-			population_label.text = str(current_population)	+ "/" + str(max_population)
-			if current_population > max_population:
-				population_label.color = Color.RED
-			elif current_population == max_population:
-				population_label.color = Color.YELLOW
-			else:
-				population_label.color = Color.GREEN
-			faction_bonus_manager.bonus_refresh()
-	)
+	hero_mover.hero_moved.connect(update_population)
 
 	center_point = Vector2(tile_size.x * grid_count / 2, tile_size.y * grid_count / 2)
 
@@ -284,7 +283,8 @@ func new_round_prepare_end():
 		if node is Hero and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
 			team_dict[Team.TEAM1_FULL].append(node)
 	save_arena_team()
-	generate_enemy(current_round * 300)
+
+	generate_enemy(shop_handler.get_current_difficulty())
 
 	connect_hero_signals()
 
@@ -317,6 +317,8 @@ func start_new_turn():
 		return
 		
 	# current_team = [Team.TEAM1, Team.TEAM2][randi() % 2]
+
+	faction_bonus_manager.bonus_refresh()
 	
 	current_team = Team.TEAM1
 
@@ -360,6 +362,8 @@ func _on_character_action_finished(hero: Hero):
 		start_new_turn()
 
 func _on_round_finished(msg):
+	save_game_binary()
+
 	if msg == "team1":
 		won_rounds += 1
 		print("Round %d over, you won!" % current_round)
@@ -566,23 +570,11 @@ func connect_hero_signals() -> void:
 
 	for hero_index in team_dict[Team.TEAM1_FULL]:
 		hero_index.damage_taken.connect(battle_meter.get_damage_data)
-		hero_index.is_died.connect(
-			func(hero):
-				if team_dict[Team.TEAM1].has(hero):
-					team_dict[Team.TEAM1].erase(hero)
-				if team_dict[Team.TEAM1_FULL].has(hero):
-					team_dict[Team.TEAM1_FULL].erase(hero)
-		)
+		hero_index.is_died.connect(hero_death_handle)
 
 	for hero_index in team_dict[Team.TEAM2_FULL]:
 		hero_index.damage_taken.connect(battle_meter.get_damage_data)
-		hero_index.is_died.connect(
-			func(hero):
-				if team_dict[Team.TEAM2].has(hero):
-					team_dict[Team.TEAM2].erase(hero)
-				if team_dict[Team.TEAM2_FULL].has(hero):
-					team_dict[Team.TEAM2_FULL].erase(hero)
-		)
+		hero_index.is_died.connect(hero_death_handle)
 
 func hero_appearance(play_area: PlayArea):
 
@@ -647,5 +639,69 @@ func summon_hero(summon_hero_faction: String, summon_hero_name: String, team: in
 	hero_mover.setup_hero(summoned_character)
 	hero_mover._move_hero(summoned_character, summon_arena, summon_position)
 	hero_information.setup_hero(summoned_character)
+
+	summoned_character.damage_taken.connect(battle_meter.get_damage_data)
+	summoned_character.is_died.connect(hero_death_handle)
+
+	if team == 1:
+		team_dict[game_root_scene.Team.TEAM1_FULL].append(summoned_character)
+		team_dict[game_root_scene.Team.TEAM1].append(summoned_character)
+	else:
+		team_dict[game_root_scene.Team.TEAM2_FULL].append(summoned_character)
+		team_dict[game_root_scene.Team.TEAM2].append(summoned_character)
 		
 	return summoned_character
+
+func update_population(hero: Hero, play_area: PlayArea, tile: Vector2i):
+	var current_population := 0
+	for node in get_tree().get_nodes_in_group("hero_group"):
+		if node is Hero and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
+			current_population += 1
+	var max_population = shop_handler.get_max_population()
+	population_label.text = str(current_population)	+ "/" + str(max_population)
+	if current_population > max_population:
+		population_label.color = Color.RED
+	elif current_population == max_population:
+		population_label.color = Color.YELLOW
+	else:
+		population_label.color = Color.GREEN
+	faction_bonus_manager.bonus_refresh()
+
+# Load save file
+func load_game_binary():
+	if FileAccess.file_exists("user://savegame.dat"):
+		var file = FileAccess.open("user://savegame.dat", FileAccess.READ)
+		var save_datas = file.get_var(true)
+		file.close()
+		return save_datas
+	return null
+
+
+func save_game_binary():
+	save_datas[player_name] = player_save_data.duplicate()
+	var file = FileAccess.open("user://savegame.dat", FileAccess.WRITE)
+	file.store_var(save_datas, true)  # true enables full length encoding
+	file.close()
+
+func hero_death_handle(hero: Hero):
+
+	if team_dict[Team.TEAM1].has(hero):
+		team_dict[Team.TEAM1].erase(hero)
+
+	if team_dict[Team.TEAM1_FULL].has(hero):
+		team_dict[Team.TEAM1_FULL].erase(hero)
+
+	if team_dict[Team.TEAM2].has(hero):
+		team_dict[Team.TEAM2].erase(hero)
+
+	if team_dict[Team.TEAM2_FULL].has(hero):
+		team_dict[Team.TEAM2_FULL].erase(hero)
+
+	if team != 1:
+		player_save_data["kill_enemy_count"] += 1
+		player_save_data["kill_enemy_array"].append([hero.faction, hero.hero_name])
+
+	hero.visible = false
+	arena.unit_grid.remove_unit(hero.position_id)
+	await get_tree.process_frame
+	hero.queue_free
