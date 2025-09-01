@@ -12,8 +12,8 @@ func _ready() -> void:
 		for x in size.x:
 			units[Vector2i(x,y)] = null
 	
-func add_unit(tile: Vector2i, hero: Hero) -> void:
-	units[tile] =  hero
+func add_unit(tile: Vector2i, obstacle: Obstacle) -> void:
+	units[tile] = obstacle
 	unit_grid_changed.emit()
 
 func remove_unit(tile: Vector2i) -> void:
@@ -37,9 +37,17 @@ func get_first_empty_tile() -> Vector2i:
 			return tile
 	return Vector2i(-1, -1)
 
-func get_all_units() -> Array[Hero]:
-	var unit_arry: Array[Hero] = []
+func get_all_units() -> Array[Obstacle]:
+	var unit_arry: Array[Obstacle] = []
 	for hro in units.values():
 		if hro != null:
 			unit_arry.append(hro)
 	return unit_arry
+
+func has_valid_chess(tile: Vector2i) -> bool:
+	# if tile.x >= 0 and tile.x < size.x and tile.y >= 0 and tile.y < size.y:
+	if units in units.keys():
+		var unit_result = units[tile]
+		if is_instance_valid(unit_result) and unit_result is Obstacle and unit_result.status != unit_result.STATUS.DIE:
+			return true
+	return false
