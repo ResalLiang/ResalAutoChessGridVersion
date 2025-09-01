@@ -14,12 +14,12 @@ var traveled_distance: float = 0.0
 var source_team: int = -1  # 发射队伍
 var initial_flip: bool = false  # 初始翻转状态
 var is_active := false
-var attacker: Hero = null:
+var attacker: Obstacle = null:
 	set(value):
 		attacker = value
 		# Load animation resource in editor mode
-		if ResourceLoader.exists("res://asset/animation/" + attacker.faction + "/" + attacker.faction + attacker.hero_name + "_projectile.tres"):
-			animated_sprite_2d.sprite_frames = ResourceLoader.load("res://asset/animation/" + attacker.faction + "/" + attacker.faction + attacker.hero_name + "_projectile.tres")
+		if ResourceLoader.exists("res://asset/animation/" + attacker.faction + "/" + attacker.faction + attacker.chess_name + "_projectile.tres"):
+			animated_sprite_2d.sprite_frames = ResourceLoader.load("res://asset/animation/" + attacker.faction + "/" + attacker.faction + attacker.chess_name + "_projectile.tres")
 		elif ResourceLoader.exists("res://asset/animation/" + attacker.faction + "/" +  "default_projectile.tres"):
 			animated_sprite_2d.sprite_frames = ResourceLoader.load("res://asset/animation/" + attacker.faction + "/" +  "default_projectile.tres")
 		else:
@@ -39,13 +39,13 @@ func _ready():
 		
 	animated_sprite_2d.play("default")
 
-func setup(pos: Vector2, dir: Vector2, team: int, is_flipped: bool, hero_attack: Hero):
+func setup(pos: Vector2, dir: Vector2, team: int, is_flipped: bool, chess_attack: Obstacle):
 	global_position = pos
 	direction = dir.normalized()
 	source_team = team
 	initial_flip = is_flipped
 	rotation = dir.angle()  # 根据方向旋转
-	attacker = hero_attack
+	attacker = chess_attack
 
 func _physics_process(delta):
 	if is_active:
@@ -62,12 +62,12 @@ func _physics_process(delta):
 			queue_free()
 
 func _on_area_entered(area):
-	if area.get_parent().is_in_group("hero_group"):
-		var hero = area.get_parent()
-		projectile_hit.emit(hero, attacker)
+	if area.get_parent().is_in_group("obstacle_group"):
+		var obstacle = area.get_parent()
+		projectile_hit.emit(obstacle, attacker)
 		# 只伤害敌方队伍
-		if hero.team != source_team and attacker != null:
-			hero.take_damage(damage, attacker)
+		if obstacle.team != source_team and attacker != null:
+			obstacle.take_damage(damage, attacker)
 			penetration -= 1  # 减少穿透计数
 			
 			# 穿透次数耗尽时消失
