@@ -1,8 +1,9 @@
 extends Node2D
 
 # 预加载角色场景
-const hero_scene = preload("res://scene/hero.tscn")
-const hero_class = preload("res://script/hero.gd")
+const chess_scene = preload("res://scene/chess.tscn")
+const obstacle_scene = preload("res://scene/obstacle.tscn")
+const chess_class = preload("res://script/chess.gd")
 
 @onready var arena: PlayArea = %arena
 @onready var bench: PlayArea = %bench
@@ -11,7 +12,7 @@ const hero_class = preload("res://script/hero.gd")
 @onready var bench_unit_grid: UnitGrid = $BenchUnitGrid
 
 @onready var debug_handler: DebugHandler = %debug_handler
-@onready var hero_mover: HeroMover = %hero_mover
+@onready var chess_mover: ChessMover = %chess_mover
 @onready var shop_handler: ShopHandler = %shop_handler
 @onready var faction_bonus_manager: FactionBonusManager = %faction_bonus_manager
 
@@ -25,20 +26,20 @@ const hero_class = preload("res://script/hero.gd")
 @onready var shop_freeze_button: Button = $shop_freeze_button
 @onready var shop_upgrade_button: Button = $shop_upgrade_button
 
-@onready var hero_order_hp_high: Button = $hero_order_control/hero_order_hp_high
-@onready var hero_order_hp_low: Button = $hero_order_control/hero_order_hp_low
-@onready var hero_order_near_center: Button = $hero_order_control/hero_order_near_center
-@onready var hero_order_far_center: Button = $hero_order_control/hero_order_far_center
+@onready var chess_order_hp_high: Button = $chess_order_control/chess_order_hp_high
+@onready var chess_order_hp_low: Button = $chess_order_control/chess_order_hp_low
+@onready var chess_order_near_center: Button = $chess_order_control/chess_order_near_center
+@onready var chess_order_far_center: Button = $chess_order_control/chess_order_far_center
 
 @onready var battle_meter: BattleMeter = $battle_meter
-@onready var hero_information: HeroInformation = $hero_information
+@onready var chess_information: ChessInformation = $chess_information
 
-var hero_data: Dictionary  # Stores hero stats loaded from JSON
-var hero_data_array: Dictionary
+var chess_data: Dictionary  # Stores chess stats loaded from JSON
+var chess_data_array: Dictionary
 enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
-enum HeroActiveOrder { HIGH_HP, LOW_HP, NEAR_CENTER, FAR_CENTER }
+enum ChessActiveOrder { HIGH_HP, LOW_HP, NEAR_CENTER, FAR_CENTER }
 var current_team: Team
-var active_hero
+var active_chess
 var team_chars
 var team_dict: Dictionary = {
 	Team.TEAM1: [],
@@ -47,9 +48,9 @@ var team_dict: Dictionary = {
 	Team.TEAM2_FULL: []
 }
 
-var hero_serial := 1000
+var chess_serial := 1000
 
-var current_hero_active_order := HeroActiveOrder.HIGH_HP
+var current_chess_active_order := ChessActiveOrder.HIGH_HP
 var center_point: Vector2
 var board_width:= 216
 var board_height:= 216
@@ -58,7 +59,7 @@ var grid_size := 16
 var grid_count := 16
 var astar_solid_map
 
-var rand_hero_ratio := 0.8
+var rand_chess_ratio := 0.8
 
 var is_shop_frozen := false
 var remain_coins := 999
@@ -143,7 +144,7 @@ var current_population := 0
 var max_population := 3
 
 signal game_finished
-signal hero_appearance_finished
+signal chess_appearance_finished
 signal game_turn_started
 signal game_turn_finished
 
@@ -156,41 +157,41 @@ func _ready():
 
 	var tile_size = Vector2(16, 16)
 	
-	var file = FileAccess.open("res://script/hero_stats.json", FileAccess.READ)
+	var file = FileAccess.open("res://script/chess_stats.json", FileAccess.READ)
 	if not file:
-		push_error("Failed to open hero_stats.json")
+		push_error("Failed to open chess_stats.json")
 		return
 	
 	var json_text = file.get_as_text()
-	hero_data = JSON.parse_string(json_text)
+	chess_data = JSON.parse_string(json_text)
 	
-	if not hero_data:
-		push_error("JSON parsing failed for hero_stats.json")
+	if not chess_data:
+		push_error("JSON parsing failed for chess_stats.json")
 		return
 	
 	game_finished.connect(_on_round_finished)
 	game_turn_started.connect(
 		func():
 			game_start_button.disabled = true
-			hero_order_hp_high.disabled = true
-			hero_order_hp_low.disabled = true
-			hero_order_near_center.disabled = true
-			hero_order_far_center.disabled = true
+			chess_order_hp_high.disabled = true
+			chess_order_hp_low.disabled = true
+			chess_order_near_center.disabled = true
+			chess_order_far_center.disabled = true
 			is_game_turn_start = true
-			for node in get_tree().get_nodes_in_group("hero_group"):
-				if node is Hero:
+			for node in get_tree().get_nodes_in_group("obstacle_group"):
+				if node is Obstacle:
 					node.dragging_enabled =  false
 	)
 	game_turn_finished.connect(
 		func():
 			game_start_button.disabled = false
-			hero_order_hp_high.disabled = false
-			hero_order_hp_low.disabled = false
-			hero_order_near_center.disabled = false
-			hero_order_far_center.disabled = false
+			chess_order_hp_high.disabled = false
+			chess_order_hp_low.disabled = false
+			chess_order_near_center.disabled = false
+			chess_order_far_center.disabled = false
 			is_game_turn_start = false
-			for node in get_tree().get_nodes_in_group("hero_group"):
-				if node is Hero:
+			for node in get_tree().get_nodes_in_group("obstacle_group"):
+				if node is Obstacle:
 					node.dragging_enabled =  true
 	)
 	game_start_button.pressed.connect(new_round_prepare_end)
@@ -198,21 +199,21 @@ func _ready():
 	shop_refresh_button.pressed.connect(shop_handler.shop_manual_refresh)
 	shop_freeze_button.pressed.connect(shop_handler.shop_freeze)
 	shop_upgrade_button.pressed.connect(shop_handler.shop_upgrade)
-	hero_order_hp_high.pressed.connect(
+	chess_order_hp_high.pressed.connect(
 		func():
-			current_hero_active_order = HeroActiveOrder.HIGH_HP
+			current_chess_active_order = ChessActiveOrder.HIGH_HP
 	)
-	hero_order_hp_low.pressed.connect(
+	chess_order_hp_low.pressed.connect(
 		func():
-			current_hero_active_order = HeroActiveOrder.LOW_HP
+			current_chess_active_order = ChessActiveOrder.LOW_HP
 	)
-	hero_order_near_center.pressed.connect(
+	chess_order_near_center.pressed.connect(
 		func():
-			current_hero_active_order = HeroActiveOrder.NEAR_CENTER
+			current_chess_active_order = ChessActiveOrder.NEAR_CENTER
 	)
-	hero_order_far_center.pressed.connect(
+	chess_order_far_center.pressed.connect(
 		func():
-			current_hero_active_order = HeroActiveOrder.FAR_CENTER
+			current_chess_active_order = ChessActiveOrder.FAR_CENTER
 	)
 
 	shop_handler.coins_increased.connect(
@@ -232,13 +233,13 @@ func _ready():
 			current_shop_level.text = "Current Shop Level is :" + str(value)
 			update_population()
 	)
-	hero_appearance_finished.connect(
+	chess_appearance_finished.connect(
 		func(play_area):
 			if play_area == arena:
 				start_new_turn()
 	)
-	hero_mover.hero_moved.connect(
-		func(hero: Hero, play_area: PlayArea, tile: Vector2i):
+	chess_mover.chess_moved.connect(
+		func(chess: Obstacle, play_area: PlayArea, tile: Vector2i):
 			update_population()
 	)
 
@@ -265,7 +266,7 @@ func start_new_game() -> void:
 	team_dict[Team.TEAM1_FULL] = []
 	team_dict[Team.TEAM2_FULL] = []
 
-	hero_serial = 1000
+	chess_serial = 1000
 
 	battle_meter.battle_data = {}
 
@@ -287,7 +288,7 @@ func new_round_prepare_start():
 	clear_play_area(arena)
 	if saved_arena_team.size() != 0:
 		load_arena_team()
-	hero_mover.setup_before_turn_start()
+	chess_mover.setup_before_turn_start()
 	current_round += 1
 	shop_handler.turn_start_income(current_round)
 
@@ -296,8 +297,8 @@ func new_round_prepare_end():
 	battle_meter.battle_data = {}
 	#if saved_arena_team.size() == 0:
 	team_dict[Team.TEAM1_FULL] = []
-	for node in get_tree().get_nodes_in_group("hero_group"):
-		if node is Hero and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
+	for node in get_tree().get_nodes_in_group("chess_group"):
+		if node is Obstacle and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
 			team_dict[Team.TEAM1_FULL].append(node)
 	save_arena_team()
 
@@ -305,9 +306,9 @@ func new_round_prepare_end():
 
 	faction_bonus_manager.bonus_refresh()
 
-	connect_hero_signals()
+	connect_chess_signals()
 
-	hero_appearance(arena)
+	chess_appearance(arena)
 
 func start_new_turn():
 	# if start new turn, it will be fully auto.
@@ -316,15 +317,15 @@ func start_new_turn():
 	var team2_alive_cnt = 0
 	team_dict[Team.TEAM1] = []
 	team_dict[Team.TEAM2] = []
-	for hero_index in team_dict[Team.TEAM1_FULL]:
-		if is_instance_valid(hero_index):
-			if hero_index.status != hero_class.STATUS.DIE and hero_index.current_play_area == hero_index.play_areas.playarea_arena:
-				team_dict[Team.TEAM1].append(hero_index)
+	for chess_index in team_dict[Team.TEAM1_FULL]:
+		if is_instance_valid(chess_index):
+			if chess_index.status != chess_class.STATUS.DIE and chess_index.current_play_area == chess_index.play_areas.playarea_arena:
+				team_dict[Team.TEAM1].append(chess_index)
 				team1_alive_cnt += 1
-	for hero_index in team_dict[Team.TEAM2_FULL]:
-		if is_instance_valid(hero_index):
-			if hero_index.status != hero_class.STATUS.DIE and hero_index.current_play_area == hero_index.play_areas.playarea_arena:
-				team_dict[Team.TEAM2].append(hero_index)
+	for chess_index in team_dict[Team.TEAM2_FULL]:
+		if is_instance_valid(chess_index):
+			if chess_index.status != chess_class.STATUS.DIE and chess_index.current_play_area == chess_index.play_areas.playarea_arena:
+				team_dict[Team.TEAM2].append(chess_index)
 				team2_alive_cnt += 1
 			
 	if team1_alive_cnt == 0:
@@ -339,42 +340,42 @@ func start_new_turn():
 	
 	current_team = Team.TEAM1
 
-	start_hero_turn(current_team)
+	start_chess_turn(current_team)
 
-func start_hero_turn(team: Team):
-	team_chars = sort_characters(team, current_hero_active_order)
-	var current_hero = team_chars.pop_front()
-	if hero_mover._get_play_area_for_position(current_hero.global_position) == 0:
-		process_character_turn(current_hero)
+func start_chess_turn(team: Team):
+	team_chars = sort_characters(team, current_chess_active_order)
+	var current_chess = team_chars.pop_front()
+	if chess_mover._get_play_area_for_position(current_chess.global_position) == 0:
+		process_character_turn(current_chess)
 	else:
-		active_hero = current_hero
-		active_hero.is_active = true
-		#active_hero.start_turn()
+		active_chess = current_chess
+		active_chess.is_active = true
+		#active_chess.start_turn()
 		# 连接信号等待行动完成
-		active_hero.action_finished.connect(_on_character_action_finished)
-		_on_character_action_finished(active_hero)
+		active_chess.action_finished.connect(_on_character_action_finished)
+		_on_character_action_finished(active_chess)
 
-func process_character_turn(hero: Hero):
-	active_hero = hero
-	active_hero.is_active = true
-	active_hero.action_finished.connect(_on_character_action_finished)
-	active_hero.start_turn()
+func process_character_turn(chess: Obstacle):
+	active_chess = chess
+	active_chess.is_active = true
+	active_chess.action_finished.connect(_on_character_action_finished)
+	active_chess.start_turn()
 	# 连接信号等待行动完成
 
-func _on_character_action_finished(hero: Hero):
-	active_hero.is_active = false
-	active_hero.action_finished.disconnect(_on_character_action_finished)
+func _on_character_action_finished(chess: Obstacle):
+	active_chess.is_active = false
+	active_chess.action_finished.disconnect(_on_character_action_finished)
 
 	if current_team == Team.TEAM1 and team_dict[Team.TEAM2].size() != 0:
 		current_team = Team.TEAM2
-		start_hero_turn(current_team)
+		start_chess_turn(current_team)
 		return
 	elif current_team == Team.TEAM2 and team_dict[Team.TEAM1].size() != 0:
 		current_team = Team.TEAM1
-		start_hero_turn(current_team)
+		start_chess_turn(current_team)
 		return
 	elif team_dict[Team.TEAM2].size() != 0 or team_dict[Team.TEAM1].size() != 0:
-		start_hero_turn(current_team)
+		start_chess_turn(current_team)
 	else:
 		start_new_turn()
 
@@ -399,25 +400,25 @@ func _on_round_finished(msg):
 
 	new_round_prepare_start()
 
-func sort_characters(team: Team, mode: HeroActiveOrder) -> Array:
-	var heroes_team = team_dict[team]
+func sort_characters(team: Team, mode: ChessActiveOrder) -> Array:
+	var chesses_team = team_dict[team]
 	match mode:
-		HeroActiveOrder.HIGH_HP:
-			heroes_team.sort_custom(func(a, b): return a.max_hp > b.max_hp)
-		HeroActiveOrder.LOW_HP:
-			heroes_team.sort_custom(func(a, b): return a.max_hp < b.max_hp)
-		HeroActiveOrder.NEAR_CENTER:
-			heroes_team.sort_custom(func(a, b): 
+		ChessActiveOrder.HIGH_HP:
+			chesses_team.sort_custom(func(a, b): return a.max_hp > b.max_hp)
+		ChessActiveOrder.LOW_HP:
+			chesses_team.sort_custom(func(a, b): return a.max_hp < b.max_hp)
+		ChessActiveOrder.NEAR_CENTER:
+			chesses_team.sort_custom(func(a, b): 
 				return a.position.distance_to(center_point) < b.position.distance_to(center_point))
-		HeroActiveOrder.FAR_CENTER:
-			heroes_team.sort_custom(func(a, b): 
+		ChessActiveOrder.FAR_CENTER:
+			chesses_team.sort_custom(func(a, b): 
 				return a.position.distance_to(center_point) > b.position.distance_to(center_point))
-	return heroes_team
+	return chesses_team
 	
 func generate_enemy(difficulty : int) -> void:
 	team_dict[Team.TEAM2_FULL] = []
-	for node in get_tree().get_nodes_in_group("hero_group"):
-		if node is Hero and node.current_play_area == node.play_areas.playarea_arena and node.team != 1:
+	for node in get_tree().get_nodes_in_group("obstacle_group"):
+		if node is Obstacle and node.current_play_area == node.play_areas.playarea_arena and node.team != 1:
 			node.queue_free()
 	var current_difficulty := 0
 	var current_enemy_cnt := 0
@@ -426,39 +427,39 @@ func generate_enemy(difficulty : int) -> void:
 		var rand_x = randi_range(arena.unit_grid.size.x / 2, arena.unit_grid.size.x - 1)
 		var rand_y = randi_range(0, arena.unit_grid.size.y - 1)
 		if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
-			var character = hero_scene.instantiate()
+			var character = chess_scene.instantiate()
 			character.team = 2
 			character.arena = arena
 			character.bench = bench
 			character.shop = shop
-			var rand_character_result = generate_random_hero()
+			var rand_character_result = generate_random_chess()
 			character.faction = rand_character_result[0]
-			character.hero_name = rand_character_result[1]
-			character.hero_serial = get_next_serial()
-			# character.faction = hero_data.keys()[randi_range(0, hero_data.keys().size() - 2)] # remove villager
-			# character.hero_name = get_random_character(character.faction)
+			character.chess_name = rand_character_result[1]
+			character.chess_serial = get_next_serial()
+			# character.faction = chess_data.keys()[randi_range(0, chess_data.keys().size() - 2)] # remove villager
+			# character.chess_name = get_random_character(character.faction)
 			add_child(character)
-			debug_handler.connect_to_hero_signal(character)
-			hero_mover.setup_hero(character)
-			hero_mover._move_hero(character, arena, Vector2(rand_x, rand_y))
-			hero_information.setup_hero(character)
+			debug_handler.connect_to_chess_signal(character)
+			chess_mover.setup_chess(character)
+			chess_mover._move_chess(character, arena, Vector2(rand_x, rand_y))
+			chess_information.setup_chess(character)
 			current_difficulty += character.max_hp
 			current_enemy_cnt += 1
 			team_dict[Team.TEAM2_FULL].append(character)
 			
 	
 func get_random_character(faction_name: String) -> String:
-	if not hero_data.has(faction_name):
+	if not chess_data.has(faction_name):
 		return ""
 	
 	var candidates = []
 	var weights = []
 	
 	# Prepare candidate list and weight list
-	for hero_name_index in hero_data[faction_name]:
-		var rarity = hero_data[faction_name][hero_name_index]["rarity"]
-		if RARITY_WEIGHTS[min(6, shop_handler.shop_level)].has(rarity) and hero_data[faction_name][hero_name_index]["spd"] != 0:
-			candidates.append(hero_name_index)
+	for chess_name_index in chess_data[faction_name]:
+		var rarity = chess_data[faction_name][chess_name_index]["rarity"]
+		if RARITY_WEIGHTS[min(6, shop_handler.shop_level)].has(rarity) and chess_data[faction_name][chess_name_index]["spd"] != 0:
+			candidates.append(chess_name_index)
 			weights.append(RARITY_WEIGHTS[min(6, shop_handler.shop_level)][rarity])
 	
 	if candidates.size() == 0:
@@ -481,7 +482,7 @@ func get_random_character(faction_name: String) -> String:
 
 func clear_play_area(play_area_to_clear: PlayArea):
 	for node in play_area_to_clear.unit_grid.get_children():
-		if node is Hero:
+		if node is Obstacle:
 			node.queue_free()
 
 func load_arena_team():
@@ -489,29 +490,29 @@ func load_arena_team():
 	if saved_arena_team.size() != 0:
 		for tile_index in saved_arena_team.keys():
 			if saved_arena_team[tile_index]:
-				var character = hero_scene.instantiate()
+				var character = chess_scene.instantiate()
 				character.faction = saved_arena_team[tile_index][0]
-				character.hero_name = saved_arena_team[tile_index][1]
+				character.chess_name = saved_arena_team[tile_index][1]
 				character.team = 1
 				character.arena = arena
 				character.bench = bench
 				character.shop = shop
-				character.hero_serial = get_next_serial()
+				character.chess_serial = get_next_serial()
 				add_child(character)
-				debug_handler.connect_to_hero_signal(character)
-				hero_mover._move_hero(character, arena, tile_index) 
+				debug_handler.connect_to_chess_signal(character)
+				chess_mover._move_chess(character, arena, tile_index) 
 				team_dict[Team.TEAM1_FULL].append(character)
 		
 func save_arena_team():
 	saved_arena_team = {}
-	for hero_index in arena.unit_grid.units.keys():
-		if not is_instance_valid(arena.unit_grid.units[hero_index]):
-			arena.unit_grid.units[hero_index] = null
-		elif arena.unit_grid.units[hero_index] is Hero:
-			saved_arena_team[hero_index] = [arena.unit_grid.units[hero_index].faction, arena.unit_grid.units[hero_index].hero_name]
+	for chess_index in arena.unit_grid.units.keys():
+		if not is_instance_valid(arena.unit_grid.units[chess_index]):
+			arena.unit_grid.units[chess_index] = null
+		elif arena.unit_grid.units[chess_index] is Obstacle:
+			saved_arena_team[chess_index] = [arena.unit_grid.units[chess_index].faction, arena.unit_grid.units[chess_index].chess_name]
 
-# Generates random hero based on shop level and rarity weights
-func generate_random_hero():
+# Generates random chess based on shop level and rarity weights
+func generate_random_chess():
 	# --- Rarity Selection Phase ---
 	# Calculate total weight for current shop level
 	var total_rarity_weight := 0
@@ -530,81 +531,81 @@ func generate_random_hero():
 			selected_rarity = rarity_type
 			break
 
-	# --- Existing Heroes Tracking ---
-	# Count existing hero instances (faction+name pairs)
-	var existing_hero_counts := {}
-	for node in get_tree().get_nodes_in_group("hero_group"):
-		if node is Hero:
-			var composite_key = "%s_%s" % [node.faction, node.hero_name]
-			existing_hero_counts[composite_key] = existing_hero_counts.get(composite_key, 0) + 1
+	# --- Existing Chesses Tracking ---
+	# Count existing chess instances (faction+name pairs)
+	var existing_chess_counts := {}
+	for node in get_tree().get_nodes_in_group("chess_group"):
+		if node is Chess:
+			var composite_key = "%s_%s" % [node.faction, node.chess_name]
+			existing_chess_counts[composite_key] = existing_chess_counts.get(composite_key, 0) + 1
 
-	# --- Eligible Heroes Filtering ---
-	var candidate_heroes := []
+	# --- Eligible Chesses Filtering ---
+	var candidate_chesses := []
 	var total_weight_pool := 0
 	
-	# Pre-process all eligible heroes with calculated weights
-	for faction in hero_data:
+	# Pre-process all eligible chesses with calculated weights
+	for faction in chess_data:
 		# Skip special faction
 		if faction == "villager":
 			continue
 			
-		for hero_name in hero_data[faction]:
-			var hero_attributes = hero_data[faction][hero_name]
+		for chess_name in chess_data[faction]:
+			var chess_attributes = chess_data[faction][chess_name]
 			
 			# Validation checks
-			if hero_attributes["spd"] == 0 || hero_attributes["rarity"] != selected_rarity:
+			if chess_attributes["spd"] == 0 || chess_attributes["rarity"] != selected_rarity:
 				continue
 				
 			# Calculate dynamic weight with duplicate penalty
-			var hero_identifier = "%s_%s" % [faction, hero_name]
-			var base_weight = RARITY_WEIGHTS[min(6, shop_handler.shop_level)][hero_attributes["rarity"]]
-			var duplicate_penalty = existing_hero_counts.get(hero_identifier, 0)
+			var chess_identifier = "%s_%s" % [faction, chess_name]
+			var base_weight = RARITY_WEIGHTS[min(6, shop_handler.shop_level)][chess_attributes["rarity"]]
+			var duplicate_penalty = existing_chess_counts.get(chess_identifier, 0)
 			var final_weight = max(base_weight - duplicate_penalty, 1)  # Ensure minimum weight
 			
-			# Register candidate hero
+			# Register candidate chess
 			total_weight_pool += final_weight
-			candidate_heroes.append({
+			candidate_chesses.append({
 				"faction": faction,
-				"name": hero_name,
+				"name": chess_name,
 				"weight": final_weight,
 				"cumulative_weight": total_weight_pool
 			})
 
 	# --- Weighted Random Selection ---
-	if candidate_heroes.size() == 0:
-		push_warning("No eligible heroes found for rarity: %s" % selected_rarity)
+	if candidate_chesses.size() == 0:
+		push_warning("No eligible chesses found for rarity: %s" % selected_rarity)
 		return ["human", "ShieldMan"]  # Fallback
 	
-	var random_hero_point := randi_range(0, total_weight_pool - 1)
-	for hero in candidate_heroes:
-		if hero["cumulative_weight"] > random_hero_point:
-			return [hero["faction"], hero["name"]]
+	var random_chess_point := randi_range(0, total_weight_pool - 1)
+	for chess in candidate_chesses:
+		if chess["cumulative_weight"] > random_chess_point:
+			return [chess["faction"], chess["name"]]
 	
 	# Should never reach here if candidates exist
 	return ["human", "ShieldMan"]
 
-func connect_hero_signals() -> void:
+func connect_chess_signals() -> void:
 
-	for hero_index in team_dict[Team.TEAM1_FULL]:
-		hero_index.damage_taken.connect(battle_meter.get_damage_data)
-		hero_index.is_died.connect(hero_death_handle)
+	for chess_index in team_dict[Team.TEAM1_FULL]:
+		chess_index.damage_taken.connect(battle_meter.get_damage_data)
+		chess_index.is_died.connect(chess_death_handle)
 
-	for hero_index in team_dict[Team.TEAM2_FULL]:
-		hero_index.damage_taken.connect(battle_meter.get_damage_data)
-		hero_index.is_died.connect(hero_death_handle)
+	for chess_index in team_dict[Team.TEAM2_FULL]:
+		chess_index.damage_taken.connect(battle_meter.get_damage_data)
+		chess_index.is_died.connect(chess_death_handle)
 
-func hero_appearance(play_area: PlayArea):
+func chess_appearance(play_area: PlayArea):
 
-	var area_hero_count = 0
-	var current_hero_count := 0
+	var area_chess_count = 0
+	var current_chess_count := 0
 	var before_appreance_height := 999
 
-	for hero_index in team_dict[Team.TEAM1_FULL]:
-		area_hero_count += 1
-		hero_index.visible = false
-	for hero_index in team_dict[Team.TEAM2_FULL]:
-		area_hero_count += 1
-		hero_index.visible = false
+	for chess_index in team_dict[Team.TEAM1_FULL]:
+		area_chess_count += 1
+		chess_index.visible = false
+	for chess_index in team_dict[Team.TEAM2_FULL]:
+		area_chess_count += 1
+		chess_index.visible = false
 
 
 	if appearance_tween:
@@ -612,54 +613,88 @@ func hero_appearance(play_area: PlayArea):
 	appearance_tween = create_tween()
 	appearance_tween.connect("finished", 
 		func():
-			if current_hero_count >= area_hero_count or true:
-				hero_appearance_finished.emit(play_area)
+			if current_chess_count >= area_chess_count or true:
+				chess_appearance_finished.emit(play_area)
 	)
 
-	for hero_index in team_dict[Team.TEAM1_FULL]:
-		current_hero_count += 1
-		hero_index._position.y -= before_appreance_height
-		hero_index.visible = true
-		appearance_tween.tween_property(hero_index, "_position", hero_index._position + Vector2(0, before_appreance_height) , 0.5)
+	for chess_index in team_dict[Team.TEAM1_FULL]:
+		current_chess_count += 1
+		chess_index._position.y -= before_appreance_height
+		chess_index.visible = true
+		appearance_tween.tween_property(chess_index, "_position", chess_index._position + Vector2(0, before_appreance_height) , 0.5)
 
-	for hero_index in team_dict[Team.TEAM2_FULL]:
-		current_hero_count += 1
-		hero_index._position.y -= before_appreance_height
-		hero_index.visible = true
-		appearance_tween.tween_property(hero_index, "_position", hero_index._position + Vector2(0, before_appreance_height) , 0.5)
+	for chess_index in team_dict[Team.TEAM2_FULL]:
+		current_chess_count += 1
+		chess_index._position.y -= before_appreance_height
+		chess_index.visible = true
+		appearance_tween.tween_property(chess_index, "_position", chess_index._position + Vector2(0, before_appreance_height) , 0.5)
 
 	# position_tween.tween_property(self, "_position", target_pos, 0.1)
 
 	
 func get_next_serial() -> int:
-	hero_serial += 1
-	return hero_serial
+	chess_serial += 1
+	return chess_serial
 
 
-func summon_hero(summon_hero_faction: String, summon_hero_name: String, team: int, summon_arena: PlayArea, summon_position: Vector2i) -> Hero:
+func summon_chess(summon_chess_faction: String, summon_chess_name: String, team: int, summon_arena: PlayArea, summon_position: Vector2i) -> Chess:
 
-	if not summon_hero_faction in hero_data.keys():
+	if not summon_chess_faction in chess_data.keys():
 		return null
-	if not summon_hero_name in hero_data[summon_hero_faction].keys():
+	if not summon_chess_name in chess_data[summon_chess_faction].keys():
 		return null
 
-	var summoned_character = hero_scene.instantiate()
-	summoned_character.faction = summon_hero_faction
-	summoned_character.hero_name = summon_hero_name
+	var summoned_character = chess_scene.instantiate()
+	summoned_character.faction = summon_chess_faction
+	summoned_character.chess_name = summon_chess_name
 	summoned_character.team = team
 	summoned_character.arena = arena
 	summoned_character.bench = bench
 	summoned_character.shop = shop
-	summoned_character.hero_serial = get_next_serial()
+	summoned_character.chess_serial = get_next_serial()
 	add_child(summoned_character)
-	summoned_character._load_hero_stats()
-	debug_handler.connect_to_hero_signal(summoned_character)
-	hero_mover.setup_hero(summoned_character)
-	hero_mover._move_hero(summoned_character, summon_arena, summon_position)
-	hero_information.setup_hero(summoned_character)
+	summoned_character._load_chess_stats()
+	debug_handler.connect_to_chess_signal(summoned_character)
+	chess_mover.setup_chess(summoned_character)
+	chess_mover._move_chess(summoned_character, summon_arena, summon_position)
+	chess_information.setup_chess(summoned_character)
 
 	summoned_character.damage_taken.connect(battle_meter.get_damage_data)
-	summoned_character.is_died.connect(hero_death_handle)
+	summoned_character.is_died.connect(chess_death_handle)
+
+	if team == 1:
+		team_dict[Team.TEAM1_FULL].append(summoned_character)
+		team_dict[Team.TEAM1].append(summoned_character)
+	else:
+		team_dict[Team.TEAM2_FULL].append(summoned_character)
+		team_dict[Team.TEAM2].append(summoned_character)
+		
+	return summoned_character
+
+func summon_obstacle(summon_obstacle_faction: String, summon_chess_name: String, team: int, summon_arena: PlayArea, summon_position: Vector2i) -> Obstacle:
+
+	if not summon_obstacle_faction in chess_data.keys():
+		return null
+	if not summon_chess_name in chess_data[summon_obstacle_faction].keys():
+		return null
+
+	var summoned_character = obstacle_scene.instantiate()
+	summoned_character.faction = summon_obstacle_faction
+	summoned_character.chess_name = summon_chess_name
+	summoned_character.team = team
+	summoned_character.arena = arena
+	summoned_character.bench = bench
+	summoned_character.shop = shop
+	summoned_character.chess_serial = get_next_serial()
+	add_child(summoned_character)
+	summoned_character._load_chess_stats()
+	debug_handler.connect_to_chess_signal(summoned_character)
+	chess_mover.setup_chess(summoned_character)
+	chess_mover._move_chess(summoned_character, summon_arena, summon_position)
+	chess_information.setup_chess(summoned_character)
+
+	summoned_character.damage_taken.connect(battle_meter.get_damage_data)
+	summoned_character.is_died.connect(chess_death_handle)
 
 	if team == 1:
 		team_dict[Team.TEAM1_FULL].append(summoned_character)
@@ -672,8 +707,8 @@ func summon_hero(summon_hero_faction: String, summon_hero_name: String, team: in
 
 func update_population():
 	current_population = 0
-	for node in get_tree().get_nodes_in_group("hero_group"):
-		if node is Hero and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
+	for node in get_tree().get_nodes_in_group("chess_group"):
+		if node is Chess and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
 			current_population += 1
 	max_population = shop_handler.get_max_population()
 	population_label.text = str(current_population)	+ "/" + str(max_population)
@@ -704,32 +739,32 @@ func save_game_binary():
 	file.store_var(save_datas, true)  # true enables full length encoding
 	file.close()
 
-func hero_death_handle(hero: Hero):
+func chess_death_handle(obstacle: Obstacle):
 
-	if team_dict[Team.TEAM1].has(hero):
-		team_dict[Team.TEAM1].erase(hero)
+	if team_dict[Team.TEAM1].has(obstacle):
+		team_dict[Team.TEAM1].erase(obstacle)
 
-	if team_dict[Team.TEAM1_FULL].has(hero):
-		team_dict[Team.TEAM1_FULL].erase(hero)
+	if team_dict[Team.TEAM1_FULL].has(obstacle):
+		team_dict[Team.TEAM1_FULL].erase(obstacle)
 
-	if team_dict[Team.TEAM2].has(hero):
-		team_dict[Team.TEAM2].erase(hero)
+	if team_dict[Team.TEAM2].has(obstacle):
+		team_dict[Team.TEAM2].erase(obstacle)
 
-	if team_dict[Team.TEAM2_FULL].has(hero):
-		team_dict[Team.TEAM2_FULL].erase(hero)
+	if team_dict[Team.TEAM2_FULL].has(obstacle):
+		team_dict[Team.TEAM2_FULL].erase(obstacle)
 
-	if hero.team != 1:
+	if obstacle.team != 1:
 		if player_save_data.has("kill_enemy_count"):
 			player_save_data["kill_enemy_count"] += 1
 		else:
 			player_save_data["kill_enemy_count"] = 1
 			
 		if player_save_data.has("kill_enemy_array"):
-			player_save_data["kill_enemy_array"].append([hero.faction, hero.hero_name])
+			player_save_data["kill_enemy_array"].append([obstacle.faction, obstacle.chess_name])
 		else:
-			player_save_data["kill_enemy_array"]= [hero.faction, hero.hero_name]
+			player_save_data["kill_enemy_array"]= [obstacle.faction, obstacle.chess_name]
 
-	hero.visible = false
-	arena.unit_grid.remove_unit(hero.position_id)
+	obstacle.visible = false
+	arena.unit_grid.remove_unit(obstacle.position_id)
 	await get_tree().process_frame
-	hero.queue_free
+	obstacle.queue_free
