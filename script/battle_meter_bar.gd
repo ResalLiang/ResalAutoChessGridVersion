@@ -13,7 +13,7 @@ extends HBoxContainer
 # ├── Initialization Flow
 # │   └── _ready() → Update texture and UI display
 # └── Update Methods
-#     ├── _update_hero_texture() (unified texture update logic)
+#     ├── _update_chess_texture() (unified texture update logic)
 #     └── _update_damage_display() (unified UI update logic)
 
 # Damage value property with real-time UI update
@@ -31,18 +31,18 @@ extends HBoxContainer
 @export var sprite_faction := "human":
 	set(value):
 		sprite_faction = value
-		_update_hero_texture()
+		_update_chess_texture()
 
-# Hero name property with real-time texture update
+# Chess name property with real-time texture update
 @export var sprite_name := "ShieldMan":
 	set(value):
 		sprite_name = value
-		_update_hero_texture()
+		_update_chess_texture()
 		
-@export var hero_team := 1:
+@export var chess_team := 1:
 	set(value):
-		hero_team = value
-		_update_hero_texture()
+		chess_team = value
+		_update_chess_texture()
 
 # Called when the node enters the scene tree for the first time
 func _ready():
@@ -55,11 +55,11 @@ func _ready():
 	progress_bar.size_flags_horizontal = 3
 	label.size_flags_horizontal = 8
 
-	_update_hero_texture()
+	_update_chess_texture()
 	_update_damage_display()
 
-# Update hero texture from sprite frames
-func _update_hero_texture():
+# Update chess texture from sprite frames
+func _update_chess_texture():
 	if not texture_rect:
 		return
 		
@@ -91,7 +91,7 @@ func _update_hero_texture():
 	source_texture.region = Rect2(12, 18, 8, 8)
 	texture_rect.texture = source_texture
 	var fill_style = StyleBoxFlat.new()
-	if hero_team == 1:
+	if chess_team == 1:
 		fill_style.bg_color = Color.GREEN  # Set fill color
 	else:
 		fill_style.bg_color = Color.RED  # Set fill color
@@ -114,11 +114,11 @@ func _update_damage_display():
 	if label:
 		label.text = str(damage_value)
 
-func init(faction: String, hero_name: String, team: int, max_value: int, value: int):
+func init(faction: String, chess_name: String, team: int, max_value: int, value: int):
 	sprite_faction = faction
-	sprite_name = hero_name
-	hero_team = team
+	sprite_name = chess_name
+	chess_team = team
 	highest_damage_value = max_value
 	damage_value = value
-	_update_hero_texture()
+	_update_chess_texture()
 	_update_damage_display()
