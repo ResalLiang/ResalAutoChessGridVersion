@@ -300,7 +300,7 @@ func _process(delta: float) -> void:
 	hp_bar.max_value = max_hp
 	mp_bar.max_value = max_mp
 
-	hp_bar.visible = hp != max_hp
+	hp_bar.visible = true #hp != max_hp
 		
 	# Update attack indicator line
 	if chess_target and line_visible:
@@ -445,6 +445,10 @@ func _load_chess_stats():
 func start_turn():
 	
 	#Placeholder for chess passive ability on start turn
+	if status == STATUS.DIE:
+		action_timer.set_wait_time(action_timer_wait_time)
+		action_timer.start()
+		return
 
 	update_solid_map()
 	await get_tree().process_frame
