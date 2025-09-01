@@ -3,12 +3,12 @@ extends Node2D
 
 const max_shop_level := 7
 
-@onready var hero_mover: HeroMover = %hero_mover
+@onready var chess_mover: ChessMover = %chess_mover
 @onready var arena: PlayArea = %arena
 @onready var bench: PlayArea = %bench
 @onready var shop: PlayArea = %shop
 @onready var debug_handler: DebugHandler = %debug_handler
-@onready var hero_information: HeroInformation = $"../hero_information"
+@onready var chess_information: ChessInformation = $"../chess_information"
 
 
 var shop_buy_price := 3
@@ -25,8 +25,8 @@ var shop_level := 1
 signal shop_refreshed
 signal shop_freezed
 signal shop_unfreezed
-signal hero_bought
-signal hero_sold
+signal chess_bought
+signal chess_sold
 signal coins_increased
 signal coins_decreased
 signal shop_upgraded
@@ -45,13 +45,13 @@ func _ready():
 		func():
 			debug_handler.write_log("LOG", "Shop unfreezed.")
 	)
-	hero_bought.connect(
-		func(hero):
-			debug_handler.write_log("LOG", hero.hero_name + " is bought.")
+	chess_bought.connect(
+		func(chess):
+			debug_handler.write_log("LOG", chess.chess_name + " is bought.")
 	)
-	hero_sold.connect(
-		func(hero):
-			debug_handler.write_log("LOG", hero.hero_name + " is sold.")
+	chess_sold.connect(
+		func(chess):
+			debug_handler.write_log("LOG", chess.chess_name + " is sold.")
 	)
 	coins_increased.connect(
 		func(value, reason):
@@ -85,52 +85,52 @@ func shop_refresh() -> void:
 	is_shop_frozen = false
 	shop_unfreezed.emit()
 
-	for node in get_tree().get_nodes_in_group("hero_group"):
-		if node is Hero and node.current_play_area == node.play_areas.playarea_shop:
+	for node in get_tree().get_nodes_in_group("obstacle_group"):
+		if node is Chess and node.current_play_area == node.play_areas.playarea_shop:
 			node.queue_free()	
 
 	for i in range(shop_level + 2):
 		var shop_col_index = i % shop.unit_grid.size.x
 		var shop_row_index = floor(i / shop.unit_grid.size.x)
-		# var rand_faction_index = randi_range(0, get_parent().hero_data.keys().size() - 2) # remove villager
-		# var rand_faction = get_parent().hero_data.keys()[rand_faction_index]
-		var character = get_parent().hero_scene.instantiate()
+		# var rand_faction_index = randi_range(0, get_parent().chess_data.keys().size() - 2) # remove villager
+		# var rand_faction = get_parent().chess_data.keys()[rand_faction_index]
+		var character = get_parent().chess_scene.instantiate()
 		# character.faction = rand_faction
-		# character.hero_name = get_parent().get_random_character(rand_faction)
-		var rand_character_result = get_parent().generate_random_hero()
+		# character.chess_name = get_parent().get_random_character(rand_faction)
+		var rand_character_result = get_parent().generate_random_chess()
 		character.faction = rand_character_result[0]
-		character.hero_name = rand_character_result[1]
+		character.chess_name = rand_character_result[1]
 		character.team = 1
 		character.arena = arena
 		character.bench = bench
 		character.shop = shop
-		character.hero_serial = get_parent().get_next_serial()
+		character.chess_serial = get_parent().get_next_serial()
 		add_child(character)
-		debug_handler.connect_to_hero_signal(character)
-		hero_mover.setup_hero(character)
-		hero_mover._move_hero(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
-		hero_information.setup_hero(character)
+		debug_handler.connect_to_chess_signal(character)
+		chess_mover.setup_chess(character)
+		chess_mover._move_chess(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
+		chess_information.setup_chess(character)
 		
-	var debug_hero_faction = ["human", "human", "human", "demon", "elf", "elf", "undead", "dwarf"]
-	var debug_hero_name = ["CrossBowMan", "Mage", "ArchMage", "FireImp", "Queen", "Mage", "Necromancer", "Demolitionist"]
-	for debug_index in range(debug_hero_faction.size()):
-		var character = get_parent().hero_scene.instantiate()
-		character.faction = debug_hero_faction[debug_index]
-		character.hero_name = debug_hero_name[debug_index]
+	var debug_chess_faction = ["human", "human", "human", "demon", "elf", "elf", "undead", "dwarf"]
+	var debug_chess_name = ["CrossBowMan", "Mage", "ArchMage", "FireImp", "Queen", "Mage", "Necromancer", "Demolitionist"]
+	for debug_index in range(debug_chess_faction.size()):
+		var character = get_parent().chess_scene.instantiate()
+		character.faction = debug_chess_faction[debug_index]
+		character.chess_name = debug_chess_name[debug_index]
 		character.team = 1
 		character.arena = arena
 		character.bench = bench
 		character.shop = shop
-		character.hero_serial = get_parent().get_next_serial()
+		character.chess_serial = get_parent().get_next_serial()
 		add_child(character)
-		debug_handler.connect_to_hero_signal(character)
-		hero_mover.setup_hero(character)
-		hero_information.setup_hero(character)
+		debug_handler.connect_to_chess_signal(character)
+		chess_mover.setup_chess(character)
+		chess_information.setup_chess(character)
 
 		var shop_col_index = debug_index % shop.unit_grid.size.x
 		var shop_row_index = floor(debug_index / shop.unit_grid.size.x) + 2
 
-		hero_mover._move_hero(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
+		chess_mover._move_chess(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
 	
 func shop_freeze() -> void:
 	if is_shop_frozen:
@@ -156,27 +156,27 @@ func get_current_difficulty():
 func get_max_population():
 	return 999 if shop_level == 7 else shop_level + 2
 
-func can_pay_hero(hero: Hero) -> bool:
-	if get_hero_buy_price(hero) > remain_coins:
+func can_pay_chess(chess: Chess) -> bool:
+	if get_chess_buy_price(chess) > remain_coins:
 		return false
 	else:
 		return true
 
-func buy_hero(hero: Hero):
-	hero_bought.emit(hero)
-	remain_coins -= get_hero_buy_price(hero)
-	coins_decreased.emit(get_hero_buy_price(hero), "buyinging hero")
+func buy_chess(chess: Chess):
+	chess_bought.emit(chess)
+	remain_coins -= get_chess_buy_price(chess)
+	coins_decreased.emit(get_chess_buy_price(chess), "buyinging chess")
 
-func sell_hero(hero: Hero):
-	hero_sold.emit(hero)
-	remain_coins += get_hero_buy_price(hero)
-	coins_increased.emit(get_hero_buy_price(hero), "selling hero")
-	hero.queue_free()
+func sell_chess(chess: Chess):
+	chess_sold.emit(chess)
+	remain_coins += get_chess_buy_price(chess)
+	coins_increased.emit(get_chess_buy_price(chess), "selling chess")
+	chess.queue_free()
 
-func get_hero_buy_price(hero: Hero):
+func get_chess_buy_price(chess: Chess):
 	return shop_buy_price
 
-func get_hero_sell_price(hero: Hero):
+func get_chess_sell_price(chess: Chess):
 	return shop_sell_price
 
 func turn_start_income(current_round: int):
