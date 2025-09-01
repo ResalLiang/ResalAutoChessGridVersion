@@ -19,6 +19,8 @@ const chess_class = preload("res://script/chess.gd")
 @onready var remain_coins_label: Label = $remain_coins_label
 @onready var current_shop_level: Label = $current_shop_level
 @onready var population_label: Label = $population_label
+@onready var current_round_label: Label = $current_round_label
+@onready var last_turn_label: Label = $last_turn_label
 
 @onready var game_start_button: Button = $game_start_button
 @onready var game_restart_button: Button = $game_restart_button
@@ -279,7 +281,10 @@ func start_new_game() -> void:
 
 func new_round_prepare_start():
 	
-
+	current_round += 1
+	
+	current_round_label.text = "Current round : " + str(current_round)
+	
 	if not shop_handler.is_shop_frozen:
 		shop_handler.shop_refresh()
 
@@ -289,7 +294,6 @@ func new_round_prepare_start():
 	if saved_arena_team.size() != 0:
 		load_arena_team()
 	chess_mover.setup_before_turn_start()
-	current_round += 1
 	shop_handler.turn_start_income(current_round)
 
 func new_round_prepare_end():
@@ -352,19 +356,22 @@ func start_chess_turn(team: Team):
 		active_chess.is_active = true
 		#active_chess.start_turn()
 		# 连接信号等待行动完成
-		active_chess.action_finished.connect(_on_character_action_finished)
+		#active_chess.action_finished.connect(_on_character_action_finished)
 		_on_character_action_finished(active_chess)
 
 func process_character_turn(chess: Obstacle):
 	active_chess = chess
 	active_chess.is_active = true
-	active_chess.action_finished.connect(_on_character_action_finished)
+	#active_chess.action_finished.connect(_on_character_action_finished)
 	active_chess.start_turn()
+	await active_chess.action_finished
+	
+	_on_character_action_finished(active_chess)
 	# 连接信号等待行动完成
 
 func _on_character_action_finished(chess: Obstacle):
 	active_chess.is_active = false
-	active_chess.action_finished.disconnect(_on_character_action_finished)
+	#active_chess.action_finished.disconnect(_on_character_action_finished)
 
 	if current_team == Team.TEAM1 and team_dict[Team.TEAM2].size() != 0:
 		current_team = Team.TEAM2
@@ -385,9 +392,11 @@ func _on_round_finished(msg):
 	if msg == "team1":
 		won_rounds += 1
 		print("Round %d over, you won!" % current_round)
+		last_turn_label.text = 'WON'
 	elif msg == "team2":
 		lose_rounds += 1
 		print("Round %d over, you lose..." % current_round)
+		last_turn_label.text = 'LOSE'
 
 	print("You have won %d rounds, and lose %d rounds." % [won_rounds, lose_rounds])
 
@@ -711,7 +720,7 @@ func update_population():
 		if node is Chess and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
 			current_population += 1
 	max_population = shop_handler.get_max_population()
-	population_label.text = str(current_population)	+ "/" + str(max_population)
+	population_label.text = "Population = " + str(current_population)	+ "/" + str(max_population)
 	var label_settings = LabelSettings.new()
 	if current_population > max_population:
 		label_settings.font_color = Color.RED
@@ -766,5 +775,4 @@ func chess_death_handle(obstacle: Obstacle):
 
 	obstacle.visible = false
 	arena.unit_grid.remove_unit(obstacle.position_id)
-	await get_tree().process_frame
-	obstacle.queue_free
+	obstacle.queue_free()

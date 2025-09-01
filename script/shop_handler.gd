@@ -128,7 +128,7 @@ func shop_refresh() -> void:
 		chess_information.setup_chess(character)
 
 		var shop_col_index = debug_index % shop.unit_grid.size.x
-		var shop_row_index = floor(debug_index / shop.unit_grid.size.x) + 2
+		var shop_row_index = floor(debug_index / shop.unit_grid.size.x) + 1
 
 		chess_mover._move_chess(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
 	

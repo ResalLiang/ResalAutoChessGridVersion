@@ -1,9 +1,9 @@
 [gd_scene load_steps=3 format=3 uid="uid://c6sf672nmok3s"]
 
-[ext_resource type="Script" uid="uid://xhm35hpui8l5" path="res://script/hero_infomation.gd" id="1_f1mac"]
+[ext_resource type="Script" uid="uid://xhm35hpui8l5" path="res://script/chess_information.gd" id="1_f1mac"]
 [ext_resource type="FontFile" uid="uid://d3b2vvdpmh8cc" path="res://asset/font/Everyday_Tiny_Original.ttf" id="1_wkp60"]
 
-[node name="hero_information" type="HBoxContainer"]
+[node name="chess_information" type="HBoxContainer"]
 offset_right = 101.0
 offset_bottom = 104.0
 script = ExtResource("1_f1mac")
@@ -12,13 +12,13 @@ script = ExtResource("1_f1mac")
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="hero_name" type="Label" parent="VBoxContainer"]
+[node name="chess_name" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_wkp60")
 theme_override_font_sizes/font_size = 4
 text = "Hero Name: "
 
-[node name="hero_faction" type="Label" parent="VBoxContainer"]
+[node name="chess_faction" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_wkp60")
 theme_override_font_sizes/font_size = 4

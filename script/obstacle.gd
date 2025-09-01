@@ -7,7 +7,7 @@ extends Node2D
 # Constants and Enums
 # ========================
 # Character states
-enum STATUS {IDLE, MOVE, HIT, DIE, SPELL}
+enum STATUS {IDLE, MOVE, MELEE_ATTACK, RANGED_ATTACK, JUMP, HIT, DIE, SPELL}
 enum play_areas {playarea_arena, playarea_bench, playarea_shop}
 
 const MAX_SEARCH_RADIUS = 3
@@ -111,9 +111,8 @@ var dragging_enabled: bool = true # Enable/disable dragging
 #============================================
 #Appreance Related
 #============================================
-@export var line_visible:= false
 var sprite_frames: SpriteFrames  # Custom sprite frames
-var action_timer_wait_time := 0.5
+var action_timer_wait_time := 1
 var move_timer_wait_time := 0.5
 #============================================
 # Skill or Spell Related
@@ -217,12 +216,6 @@ func ready():
 	hp_bar.value = max_hp
 	mp_bar.value = 0
 	
-	astar_grid = AStarGrid2D.new()
-	#astar_grid_region = Rect2i(tile_size.x / 2, tile_size.y / 2, tile_size.x / 2 + tile_size.x * (grid_count - 1), tile_size.y / 2 + tile_size.y * (grid_count - 1))
-	astar_grid.region = astar_grid_region
-	astar_grid.cell_size = Vector2(16, 16)
-	astar_grid.diagonal_mode = 2
-	astar_grid.update()
 	
 	if not animated_sprite_2d.sprite_frames.has_animation("spell") :
 		mp_bar.visible = false
@@ -360,9 +353,6 @@ func _load_chess_stats():
 		var stats = chess_data[faction][chess_name]
 		base_spd = stats["spd"]
 		base_max_hp = stats["max_health"]
-		base_damage = stats["attack_damage"]
-		base_attack_range = stats["attack_range"]
-		base_attack_spd = stats["attack_speed"]
 		skill_name = stats["skill_name"]
 		skill_description = stats["skill_description"]
 		stats_loaded.emit(self, stats)
@@ -373,11 +363,10 @@ func start_turn():
 
 	update_effect()
 
-	move_timer.set_wait_time(move_timer_wait_time)		
-	move_timer.start()
+	_handle_action()
+
 						
 func _handle_action():
-	move_timer.stop()
 	action_started.emit(self)
 
 	handle_obstacle_action()
@@ -399,7 +388,7 @@ func _on_idle_timeout():
 
 
 # Launch projectile at target
-func _launch_projectile(target: Chess):
+func _launch_projectile(target: Obstacle):
 	
 	# Calculate direction to target
 	var direction = (target.global_position - global_position).normalized()
@@ -425,7 +414,7 @@ func _launch_projectile(target: Chess):
 	projectile.initial_flip = is_flipped
 	projectile.attacker = self
 	
-	projectile_damage = damage
+	projectile_damage = 20
 
 	# Configure projectile properties
 	projectile.speed = projectile_speed
@@ -437,21 +426,18 @@ func _launch_projectile(target: Chess):
 	return projectile
 
 # Add damage handling method
-func take_damage(damage_value: int, attacker: Chess):
+func take_damage(damage_value: int, attacker: Obstacle):
 	#Placeholder for chess passive ability on take damage
 	if damage_value <= 0:
 		return
 
-	if rng.randf() > evasion_rate and not effect_handler.is_immunity:
-		var real_damage_value = damage_value - armor
-		hp -= max(0, real_damage_value)
-		attacker.mp += real_damage_value
-		damage_taken.emit(self, real_damage_value, attacker)
-	else:
-		attack_evased.emit(self, attacker)
+	var real_damage_value = damage_value - armor
+	hp -= max(0, real_damage_value)
+	attacker.mp += real_damage_value
+	damage_taken.emit(self, real_damage_value, attacker)
 
 
-func take_heal(heal_value: int, healer: Chess):
+func take_heal(heal_value: int, healer: Obstacle):
 	#Placeholder for chess passive ability on take heal
 	if heal_value <= 0:
 		return
@@ -460,18 +446,12 @@ func take_heal(heal_value: int, healer: Chess):
 	healer.mp += heal_value
 	heal_taken.emit(self, heal_value, healer)
 
-func _apply_damage(damage_target: Chess = chess_target, damage_value: int = damage):
-	if chess_target and damage_value > 0:
-		#Placeholder for chess passive ability on apply damage
-		var crit_damage_value =  damage * 2
-		if rng.randf() <= critical_rate:
-			chess_target.take_damage(crit_damage_value, self)
-			critical_damage_applied.emit(self, damage_target)
-		else:
-			chess_target.take_damage(damage_value, self)
-			damage_applied.emit(self, damage_target)		
+func _apply_damage(damage_target: Obstacle , damage_value: int):
+	if damage_target and damage_value > 0:
+		damage_target.take_damage(damage_value, self)
+		damage_applied.emit(self, damage_target)		
 
-func _apply_heal(heal_target: Chess = chess_spell_target, heal_value: int = damage):
+func _apply_heal(heal_target: Obstacle, heal_value: int):
 	if heal_target and heal_value > 0:
 		#Placeholder for chess passive ability on apply heal
 		heal_target.take_heal(heal_value, self)
@@ -480,7 +460,7 @@ func _apply_heal(heal_target: Chess = chess_spell_target, heal_value: int = dama
 func snap(value: float, grid_size: int) -> int:
 	return floor(value / grid_size)
 
-func _on_damage_taken(taker: Chess, damage_value: int, attacker: Chess):
+func _on_damage_taken(taker: Obstacle, damage_value: int, attacker: Obstacle):
 	if hp <= 0:
 		status = STATUS.DIE
 		animated_sprite_2d.stop()
@@ -503,9 +483,7 @@ func _handle_dragging_state(stating_position: Vector2, drag_action: String):
 	if !is_active:
 		match drag_action:
 			"started":
-				status = STATUS.JUMP
-				animated_sprite_2d.play("jump")
-				return
+				status = STATUS.IDLE
 			"dropped":
 				status = STATUS.IDLE
 			"canceled":
@@ -528,9 +506,9 @@ func update_effect():
 	armor = base_armor + effect_handler.armor_modifier
 
 	max_hp = base_max_hp + effect_handler.max_hp_modifier
-	max_mp = base_max_mp + effect_handler.max_mp_mo
+	max_mp = base_max_mp + effect_handler.max_mp_modifier
 
-func handle_projectile_hit(chess:Chess, attacker:Chess):
+func handle_projectile_hit(chess:Obstacle, attacker:Obstacle):
 	#Placeholder for chess passive ability on projectile hit
 	pass
 
@@ -546,7 +524,7 @@ func dwarf_bomb_boom():
 		for y in range(-obstacle_level, obstacle_level):
 			if x >=0 and x < arena.unit_grid.size.x and y >=0 and y < arena.unit_grid.size.y:
 				var target_area_chess = arena.unit_grid.units[position_id + Vector2i(x, y)]
-				if is_instance_valid(target_area_chess) and target_area_chess is Chess and target_area_chess.status != STATUS.DIE:
+				if is_instance_valid(target_area_chess) and target_area_chess is Obstacle and target_area_chess.status != STATUS.DIE:
 					_apply_damage(target_area_chess, 50 * obstacle_level)
 		
 	is_died.emit(self)		

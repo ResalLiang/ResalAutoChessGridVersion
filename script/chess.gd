@@ -7,37 +7,37 @@ extends Obstacle
 # Constants and Enums
 # ========================
 # Character states
-enum STATUS {IDLE, MOVE, MELEE_ATTACK, RANGED_ATTACK, JUMP, HIT, DIE, SPELL}
+#enum STATUS {IDLE, MOVE, MELEE_ATTACK, RANGED_ATTACK, JUMP, HIT, DIE, SPELL}
 enum TARGET_CHOICE {CLOSE, FAR, STRONG, WEAK, ALLY, SELF}
-enum play_areas {playarea_arena, playarea_bench, playarea_shop}
+#enum play_areas {playarea_arena, playarea_bench, playarea_shop}
 
-const MAX_SEARCH_RADIUS = 3
-const projectile_scene = preload("res://scene/projectile.tscn")
-const chess_scene = preload("res://scene/chess.tscn")
+#const MAX_SEARCH_RADIUS = 3
+#const projectile_scene = preload("res://scene/projectile.tscn")
+#const chess_scene = preload("res://scene/chess.tscn")
 
 @onready var melee_attack_animation: AnimationPlayer = $melee_attack_animation
 @onready var ranged_attack_animation: AnimationPlayer = $ranged_attack_animation
-@onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
-@onready var area_2d: Area2D = $Area2D
-@onready var idle_timer: Timer = $idle_timer
+#@onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
+#@onready var area_2d: Area2D = $Area2D
+#@onready var idle_timer: Timer = $idle_timer
 @onready var attack_target_line: Line2D = $attack_target_line  # Attack range indicator
 @onready var spell_target_line: Line2D = $spell_target_line  # Spell range indicator
-@onready var drag_handler: Node2D = $drag_handler
-@onready var move_timer: Timer = $move_timer
-@onready var action_timer: Timer = $action_timer
-@onready var debug_handler: DebugHandler = %debug_handler
-@onready var area_effect_handler: AreaEffectHandler = $area_effect_handler
-@onready var hp_bar: ProgressBar = $hp_bar
-@onready var mp_bar: ProgressBar = $mp_bar
+#@onready var drag_handler: Node2D = $drag_handler
+#@onready var move_timer: Timer = $move_timer
+#@onready var action_timer: Timer = $action_timer
+#@onready var debug_handler: DebugHandler = %debug_handler
+#@onready var area_effect_handler: AreaEffectHandler = $area_effect_handler
+#@onready var hp_bar: ProgressBar = $hp_bar
+#@onready var mp_bar: ProgressBar = $mp_bar
 
 # ========================
 # Exported Variables
 # ========================
 # Character faction with property observer
-@export_enum("human", "dwarf", "elf", "forestProtector", "holy", "demon", "undead", "villager") var faction := "human"
+#@export_enum("human", "dwarf", "elf", "forestProtector", "holy", "demon", "undead", "villager") var faction := "human"
 
 # Chess name with property observer
-@export var chess_name := "ShieldMan"
+#@export var chess_name := "ShieldMan"
 	#set(value):
 		#chess_name = value
 		## Load animation resource in editor mode
@@ -45,44 +45,44 @@ const chess_scene = preload("res://scene/chess.tscn")
 			#animated_sprite_2d.sprite_frames = ResourceLoader.load("res://asset/animation/" + faction + "/" + faction + chess_name + ".tres")
 		#_load_chess_stats()
 
-var chess_serial := 1001
+#var chess_serial := 1001
 
 #============================================
 # Basic attack statics
 #============================================
-var is_obstacle := false
-var obstacle_counter := 0
-var obstacle_level := 0
-
-var base_max_hp := 100  # Maximum health points
-var base_max_mp := 50   # Maximum magic points
-var base_spd := 8
+#var is_obstacle := false
+#var obstacle_counter := 0
+#var obstacle_level := 0
+#
+#var base_max_hp := 100  # Maximum health points
+#var base_max_mp := 50   # Maximum magic points
+#var base_spd := 8
 var base_damage := 20   # Attack damage
 var base_attack_spd := 1 # Attack speed (attacks per turn)
 var base_attack_range := 20 # Attack range (pixels)
 var base_evasion_rate := 0.10
 var base_critical_rate := 0.10
-var base_armor := 0
-
-var hp: int = base_max_hp:
-	set(value):
-		hp = min(value, max_hp)
-		hp = max(0, hp)
-var mp: int = 0:
-	set(value):
-		mp = min(value, max_mp)
-		mp = max(0, mp)
-
-var max_hp = base_max_hp:
-	set(value):
-		var update_hp = value * (hp / max_hp)
-		max_hp = value
-		hp = update_hp
-var max_mp = base_max_mp:
-	set(value):
-		var update_mp = value * (mp / max_mp)
-		max_mp = value
-		mp = update_mp
+#var base_armor := 0
+#
+#var hp: int = base_max_hp:
+	#set(value):
+		#hp = min(value, max_hp)
+		#hp = max(0, hp)
+#var mp: int = 0:
+	#set(value):
+		#mp = min(value, max_mp)
+		#mp = max(0, mp)
+#
+#var max_hp = base_max_hp:
+	#set(value):
+		#var update_hp = value * (hp / max_hp)
+		#max_hp = value
+		#hp = update_hp
+#var max_mp = base_max_mp:
+	#set(value):
+		#var update_mp = value * (mp / max_mp)
+		#max_mp = value
+		#mp = update_mp
 
 var spd = base_spd
 var damage = base_damage
@@ -90,113 +90,113 @@ var attack_spd = base_attack_spd
 var attack_range = base_attack_range
 var evasion_rate := 0.10
 var critical_rate := 0.10
-var armor := 0
+#var armor := 0
 
 
 var remain_attack_count
 
-var chess_data: Dictionary  # Stores chess stats loaded from JSON
-
-var effect_handler = EffectHandler.new()
+#var chess_data: Dictionary  # Stores chess stats loaded from JSON
+#
+#var effect_handler = EffectHandler.new()
 
 #============================================
 # Target setting
 #============================================
 var chess_target_choice := TARGET_CHOICE.CLOSE  # Target selection strategy
-var chess_target: Chess  # Current attack target
+var chess_target: Obstacle  # Current attack target
 var chess_spell_target_choice := TARGET_CHOICE.CLOSE  # Target selection strategy
-var chess_spell_target: Chess # Current spell target
+var chess_spell_target: Obstacle # Current spell target
 
-@export var team: int      # 0 for player, 1~7 for AI enemy
+#@export var team: int      # 0 for player, 1~7 for AI enemy
 
 #============================================
 # Play Area Related
 #============================================
-var arena: PlayArea
-var bench: PlayArea
-var shop: PlayArea
-
-var current_play_area = play_areas.playarea_arena
+#var arena: PlayArea
+#var bench: PlayArea
+#var shop: PlayArea
+#
+#var current_play_area = play_areas.playarea_arena
 
 #============================================
 # Movement Related
 #============================================
 var move_path: PackedVector2Array
-var position_id := Vector2i.ZERO
-var _position := Vector2.ZERO:
-	set(value):
-		_position = value
-		position = _position
-		position_id = Vector2i(
-			snap(value.x, 16),
-			snap(value.y, 16)
-		)
+#var position_id := Vector2i.ZERO
+#var _position := Vector2.ZERO:
+	#set(value):
+		#_position = value
+		#position = _position
+		#position_id = Vector2i(
+			#snap(value.x, 16),
+			#snap(value.y, 16)
+		#)
 var astar_grid
 var position_tween
-var is_active: bool = false
-var grid_offset =Vector2(8, 8)
+#var is_active: bool = false
+#var grid_offset =Vector2(8, 8)
 var remain_step:= 0
 var astar_grid_region = Rect2i(0, 0, 16, 16)
 
-var dragging_enabled: bool = true # Enable/disable dragging
+#var dragging_enabled: bool = true # Enable/disable dragging
 
 #============================================
 #Appreance Related
 #============================================
 @export var line_visible:= false
-var sprite_frames: SpriteFrames  # Custom sprite frames
-var action_timer_wait_time := 0.5
-var move_timer_wait_time := 0.5
+#var sprite_frames: SpriteFrames  # Custom sprite frames
+#var action_timer_wait_time := 0.5
+#var move_timer_wait_time := 0.5
 #============================================
 # Skill or Spell Related
 #============================================
-var skill_name := "Place holder."
-var skill_description := "Place holder."
+#var skill_name := "Place holder."
+#var skill_description := "Place holder."
 
-var taunt_range := 70
+#var taunt_range := 70
 
 # Projectile Related
-var projectile_speed: float = 300.0  # Projectile speed
-var projectile_damage: int = 15  # Projectile damage
-var projectile_penetration: int = 3  # Number of enemies projectile can penetrate
-var ranged_attack_threshold: float = 32.0  # Minimum distance for ranged attack
-var projectile
+#var projectile_speed: float = 300.0  # Projectile speed
+#var projectile_damage: int = 15  # Projectile damage
+#var projectile_penetration: int = 3  # Number of enemies projectile can penetrate
+#var ranged_attack_threshold: float = 32.0  # Minimum distance for ranged attack
+#var projectile
 
 
-var status := STATUS.IDLE         # Current character state
+#var status := STATUS.IDLE         # Current character state
 
-var rng = RandomNumberGenerator.new() # Random number generator
+#var rng = RandomNumberGenerator.new() # Random number generator
 
 #============================================
 # Signals
 #============================================
-signal attack_landed(target: Chess, damage: int)  # Emitted when attack hits target
-signal is_died                                      # Emitted when die
-signal turn_finished
+signal attack_landed(target: Obstacle, damage: int)  # Emitted when attack hits target
+#signal is_died                                      # Emitted when die
+#signal turn_finished
 
 signal move_started
 signal move_finished
-signal action_started
-signal action_finished
+#signal action_started
+#signal action_finished
 
-signal damage_taken
-signal heal_taken
-
-signal is_hit
-signal spell_casted
+#signal damage_taken
+#signal heal_taken
+#
+#signal is_hit
+#signal spell_casted
 signal ranged_attack_started
 signal melee_attack_started
 signal ranged_attack_finished
 signal melee_attack_finished
 
-signal critical_damage_applied
-signal damage_applied
-signal heal_applied
+#signal critical_damage_applied
+#signal damage_applied
+#signal heal_applied
 signal attack_evased #attack_evased.emit(self, attacker.chess_name)
-signal projectile_lauched
+#signal projectile_lauched
 
-signal animated_sprite_loaded
-signal stats_loaded
+#signal animated_sprite_loaded
+#signal stats_loaded
 signal target_lost	#target_lost.emit(self)
 signal target_found	#target_found.emit(self, chess_target.chess_name)
 signal tween_moving	#tween_moving.emit(self, _position, target_pos)
@@ -453,7 +453,7 @@ func start_turn():
 
 	remain_attack_count = attack_spd
 
-	if not chess_target or chess_target.status == STATUS.DIE:
+	if not chess_target or not is_instance_valid(chess_target) or chess_target.status == STATUS.DIE:
 		target_lost.emit(self)
 		_handle_targeting()
 		
@@ -653,12 +653,12 @@ func _handle_targeting():
 	attack_target_line.visible = true
 		
 # Find a new target based on selection strategy
-func _find_new_target(tgt) -> Chess:
+func _find_new_target(tgt) -> Obstacle:
 	#Placeholder for chess passive ability on find target
 	var new_target
 	var all_chesses = get_tree().get_nodes_in_group("obstacle_group").filter(
 		func(node): 
-			return (node is Chess and 
+			return (node is Obstacle and 
 				   node.status != STATUS.DIE and 
 				   node.current_play_area == play_areas.playarea_arena)
 	)
@@ -707,7 +707,7 @@ func _find_new_target(tgt) -> Chess:
 	else:
 		return null  # No valid target found
 
-func _compare_distance(a: Chess, b: Chess) -> bool:
+func _compare_distance(a: Obstacle, b: Obstacle) -> bool:
 
 	# handling taunt
 	if (a.buffer_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range) and (not b.buffer_handler.is_taunt or b.global_position.distance_to(global_position) > taunt_range):
@@ -723,7 +723,7 @@ func _compare_distance(a: Chess, b: Chess) -> bool:
 	
 	return a.global_position.distance_to(global_position) > b.global_position.distance_to(global_position)
 
-func _compare_hp(a: Chess, b: Chess) -> bool:
+func _compare_hp(a: Obstacle, b: Obstacle) -> bool:
 
 	# handling taunt
 	if (a.buffer_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range) and (not b.buffer_handler.is_taunt or b.global_position.distance_to(global_position) > taunt_range):
@@ -739,7 +739,7 @@ func _compare_hp(a: Chess, b: Chess) -> bool:
 	
 	return a.max_hp > b.max_hp
 
-func _compare_damage(a: Chess, b: Chess) -> bool:
+func _compare_damage(a: Obstacle, b: Obstacle) -> bool:
 
 	# handling taunt
 	if (a.buffer_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range) and (not b.buffer_handler.is_taunt or b.global_position.distance_to(global_position) > taunt_range):
@@ -763,7 +763,7 @@ func _on_idle_timeout():
 
 
 # Launch projectile at target
-func _launch_projectile(target: Chess):
+func _launch_projectile(target: Obstacle):
 	
 	# Calculate direction to target
 	var direction = (target.global_position - global_position).normalized()
@@ -801,7 +801,7 @@ func _launch_projectile(target: Chess):
 	return projectile
 
 # Add damage handling method
-func take_damage(damage_value: int, attacker: Chess):
+func take_damage(damage_value: int, attacker: Obstacle):
 	#Placeholder for chess passive ability on take damage
 	if damage_value <= 0:
 		return
@@ -815,7 +815,7 @@ func take_damage(damage_value: int, attacker: Chess):
 		attack_evased.emit(self, attacker)
 
 
-func take_heal(heal_value: int, healer: Chess):
+func take_heal(heal_value: int, healer: Obstacle):
 	#Placeholder for chess passive ability on take heal
 	if heal_value <= 0:
 		return
@@ -825,7 +825,7 @@ func take_heal(heal_value: int, healer: Chess):
 	heal_taken.emit(self, heal_value, healer)
 
 
-func _cast_spell(spell_tgt: Chess) -> bool:
+func _cast_spell(spell_tgt: Obstacle) -> bool:
 	#Placeholder for chess passive ability on cast spell
 	var cast_spell_result := false
 
@@ -851,10 +851,10 @@ func _cast_spell(spell_tgt: Chess) -> bool:
 	return cast_spell_result
 
 
-func _apply_damage(damage_target: Chess = chess_target, damage_value: int = damage):
+func _apply_damage(damage_target: Obstacle = chess_target, damage_value: int = damage):
 	if chess_target and damage_value > 0:
 		#Placeholder for chess passive ability on apply damage
-		var crit_damage_value =  damage * 2
+		var crit_damage_value =  damage_value * 2
 		if rng.randf() <= critical_rate:
 			chess_target.take_damage(crit_damage_value, self)
 			critical_damage_applied.emit(self, damage_target)
@@ -862,7 +862,7 @@ func _apply_damage(damage_target: Chess = chess_target, damage_value: int = dama
 			chess_target.take_damage(damage_value, self)
 			damage_applied.emit(self, damage_target)		
 
-func _apply_heal(heal_target: Chess = chess_spell_target, heal_value: int = damage):
+func _apply_heal(heal_target: Obstacle = chess_spell_target, heal_value: int = damage):
 	if heal_target and heal_value > 0:
 		#Placeholder for chess passive ability on apply heal
 		heal_target.take_heal(heal_value, self)
@@ -899,7 +899,7 @@ func get_points_in_radius(target: Vector2i, radius: int) -> Array[Vector2i]:
 				points.append(Vector2i(x,y))
 	return points
 
-func _on_damage_taken(taker: Chess, damage_value: int, attacker: Chess):
+func _on_damage_taken(taker: Obstacle, damage_value: int, attacker: Obstacle):
 	if hp <= 0:
 		status = STATUS.DIE
 		animated_sprite_2d.stop()
@@ -968,60 +968,9 @@ func update_effect():
 	
 	return
 
-func handle_projectile_hit(chess:Chess, attacker:Chess):
+func handle_projectile_hit(chess:Obstacle, attacker:Obstacle):
 	#Placeholder for chess passive ability on projectile hit
 	pass
-
-# func _on_animated_sprite_2d_animation_finished() -> void:
-# 	if status == STATUS.DIE:
-		
-# 		is_died.emit(self)
-# 		arena.unit_grid.remove_unit(position_id)
-
-# 		await get_tree().process_frame
-
-# 		queue_free()
-
-# 	elif status == STATUS.HIT:
-# 		is_hit.emit(self)
-# 		status = STATUS.IDLE
-
-# 	elif status == STATUS.SPELL:
-# 		action_timer.start()
-		
-# 	elif status == STATUS.RANGED_ATTACK:
-# 		if remain_attack_count <= 0:
-# 			#if ResourceLoader.exists("res://asset/animation/%s/%s%s_projectile.tres" % [faction, faction, chess_name]):
-# 				#pass
-# 			#else:
-# 			action_timer.start()
-# 			ranged_attack_finished.emit(self)
-# 		elif chess_target and chess_target.status != STATUS.DIE:
-# 			_handle_attack()
-# 		else:
-# 			chess_target = _find_new_target(TARGET_CHOICE.CLOSE)
-# 			if chess_target:
-# 				chess_target.is_died.connect(handle_target_death)
-# 			_handle_attack()
-
-# 	elif status == STATUS.MELEE_ATTACK:
-# 		if remain_attack_count <= 0:
-# 			melee_attack_finished.emit(self)
-# 			action_timer.start()
-# 		elif chess_target and chess_target.status != STATUS.DIE:
-# 			_handle_attack()
-# 		else:
-# 			chess_target = _find_new_target(TARGET_CHOICE.CLOSE)
-# 			if chess_target:
-# 				chess_target.is_died.connect(handle_target_death)
-# 			_handle_attack()
-
-# func _on_melee_attack_animation_animation_finished(anim_name: StringName) -> void:
-# 	_on_animated_sprite_2d_animation_finished()
-
-
-# func _on_ranged_attack_animation_animation_finished(anim_name: StringName) -> void:
-# 	_on_animated_sprite_2d_animation_finished()
 
 func handle_target_death():
 	if status == STATUS.RANGED_ATTACK or status == STATUS.MELEE_ATTACK:
@@ -1041,7 +990,7 @@ func handle_spell_target_death():
 	chess_spell_target = null
 	spell_target_line.visible = false
 
-func handle_special_effect(target: Chess, attacker: Chess):
+func handle_special_effect(target: Obstacle, attacker: Obstacle):
 	#Placeholder for chess passive ability on special attack effect
 	pass
 	
@@ -1065,7 +1014,7 @@ func human_mage_taunt(spell_duration: int) -> bool:
 
 	for affected_index in affected_index_array:
 			if arena_unitgrid.has(affected_index) and is_instance_valid(arena_unitgrid[affected_index]):
-				if arena_unitgrid[affected_index] is Chess and arena_unitgrid[affected_index].team != team:
+				if arena_unitgrid[affected_index] is Obstacle and arena_unitgrid[affected_index].team != team:
 					arena_unitgrid[affected_index].chess_target = self
 					chess_affected = true
 	return chess_affected
@@ -1081,7 +1030,7 @@ func human_archmage_heal(spell_duration: int, heal_value: int) -> bool:
 
 	for affected_index in affected_index_array:
 			if arena_unitgrid.has(affected_index) and is_instance_valid(arena_unitgrid[affected_index]):
-				if arena_unitgrid[affected_index] is Chess and arena_unitgrid[affected_index].team == team:
+				if arena_unitgrid[affected_index] is Obstacle and arena_unitgrid[affected_index].team == team:
 
 					var effect_instance = ChessEffect.new()
 					effect_instance.continuous_hp_modifier = heal_value
@@ -1106,7 +1055,7 @@ func elf_queen_stun(spell_duration: int, damage_value: int) -> bool:
 
 	for affected_index in affected_index_array:
 		if arena_unitgrid.has(affected_index) and  is_instance_valid(arena_unitgrid[affected_index]):
-			if arena_unitgrid[affected_index] is Chess and arena_unitgrid[affected_index].team != team:
+			if arena_unitgrid[affected_index] is Obstacle and arena_unitgrid[affected_index].team != team:
 
 				var effect_instance = ChessEffect.new()
 				effect_instance.stunned_duration = spell_duration
@@ -1121,7 +1070,7 @@ func elf_queen_stun(spell_duration: int, damage_value: int) -> bool:
 				chess_affected =  true
 	return chess_affected
 
-func elf_mage_damage(spell_target:Chess, damage_threshold: float, min_damage_value: int, spell_range: int) -> bool:
+func elf_mage_damage(spell_target:Obstacle, damage_threshold: float, min_damage_value: int, spell_range: int) -> bool:
 	var chess_affected := false
 	if spell_target.status != STATUS.DIE and spell_target.team != team and spell_target.global_position.distance_to(global_position) <= spell_range:
 
@@ -1168,7 +1117,7 @@ func dwarf_demolitionist_placebomb(spell_range: int) -> bool:
 				attempt_summon_count -= 1
 				if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
 					var game_root_scene = arena.get_parent().get_parent()
-					var summoned_character = game_root_scene.summon_chess("dwarf", "Bomb", team, arena, Vector2i(rand_x, rand_y))	
+					var summoned_character = game_root_scene.summon_obstacle("dwarf", "Bomb", team, arena, Vector2i(rand_x, rand_y))	
 					summoned_character.obstacle_counter = 2
 					summoned_character.obstacle_level = 1
 
