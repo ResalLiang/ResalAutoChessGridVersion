@@ -578,9 +578,9 @@
 	},
 	"SatyrDruid": {
 	  "spd": 4,
-	  "attack_damage": 0,
-	  "attack_range": 0,
-	  "attack_speed": 0,
+	  "attack_damage": 10,
+	  "attack_range": 30,
+	  "attack_speed": 1,
 	  "max_health": 100,
 	  "max_mana": 160,
 	  "armor": 0,

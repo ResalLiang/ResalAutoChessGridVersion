@@ -1,4 +1,4 @@
-class_name GameDataManager
+class_name DataManager
 extends Node
 
 var player_datas := {}
@@ -51,12 +51,11 @@ func save_game_binary():
 		return
 
 	for in_game_data_index in in_game_data.keys():
-		if player_data.has_key(in_game_data_index):
-			match in_game_data[in_game_data_index].type:
-				String:
-					player_data[in_game_data_index].append(in_game_data[in_game_data_index])
-				int:
-					player_data[in_game_data_index] += in_game_data[in_game_data_index]
+		if player_data.has(in_game_data_index):
+			if in_game_data[in_game_data_index] is Array:
+				player_data[in_game_data_index].append(in_game_data[in_game_data_index])
+			elif in_game_data[in_game_data_index] is int:
+				player_data[in_game_data_index] += in_game_data[in_game_data_index]
 
 	player_datas[current_player] = player_data.duplicate()
 	var file = FileAccess.open("user://savegame.dat", FileAccess.WRITE)
@@ -89,23 +88,23 @@ func record_death_chess(chess: Obstacle) -> void:
 
 	if chess.faction in chess_dict.keys() and chess.chess_name in chess_dict[chess.faction].keys():
 		if chess.team == 1:
-			in_game_data[current_player]["ally_death_array"].append([chess.faction, chess.chess_name])
-			in_game_data[current_player]["ally_death_count"] += 1
+			in_game_data["ally_death_array"].append([chess.faction, chess.chess_name])
+			in_game_data["ally_death_count"] += 1
 		else:
-			in_game_data[current_player]["enemy_death_array"].append([chess.faction, chess.chess_name])
-			in_game_data[current_player]["enemy_death_count"] += 1
+			in_game_data["enemy_death_array"].append([chess.faction, chess.chess_name])
+			in_game_data["enemy_death_count"] += 1
 
 func handle_player_won_round():
-	in_game_data[current_player]["total_won_round"] += 1
+	in_game_data["total_won_round"] += 1
 
 func handle_player_won_game():
-	in_game_data[current_player]["total_won_game"] += 1
+	in_game_data["total_won_game"] += 1
 
 func handle_player_lose_round():
-	in_game_data[current_player]["total_lose_round"] += 1
+	in_game_data["total_lose_round"] += 1
 
 func handle_player_lose_game():
-	in_game_data[current_player]["total_lose_game"] += 1
+	in_game_data["total_lose_game"] += 1
 
 func handle_coin_spend(value: int, reason: String):
-	in_game_data[current_player]["total_coin_spend"] += max(0, value)
+	in_game_data["total_coin_spend"] += max(0, value)

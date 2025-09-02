@@ -154,7 +154,7 @@ var cursor_texture = preload("res://asset/cursor/cursors/cursor1.png")
 
 func _ready():
 
-	var tile_size = Vector2(16, 16)
+	var tile_size = arena.unit_grid.size
 	
 	var file = FileAccess.open("res://script/chess_stats.json", FileAccess.READ)
 	if not file:
@@ -196,6 +196,7 @@ func _ready():
 	game_start_button.pressed.connect(new_round_prepare_end)
 	game_restart_button.pressed.connect(start_new_game)
 	shop_refresh_button.pressed.connect(shop_handler.shop_manual_refresh)
+	shop_refresh_button.pressed.connect(control_shaker)
 	shop_freeze_button.pressed.connect(shop_handler.shop_freeze)
 	shop_upgrade_button.pressed.connect(shop_handler.shop_upgrade)
 	chess_order_hp_high.pressed.connect(
@@ -221,7 +222,7 @@ func _ready():
 			if shop_handler.remain_coins >= shop_handler.shop_upgrade_price:
 				shop_refresh_button.disabled = false
 	)
-	shop_handler.coins_decreased.connect(handle_coin_spend)
+	shop_handler.coins_decreased.connect(DataManagerSingleton.handle_coin_spend)
 	shop_handler.coins_decreased.connect(
 		func(value, reason):
 			remain_coins_label.text = "Remaining Coins = " + str(shop_handler.remain_coins)
@@ -243,43 +244,22 @@ func _ready():
 			update_population()
 	)
 
-	player_won_round.connect(GameDataManager.handle_player_won_round)
-	player_lose_round.connect(GameDataManager.handle_player_lose_round)
-	player_won_game.connect(GameDataManager.handle_player_won_game)
-	player_lose_game.connect(GameDataManager.handle_player_lose_game)
+	player_won_round.connect(DataManagerSingleton.handle_player_won_round)
+	player_lose_round.connect(DataManagerSingleton.handle_player_lose_round)
+	player_won_game.connect(DataManagerSingleton.handle_player_won_game)
+	player_lose_game.connect(DataManagerSingleton.handle_player_lose_game)
 
-	center_point = Vector2(tile_size.x * grid_count / 2, tile_size.y * grid_count / 2)
+	center_point = Vector2(tile_size.x * 16 / 2, tile_size.y * 16 / 2)
 
 	shop_handler.shop_refresh()
 	current_round = 0
 	
-	
 	start_new_game()
-
-
-func _input(event):
-	if event.is_action_pressed("ui_cancel"):
-		toggle_pause()
-
-func toggle_pause():
-	if get_tree().paused:
-		resume_game()
-	else:
-		pause_game()
-
-func pause_game():
-	get_tree().paused = true
-	# pause_menu.show()
-
-func resume_game():
-	get_tree().paused = false
-	# pause_menu.hide()
-	# settings_menu.hide()
 
 func start_new_game() -> void:
 
-	GameDataManager.load_game_binary()
-	GameDataManager.in_game_data = {}
+	DataManagerSingleton.load_game_binary()
+	DataManagerSingleton.in_game_data = DataManagerSingleton.player_data.duplicate()
 
 	debug_handler.write_log("LOG", "Game Start.")
 	
@@ -374,7 +354,7 @@ func start_new_turn():
 	start_chess_turn(current_team)
 
 func start_chess_turn(team: Team) -> bool:
-	while dict[team].size > 0:
+	while team_dict[team].size() > 0:
 		team_chars = sort_characters(team, current_chess_active_order)
 		var current_chess = team_chars.pop_front()
 		if is_instance_valid(current_chess) and current_chess is Obstacle and current_chess.status != current_chess.STATUS.DIE:
@@ -387,7 +367,7 @@ func start_chess_turn(team: Team) -> bool:
 				#active_chess.start_turn()
 				# 连接信号等待行动完成
 				#active_chess.action_finished.connect(handle_character_action_finished)
-				handle_character_action_finished(active_chess)
+				handle_character_action_finished()
 				return true
 	active_chess = null
 	handle_character_action_finished()
@@ -400,7 +380,7 @@ func process_character_turn(chess: Obstacle):
 	active_chess.start_turn()
 	await active_chess.action_finished
 	
-	handle_character_action_finished(active_chess)
+	handle_character_action_finished()
 	# 连接信号等待行动完成
 
 func handle_character_action_finished():
@@ -451,7 +431,7 @@ func handle_round_finished(msg):
 	new_round_prepare_start()
 
 func handle_game_end():
-	GameDataManager.save_game_binary()
+	DataManagerSingleton.save_game_binary()
 	#Show report
 
 func sort_characters(team: Team, mode: ChessActiveOrder) -> Array:
@@ -642,13 +622,13 @@ func connect_chess_signals() -> void:
 
 	for chess_index in team_dict[Team.TEAM1_FULL]:
 		chess_index.damage_taken.connect(battle_meter.get_damage_data)
-		chess_index.is_died.connect(GameDataManager.record_death_chess)
+		chess_index.is_died.connect(DataManagerSingleton.record_death_chess)
 		chess_index.is_died.connect(chess_death_handle)
 
 
 	for chess_index in team_dict[Team.TEAM2_FULL]:
 		chess_index.damage_taken.connect(battle_meter.get_damage_data)
-		chess_index.is_died.connect(GameDataManager.record_death_chess)
+		chess_index.is_died.connect(DataManagerSingleton.record_death_chess)
 		chess_index.is_died.connect(chess_death_handle)
 
 func chess_appearance(play_area: PlayArea):
@@ -717,7 +697,7 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, team:
 	chess_information.setup_chess(summoned_character)
 
 	summoned_character.damage_taken.connect(battle_meter.get_damage_data)
-	summoned_character.is_died.connect(GameDataManager.record_death_chess)
+	summoned_character.is_died.connect(DataManagerSingleton.record_death_chess)
 	summoned_character.is_died.connect(chess_death_handle)
 
 	if team == 1:
@@ -752,7 +732,7 @@ func summon_obstacle(summon_obstacle_faction: String, summon_chess_name: String,
 	chess_information.setup_chess(summoned_character)
 
 	summoned_character.damage_taken.connect(battle_meter.get_damage_data)
-	summoned_character.is_died.connect(GameDataManager.record_death_chess)
+	summoned_character.is_died.connect(DataManagerSingleton.record_death_chess)
 	summoned_character.is_died.connect(chess_death_handle)
 
 	if team == 1:
@@ -800,3 +780,18 @@ func chess_death_handle(obstacle: Obstacle):
 	obstacle.visible = false
 	arena.unit_grid.remove_unit(obstacle.position_id)
 	obstacle.queue_free()
+
+func control_shaker(control: Control = remain_coins_label):
+	var old_position = control.global_position
+	var shake_count = randi_range(4, 6)
+	var remain_shake_count = shake_count
+	var shake_tween
+	if shake_tween:
+		shake_tween.kill() # Abort the previous animation.
+	shake_tween = create_tween()
+	for shake_index in range(shake_count):
+		var rand_x = randi_range(-5, 5)
+		var rand_y = randi_range(-5, 5)
+		shake_tween.tween_property(control, "global_position", old_position + Vector2(rand_x, rand_y), 0.1)
+		shake_tween.tween_property(control, "global_position", old_position, 0.1)
+		

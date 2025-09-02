@@ -453,6 +453,7 @@ func _load_chess_stats():
 		base_attack_spd = stats["attack_speed"]
 		skill_name = stats["skill_name"]
 		skill_description = stats["skill_description"]
+		chess_rarity = stats["rarity"]
 		stats_loaded.emit(self, stats)
 	else:
 		push_error("Stats not found for %s/%s" % [faction, chess_name])

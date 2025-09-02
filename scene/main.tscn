@@ -1,0 +1,44 @@
+[gd_scene load_steps=3 format=3 uid="uid://d0b2nvb8x662x"]
+
+[ext_resource type="Script" uid="uid://d17f3ikis8dwb" path="res://script/main.gd" id="1_v0l8b"]
+[ext_resource type="Script" uid="uid://ch81naf8nx47i" path="res://script/virtual_cursor.gd" id="2_v0l8b"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_v0l8b")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(288, 162)
+zoom = Vector2(2, 2)
+
+[node name="transition_layer" type="ColorRect" parent="."]
+z_index = 999
+offset_right = 576.0
+offset_bottom = 324.0
+color = Color(0, 0, 0, 1)
+
+[node name="menu_container" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 576.0
+offset_bottom = 324.0
+mouse_filter = 1
+
+[node name="game_container" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 576.0
+offset_bottom = 324.0
+mouse_filter = 1
+
+[node name="virtual_cursor" type="Control" parent="."]
+unique_name_in_owner = true
+process_mode = 3
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("2_v0l8b")
+
+[node name="cursor_sprite" type="TextureRect" parent="virtual_cursor"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="click_animation" type="AnimationPlayer" parent="virtual_cursor"]
