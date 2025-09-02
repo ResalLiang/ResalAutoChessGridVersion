@@ -1,4 +1,3 @@
-# Chess character class with movement, dragging functionality and state management
 class_name Chess
 extends Obstacle
 
@@ -9,6 +8,7 @@ extends Obstacle
 # Character states
 #enum STATUS {IDLE, MOVE, MELEE_ATTACK, RANGED_ATTACK, JUMP, HIT, DIE, SPELL}
 enum TARGET_CHOICE {CLOSE, FAR, STRONG, WEAK, ALLY, SELF}
+
 #enum play_areas {playarea_arena, playarea_bench, playarea_shop}
 
 #const MAX_SEARCH_RADIUS = 3
@@ -91,7 +91,7 @@ var attack_range = base_attack_range
 var evasion_rate := 0.10
 var critical_rate := 0.10
 #var armor := 0
-
+var chess_rarity := "Common" #	"Common", "Uncommon", "Rare", "Epic", "Legendary"
 
 var remain_attack_count
 
@@ -313,6 +313,7 @@ func _process(delta: float) -> void:
 		spell_target_line.visible = true
 		
 	var new_material = animated_sprite_2d.material.duplicate()
+
 	match team:
 		1:
 			if is_active:
@@ -334,6 +335,20 @@ func _process(delta: float) -> void:
 				new_material.set_shader_parameter("outline_color", Color(1, 1, 1, 1))
 			else:
 				new_material.set_shader_parameter("outline_color", Color(1, 1, 1, 0.33))
+
+
+	if current_play_area == play_areas.playarea_shop:
+		match chess_rarity: #"Common", "Uncommon", "Rare", "Epic", "Legendary"
+			"Common":
+				new_material.set_shader_parameter("outline_color", Color.RED)
+			"Uncommon":
+				new_material.set_shader_parameter("outline_color", Color.BLUE)
+			"Rare":
+				new_material.set_shader_parameter("outline_color", Color.GREEN)
+			"Epic":
+				new_material.set_shader_parameter("outline_color", Color.PURPLE)
+			"Legendary":
+				new_material.set_shader_parameter("outline_color", Color.YELLOW)
 
 	if status == STATUS.HIT:			
 		if is_active:
@@ -921,7 +936,8 @@ func _on_damage_taken(taker: Obstacle, damage_value: int, attacker: Obstacle):
 	
 func _on_died():
 	#Placeholder for chess passive ability on died
-	pass
+	if is_active:
+		action_finished.emit(self)
 
 func update_solid_map():
 		
