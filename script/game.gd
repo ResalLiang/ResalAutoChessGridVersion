@@ -1,3 +1,4 @@
+class_name Game
 extends Node2D
 
 # 预加载角色场景
@@ -56,15 +57,6 @@ var current_chess_active_order := ChessActiveOrder.HIGH_HP
 var center_point: Vector2
 var board_width:= 216
 var board_height:= 216
-
-var grid_size := 16
-var grid_count := 16
-var astar_solid_map
-
-var rand_chess_ratio := 0.8
-
-var is_shop_frozen := false
-var remain_coins := 999
 
 var current_round := 1
 var won_rounds := 0
@@ -135,7 +127,11 @@ var player_save_data = {
 	"coins": 0,
 	"kill_enemy_count": 0,
 	"kill_enemy_array": [],
-	"experience": 1250
+	"experience": 1250,
+	"total_won_round": 0,
+	"total_lose_round": 0,
+	"total_won_game": 0,
+	"total_lose_game": 0
 }
 
 var player_name := "player1"
@@ -145,17 +141,18 @@ var save_datas : Dictionary
 var current_population := 0
 var max_population := 3
 
-signal game_finished
+signal round_finished
 signal chess_appearance_finished
 signal game_turn_started
 signal game_turn_finished
+signal player_won_round
+signal player_lose_round
+signal player_won_game
+signal player_lose_game
 
 var cursor_texture = preload("res://asset/cursor/cursors/cursor1.png")
 
 func _ready():
-	save_datas = load_game_binary()
-	if save_datas.has(player_name):
-		player_save_data = save_datas[player_name]
 
 	var tile_size = Vector2(16, 16)
 	
@@ -171,7 +168,7 @@ func _ready():
 		push_error("JSON parsing failed for chess_stats.json")
 		return
 	
-	game_finished.connect(_on_round_finished)
+	round_finished.connect(handle_round_finished)
 	game_turn_started.connect(
 		func():
 			game_start_button.disabled = true
@@ -224,6 +221,7 @@ func _ready():
 			if shop_handler.remain_coins >= shop_handler.shop_upgrade_price:
 				shop_refresh_button.disabled = false
 	)
+	shop_handler.coins_decreased.connect(handle_coin_spend)
 	shop_handler.coins_decreased.connect(
 		func(value, reason):
 			remain_coins_label.text = "Remaining Coins = " + str(shop_handler.remain_coins)
@@ -245,6 +243,11 @@ func _ready():
 			update_population()
 	)
 
+	player_won_round.connect(GameDataManager.handle_player_won_round)
+	player_lose_round.connect(GameDataManager.handle_player_lose_round)
+	player_won_game.connect(GameDataManager.handle_player_won_game)
+	player_lose_game.connect(GameDataManager.handle_player_lose_game)
+
 	center_point = Vector2(tile_size.x * grid_count / 2, tile_size.y * grid_count / 2)
 
 	shop_handler.shop_refresh()
@@ -254,14 +257,37 @@ func _ready():
 	start_new_game()
 
 
+func _input(event):
+	if event.is_action_pressed("ui_cancel"):
+		toggle_pause()
+
+func toggle_pause():
+	if get_tree().paused:
+		resume_game()
+	else:
+		pause_game()
+
+func pause_game():
+	get_tree().paused = true
+	# pause_menu.show()
+
+func resume_game():
+	get_tree().paused = false
+	# pause_menu.hide()
+	# settings_menu.hide()
+
 func start_new_game() -> void:
 
+	GameDataManager.load_game_binary()
+	GameDataManager.in_game_data = {}
 
 	debug_handler.write_log("LOG", "Game Start.")
 	
 	clear_play_area(arena)
 	clear_play_area(shop)
 	clear_play_area(bench)
+
+	saved_arena_team = {}
 
 	team_dict[Team.TEAM1] = []
 	team_dict[Team.TEAM2] = []
@@ -280,6 +306,7 @@ func start_new_game() -> void:
 	new_round_prepare_start()
 
 func new_round_prepare_start():
+	update_population()
 	
 	current_round += 1
 	
@@ -333,10 +360,10 @@ func start_new_turn():
 				team2_alive_cnt += 1
 			
 	if team1_alive_cnt == 0:
-		game_finished.emit("team2")
+		round_finished.emit("team2")
 		return
 	elif team2_alive_cnt == 0:
-		game_finished.emit("team1")
+		round_finished.emit("team1")
 		return
 		
 	# current_team = [Team.TEAM1, Team.TEAM2][randi() % 2]
@@ -346,68 +373,86 @@ func start_new_turn():
 
 	start_chess_turn(current_team)
 
-func start_chess_turn(team: Team):
-	team_chars = sort_characters(team, current_chess_active_order)
-	var current_chess = team_chars.pop_front()
-	if chess_mover._get_play_area_for_position(current_chess.global_position) == 0:
-		process_character_turn(current_chess)
-	else:
-		active_chess = current_chess
-		active_chess.is_active = true
-		#active_chess.start_turn()
-		# 连接信号等待行动完成
-		#active_chess.action_finished.connect(_on_character_action_finished)
-		_on_character_action_finished(active_chess)
+func start_chess_turn(team: Team) -> bool:
+	while dict[team].size > 0:
+		team_chars = sort_characters(team, current_chess_active_order)
+		var current_chess = team_chars.pop_front()
+		if is_instance_valid(current_chess) and current_chess is Obstacle and current_chess.status != current_chess.STATUS.DIE:
+			if chess_mover._get_play_area_for_position(current_chess.global_position) == 0:
+				process_character_turn(current_chess)
+				return true
+			elif chess_mover._get_play_area_for_position(current_chess.global_position) == 1:
+				active_chess = current_chess
+				active_chess.is_active = true
+				#active_chess.start_turn()
+				# 连接信号等待行动完成
+				#active_chess.action_finished.connect(handle_character_action_finished)
+				handle_character_action_finished(active_chess)
+				return true
+	active_chess = null
+	handle_character_action_finished()
+	return false
 
 func process_character_turn(chess: Obstacle):
 	active_chess = chess
 	active_chess.is_active = true
-	#active_chess.action_finished.connect(_on_character_action_finished)
+	#active_chess.action_finished.connect(handle_character_action_finished)
 	active_chess.start_turn()
 	await active_chess.action_finished
 	
-	_on_character_action_finished(active_chess)
+	handle_character_action_finished(active_chess)
 	# 连接信号等待行动完成
 
-func _on_character_action_finished(chess: Obstacle):
-	active_chess.is_active = false
-	#active_chess.action_finished.disconnect(_on_character_action_finished)
+func handle_character_action_finished():
+	if active_chess:
+		active_chess.is_active = false
+		#active_chess.action_finished.disconnect(handle_character_action_finished)
 
 	if current_team == Team.TEAM1 and team_dict[Team.TEAM2].size() != 0:
 		current_team = Team.TEAM2
 		start_chess_turn(current_team)
-		return
+		
 	elif current_team == Team.TEAM2 and team_dict[Team.TEAM1].size() != 0:
 		current_team = Team.TEAM1
 		start_chess_turn(current_team)
-		return
+		
 	elif team_dict[Team.TEAM2].size() != 0 or team_dict[Team.TEAM1].size() != 0:
 		start_chess_turn(current_team)
+
 	else:
 		start_new_turn()
 
-func _on_round_finished(msg):
-	save_game_binary()
+func handle_round_finished(msg):
 
 	if msg == "team1":
 		won_rounds += 1
 		print("Round %d over, you won!" % current_round)
+		player_won_round.emit()
 		last_turn_label.text = 'WON'
 	elif msg == "team2":
 		lose_rounds += 1
 		print("Round %d over, you lose..." % current_round)
+		player_lose_round.emit()
 		last_turn_label.text = 'LOSE'
 
 	print("You have won %d rounds, and lose %d rounds." % [won_rounds, lose_rounds])
 
 	if won_rounds >= max_won_rounds:
 		print("You won the game!")
+		player_won_game.emit()
+		handle_game_end()
 		return
 	elif lose_rounds >= max_lose_rounds:
 		print("You lose the game... Try later.")
+		player_lose_game.emit()
+		handle_game_end()
 		return
 
 	new_round_prepare_start()
+
+func handle_game_end():
+	GameDataManager.save_game_binary()
+	#Show report
 
 func sort_characters(team: Team, mode: ChessActiveOrder) -> Array:
 	var chesses_team = team_dict[team]
@@ -597,10 +642,13 @@ func connect_chess_signals() -> void:
 
 	for chess_index in team_dict[Team.TEAM1_FULL]:
 		chess_index.damage_taken.connect(battle_meter.get_damage_data)
+		chess_index.is_died.connect(GameDataManager.record_death_chess)
 		chess_index.is_died.connect(chess_death_handle)
+
 
 	for chess_index in team_dict[Team.TEAM2_FULL]:
 		chess_index.damage_taken.connect(battle_meter.get_damage_data)
+		chess_index.is_died.connect(GameDataManager.record_death_chess)
 		chess_index.is_died.connect(chess_death_handle)
 
 func chess_appearance(play_area: PlayArea):
@@ -669,6 +717,7 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, team:
 	chess_information.setup_chess(summoned_character)
 
 	summoned_character.damage_taken.connect(battle_meter.get_damage_data)
+	summoned_character.is_died.connect(GameDataManager.record_death_chess)
 	summoned_character.is_died.connect(chess_death_handle)
 
 	if team == 1:
@@ -703,6 +752,7 @@ func summon_obstacle(summon_obstacle_faction: String, summon_chess_name: String,
 	chess_information.setup_chess(summoned_character)
 
 	summoned_character.damage_taken.connect(battle_meter.get_damage_data)
+	summoned_character.is_died.connect(GameDataManager.record_death_chess)
 	summoned_character.is_died.connect(chess_death_handle)
 
 	if team == 1:
@@ -732,22 +782,6 @@ func update_population():
 	population_label.label_settings = label_settings
 	faction_bonus_manager.bonus_refresh()
 
-# Load save file
-func load_game_binary():
-	if FileAccess.file_exists("user://savegame.dat"):
-		var file = FileAccess.open("user://savegame.dat", FileAccess.READ)
-		var save_datas = file.get_var(true)
-		file.close()
-		return save_datas
-	return {}
-
-
-func save_game_binary():
-	save_datas[player_name] = player_save_data.duplicate()
-	var file = FileAccess.open("user://savegame.dat", FileAccess.WRITE)
-	file.store_var(save_datas, true)  # true enables full length encoding
-	file.close()
-
 func chess_death_handle(obstacle: Obstacle):
 
 	if team_dict[Team.TEAM1].has(obstacle):
@@ -762,16 +796,6 @@ func chess_death_handle(obstacle: Obstacle):
 	if team_dict[Team.TEAM2_FULL].has(obstacle):
 		team_dict[Team.TEAM2_FULL].erase(obstacle)
 
-	if obstacle.team != 1:
-		if player_save_data.has("kill_enemy_count"):
-			player_save_data["kill_enemy_count"] += 1
-		else:
-			player_save_data["kill_enemy_count"] = 1
-			
-		if player_save_data.has("kill_enemy_array"):
-			player_save_data["kill_enemy_array"].append([obstacle.faction, obstacle.chess_name])
-		else:
-			player_save_data["kill_enemy_array"]= [obstacle.faction, obstacle.chess_name]
 
 	obstacle.visible = false
 	arena.unit_grid.remove_unit(obstacle.position_id)
