@@ -101,5 +101,5 @@ func _on_target_input_event(_viewport, event, _shape_idx):
 # Handle dragging behavior
 func _handle_dragging():
 	# Follow mouse position with offset
-	dragging_item.global_position = get_global_mouse_position() + offset
+	# dragging_item.global_position = get_global_mouse_position() + offset
 	pass
