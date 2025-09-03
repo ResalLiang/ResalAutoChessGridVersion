@@ -160,7 +160,7 @@ signal stats_loaded
 # ========================
 # Initialization
 # ========================
-func ready():
+func _ready():
 		
 	drag_handler.dragging_enabled = dragging_enabled
 	
@@ -225,8 +225,6 @@ func ready():
 # ========================
 # Process Functions
 # ========================
-func _ready() -> void:
-	ready()
 
 func _process(delta: float) -> void:
 	
@@ -336,13 +334,7 @@ func _load_animations():
 
 # Load chess stats from JSON file
 func _load_chess_stats():
-	var file = FileAccess.open("res://script/chess_stats.json", FileAccess.READ)
-	if not file:
-		push_error("Failed to open chess_stats.json")
-		return
-	
-	var json_text = file.get_as_text()
-	chess_data = JSON.parse_string(json_text)
+	chess_data = DataManagerSingleton.chess_data
 	
 	if not chess_data:
 		push_error("JSON parsing failed for chess_stats.json")
