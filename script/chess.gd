@@ -204,7 +204,7 @@ signal tween_moving	#tween_moving.emit(self, _position, target_pos)
 # ========================
 # Initialization
 # ========================
-func ready():
+func _ready():
 		
 	drag_handler.dragging_enabled = dragging_enabled
 	
@@ -286,11 +286,12 @@ func ready():
 		
 	area_effect_handler.arena = arena
 
+	connect_to_data_manager()
+
 # ========================
 # Process Functions
 # ========================
-func _ready() -> void:
-	ready()
+
 
 func _process(delta: float) -> void:
 	
@@ -431,13 +432,8 @@ func _load_animations():
 
 # Load chess stats from JSON file
 func _load_chess_stats():
-	var file = FileAccess.open("res://script/chess_stats.json", FileAccess.READ)
-	if not file:
-		push_error("Failed to open chess_stats.json")
-		return
-	
-	var json_text = file.get_as_text()
-	chess_data = JSON.parse_string(json_text)
+
+	chess_data = DataManagerSingeton.get_chess_data()
 	
 	if not chess_data:
 		push_error("JSON parsing failed for chess_stats.json")
@@ -1014,6 +1010,63 @@ func handle_spell_target_death():
 func handle_special_effect(target: Obstacle, attacker: Obstacle):
 	#Placeholder for chess passive ability on special attack effect
 	pass
+
+func connect_to_data_manager():
+	# DataManagerSingeton.add_data_to_dict(DataManagerSingeton.in_game_data, ["XX"], value)
+	attack_evased.connect(
+		func(chess, attacker):
+			if chess.team == 1:
+				DataManagerSingeton.add_data_to_dict(DataManagerSingeton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "evase_attack_count"], 1)
+	)
+
+	critical_damage_applied.connect(
+		func(chess, attacker):
+			if chess.team == 1:
+				DataManagerSingeton.add_data_to_dict(DataManagerSingeton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "critical_attack_count"], 1)
+	)
+
+	spell_casted.connect(
+		func(chess, spell_name):
+			if chess.team == 1:
+				DataManagerSingeton.add_data_to_dict(DataManagerSingeton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "cast_spell_count"], 1)
+	)
+
+
+
+# var chess_stat_sample = {
+# 	"buy_count": 0,
+# 	"sell_count": 0,
+# 	"refresh_count" : 0,
+# 	"max_damage": 0,
+# 	"max_damage_taken": 0,
+# 	"critical_attack_count": 0,
+# 	"evase_attack_count" : 0,
+# 	"cast_spell_count" : 0
+# }
+# attack_evased.emit(self, attacker.chess_name)
+# target_lost.emit(self)
+# target_found.emit(self, chess_target.chess_name)
+# tween_moving.emit(self, _position, target_pos)
+# animated_sprite_loaded.emit(self, anim_name)
+# stats_loaded.emit(self, stats)
+# target_found.emit(self, chess_target)
+# move_started.emit(self, position_id)
+# move_finished.emit(self, position_id)
+# move_finished.emit(self, _position)
+# action_started.emit(self)
+# ranged_attack_started.emit(self)
+# projectile_lauched.emit(self)
+# projectile_hit.emit(handle_special_effect)
+# melee_attack_started.emit(self)
+# action_finished.emit(self)
+# damage_taken.emit(self, real_damage_value, attacker)
+# attack_evased.emit(self, attacker)
+# heal_taken.emit(self, heal_value, healer)
+# spell_casted.emit(self, skill_name)
+# critical_damage_applied.emit(self, damage_target)
+# damage_applied.emit(self, damage_target)
+# heal_applied.emit(self, heal_value, heal_target)
+# is_died.emit(self)
 	
 func human_mage_taunt(spell_duration: int) -> bool:
 	var chess_affected := true
