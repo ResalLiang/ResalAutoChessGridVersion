@@ -37,8 +37,6 @@ const chess_class = preload("res://script/chess.gd")
 @onready var battle_meter: BattleMeter = $battle_meter
 @onready var chess_information: ChessInformation = $chess_information
 
-var chess_data: Dictionary  # Stores chess stats loaded from JSON
-var chess_data_array: Dictionary
 enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
 enum ChessActiveOrder { HIGH_HP, LOW_HP, NEAR_CENTER, FAR_CENTER }
 var current_team: Team
@@ -123,17 +121,6 @@ const RARITY_COUNTS = {
 	"Legendary": 10
 }
 
-var player_save_data = {
-	"coins": 0,
-	"kill_enemy_count": 0,
-	"kill_enemy_array": [],
-	"experience": 1250,
-	"total_won_round": 0,
-	"total_lose_round": 0,
-	"total_won_game": 0,
-	"total_lose_game": 0
-}
-
 var player_name := "player1"
 
 var save_datas : Dictionary
@@ -155,18 +142,6 @@ var cursor_texture = preload("res://asset/cursor/cursors/cursor1.png")
 func _ready():
 
 	var tile_size = arena.unit_grid.size
-	
-	var file = FileAccess.open("res://script/chess_stats.json", FileAccess.READ)
-	if not file:
-		push_error("Failed to open chess_stats.json")
-		return
-	
-	var json_text = file.get_as_text()
-	chess_data = JSON.parse_string(json_text)
-	
-	if not chess_data:
-		push_error("JSON parsing failed for chess_stats.json")
-		return
 	
 	round_finished.connect(handle_round_finished)
 	game_turn_started.connect(
@@ -196,7 +171,10 @@ func _ready():
 	game_start_button.pressed.connect(new_round_prepare_end)
 	game_restart_button.pressed.connect(start_new_game)
 	shop_refresh_button.pressed.connect(shop_handler.shop_manual_refresh)
-	shop_refresh_button.pressed.connect(control_shaker)
+	shop_refresh_button.pressed.connect(
+		func():
+			control_shaker(remain_coins_label)
+	)
 	shop_freeze_button.pressed.connect(shop_handler.shop_freeze)
 	shop_upgrade_button.pressed.connect(shop_handler.shop_upgrade)
 	chess_order_hp_high.pressed.connect(
@@ -286,6 +264,7 @@ func start_new_game() -> void:
 	new_round_prepare_start()
 
 func new_round_prepare_start():
+	# start shopping
 	update_population()
 	
 	current_round += 1
@@ -417,6 +396,8 @@ func handle_round_finished(msg):
 
 	print("You have won %d rounds, and lose %d rounds." % [won_rounds, lose_rounds])
 
+	battle_meter.round_end_data_update()
+
 	if won_rounds >= max_won_rounds:
 		print("You won the game!")
 		player_won_game.emit()
@@ -470,7 +451,7 @@ func generate_enemy(difficulty : int) -> void:
 			character.faction = rand_character_result[0]
 			character.chess_name = rand_character_result[1]
 			character.chess_serial = get_next_serial()
-			# character.faction = chess_data.keys()[randi_range(0, chess_data.keys().size() - 2)] # remove villager
+			# character.faction = DataManagerSingeton.get_chess_data().keys()[randi_range(0, DataManagerSingeton.get_chess_data().keys().size() - 2)] # remove villager
 			# character.chess_name = get_random_character(character.faction)
 			add_child(character)
 			debug_handler.connect_to_chess_signal(character)
@@ -483,16 +464,16 @@ func generate_enemy(difficulty : int) -> void:
 			
 	
 func get_random_character(faction_name: String) -> String:
-	if not chess_data.has(faction_name):
+	if not DataManagerSingeton.get_chess_data().has(faction_name):
 		return ""
 	
 	var candidates = []
 	var weights = []
 	
 	# Prepare candidate list and weight list
-	for chess_name_index in chess_data[faction_name]:
-		var rarity = chess_data[faction_name][chess_name_index]["rarity"]
-		if RARITY_WEIGHTS[min(6, shop_handler.shop_level)].has(rarity) and chess_data[faction_name][chess_name_index]["spd"] != 0:
+	for chess_name_index in DataManagerSingeton.get_chess_data()[faction_name]:
+		var rarity = DataManagerSingeton.get_chess_data()[faction_name][chess_name_index]["rarity"]
+		if RARITY_WEIGHTS[min(6, shop_handler.shop_level)].has(rarity) and DataManagerSingeton.get_chess_data()[faction_name][chess_name_index]["spd"] != 0:
 			candidates.append(chess_name_index)
 			weights.append(RARITY_WEIGHTS[min(6, shop_handler.shop_level)][rarity])
 	
@@ -578,13 +559,13 @@ func generate_random_chess():
 	var total_weight_pool := 0
 	
 	# Pre-process all eligible chesses with calculated weights
-	for faction in chess_data:
+	for faction in DataManagerSingeton.get_chess_data():
 		# Skip special faction
 		if faction == "villager":
 			continue
 			
-		for chess_name in chess_data[faction]:
-			var chess_attributes = chess_data[faction][chess_name]
+		for chess_name in DataManagerSingeton.get_chess_data()[faction]:
+			var chess_attributes = DataManagerSingeton.get_chess_data()[faction][chess_name]
 			
 			# Validation checks
 			if chess_attributes["spd"] == 0 || chess_attributes["rarity"] != selected_rarity:
@@ -676,9 +657,9 @@ func get_next_serial() -> int:
 
 func summon_chess(summon_chess_faction: String, summon_chess_name: String, team: int, summon_arena: PlayArea, summon_position: Vector2i) -> Chess:
 
-	if not summon_chess_faction in chess_data.keys():
+	if not summon_chess_faction in DataManagerSingeton.get_chess_data().keys():
 		return null
-	if not summon_chess_name in chess_data[summon_chess_faction].keys():
+	if not summon_chess_name in DataManagerSingeton.get_chess_data()[summon_chess_faction].keys():
 		return null
 
 	var summoned_character = chess_scene.instantiate()
@@ -711,9 +692,9 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, team:
 
 func summon_obstacle(summon_obstacle_faction: String, summon_chess_name: String, team: int, summon_arena: PlayArea, summon_position: Vector2i) -> Obstacle:
 
-	if not summon_obstacle_faction in chess_data.keys():
+	if not summon_obstacle_faction in DataManagerSingeton.get_chess_data().keys():
 		return null
-	if not summon_chess_name in chess_data[summon_obstacle_faction].keys():
+	if not summon_chess_name in DataManagerSingeton.get_chess_data()[summon_obstacle_faction].keys():
 		return null
 
 	var summoned_character = obstacle_scene.instantiate()
@@ -781,7 +762,7 @@ func chess_death_handle(obstacle: Obstacle):
 	arena.unit_grid.remove_unit(obstacle.position_id)
 	obstacle.queue_free()
 
-func control_shaker(control: Control = remain_coins_label):
+func control_shaker(control: Control):
 	var old_position = control.global_position
 	var shake_count = randi_range(4, 6)
 	var remain_shake_count = shake_count
@@ -790,8 +771,8 @@ func control_shaker(control: Control = remain_coins_label):
 		shake_tween.kill() # Abort the previous animation.
 	shake_tween = create_tween()
 	for shake_index in range(shake_count):
-		var rand_x = randi_range(-5, 5)
-		var rand_y = randi_range(-5, 5)
-		shake_tween.tween_property(control, "global_position", old_position + Vector2(rand_x, rand_y), 0.1)
+		var rand_x = randi_range(-3, 3)
+		var rand_y = randi_range(-3, 3)
+		shake_tween.tween_property(control, "global_position", old_position + Vector2(rand_x, rand_y), 0.05)
 		shake_tween.tween_property(control, "global_position", old_position, 0.1)
 		
