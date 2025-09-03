@@ -15,14 +15,26 @@ var player_data : Dictionary = {
 	"total_lose_game": 0,
 	"total_coin_spend": 0,
 	"total_refresh_count" : 0,
-	"highest_score" : 0
+	"highest_score" : 0,
+	"chess_stat" : {}
+}
+
+var chess_stat_sample = {
+	"buy_count": 0,
+	"sell_count": 0,
+	"refresh_count" : 0,
+	"max_damage": 0,
+	"max_damage_taken": 0,
+	"critical_attack_count": 0,
+	"evase_attack_count" : 0,
+	"cast_spell_count" : 0
 }
 
 var in_game_data : Dictionary
 
 var last_player : String
 var current_player : String
-var chess_dict : Dictionary
+var chess_data : Dictionary
 
 func _ready() -> void:
 
@@ -35,29 +47,21 @@ func _ready() -> void:
 
 	load_chess_stats()
 
-
 func load_game_binary():
-	if FileAccess.file_exists("user://savegame.dat"):
+	if FileAccess.file_exists("user://gamedata.dat"):
 		var file = FileAccess.open("user://savegame.dat", FileAccess.READ)
 		var player_datas = file.get_var(true)
 		file.close()
 		if player_datas.keys().has(current_player):
 			player_data = player_datas[current_player]
 
-
 func save_game_binary():
 
 	if current_player == "":
 		return
 
-	for in_game_data_index in in_game_data.keys():
-		if player_data.has(in_game_data_index):
-			if in_game_data[in_game_data_index] is Array:
-				player_data[in_game_data_index].append(in_game_data[in_game_data_index])
-			elif in_game_data[in_game_data_index] is int:
-				player_data[in_game_data_index] += in_game_data[in_game_data_index]
+	player_datas[current_player] = merge_dictionaries(player_data, in_game_data) 
 
-	player_datas[current_player] = player_data.duplicate()
 	var file = FileAccess.open("user://savegame.dat", FileAccess.WRITE)
 	file.store_var(player_datas, true)  # true enables full length encoding
 	file.close()
@@ -75,9 +79,9 @@ func load_chess_stats():
 		return
 	
 	var json_text = file.get_as_text()
-	chess_dict = JSON.parse_string(json_text)
+	chess_data = JSON.parse_string(json_text)
 	
-	if not chess_dict:
+	if not chess_data:
 		push_error("JSON parsing failed for chess_stats.json")
 		return
 
@@ -86,25 +90,118 @@ func record_death_chess(chess: Obstacle) -> void:
 	if not chess is Chess:
 		return
 
-	if chess.faction in chess_dict.keys() and chess.chess_name in chess_dict[chess.faction].keys():
+	if chess.faction in chess_data.keys() and chess.chess_name in chess_data[chess.faction].keys():
 		if chess.team == 1:
-			in_game_data["ally_death_array"].append([chess.faction, chess.chess_name])
-			in_game_data["ally_death_count"] += 1
+			add_data_to_dict(in_game_data, ["ally_death_array"], [chess.faction, chess.chess_name])
+			add_data_to_dict(in_game_data, ["ally_death_count"], 1)
 		else:
-			in_game_data["enemy_death_array"].append([chess.faction, chess.chess_name])
-			in_game_data["enemy_death_count"] += 1
+			add_data_to_dict(in_game_data, ["enemy_death_array"], [chess.faction, chess.chess_name])
+			add_data_to_dict(in_game_data, ["enemy_death_count"], 1)
 
 func handle_player_won_round():
-	in_game_data["total_won_round"] += 1
+	add_data_to_dict(in_game_data, ["total_won_round"], 1)
+	# in_game_data["total_won_round"] += 1
 
 func handle_player_won_game():
-	in_game_data["total_won_game"] += 1
+	add_data_to_dict(in_game_data, ["total_won_game"], 1)
+	# in_game_data["total_won_game"] += 1
 
 func handle_player_lose_round():
-	in_game_data["total_lose_round"] += 1
+	add_data_to_dict(in_game_data, ["total_lose_round"], 1)
+	# in_game_data["total_lose_round"] += 1
 
 func handle_player_lose_game():
-	in_game_data["total_lose_game"] += 1
+	add_data_to_dict(in_game_data, ["total_lose_game"], 1)
+	# in_game_data["total_lose_game"] += 1
 
 func handle_coin_spend(value: int, reason: String):
-	in_game_data["total_coin_spend"] += max(0, value)
+	add_data_to_dict(in_game_data, ["total_coin_spend"], max(0, value))
+	# in_game_data["total_coin_spend"] += max(0, value)
+
+func get_chess_data():
+	return chess_data
+
+func add_data_to_dict(dict: Dictionary, key_array: Array[String], value):
+	# Navigate through the dictionary following the key array path
+	var current_dict = dict
+	
+	# Traverse all keys except the last one to build the nested structure
+	for i in range(key_array.size() - 1):
+		var key = key_array[i]
+		
+		# If the key doesn't exist, create a new dictionary
+		if not current_dict.has(key):
+			current_dict[key] = {}
+		
+		# Move to the next level of the dictionary
+		current_dict = current_dict[key]
+	
+	# Get the final key where we'll set the value
+	var final_key = key_array[-1]
+	
+	# Check if the final key already exists
+	if current_dict.has(final_key):
+		var existing_value = current_dict[final_key]
+		if value is int:
+			# Handle special cases based on key naming conventions
+			if final_key.begins_with("max"):
+				# Take the maximum of existing and new value
+				current_dict[final_key] = max(existing_value, value)
+			elif final_key.begins_with("min"):
+				# Take the minimum of existing and new value
+				current_dict[final_key] = min(existing_value, value)
+			elif final_key.ends_with("count") or final_key.begins_with("total"):
+				# Sum the existing and new value
+				current_dict[final_key] = existing_value + value
+			else:
+				# Overwrite with new value for all other cases
+				current_dict[final_key] = value
+		elif value is Array:
+			current_dict[final_key] = existing_value + value
+	else:
+		# Key doesn't exist, simply set the new value
+		current_dict[final_key] = value
+
+func merge_dictionaries(dict1: Dictionary, dict2: Dictionary) -> Dictionary:
+	# Create a copy of the first dictionary to avoid modifying the original
+	var result = dict1.duplicate(true)
+	
+	# Iterate through each key-value pair in the second dictionary
+	for key in dict2:
+		var value2 = dict2[key]
+		
+		# If key doesn't exist in result, simply add it
+		if not result.has(key):
+			result[key] = value2
+			continue
+		
+		var value1 = result[key]
+		
+		# Handle different value types based on their types
+		if typeof(value1) == typeof(value2):
+			match typeof(value1):
+				TYPE_DICTIONARY:
+					# Recursively merge dictionaries
+					result[key] = merge_dictionaries(value1, value2)
+				TYPE_ARRAY:
+					# Concatenate arrays directly
+					result[key] = value1 + value2
+				TYPE_INT, TYPE_FLOAT:
+					# Handle numeric values based on key naming conventions
+					if key.begins_with("max"):
+						result[key] = max(value1, value2)
+					elif key.begins_with("min"):
+						result[key] = min(value1, value2)
+					elif key.ends_with("count"):
+						result[key] = value1 + value2
+					else:
+						# Default behavior: replace with second dictionary's value
+						result[key] = value2
+				_:
+					# For other types, replace with second dictionary's value
+					result[key] = value2
+		else:
+			# If types don't match, replace with second dictionary's value
+			result[key] = value2
+	
+	return result
