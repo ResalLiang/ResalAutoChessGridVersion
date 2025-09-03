@@ -4,6 +4,8 @@ extends Node
 @export var play_areas: Array[PlayArea]
 @onready var shop_handler: ShopHandler = %shop_handler
 signal chess_moved(obstacle: Obstacle, play_area: PlayArea, tile: Vector2i)
+signal chess_raised(chess_position: Vector2, obstacle: Obstacle)
+signal chess_dropped(obstacle: Obstacle)
 
 func _ready() -> void:
 	pass
@@ -68,13 +70,15 @@ func _on_chess_drag_started(starting_position: Vector2, status: String, obstacle
 	if i > -1:
 		var tile := play_areas[i].get_tile_from_global(obstacle.global_position)
 		play_areas[i].unit_grid.remove_unit(tile)
+		chess_raised.emit(starting_position, obstacle)	
 		
 		
 func _on_chess_drag_canceled(starting_position: Vector2, status: String, obstacle: Obstacle) -> void:
-	
+	chess_dropped.emit(starting_position, obstacle)
 	if get_parent().is_game_turn_start:
 		_set_highlighters(false)
 		_reset_chess_to_starting_position(starting_position, obstacle)
+		
 		return
 		
 	
@@ -87,6 +91,7 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 	if get_parent().is_game_turn_start:
 		_set_highlighters(false)
 		_reset_chess_to_starting_position(starting_position, obstacle)
+		chess_dropped.emit(starting_position, obstacle)
 		return
 	
 	_set_highlighters(false)
@@ -100,9 +105,11 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 
 	if drop_area_index == -1:
 		_reset_chess_to_starting_position(starting_position, obstacle)
+		chess_dropped.emit(starting_position, obstacle)
 		return
 	elif (old_area_index == 0 or old_area_index == 1) and drop_area_index == 2: # move obstacle back to shop means sell
 		shop_handler.sell_chess(obstacle)
+		chess_dropped.emit(starting_position, obstacle)
 		return
 
 		
@@ -116,9 +123,11 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 		if shop_handler.can_pay_chess(obstacle) and not new_area.unit_grid.is_tile_occupied(new_tile) and get_parent().current_population < get_parent().max_population:
 			shop_handler.buy_chess(obstacle)
 			_move_chess(obstacle, new_area, new_tile)
+			chess_dropped.emit(obstacle)
 			return
 		else:
 			_reset_chess_to_starting_position(starting_position, obstacle)
+			chess_dropped.emit(starting_position, obstacle)
 			return
 
 	if new_area.unit_grid.is_tile_occupied(new_tile):
@@ -127,4 +136,5 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 		_move_chess(old_obstacle, old_area, old_tile)
 		
 	_move_chess(obstacle, new_area, new_tile)		
+	chess_dropped.emit(obstacle)
 	

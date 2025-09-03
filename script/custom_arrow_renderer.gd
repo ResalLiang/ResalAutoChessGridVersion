@@ -8,7 +8,7 @@ class_name CustomArrowRenderer
 @export var arrow_head_width: float = 15.0
 @export var dash_length: float = 15.0
 @export var dash_gap: float = 10.0
-@export var is_dashed: bool = false
+@export var is_dashed: bool = true
 
 var start_pos: Vector2
 var end_pos: Vector2
@@ -16,17 +16,19 @@ var is_visible: bool = false
 
 # 动画相关
 var animation_progress: float = 0.0
-var is_animating: bool = false
+var is_animating: bool = true
 
 func _ready():
 	z_index = 999
 	mouse_filter = MouseFilter.MOUSE_FILTER_IGNORE
-	show_targeting_arrow(Vector2(0, 0), get_global_mouse_position(), true)
 
-
-func _process():
-	if is_visible and animation_progress > 0.0:
+func _process(delta: float) -> void:
+	if is_visible : #and animation_progress > 0.0:
+		visible = true
 		end_pos = get_global_mouse_position()
+		show_targeting_arrow(start_pos, get_global_mouse_position(), true)
+	else:
+		visible = false
 
 func show_targeting_arrow(from: Vector2, to: Vector2, animate: bool = true):
 	start_pos = from
@@ -148,11 +150,11 @@ func draw_dashed_segment(start: Vector2, end: Vector2, offset: float, total_leng
 	
 	var current_pos = 0.0
 	var dash_cycle = dash_length + dash_gap
-	var is_dash = ((offset % dash_cycle) < dash_length)
+	var is_dash = (int(offset) % int(dash_cycle)) < dash_length
 	
 	while current_pos < segment_length:
 		var remaining = segment_length - current_pos
-		var cycle_pos = (offset + current_pos) % dash_cycle
+		var cycle_pos = int(offset + current_pos) % int(dash_cycle)
 		
 		if is_dash and cycle_pos < dash_length:
 			# 绘制虚线段

@@ -433,7 +433,7 @@ func _load_animations():
 # Load chess stats from JSON file
 func _load_chess_stats():
 
-	chess_data = DataManagerSingeton.get_chess_data()
+	chess_data = DataManagerSingleton.get_chess_data()
 	
 	if not chess_data:
 		push_error("JSON parsing failed for chess_stats.json")
@@ -1012,23 +1012,23 @@ func handle_special_effect(target: Obstacle, attacker: Obstacle):
 	pass
 
 func connect_to_data_manager():
-	# DataManagerSingeton.add_data_to_dict(DataManagerSingeton.in_game_data, ["XX"], value)
+	# DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["XX"], value)
 	attack_evased.connect(
 		func(chess, attacker):
 			if chess.team == 1:
-				DataManagerSingeton.add_data_to_dict(DataManagerSingeton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "evase_attack_count"], 1)
+				DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "evase_attack_count"], 1)
 	)
 
 	critical_damage_applied.connect(
 		func(chess, attacker):
 			if chess.team == 1:
-				DataManagerSingeton.add_data_to_dict(DataManagerSingeton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "critical_attack_count"], 1)
+				DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "critical_attack_count"], 1)
 	)
 
 	spell_casted.connect(
 		func(chess, spell_name):
 			if chess.team == 1:
-				DataManagerSingeton.add_data_to_dict(DataManagerSingeton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "cast_spell_count"], 1)
+				DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "cast_spell_count"], 1)
 	)
 
 

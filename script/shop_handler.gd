@@ -48,12 +48,12 @@ func _ready():
 	chess_bought.connect(
 		func(chess):
 			debug_handler.write_log("LOG", chess.chess_name + " is bought.")
-			DataManagerSingeton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "buy_count"], 1)
+			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "buy_count"], 1)
 	)
 	chess_sold.connect(
 		func(chess):
 			debug_handler.write_log("LOG", chess.chess_name + " is sold.")
-			DataManagerSingeton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "sell_count"], 1)
+			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "sell_count"], 1)
 	)
 	coins_increased.connect(
 		func(value, reason):
@@ -99,7 +99,7 @@ func shop_refresh() -> void:
 
 	for node in get_tree().get_nodes_in_group("obstacle_group"):
 		if node is Chess and node.current_play_area == node.play_areas.playarea_shop:
-			DataManagerSingeton.add_data_to_dict(DataManagerSingeton.in_game_data, ["chess_stat", node.faction, node.chess_name, "refresh_count"], 1)
+			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", node.faction, node.chess_name, "refresh_count"], 1)
 			node.queue_free()	
 
 	for i in range(shop_level + 2):

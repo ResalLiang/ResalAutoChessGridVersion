@@ -28,6 +28,7 @@ const chess_class = preload("res://script/chess.gd")
 @onready var shop_refresh_button: Button = $shop_refresh_button
 @onready var shop_freeze_button: Button = $shop_freeze_button
 @onready var shop_upgrade_button: Button = $shop_upgrade_button
+@onready var back_button: Button = $back_button
 
 @onready var chess_order_hp_high: Button = $chess_order_control/chess_order_hp_high
 @onready var chess_order_hp_low: Button = $chess_order_control/chess_order_hp_low
@@ -36,6 +37,7 @@ const chess_class = preload("res://script/chess.gd")
 
 @onready var battle_meter: BattleMeter = $battle_meter
 @onready var chess_information: ChessInformation = $chess_information
+@onready var arrow: CustomArrowRenderer = $arrow
 
 enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
 enum ChessActiveOrder { HIGH_HP, LOW_HP, NEAR_CENTER, FAR_CENTER }
@@ -57,10 +59,6 @@ var board_width:= 216
 var board_height:= 216
 
 var current_round := 1
-var won_rounds := 0
-const max_won_rounds := 5
-var lose_rounds := 0
-const max_lose_rounds := 5
 
 var saved_arena_team = {}
 var appearance_tween
@@ -137,7 +135,6 @@ signal player_lose_round
 signal player_won_game
 signal player_lose_game
 
-var cursor_texture = preload("res://asset/cursor/cursors/cursor1.png")
 
 func _ready():
 
@@ -209,7 +206,7 @@ func _ready():
 	)
 	shop_handler.shop_upgraded.connect(
 		func(value):
-			current_shop_level.text = "Current Shop Level is :" + str(value)
+			current_shop_level.text = "Current Shop Level is :" + str(shop_handler.shop_level)
 			update_population()
 	)
 	chess_appearance_finished.connect(
@@ -220,6 +217,17 @@ func _ready():
 	chess_mover.chess_moved.connect(
 		func(chess: Obstacle, play_area: PlayArea, tile: Vector2i):
 			update_population()
+	)
+	
+	chess_mover.chess_raised.connect(
+		func(chess_position, obstacle):
+			arrow.is_visible = true
+			arrow.start_pos = chess_position
+	)
+	
+	chess_mover.chess_dropped.connect(
+		func(obstacle):
+			arrow.is_visible = false		
 	)
 
 	player_won_round.connect(DataManagerSingleton.handle_player_won_round)
@@ -257,8 +265,8 @@ func start_new_game() -> void:
 	battle_meter.battle_data = {}
 
 	current_round = 0
-	won_rounds = 0
-	lose_rounds = 0
+	DataManagerSingleton.won_rounds = 0
+	DataManagerSingleton.lose_rounds = 0
 
 	shop_handler.shop_init()
 	new_round_prepare_start()
@@ -382,28 +390,30 @@ func handle_character_action_finished():
 		start_new_turn()
 
 func handle_round_finished(msg):
-
+	
+	get_parent().get_parent().show_round_finish()
+	
 	if msg == "team1":
-		won_rounds += 1
+		DataManagerSingleton.won_rounds += 1
 		print("Round %d over, you won!" % current_round)
 		player_won_round.emit()
 		last_turn_label.text = 'WON'
 	elif msg == "team2":
-		lose_rounds += 1
+		DataManagerSingleton.lose_rounds += 1
 		print("Round %d over, you lose..." % current_round)
 		player_lose_round.emit()
 		last_turn_label.text = 'LOSE'
 
-	print("You have won %d rounds, and lose %d rounds." % [won_rounds, lose_rounds])
+	print("You have won %d rounds, and lose %d rounds." % [DataManagerSingleton.won_rounds, DataManagerSingleton.lose_rounds])
 
 	battle_meter.round_end_data_update()
 
-	if won_rounds >= max_won_rounds:
+	if DataManagerSingleton.won_rounds >= DataManagerSingleton.max_won_rounds:
 		print("You won the game!")
 		player_won_game.emit()
 		handle_game_end()
 		return
-	elif lose_rounds >= max_lose_rounds:
+	elif DataManagerSingleton.lose_rounds >= DataManagerSingleton.max_lose_rounds:
 		print("You lose the game... Try later.")
 		player_lose_game.emit()
 		handle_game_end()
@@ -412,7 +422,8 @@ func handle_round_finished(msg):
 	new_round_prepare_start()
 
 func handle_game_end():
-	DataManagerSingleton.save_game_binary()
+	DataManagerSingleton.save_game_binary()	
+	get_parent().get_parent().show_game_finish()
 	#Show report
 
 func sort_characters(team: Team, mode: ChessActiveOrder) -> Array:
@@ -451,7 +462,7 @@ func generate_enemy(difficulty : int) -> void:
 			character.faction = rand_character_result[0]
 			character.chess_name = rand_character_result[1]
 			character.chess_serial = get_next_serial()
-			# character.faction = DataManagerSingeton.get_chess_data().keys()[randi_range(0, DataManagerSingeton.get_chess_data().keys().size() - 2)] # remove villager
+			# character.faction = DataManagerSingleton.get_chess_data().keys()[randi_range(0, DataManagerSingleton.get_chess_data().keys().size() - 2)] # remove villager
 			# character.chess_name = get_random_character(character.faction)
 			add_child(character)
 			debug_handler.connect_to_chess_signal(character)
@@ -464,16 +475,16 @@ func generate_enemy(difficulty : int) -> void:
 			
 	
 func get_random_character(faction_name: String) -> String:
-	if not DataManagerSingeton.get_chess_data().has(faction_name):
+	if not DataManagerSingleton.get_chess_data().has(faction_name):
 		return ""
 	
 	var candidates = []
 	var weights = []
 	
 	# Prepare candidate list and weight list
-	for chess_name_index in DataManagerSingeton.get_chess_data()[faction_name]:
-		var rarity = DataManagerSingeton.get_chess_data()[faction_name][chess_name_index]["rarity"]
-		if RARITY_WEIGHTS[min(6, shop_handler.shop_level)].has(rarity) and DataManagerSingeton.get_chess_data()[faction_name][chess_name_index]["spd"] != 0:
+	for chess_name_index in DataManagerSingleton.get_chess_data()[faction_name]:
+		var rarity = DataManagerSingleton.get_chess_data()[faction_name][chess_name_index]["rarity"]
+		if RARITY_WEIGHTS[min(6, shop_handler.shop_level)].has(rarity) and DataManagerSingleton.get_chess_data()[faction_name][chess_name_index]["spd"] != 0:
 			candidates.append(chess_name_index)
 			weights.append(RARITY_WEIGHTS[min(6, shop_handler.shop_level)][rarity])
 	
@@ -559,13 +570,13 @@ func generate_random_chess():
 	var total_weight_pool := 0
 	
 	# Pre-process all eligible chesses with calculated weights
-	for faction in DataManagerSingeton.get_chess_data():
+	for faction in DataManagerSingleton.get_chess_data():
 		# Skip special faction
 		if faction == "villager":
 			continue
 			
-		for chess_name in DataManagerSingeton.get_chess_data()[faction]:
-			var chess_attributes = DataManagerSingeton.get_chess_data()[faction][chess_name]
+		for chess_name in DataManagerSingleton.get_chess_data()[faction]:
+			var chess_attributes = DataManagerSingleton.get_chess_data()[faction][chess_name]
 			
 			# Validation checks
 			if chess_attributes["spd"] == 0 || chess_attributes["rarity"] != selected_rarity:
@@ -657,9 +668,9 @@ func get_next_serial() -> int:
 
 func summon_chess(summon_chess_faction: String, summon_chess_name: String, team: int, summon_arena: PlayArea, summon_position: Vector2i) -> Chess:
 
-	if not summon_chess_faction in DataManagerSingeton.get_chess_data().keys():
+	if not summon_chess_faction in DataManagerSingleton.get_chess_data().keys():
 		return null
-	if not summon_chess_name in DataManagerSingeton.get_chess_data()[summon_chess_faction].keys():
+	if not summon_chess_name in DataManagerSingleton.get_chess_data()[summon_chess_faction].keys():
 		return null
 
 	var summoned_character = chess_scene.instantiate()
@@ -692,9 +703,9 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, team:
 
 func summon_obstacle(summon_obstacle_faction: String, summon_chess_name: String, team: int, summon_arena: PlayArea, summon_position: Vector2i) -> Obstacle:
 
-	if not summon_obstacle_faction in DataManagerSingeton.get_chess_data().keys():
+	if not summon_obstacle_faction in DataManagerSingleton.get_chess_data().keys():
 		return null
-	if not summon_chess_name in DataManagerSingeton.get_chess_data()[summon_obstacle_faction].keys():
+	if not summon_chess_name in DataManagerSingleton.get_chess_data()[summon_obstacle_faction].keys():
 		return null
 
 	var summoned_character = obstacle_scene.instantiate()
@@ -728,7 +739,7 @@ func summon_obstacle(summon_obstacle_faction: String, summon_chess_name: String,
 func update_population():
 	current_population = 0
 	for node in get_tree().get_nodes_in_group("chess_group"):
-		if node is Chess and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
+		if is_instance_valid(node) and node is Chess and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
 			current_population += 1
 	max_population = shop_handler.get_max_population()
 	population_label.text = "Population = " + str(current_population)	+ "/" + str(max_population)
@@ -760,6 +771,8 @@ func chess_death_handle(obstacle: Obstacle):
 
 	obstacle.visible = false
 	arena.unit_grid.remove_unit(obstacle.position_id)
+	if obstacle.is_active:
+		obstacle.action_finished.emit(obstacle)
 	obstacle.queue_free()
 
 func control_shaker(control: Control):
@@ -776,3 +789,7 @@ func control_shaker(control: Control):
 		shake_tween.tween_property(control, "global_position", old_position + Vector2(rand_x, rand_y), 0.05)
 		shake_tween.tween_property(control, "global_position", old_position, 0.1)
 		
+
+
+func _on_back_button_pressed() -> void:
+	get_parent().get_parent().show_main_menu()

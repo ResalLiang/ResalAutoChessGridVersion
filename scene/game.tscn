@@ -1,4 +1,4 @@
-[gd_scene load_steps=87 format=4 uid="uid://cthbjvirwy2mg"]
+[gd_scene load_steps=88 format=4 uid="uid://cthbjvirwy2mg"]
 
 [ext_resource type="Script" uid="uid://c7rtc63knhqn2" path="res://script/game.gd" id="1_ll5lq"]
 [ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="2_dbls1"]
@@ -41,6 +41,7 @@
 [ext_resource type="Texture2D" uid="uid://cw57lok07i1lu" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/64x16 resource counter.png" id="28_oqkxr"]
 [ext_resource type="Texture2D" uid="uid://da6wn3yt347n" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/64x16 Slider Bar.png" id="29_8ssax"]
 [ext_resource type="Script" uid="uid://6rd8dx6cs16n" path="res://script/pause.gd" id="41_400sm"]
+[ext_resource type="Script" uid="uid://c7tb0jrcwtwg0" path="res://script/custom_arrow_renderer.gd" id="41_lip20"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_x3x2e"]
 texture = ExtResource("6_qpk70")
@@ -7618,6 +7619,24 @@ theme_override_font_sizes/font_size = 4
 text = "far_center"
 metadata/_edit_use_anchors_ = true
 
+[node name="back_button" type="Button" parent="."]
+z_index = 1
+anchors_preset = -1
+anchor_left = 0.0428571
+anchor_top = 0.247423
+anchor_right = 0.0428571
+anchor_bottom = 0.247423
+offset_left = 12.0
+offset_top = 279.0
+offset_right = 46.0
+offset_bottom = 295.0
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_fonts/font = ExtResource("9_81276")
+theme_override_font_sizes/font_size = 4
+text = "back"
+metadata/_edit_use_anchors_ = true
+
 [node name="battle_meter" parent="." instance=ExtResource("14_ve786")]
 z_index = 2
 offset_left = 433.0
@@ -7639,5 +7658,14 @@ offset_right = 554.0
 offset_bottom = 288.0
 metadata/_edit_use_anchors_ = true
 
+[node name="arrow" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("41_lip20")
+
 [node name="game_speed" type="Node" parent="."]
 script = ExtResource("41_400sm")
+
+[connection signal="pressed" from="back_button" to="." method="_on_back_button_pressed"]

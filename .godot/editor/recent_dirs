@@ -1,5 +1,9 @@
-res://script
+res://asset/animation/demon
+res://asset/sprite/GandalfHardcore Chests
+res://asset/sprite/GandalfHardcore Icons
 res://scene
+res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames
+res://script
 res://asset/sprite/MiniFolks/MinifolksDwarfs/Without Outline
 res://asset/sprite/MiniFolks/MinifolksHumans/Without Outline
 res://asset/animation/forestProtector
@@ -15,8 +19,6 @@ res://asset
 res://
 res://asset/animation/villager
 res://asset/shader
-res://asset/animation/demon
 res://asset/animation/undead
 D:/LearningGodot/ResalAutoChess/script/hero_stats_raw
 D:/LearningGodot/ResalAutoChess/script
-res://asset/tileset

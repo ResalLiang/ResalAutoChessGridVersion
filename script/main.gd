@@ -6,31 +6,40 @@ class_name Main
 
 # 当前活跃的场景
 var current_scene: Node2D = null
+var tween
 
 func _ready():
 	# 初始化显示主菜单
-	main_container.mouse_filter = MouseFilter.MOUSE_FILTER_PASS
 	show_main_menu()
 
 # 显示主菜单
 func show_main_menu():
-	_transition_to_scene("res://scene/menu.tscn", main_container)
+	_transition_to_scene("res://scene/menu.tscn", main_container, true)
 
 # 显示游戏场景
 func show_game():
-	_transition_to_scene("res://scene/game.tscn", main_container)
+	_transition_to_scene("res://scene/game.tscn", main_container, true)
 
 # 显示设置菜单
 func show_settings():
-	_transition_to_scene("res://scene/setting.tscn", main_container)
+	_transition_to_scene("res://scene/setting.tscn", main_container, true)
+	
+# 显示设置菜单
+func show_round_finish():
+	add_scene("res://scene/round_finish.tscn", main_container, false)
+
+func show_gallery():
+	_transition_to_scene("res://scene/gallery.tscn", main_container, true)
 
 # 场景切换核心方法 - 这是自定义方法
-func _transition_to_scene(scene_path: String, container: Control):
+func _transition_to_scene(scene_path: String, container: Control, if_transition: bool):
 	# 显示过渡效果
-	transition_layer.show()
-	var tween = create_tween()
-	tween.tween_property(transition_layer, "color", Color(0, 0, 0, 1), 0.5)
-	await tween.finished
+	if if_transition:
+		VirtualCursorSingleton.set_cursor_type("loading")
+		transition_layer.show()
+		tween = create_tween()
+		tween.tween_property(transition_layer, "color", Color(0, 0, 0, 1), 0.5)
+		await tween.finished
 	
 	# 清理当前场景
 	if current_scene:
@@ -46,12 +55,38 @@ func _transition_to_scene(scene_path: String, container: Control):
 	current_scene = new_scene
 	
 	# 隐藏其他容器，显示目标容器
-	menu_container.hide()
-	game_container.hide()
+	main_container.hide()
 	container.show()
 	
 	# 淡出过渡效果
-	tween = create_tween()
-	tween.tween_property(transition_layer, "color", Color(0, 0, 0, 0), 0.5)
-	await tween.finished
-	transition_layer.hide()
+	if if_transition:
+		tween = create_tween()
+		tween.tween_property(transition_layer, "color", Color(0, 0, 0, 0), 0.5)
+		await tween.finished
+		VirtualCursorSingleton.set_cursor_type("default")
+		transition_layer.hide()
+		
+func add_scene(scene_path: String, container: Control, if_transition: bool):
+		# 显示过渡效果
+	if if_transition:
+		transition_layer.show()
+		tween = create_tween()
+		tween.tween_property(transition_layer, "color", Color(0, 0, 0, 1), 0.5)
+		await tween.finished
+		
+	# 加载新场景
+	var new_scene = load(scene_path).instantiate()
+	if not new_scene:
+		print("Failed to load scene at path: ", scene_path)
+		return
+	container.add_child(new_scene)
+	
+	# 隐藏其他容器，显示目标容器
+	main_container.hide()
+	container.show()	
+	# 淡出过渡效果
+	if if_transition:
+		tween = create_tween()
+		tween.tween_property(transition_layer, "color", Color(0, 0, 0, 0), 0.5)
+		await tween.finished
+		transition_layer.hide()

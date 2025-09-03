@@ -518,5 +518,5 @@ func dwarf_bomb_boom():
 				var target_area_chess = arena.unit_grid.units[position_id + Vector2i(x, y)]
 				if is_instance_valid(target_area_chess) and target_area_chess is Obstacle and target_area_chess.status != STATUS.DIE:
 					_apply_damage(target_area_chess, 50 * obstacle_level)
-		
+	action_finished.emit(self)	
 	is_died.emit(self)		

@@ -24,7 +24,6 @@ VirtualCursorSingleton="*res://script/virtual_cursor.gd"
 
 window/stretch/mode="canvas_items"
 window/vsync/vsync_mode=0
-mouse_cursor/custom_image="uid://bvcoevci36sxh"
 mouse_cursor/tooltip_position_offset=Vector2(8, 8)
 
 [editor_plugins]

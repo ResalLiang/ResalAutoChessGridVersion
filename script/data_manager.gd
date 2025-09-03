@@ -36,6 +36,12 @@ var last_player : String
 var current_player : String
 var chess_data : Dictionary
 
+
+var won_rounds := 0
+const max_won_rounds := 5
+var lose_rounds := 0
+const max_lose_rounds := 5
+
 func _ready() -> void:
 
 	in_game_data = player_data.duplicate()

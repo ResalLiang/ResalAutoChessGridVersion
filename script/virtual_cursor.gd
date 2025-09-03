@@ -40,11 +40,17 @@ func _process(_delta):
 		return
 	# Update cursor position to follow mouse
 	global_position = get_global_mouse_position()
+		
+	if global_position.x <= 0 or global_position.x >= 576 or global_position.y <= 0 or global_position.y >= 324:
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	else:
+		Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+		
 	apply_hotspot_offset()
 
 func setup_cursor_system():
 	# Hide system cursor
-	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+
 	
 	# Ensure cursor sprite settings
 	if cursor_sprite:
@@ -63,7 +69,7 @@ func load_cursor_textures():
 		"grabbing": preload("res://asset/cursor/cursors/cursor1.png"),
 		"text": preload("res://asset/cursor/cursors/cursor1.png"),
 		"crosshair": preload("res://asset/cursor/cursors/cursor1.png"),
-		"loading": preload("res://asset/cursor/cursors/cursor1.png")
+		"loading": preload("res://asset/cursor/color/cursors__15.png")
 	}
 	
 	# Define hotspot offsets for each cursor type

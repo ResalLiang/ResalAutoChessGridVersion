@@ -16,14 +16,7 @@ offset_right = 576.0
 offset_bottom = 324.0
 color = Color(0, 0, 0, 1)
 
-[node name="menu_container" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 576.0
-offset_bottom = 324.0
-mouse_filter = 1
-
-[node name="game_container" type="Control" parent="."]
+[node name="main_container" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 576.0
@@ -38,6 +31,7 @@ anchors_preset = 0
 script = ExtResource("2_v0l8b")
 
 [node name="cursor_sprite" type="TextureRect" parent="virtual_cursor"]
+layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 

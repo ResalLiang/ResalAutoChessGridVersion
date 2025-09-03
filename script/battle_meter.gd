@@ -78,8 +78,7 @@ func round_end_data_update():
 		if data_index[3] != 1:
 			return
 			
-		DataManagerSingeton.add_data_to_dict(DataManagerSingeton.in_game_data, ["chess_stat", data_index[0], data_index[1], "max_damage"], battle_data[data_index][0])
-		DataManagerSingeton.add_data_to_dict(DataManagerSingeton.in_game_data, ["chess_stat", data_index[0], data_index[1], "max_damage_taken"], battle_data[data_index][1])
-		DataManagerSingeton.add_data_to_dict(DataManagerSingeton.in_game_data, ["chess_stat", data_index[0], data_index[1], "max_heal"], battle_data[data_index][2])
-		DataManagerSingeton.add_data_to_dict(DataManagerSingeton.in_game_data, ["chess_stat", data_index[0], data_index[1], "max_heal_taken"], battle_data[data_index][3])
-
+		DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", data_index[0], data_index[1], "max_damage"], battle_data[data_index][0])
+		DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", data_index[0], data_index[1], "max_damage_taken"], battle_data[data_index][1])
+		DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", data_index[0], data_index[1], "max_heal"], battle_data[data_index][2])
+		DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", data_index[0], data_index[1], "max_heal_taken"], battle_data[data_index][3])
