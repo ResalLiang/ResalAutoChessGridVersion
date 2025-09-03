@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://boruw7r5a35au"]
+
+[ext_resource type="SpriteFrames" uid="uid://byrnfbbr04whc" path="res://asset/animation/forestProtector/forestProtectorDryadEnchantress.tres" id="1_h805m"]
+
+[node name="chess_icon" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(16, 16)
+sprite_frames = ExtResource("1_h805m")
+animation = &"die"
+
+[node name="Container" type="Container" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0

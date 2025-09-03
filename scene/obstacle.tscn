@@ -1,14 +1,14 @@
-[gd_scene load_steps=13 format=3 uid="uid://d28hb81gv3e5x"]
+[gd_scene load_steps=13 format=3 uid="uid://g2wd0gligsps"]
 
-[ext_resource type="Script" uid="uid://cvf2euci2s4n6" path="res://script/obstacle.gd" id="1_nmnoa"]
-[ext_resource type="Shader" uid="uid://d3tyrfwlw2c1g" path="res://asset/shader/LightweightPixelPerfectOutline.gdshader" id="2_a3v8d"]
-[ext_resource type="SpriteFrames" uid="uid://b7mr84awj2n53" path="res://asset/animation/elf/elfArcaneArcher.tres" id="3_5otqy"]
-[ext_resource type="Script" uid="uid://pmtyv1bl3nog" path="res://script/drag_handler.gd" id="4_bxaxu"]
-[ext_resource type="Script" uid="uid://c101twvdkyo0l" path="res://script/area_effect_handler.gd" id="7_g5tws"]
-[ext_resource type="Script" uid="uid://f2vi2gwgn32i" path="res://script/effect_handler.gd" id="8_u2b7o"]
+[ext_resource type="Script" uid="uid://cvf2euci2s4n6" path="res://script/obstacle.gd" id="1_yvl1e"]
+[ext_resource type="Shader" uid="uid://d3tyrfwlw2c1g" path="res://asset/shader/LightweightPixelPerfectOutline.gdshader" id="2_8t6iu"]
+[ext_resource type="SpriteFrames" uid="uid://b7mr84awj2n53" path="res://asset/animation/elf/elfArcaneArcher.tres" id="3_aaiw8"]
+[ext_resource type="Script" uid="uid://pmtyv1bl3nog" path="res://script/drag_handler.gd" id="4_xtxa8"]
+[ext_resource type="Script" uid="uid://c101twvdkyo0l" path="res://script/area_effect_handler.gd" id="5_p4gmh"]
+[ext_resource type="Script" uid="uid://f2vi2gwgn32i" path="res://script/effect_handler.gd" id="6_uqmk1"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dbi3s"]
-shader = ExtResource("2_a3v8d")
+shader = ExtResource("2_8t6iu")
 shader_parameter/outline_color = Color(1, 1, 1, 1)
 shader_parameter/blink_color = Color(1, 1, 1, 1)
 shader_parameter/blink_time_scale = 0.0
@@ -41,14 +41,14 @@ border_color = Color(0.301961, 0.101961, 0.0117647, 0.498039)
 [node name="Obstacle" type="Node2D"]
 z_index = 1
 y_sort_enabled = true
-script = ExtResource("1_nmnoa")
+script = ExtResource("1_yvl1e")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 z_index = 3
 y_sort_enabled = true
 material = SubResource("ShaderMaterial_dbi3s")
 position = Vector2(0, -11)
-sprite_frames = ExtResource("3_5otqy")
+sprite_frames = ExtResource("3_aaiw8")
 animation = &"block"
 autoplay = "idle"
 
@@ -72,7 +72,7 @@ visible = false
 visible = false
 
 [node name="drag_handler" type="Node2D" parent="."]
-script = ExtResource("4_bxaxu")
+script = ExtResource("4_xtxa8")
 
 [node name="hp_bar" type="ProgressBar" parent="."]
 offset_left = -8.0
@@ -95,10 +95,10 @@ value = 50.0
 show_percentage = false
 
 [node name="area_effect_handler" type="Node2D" parent="."]
-script = ExtResource("7_g5tws")
+script = ExtResource("5_p4gmh")
 
 [node name="effect_handler" type="Node" parent="."]
-script = ExtResource("8_u2b7o")
+script = ExtResource("6_uqmk1")
 
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
 [connection signal="timeout" from="idle_timer" to="." method="_on_idle_timeout"]
