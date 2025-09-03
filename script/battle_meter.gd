@@ -69,3 +69,17 @@ func update_ranking():
 			var item = battle_meter_bar_scene.instantiate()
 			item.init(chess[0][0], chess[0][1], chess[0][3], battle_array_sliced[0][1], chess[1])
 			add_child(item)
+
+func round_end_data_update():
+	if battle_data.size() <= 0:
+		return
+
+	for data_index in battle_data.keys():
+		if data_index[3] != 1:
+			return
+			
+		DataManagerSingeton.add_data_to_dict(DataManagerSingeton.in_game_data, ["chess_stat", data_index[0], data_index[1], "max_damage"], battle_data[data_index][0])
+		DataManagerSingeton.add_data_to_dict(DataManagerSingeton.in_game_data, ["chess_stat", data_index[0], data_index[1], "max_damage_taken"], battle_data[data_index][1])
+		DataManagerSingeton.add_data_to_dict(DataManagerSingeton.in_game_data, ["chess_stat", data_index[0], data_index[1], "max_heal"], battle_data[data_index][2])
+		DataManagerSingeton.add_data_to_dict(DataManagerSingeton.in_game_data, ["chess_stat", data_index[0], data_index[1], "max_heal_taken"], battle_data[data_index][3])
+
