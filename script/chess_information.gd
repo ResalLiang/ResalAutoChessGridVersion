@@ -34,7 +34,7 @@ func setup_chess(obstacle: Obstacle) -> void:
 		
 func show_chess_information(starting_position: Vector2, status: String, obstacle: Obstacle) -> void:
 
-	for node in effect_icon_container.get_child():
+	for node in effect_icon_container.get_children():
 		node.queue_free()
 
 	visible = true
@@ -56,11 +56,29 @@ func show_chess_information(starting_position: Vector2, status: String, obstacle
 		return
 
 	for effect_index in chess_effect_list:
-		effect_name = effect_index.effect_name
-		effect_type = effect_index.effect_type
+		var effect_name = effect_index.effect_name
+		var effect_type = effect_index.effect_type
 		var effect_texture = TextureRect.new()
-		effect_texture.texture = preload("res://asset/sprite/icon/" + effect_name + ".png")
-		effect_texture.minmum_size = Vector2(32, 32)
+		match effect_name:
+			"Swift":
+				effect_texture.texture = preload("res://asset/sprite/icon/swift.png")
+			"Wisdom":
+				effect_texture.texture = preload("res://asset/sprite/icon/wisdom.png")
+			"Fortress":
+				effect_texture.texture = preload("res://asset/sprite/icon/fortress.png")
+			"Holy Shield":
+				effect_texture.texture = preload("res://asset/sprite/icon/holy_shield.png")
+			"Strong":
+				effect_texture.texture = preload("res://asset/sprite/icon/strong.png")
+			"Doom":
+				effect_texture.texture = preload("res://asset/sprite/icon/doom.png")
+			"Weak":
+				effect_texture.texture = preload("res://asset/sprite/icon/weak.png")
+			_:
+				effect_texture.texture = preload("res://asset/sprite/icon/wisdom.png")
+				
+				
+		effect_texture.minmum_size = Vector2(16, 16)
 
 		var border_style: StyleBoxFlat
 		border_style = StyleBoxFlat.new()

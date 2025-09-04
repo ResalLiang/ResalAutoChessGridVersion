@@ -244,7 +244,7 @@ func _ready():
 
 func start_new_game() -> void:
 
-	DataManagerSingleton.load_game_binary()
+	DataManagerSingleton.load_game_json()
 	DataManagerSingleton.in_game_data = DataManagerSingleton.player_data.duplicate()
 
 	debug_handler.write_log("LOG", "Game Start.")
@@ -273,6 +273,7 @@ func start_new_game() -> void:
 
 func new_round_prepare_start():
 	# start shopping
+	current_shop_level.text = "Current Shop Level is :" + str(shop_handler.shop_level)
 	update_population()
 	
 	current_round += 1
@@ -422,7 +423,7 @@ func handle_round_finished(msg):
 	new_round_prepare_start()
 
 func handle_game_end():
-	DataManagerSingleton.merge_game_binary()
+	DataManagerSingleton.merge_game_data()
 	DataManagerSingleton.record_team(team_dict[Team.TEAM1_FULL])
 	get_parent().get_parent().show_game_finish()
 	#Show report

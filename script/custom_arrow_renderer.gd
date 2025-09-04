@@ -119,14 +119,17 @@ func draw_curved_arrow_with_textures(from: Vector2, to: Vector2):
 				
 				# Draw the curve texture segment
 				var texture_size = curve_texture.get_size() * texture_scale
-				draw_texture_rect_region(
-					curve_texture, 
-					Rect2(pos - texture_size * 0.5, texture_size),
-					Rect2(Vector2.ZERO, curve_texture.get_size()),
-					arrow_color,
-					false,
-					Transform2D(angle, pos)
-				)
+				#draw_texture_rect_region(
+					#curve_texture, 
+					#Rect2(pos - texture_size * 0.5, texture_size),
+					#Rect2(Vector2.ZERO, curve_texture.get_size()),
+					#arrow_color,
+					#false,
+					#Transform2D(angle, pos)
+				#)
+				draw_set_transform(pos, angle, Vector2.ONE)
+				draw_texture(curve_texture, -texture_size * 0.5, arrow_color)
+				draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
 	
 	# Draw arrow head when animation is near completion
 	if animation_progress >= 0.8 and arrow_head_texture:
@@ -210,15 +213,18 @@ func draw_arrow_head_texture(curve_points: PackedVector2Array):
 	
 	# Draw the arrow head texture
 	var texture_size = arrow_head_texture.get_size() * texture_scale
-	draw_texture_rect_region(
-		arrow_head_texture,
-		Rect2(tip - texture_size * 0.5, texture_size),
-		Rect2(Vector2.ZERO, arrow_head_texture.get_size()),
-		arrow_color,
-		false,
-		Transform2D(angle, tip)
-	)
+	#draw_texture_rect_region(
+		#arrow_head_texture,
+		#Rect2(tip - texture_size * 0.5, texture_size),
+		#Rect2(Vector2.ZERO, arrow_head_texture.get_size()),
+		#arrow_color,
+		#false,
+		#Transform2D(angle, tip)
+	#)
 
+	draw_set_transform(tip, angle, Vector2.ONE)
+	draw_texture(arrow_head_texture, -texture_size * 0.5, arrow_color)
+	draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
 # Convenient methods for setting properties
 func set_arrow_properties(color: Color, width: float, height: float):
 	arrow_color = color

@@ -1,13 +1,13 @@
-Container
+Label
+VBoxContainer
+HBoxContainer
 AnimatedSprite2D
+Container
 Control
 TextureRect
-HBoxContainer
-VBoxContainer
 ScrollContainer
 Button
 TileMapLayer
-Label
 Timer
 AnimationPlayer
 Node2D

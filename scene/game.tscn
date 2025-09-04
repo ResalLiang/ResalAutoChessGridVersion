@@ -1,4 +1,4 @@
-[gd_scene load_steps=88 format=4 uid="uid://cthbjvirwy2mg"]
+[gd_scene load_steps=89 format=4 uid="uid://cthbjvirwy2mg"]
 
 [ext_resource type="Script" uid="uid://c7rtc63knhqn2" path="res://script/game.gd" id="1_ll5lq"]
 [ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="2_dbls1"]
@@ -42,6 +42,7 @@
 [ext_resource type="Texture2D" uid="uid://da6wn3yt347n" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/64x16 Slider Bar.png" id="29_8ssax"]
 [ext_resource type="Script" uid="uid://6rd8dx6cs16n" path="res://script/pause.gd" id="41_400sm"]
 [ext_resource type="Script" uid="uid://c7tb0jrcwtwg0" path="res://script/custom_arrow_renderer.gd" id="41_lip20"]
+[ext_resource type="Texture2D" uid="uid://yo6l1uo6dhds" path="res://asset/sprite/icon/arrow_dot.png" id="42_efr1a"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_x3x2e"]
 texture = ExtResource("6_qpk70")
@@ -7542,14 +7543,21 @@ script = ExtResource("13_5g16k")
 unique_name_in_owner = true
 script = ExtResource("14_81276")
 
+[node name="faction_container" type="VBoxContainer" parent="faction_bonus_manager"]
+offset_left = 445.0
+offset_top = 110.0
+offset_right = 552.0
+offset_bottom = 179.0
+
 [node name="chess_order_control" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
-offset_left = 7.0
-offset_top = 137.0
-offset_right = 77.0
-offset_bottom = 234.0
+offset_left = 9.0
+offset_top = 131.0
+offset_right = 79.0
+offset_bottom = 228.0
 size_flags_horizontal = 0
+size_flags_vertical = 0
 metadata/_edit_use_anchors_ = true
 
 [node name="chess_order_hp_high" type="Button" parent="chess_order_control"]
@@ -7658,12 +7666,17 @@ offset_right = 554.0
 offset_bottom = 288.0
 metadata/_edit_use_anchors_ = true
 
+[node name="effect_icon_container" type="HBoxContainer" parent="chess_information"]
+layout_mode = 2
+
 [node name="arrow" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("41_lip20")
+curve_texture = ExtResource("42_efr1a")
+arrow_head_texture = ExtResource("42_efr1a")
 
 [node name="game_speed" type="Node" parent="."]
 script = ExtResource("41_400sm")

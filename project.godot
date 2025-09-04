@@ -20,6 +20,10 @@ config/icon="res://icon.svg"
 DataManagerSingleton="*res://script/data_manager.gd"
 VirtualCursorSingleton="*res://script/virtual_cursor.gd"
 
+[display]
+
+window/stretch/mode="viewport"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/AS2P/plugin.cfg")

@@ -1,8 +1,8 @@
 extends Node2D
 class_name gallery
 
-@onready var chess_container: VBoxContainer = $chess_container
 @onready var chess_data_container : VBoxContainer = $chess_data_container
+@onready var chess_container: ScrollContainer = $chess_container
 
 @onready var buy_count: Label = $chess_data_container/buy_count
 @onready var sell_count: Label = $chess_data_container/sell_count
@@ -20,7 +20,7 @@ class_name gallery
 
 func _ready() -> void:
 
-	for node in chess_container.get_child():
+	for node in chess_container.get_children():
 		node.queue_free()
 
 	chess_data_container.visible = false
@@ -28,15 +28,24 @@ func _ready() -> void:
 
 	chess_container.mouse_filter = Control.MOUSE_FILTER_PASS
 
-	var current_player_data = DataManagerSingleton[DataManagerSingleton.current_player]
-	var current_player_chess_data = current_player_data["chess_stat"]
-
+	var current_player_data
+	var current_player_chess_data
+	
+	if not DataManagerSingleton.player_datas.has(DataManagerSingleton.current_player):
+		current_player_data = {}
+		current_player_chess_data = {}
+	else:
+		current_player_data = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]
+		current_player_chess_data = current_player_data["chess_stat"]
+	
 	var chess_displayed_x = 0
 	var chess_displayed_xmax = 8
 	var chess_displayed_y = 0
+	
+	var current_h_container
 
-	for faction_index in current_player_chess_data.keys():
-		for chess_index in current_player_chess_data[faction_index].keys():
+	for faction_index in DataManagerSingleton.chess_data.keys():
+		for chess_index in DataManagerSingleton.chess_data[faction_index].keys():
 			if chess_displayed_x == 0 or not current_h_container:
 				var h_chess_container = HBoxContainer.new()
 				h_chess_container.mouse_filter = Control.MOUSE_FILTER_PASS
@@ -47,14 +56,21 @@ func _ready() -> void:
 			var chess_button = TextureButton.new()
 			var source_texture = AtlasTexture.new()
 			var sprite_path
-			if current_player_chess_data[faction_index][chess_index]["buy_count"] > 0:
-				sprite_path = "res://asset/animation/" + sprite_faction + "/" + faction_index + chess_index + ".tres"
-			eles:
+			if not current_player_chess_data.has(faction_index):
+				sprite_path = "res://asset/animation/" + "human" + "/" + "human" + "ShieldMan" + ".tres"
+			elif not current_player_chess_data[faction_index].has(chess_index):
+				sprite_path = "res://asset/animation/" + "human" + "/" + "human" + "ShieldMan" + ".tres"
+			elif not current_player_chess_data[faction_index][chess_index].has("buy_count"):
+				sprite_path = "res://asset/animation/" + "human" + "/" + "human" + "ShieldMan" + ".tres"
+				
+			
+			elif current_player_chess_data[faction_index][chess_index]["buy_count"] > 0:
+				sprite_path = "res://asset/animation/" + faction_index + "/" + faction_index + chess_index + ".tres"
+			else:
 				sprite_path = "res://asset/animation/" + "human" + "/" + "human" + "ShieldMan" + ".tres"
 			# Check if resource exists before loading
 			if not ResourceLoader.exists(sprite_path):
 				sprite_path = "res://asset/animation/" + "human" + "/" + "human" + "ShieldMan" + ".tres"
-				continue
 			var sprite_frames = load(sprite_path) as SpriteFrames
 			source_texture.set_atlas(sprite_frames.get_frame_texture("idle", 0))
 			source_texture.region = Rect2(6, 12, 20, 20)
@@ -77,8 +93,8 @@ func _ready() -> void:
 func _on_chess_button_pressed(button: TextureButton):
 
 	
-	faction_index = button.get_meta("faction")
-	chess_index = button.get_meta("chess_name")
+	var faction_index = button.get_meta("faction")
+	var chess_index = button.get_meta("chess_name")
 
 	var current_chess_data = DataManagerSingleton[DataManagerSingleton.current_player]["chess_stat"][faction_index][chess_index]
 	if current_chess_data["buy_count"] == 0:
@@ -102,52 +118,52 @@ func _on_chess_button_pressed(button: TextureButton):
 		chess_data_container.visible = true
 		animated_sprite_2d.visible = true
 
-		if current_chess_data.has_key(buy_count):
+		if current_chess_data.has(buy_count):
 			buy_count.text = current_chess_data[buy_count]
 		else:
 			buy_count.text = "/"
 
-		if current_chess_data.has_key(sell_count):
+		if current_chess_data.has(sell_count):
 			sell_count.text = current_chess_data[sell_count]
 		else:
 			sell_count.text = "/"
 
-		if current_chess_data.has_key(refresh_count):
+		if current_chess_data.has(refresh_count):
 			refresh_count.text = current_chess_data[refresh_count]
 		else:
 			refresh_count.text = "/"
 
-		if current_chess_data.has_key(max_damage):
+		if current_chess_data.has(max_damage):
 			max_damage.text = current_chess_data[max_damage]
 		else:
 			max_damage.text = "/"
 
-		if current_chess_data.has_key(max_damage_taken):
+		if current_chess_data.has(max_damage_taken):
 			max_damage_taken.text = current_chess_data[max_damage_taken]
 		else:
 			max_damage_taken.text = "/"
 
-		if current_chess_data.has_key(max_heal):
+		if current_chess_data.has(max_heal):
 			max_heal.text = current_chess_data[max_heal]
 		else:
 			max_heal.text = "/"
 
-		if current_chess_data.has_key(max_heal_taken):
+		if current_chess_data.has(max_heal_taken):
 			max_heal_taken.text = current_chess_data[max_heal_taken]
 		else:
 			max_heal_taken.text = "/"
 
-		if current_chess_data.has_key(critical_attack_count):
+		if current_chess_data.has(critical_attack_count):
 			critical_attack_count.text = current_chess_data[critical_attack_count]
 		else:
 			critical_attack_count.text = "/"
 
-		if current_chess_data.has_key(evase_attack_count):
+		if current_chess_data.has(evase_attack_count):
 			evase_attack_count.text = current_chess_data[evase_attack_count]
 		else:
 			evase_attack_count.text = "/"
 			
-		if current_chess_data.has_key(cast_spell_count):
+		if current_chess_data.has(cast_spell_count):
 			cast_spell_count.text = current_chess_data[cast_spell_count]
 		else:
 			cast_spell_count.text = "/"
@@ -179,3 +195,7 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 # 	"evase_attack_count" : 0,
 # 	"cast_spell_count" : 0
 # }
+
+
+func _on_back_button_pressed() -> void:
+	get_parent().get_parent().show_main_menu()

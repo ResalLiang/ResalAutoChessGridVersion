@@ -27,6 +27,10 @@ func show_settings():
 # 显示设置菜单
 func show_round_finish():
 	add_scene("res://scene/round_finish.tscn", main_container, false)
+	
+# 显示设置菜单
+func show_game_finish():
+	_transition_to_scene("res://scene/game_finish.tscn", main_container, false)
 
 func show_gallery():
 	_transition_to_scene("res://scene/gallery.tscn", main_container, true)

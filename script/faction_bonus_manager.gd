@@ -65,7 +65,7 @@ var player_bonus_level_dict : Dictionary = {
 
 func bonus_refresh() -> void:
 
-	for node in faction_container.get_child():
+	for node in faction_container.get_children():
 		node.queue_free()
 
 	for chess_index in arena.unit_grid.units.values(): #summary all uniqe chess
@@ -81,7 +81,7 @@ func bonus_refresh() -> void:
 	for player_index in player_faction_count.keys(): # summary each team, each faction uniqe chess count and bonus level 
 		for faction_index in bonus_level_list.keys():
 			var bonus_level = 0
-			for level_value in bonus_level_list[faction_index].values():
+			for level_value in bonus_level_list[faction_index]:
 				if player_faction_count[player_index][faction_index].size() >= level_value:
 					bonus_level += 1
 			player_bonus_level_dict[player_index][faction_index] = min(bonus_level, 3)
@@ -96,11 +96,28 @@ func bonus_refresh() -> void:
 
 func add_bonus_bar_to_container(faction: String, level: int):
 
-	var faction_fill_texture = preload("res://asset/sprite/resal/" + faction + "_bonus_fill.png")
-    var fill_style = StyleBoxTexture.new()
-    fill_style.texture = faction_fill_texture
-    fill_style.axis_stretch_horizontal = StyleBoxTexture.AXIS_STRETCH_MODE_TILE
-    fill_style.axis_stretch_vertical = StyleBoxTexture.AXIS_STRETCH_MODE_TILE_FIT
+	var faction_fill_texture
+	match faction:
+		"elf":
+			faction_fill_texture = preload("res://asset/sprite/icon/elf_bonus_fill.png")
+		"human":
+			faction_fill_texture = preload("res://asset/sprite/icon/human_bonus_fill.png")
+		"dwarf":
+			faction_fill_texture = preload("res://asset/sprite/icon/dwarf_bonus_fill.png")
+		"holy":
+			faction_fill_texture = preload("res://asset/sprite/icon/holy_bonus_fill.png")
+		"forestProtector":
+			faction_fill_texture = preload("res://asset/sprite/icon/forestProtector_bonus_fill.png")
+		"demon":
+			faction_fill_texture = preload("res://asset/sprite/icon/elf_bonus_fill.png")
+		"undead":
+			faction_fill_texture = preload("res://asset/sprite/icon/elf_bonus_fill.png")
+		_:
+			faction_fill_texture = preload("res://asset/sprite/icon/elf_bonus_fill.png")
+	var fill_style = StyleBoxTexture.new()
+	fill_style.texture = faction_fill_texture
+	fill_style.axis_stretch_horizontal = StyleBoxTexture.AXIS_STRETCH_MODE_TILE
+	fill_style.axis_stretch_vertical = StyleBoxTexture.AXIS_STRETCH_MODE_TILE_FIT
 
 	var progress_bar = ProgressBar.new()
 	var max_level = bonus_level_list[faction].back()
@@ -110,7 +127,7 @@ func add_bonus_bar_to_container(faction: String, level: int):
 	progress_bar.value = current_level
 	progress_bar.step = 1
 	progress_bar.add_theme_stylebox_override("fill", fill_style)
-	progress_bar.minimum_size = Vector2(64, 8)
+	progress_bar.custom_minimum_size = Vector2(64, 8)
 	faction_container.add_child(progress_bar)
 
 

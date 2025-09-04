@@ -40,17 +40,20 @@ var chess_data : Dictionary
 var won_rounds := 0
 const max_won_rounds := 5
 var lose_rounds := 0
-const max_lose_rounds := 5
+const max_lose_rounds := 2
 
 func _ready() -> void:
 
 	in_game_data = player_data.duplicate()
 
-	load_game_binary()
+	load_game_json()
+	
 	if player_datas.size() != 0:
 		last_player = player_datas.keys().back()
 		current_player = last_player
-
+	else:
+		last_player = "Resal"
+		current_player = "Resal"
 	load_chess_stats()
 
 func load_game_binary():
@@ -62,12 +65,11 @@ func load_game_binary():
 			player_data = player_datas[current_player]
 
 
-func merge_game_binary():
+func merge_game_data():
 	if current_player == "":
 		return
 
 	player_datas[current_player] = merge_dictionaries(player_data, in_game_data) 	
-
 
 func save_game_binary():
 	if current_player == "":
@@ -77,11 +79,36 @@ func save_game_binary():
 	file.store_var(player_datas, true)  # true enables full length encoding
 	file.close()
 
-func clean_player_data(player: String = current_player):
-	in_game_data = {}
-	if player in player_datas.keys():
-		player_datas[player] = {}
-		save_game_binary()
+func save_game_json():
+	if current_player == "":
+		return
+
+	var file = FileAccess.open("user://savegame.json", FileAccess.WRITE)
+	if not file:
+		push_error("Failed to create savegame.json")
+		return
+	
+	# 将字典转换为JSON字符串
+	var json_string = JSON.stringify(player_datas)
+	file.store_string(json_string)
+	file.close()
+
+func load_game_json():
+	var file = FileAccess.open("user://savegame.json", FileAccess.READ)
+	if not file:
+		push_error("Failed to open savegame.json")
+		return
+	
+	var json_text = file.get_as_text()
+	file.close()
+	
+	# 解析JSON
+	player_datas = JSON.parse_string(json_text)
+	
+	if player_datas == null:
+		push_error("JSON parsing failed for savegame.json")
+		player_datas = {}  # 如果解析失败，初始化为空字典
+		return
 
 func load_chess_stats():
 	var file = FileAccess.open("res://script/chess_stats.json", FileAccess.READ)
@@ -95,7 +122,13 @@ func load_chess_stats():
 	if not chess_data:
 		push_error("JSON parsing failed for chess_stats.json")
 		return
-
+				
+func clean_player_data(player: String = current_player):
+	in_game_data = {}
+	if player in player_datas.keys():
+		player_datas[player] = {}
+		save_game_json()
+		
 func record_death_chess(chess: Obstacle) -> void:
 
 	if not chess is Chess:
@@ -218,6 +251,7 @@ func merge_dictionaries(dict1: Dictionary, dict2: Dictionary) -> Dictionary:
 	return result
 
 func record_score(score: int):
+	var datetime = Time.get_datetime_dict_from_system()
 	var today_date = "log_%04d%02d%02d_%02d%02d%02d.txt" % [
 		datetime.year, datetime.month, datetime.day,
 		datetime.hour, datetime.minute, datetime.second
