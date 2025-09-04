@@ -11,6 +11,7 @@ extends HBoxContainer
 @onready var attack_speed: Label = $VBoxContainer/attack_speed
 @onready var spell: Label = $VBoxContainer/spell
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
+@onready var effect_icon_container: HBoxContainer = $effect_icon_container
 
 var animation_faction := "human"
 var animation_chess_name := "ShieldMan"
@@ -32,6 +33,10 @@ func setup_chess(obstacle: Obstacle) -> void:
 	
 		
 func show_chess_information(starting_position: Vector2, status: String, obstacle: Obstacle) -> void:
+
+	for node in effect_icon_container.get_child():
+		node.queue_free()
+
 	visible = true
 	chess_name.text = "Chess Name = " + obstacle.chess_name
 	chess_faction.text = "Faction = " + obstacle.faction
@@ -45,6 +50,40 @@ func show_chess_information(starting_position: Vector2, status: String, obstacle
 	animation_faction = obstacle.faction
 	animation_chess_name = obstacle.chess_name
 	_load_animations()
+
+	var chess_effect_list = obstacle.effect_handler.effect_list
+	if chess_effect_list.size() == 0:
+		return
+
+	for effect_index in chess_effect_list:
+		effect_name = effect_index.effect_name
+		effect_type = effect_index.effect_type
+		var effect_texture = TextureRect.new()
+		effect_texture.texture = preload("res://asset/sprite/icon/" + effect_name + ".png")
+		effect_texture.minmum_size = Vector2(32, 32)
+
+		var border_style: StyleBoxFlat
+		border_style = StyleBoxFlat.new()
+		border_style.border_width_left = 1
+		border_style.border_width_right = 1
+		border_style.border_width_top = 1
+		border_style.border_width_bottom = 1
+
+		match effect_type:
+			"Buff":
+				border_style.border_color = Color.GREEN
+			"Debuff":
+				border_style.border_color = Color.RED
+			"Faction Bonus":
+				border_style.border_color = Color.YELLOW
+			_:
+				border_style.border_color = Color.WHITE
+
+		effect_texture.border_style.bg_color = Color.TRANSPARENT
+		add_theme_stylebox_override("normal", border_style)
+
+		effect_icon_container.add_child(effect_texture)
+
 		
 func _on_chess_drag_canceled(starting_position: Vector2, status: String, obstacle: Obstacle) -> void:
 	visible = false
