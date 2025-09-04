@@ -4,6 +4,9 @@ extends Node2D
 @onready var arena: PlayArea = %arena
 @onready var bench: PlayArea = %bench
 
+@onready var faction_container : VBoxContainer = $faction_container
+
+
 # bonus_level_list for storing each level need chess count
 var bonus_level_list : Dictionary = {
 	"elf" : [2, 4, 6],
@@ -61,7 +64,11 @@ var player_bonus_level_dict : Dictionary = {
 
 
 func bonus_refresh() -> void:
-	for chess_index in arena.unit_grid.units.values():
+
+	for node in faction_container.get_child():
+		node.queue_free()
+
+	for chess_index in arena.unit_grid.units.values(): #summary all uniqe chess
 
 		if not is_instance_valid(chess_index) or not chess_index is Chess:
 			continue
@@ -71,19 +78,42 @@ func bonus_refresh() -> void:
 		if not player_faction_count[chess_index.team][chess_index.faction].has(chess_index.chess_name):
 			player_faction_count[chess_index.team][chess_index.faction].append(chess_index.chess_name)
 
-	for player_index in player_faction_count.keys():
+	for player_index in player_faction_count.keys(): # summary each team, each faction uniqe chess count and bonus level 
 		for faction_index in bonus_level_list.keys():
 			var bonus_level = 0
-			for level_value in bonus_level_list[faction_index]:
+			for level_value in bonus_level_list[faction_index].values():
 				if player_faction_count[player_index][faction_index].size() >= level_value:
 					bonus_level += 1
 			player_bonus_level_dict[player_index][faction_index] = min(bonus_level, 3)
+			if player_index == 1 and player_bonus_level_dict[player_index][faction_index] > 0:
+				add_bonus_bar_to_container(faction_index, player_bonus_level_dict[player_index][faction_index])
 
-	for faction_index in player_bonus_level_dict[1].keys():
+	for faction_index in player_bonus_level_dict[1].keys():	#apply bonus to each player/faction 
 		for player_index in player_faction_count.keys(): #[1, 2]
 			var curren_bonus_level = player_bonus_level_dict[player_index][faction_index]
 			if curren_bonus_level > 0:
 				apply_faction_bonus(faction_index, curren_bonus_level, player_index)
+
+func add_bonus_bar_to_container(faction: String, level: int):
+
+	var faction_fill_texture = preload("res://asset/sprite/resal/" + faction + "_bonus_fill.png")
+    var fill_style = StyleBoxTexture.new()
+    fill_style.texture = faction_fill_texture
+    fill_style.axis_stretch_horizontal = StyleBoxTexture.AXIS_STRETCH_MODE_TILE
+    fill_style.axis_stretch_vertical = StyleBoxTexture.AXIS_STRETCH_MODE_TILE_FIT
+
+	var progress_bar = ProgressBar.new()
+	var max_level = bonus_level_list[faction].back()
+	var current_level = max(0, min(max_level, level))
+
+	progress_bar.max_value = max_level
+	progress_bar.value = current_level
+	progress_bar.step = 1
+	progress_bar.add_theme_stylebox_override("fill", fill_style)
+	progress_bar.minimum_size = Vector2(64, 8)
+	faction_container.add_child(progress_bar)
+
+
 
 func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -> void:
 
