@@ -3,8 +3,8 @@ extends Node
 
 var player_datas := {}
 var player_data : Dictionary = {
-	"gems": 0,
-	"experience": 0,
+	"total_gems": 0,
+	"total_experience": 0,
 	"enemy_death_count": 0,
 	"enemy_death_array": [],
 	"ally_death_count": 0,
@@ -61,12 +61,17 @@ func load_game_binary():
 		if player_datas.keys().has(current_player):
 			player_data = player_datas[current_player]
 
-func save_game_binary():
 
+func merge_game_binary():
 	if current_player == "":
 		return
 
-	player_datas[current_player] = merge_dictionaries(player_data, in_game_data) 
+	player_datas[current_player] = merge_dictionaries(player_data, in_game_data) 	
+
+
+func save_game_binary():
+	if current_player == "":
+		return
 
 	var file = FileAccess.open("user://savegame.dat", FileAccess.WRITE)
 	file.store_var(player_datas, true)  # true enables full length encoding
@@ -211,3 +216,20 @@ func merge_dictionaries(dict1: Dictionary, dict2: Dictionary) -> Dictionary:
 			result[key] = value2
 	
 	return result
+
+func record_score(score: int):
+	var today_date = "log_%04d%02d%02d_%02d%02d%02d.txt" % [
+		datetime.year, datetime.month, datetime.day,
+		datetime.hour, datetime.minute, datetime.second
+	]
+	if player_data["total_won_game"] > 0:
+		player_data["game_record"] = ["WON", today_date]
+	else:
+		player_data["game_record"] = ["LOSE", today_date]
+	player_data["total_experience"] += score
+
+func record_team(chess_array: Array):
+	player_data["final_team"] = []
+	for chess_index in chess_array:
+		if chess_index is Chess:
+			player_data["final_team"].append([chess_index.faction, chess_index.chess_name])
