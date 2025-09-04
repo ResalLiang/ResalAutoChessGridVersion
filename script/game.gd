@@ -422,7 +422,8 @@ func handle_round_finished(msg):
 	new_round_prepare_start()
 
 func handle_game_end():
-	DataManagerSingleton.save_game_binary()	
+	DataManagerSingleton.merge_game_binary()
+	DataManagerSingleton.record_team(team_dict[Team.TEAM1_FULL])
 	get_parent().get_parent().show_game_finish()
 	#Show report
 
