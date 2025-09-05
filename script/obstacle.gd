@@ -234,7 +234,7 @@ func _process(delta: float) -> void:
 	hp_bar.max_value = max_hp
 	mp_bar.max_value = max_mp
 
-	hp_bar.visible = hp != max_hp
+	hp_bar.visible = true #hp != max_hp
 		
 	var new_material = animated_sprite_2d.material.duplicate()
 	match team:
@@ -334,7 +334,8 @@ func _load_animations():
 
 # Load chess stats from JSON file
 func _load_chess_stats():
-	chess_data = DataManagerSingleton.chess_data
+
+	chess_data = DataManagerSingleton.get_chess_data()
 	
 	if not chess_data:
 		push_error("JSON parsing failed for chess_stats.json")
@@ -352,6 +353,15 @@ func _load_chess_stats():
 		push_error("Stats not found for %s/%s" % [faction, chess_name])
 
 func start_turn():
+	
+	#Placeholder for chess passive ability on start turn
+	if status == STATUS.DIE:
+		action_timer.set_wait_time(action_timer_wait_time)
+		action_timer.start()
+		return
+
+	update_solid_map()
+	await get_tree().process_frame
 
 	update_effect()
 
@@ -359,6 +369,12 @@ func start_turn():
 
 						
 func _handle_action():
+	
+	if status == STATUS.DIE:
+		action_timer.set_wait_time(action_timer_wait_time)
+		action_timer.start()
+		return
+
 	action_started.emit(self)
 
 	handle_obstacle_action()
@@ -458,7 +474,9 @@ func _on_damage_taken(taker: Obstacle, damage_value: int, attacker: Obstacle):
 		animated_sprite_2d.stop()
 		animated_sprite_2d.play("die")
 		await animated_sprite_2d.animation_finished
+		visible = false
 		is_died.emit(self)
+		action_timer
 				
 	else:
 		#Placeholder for chess passive ability on hit
@@ -517,6 +535,6 @@ func dwarf_bomb_boom():
 			if x >=0 and x < arena.unit_grid.size.x and y >=0 and y < arena.unit_grid.size.y:
 				var target_area_chess = arena.unit_grid.units[position_id + Vector2i(x, y)]
 				if is_instance_valid(target_area_chess) and target_area_chess is Obstacle and target_area_chess.status != STATUS.DIE:
-					_apply_damage(target_area_chess, 50 * obstacle_level)
-	action_finished.emit(self)	
+					_apply_damage(target_area_chess, 50 * obstacle_level))	
 	is_died.emit(self)		
+	action_finished.emit(self)
