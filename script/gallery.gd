@@ -56,21 +56,20 @@ func _ready() -> void:
 			var chess_button = TextureButton.new()
 			var source_texture = AtlasTexture.new()
 			var sprite_path
-			if not current_player_chess_data.has(faction_index):
+
+			if not DataManagerSingleton.check_key_valid(DataManagerSingleton.player_datas,[DataManagerSingleton.current_player, "chess_stat", faction_index, chess_index, "buy_count"]):
 				sprite_path = "res://asset/animation/" + "human" + "/" + "human" + "ShieldMan" + ".tres"
-			elif not current_player_chess_data[faction_index].has(chess_index):
-				sprite_path = "res://asset/animation/" + "human" + "/" + "human" + "ShieldMan" + ".tres"
-			elif not current_player_chess_data[faction_index][chess_index].has("buy_count"):
-				sprite_path = "res://asset/animation/" + "human" + "/" + "human" + "ShieldMan" + ".tres"
-				
 			
 			elif current_player_chess_data[faction_index][chess_index]["buy_count"] > 0:
 				sprite_path = "res://asset/animation/" + faction_index + "/" + faction_index + chess_index + ".tres"
+				
 			else:
 				sprite_path = "res://asset/animation/" + "human" + "/" + "human" + "ShieldMan" + ".tres"
+
 			# Check if resource exists before loading
 			if not ResourceLoader.exists(sprite_path):
 				sprite_path = "res://asset/animation/" + "human" + "/" + "human" + "ShieldMan" + ".tres"
+
 			var sprite_frames = load(sprite_path) as SpriteFrames
 			source_texture.set_atlas(sprite_frames.get_frame_texture("idle", 0))
 			source_texture.region = Rect2(6, 12, 20, 20)
@@ -90,14 +89,25 @@ func _ready() -> void:
 				chess_displayed_x = 0
 				chess_displayed_y += 1
 
+
+func _on_back_button_pressed() -> void:
+	get_parent().get_parent().show_main_menu()
+
 func _on_chess_button_pressed(button: TextureButton):
 
 	
 	var faction_index = button.get_meta("faction")
 	var chess_index = button.get_meta("chess_name")
 
-	var current_chess_data = DataManagerSingleton[DataManagerSingleton.current_player]["chess_stat"][faction_index][chess_index]
-	if current_chess_data["buy_count"] == 0:
+
+	if not DataManagerSingleton.check_key_valid(DataManagerSingleton.player_datas,[DataManagerSingleton.current_player, "chess_stat", faction_index, chess_index]):
+		chess_data_container.visible = false
+		animated_sprite_2d.visible = false
+		return
+
+	var current_chess_data = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["chess_stat"][faction_index][chess_index]
+
+	if not current_chess_data.has("buy_count") or current_chess_data["buy_count"] == 0:
 		chess_data_container.visible = false
 		animated_sprite_2d.visible = false
 		return
@@ -195,7 +205,3 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 # 	"evase_attack_count" : 0,
 # 	"cast_spell_count" : 0
 # }
-
-
-func _on_back_button_pressed() -> void:
-	get_parent().get_parent().show_main_menu()
