@@ -267,3 +267,35 @@ func record_team(chess_array: Array):
 	for chess_index in chess_array:
 		if chess_index is Chess:
 			player_data["final_team"].append([chess_index.faction, chess_index.chess_name])
+
+func check_key_valid(dict: Dictionary, keys: Array) -> bool:
+	# Check if the keys array is empty
+	if keys.is_empty():
+		return true
+	
+	# Start with the root dictionary
+	var current_dict = dict
+	
+	# Iterate through each key in the sequence
+	for i in range(keys.size()):
+		var key = keys[i]
+		
+		# Check if current level has the required key
+		if not current_dict.has(key):
+			return false
+		
+		# If this is the last key, we've successfully found the path
+		if i == keys.size() - 1:
+			return true
+		
+		# Move to the next level - check if the value is a dictionary
+		var next_value = current_dict[key]
+		if not next_value is Dictionary:
+			# Path exists but next level is not a dictionary
+			return false
+		
+		# Update current_dict to the next level
+		current_dict = next_value
+	
+	# This should never be reached, but included for completeness
+	return false
