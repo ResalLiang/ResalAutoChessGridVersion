@@ -795,3 +795,25 @@ func control_shaker(control: Control):
 
 func _on_back_button_pressed() -> void:
 	get_parent().get_parent().show_main_menu()
+
+
+func damage_value_display(chess: Obstacle, damage_value: int, attacker: Obstacle):
+	if damage_value <= 0:
+		return
+	var damage_label = Label.new()
+	arena.add_child(damage_label)
+	damage_label.value = damage_value
+
+	var old_position = chess.global_position + Vector2(32, -8)
+	damage_label.global_position = old_position
+
+	if damage_tween:
+		damage_tween.kill() # Abort the previous animation.
+	damage_tween = create_tween().set_parallel(true)
+	damage_tween.set_ease(Tween.EASE_IN_OUT)
+	damage_tween.set_trans(Tween.TRANS_CUBIC)
+	damage_tween.tween_property(damage_label, "global_position", old_position + Vector2(0, -16), 1.0)
+	damage_tween.tween_property(damage_label,"modulate.a", 0.0, 1.0)
+	await damage_tween.tween_finished
+	damage_tween.kill()
+	queue_free()
