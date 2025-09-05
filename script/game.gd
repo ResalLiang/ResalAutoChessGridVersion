@@ -212,7 +212,7 @@ func _ready():
 	chess_appearance_finished.connect(
 		func(play_area):
 			if play_area == arena:
-				start_new_turn()
+				start_new_round()
 	)
 	chess_mover.chess_moved.connect(
 		func(chess: Obstacle, play_area: PlayArea, tile: Vector2i):
@@ -309,7 +309,7 @@ func new_round_prepare_end():
 
 	chess_appearance(arena)
 
-func start_new_turn():
+func start_new_round():
 	# if start new turn, it will be fully auto.
 	print("Start new round.")
 	var team1_alive_cnt = 0
@@ -376,6 +376,23 @@ func handle_character_action_finished():
 		active_chess.is_active = false
 		#active_chess.action_finished.disconnect(handle_character_action_finished)
 
+	#refresh chess status
+
+	var new_team_dict: Dictionary = {
+		Team.TEAM1: [],
+		Team.TEAM2: [],
+		Team.TEAM1_FULL: [],
+		Team.TEAM2_FULL: []
+	}
+
+	for team_index in team_dict.keys():
+		for chess_index in team_dict[team_index]:
+			if is_instance_valid(chess_index) and chess_index is Obstacle and chess_index.status != chess_index.STATUS.DIE:
+				new_team_dict[team_index].append(chess_index)
+			else:
+				chess_index.queue_free()
+		team_dict[team_index] = new_team_dict[team_index]
+
 	if current_team == Team.TEAM1 and team_dict[Team.TEAM2].size() != 0:
 		current_team = Team.TEAM2
 		start_chess_turn(current_team)
@@ -388,7 +405,7 @@ func handle_character_action_finished():
 		start_chess_turn(current_team)
 
 	else:
-		start_new_turn()
+		start_new_round()
 
 func handle_round_finished(msg):
 	
@@ -758,24 +775,7 @@ func update_population():
 
 func chess_death_handle(obstacle: Obstacle):
 
-	if team_dict[Team.TEAM1].has(obstacle):
-		team_dict[Team.TEAM1].erase(obstacle)
-
-	if team_dict[Team.TEAM1_FULL].has(obstacle):
-		team_dict[Team.TEAM1_FULL].erase(obstacle)
-
-	if team_dict[Team.TEAM2].has(obstacle):
-		team_dict[Team.TEAM2].erase(obstacle)
-
-	if team_dict[Team.TEAM2_FULL].has(obstacle):
-		team_dict[Team.TEAM2_FULL].erase(obstacle)
-
-
-	obstacle.visible = false
 	arena.unit_grid.remove_unit(obstacle.position_id)
-	if obstacle.is_active:
-		obstacle.action_finished.emit(obstacle)
-	obstacle.queue_free()
 
 func control_shaker(control: Control):
 	var old_position = control.global_position
