@@ -481,6 +481,11 @@ func start_turn():
 
 func _handle_movement():
 	#Placeholder for chess passive ability on movement
+	
+	if status == STATUS.DIE:
+		action_timer.set_wait_time(action_timer_wait_time)
+		action_timer.start()
+		return
 
 	move_started.emit(self, position_id)
 
@@ -532,6 +537,12 @@ func _on_move_completed():
 		move_timer.start()
 						
 func _handle_action():
+
+	if status == STATUS.DIE:
+		action_timer.set_wait_time(action_timer_wait_time)
+		action_timer.start()
+		return
+
 	move_timer.stop()
 	action_started.emit(self)
 		
@@ -576,6 +587,11 @@ func _handle_action():
 		_handle_attack()
 
 func _handle_attack():
+
+	if status == STATUS.DIE:
+		action_timer.set_wait_time(action_timer_wait_time)
+		action_timer.start()
+		return
 
 	if !chess_target or !is_instance_valid(chess_target) or chess_target.status == STATUS.DIE:
 		target_lost.emit(self)
@@ -655,7 +671,8 @@ func _handle_attack():
 
 func _handle_action_timeout():
 	#Placeholder for chess passive ability on action finish
-	status = STATUS.IDLE
+	if not status = STATUS.DIE:
+		status = STATUS.IDLE
 	action_finished.emit(self)
 	action_timer.stop()
 
@@ -921,6 +938,7 @@ func _on_damage_taken(taker: Obstacle, damage_value: int, attacker: Obstacle):
 		animated_sprite_2d.stop()
 		animated_sprite_2d.play("die")
 		await animated_sprite_2d.animation_finished
+		visible = false
 		is_died.emit(self)
 				
 	else:
@@ -932,9 +950,7 @@ func _on_damage_taken(taker: Obstacle, damage_value: int, attacker: Obstacle):
 
 	
 func _on_died():
-	#Placeholder for chess passive ability on died
-	if is_active:
-		action_finished.emit(self)
+	#Placeholder for chess passive ability on diedchess_data = DataManagerSingleton.get_chess_data()
 
 func update_solid_map():
 		
@@ -1185,8 +1201,8 @@ func dwarf_demolitionist_placebomb(spell_range: int) -> bool:
 	var attempt_summon_count := 10
 	if chess_spell_target.status != STATUS.DIE and chess_spell_target.team != team and chess_spell_target.global_position.distance_to(global_position) <= spell_range:
 		while attempt_summon_count >= 0:
-			var rand_x = randi_range(chess_spell_target.position_id.x - 3, chess_spell_target.position_id.x + 3)
-			var rand_y = randi_range(chess_spell_target.position_id.y - 3, chess_spell_target.position_id.y + 3)
+			var rand_x = randi_range(chess_spell_target.position_id.x - 1, chess_spell_target.position_id.x + 1)
+			var rand_y = randi_range(chess_spell_target.position_id.y - 1, chess_spell_target.position_id.y + 1)
 			if rand_x >=0 and rand_x < arena.unit_grid.size.x and rand_y >=0 and rand_y < arena.unit_grid.size.y:
 				attempt_summon_count -= 1
 				if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
