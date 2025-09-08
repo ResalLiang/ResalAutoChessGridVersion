@@ -305,8 +305,6 @@ func new_round_prepare_end():
 
 	faction_bonus_manager.bonus_refresh()
 
-	connect_chess_signals()
-
 	chess_appearance(arena)
 
 func start_new_round():
@@ -424,7 +422,7 @@ func handle_round_finished(msg):
 
 	print("You have won %d rounds, and lose %d rounds." % [DataManagerSingleton.won_rounds, DataManagerSingleton.lose_rounds])
 
-	battle_meter.round_end_data_update()
+	battle_meter.round_end_data_update() #update to ingame data
 
 	if DataManagerSingleton.won_rounds >= DataManagerSingleton.max_won_rounds:
 		print("You won the game!")
@@ -442,8 +440,8 @@ func handle_round_finished(msg):
 func handle_game_end():
 	DataManagerSingleton.merge_game_data()
 	DataManagerSingleton.record_team(team_dict[Team.TEAM1_FULL])
-	get_parent().get_parent().show_game_finish()
 	#Show report
+	get_parent().get_parent().show_game_finish()
 
 func sort_characters(team: Team, mode: ChessActiveOrder) -> Array:
 	var chesses_team = team_dict[team]
@@ -472,25 +470,29 @@ func generate_enemy(difficulty : int) -> void:
 		var rand_x = randi_range(arena.unit_grid.size.x / 2, arena.unit_grid.size.x - 1)
 		var rand_y = randi_range(0, arena.unit_grid.size.y - 1)
 		if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
-			var character = chess_scene.instantiate()
-			character.team = 2
-			character.arena = arena
-			character.bench = bench
-			character.shop = shop
 			var rand_character_result = generate_random_chess()
-			character.faction = rand_character_result[0]
-			character.chess_name = rand_character_result[1]
-			character.chess_serial = get_next_serial()
-			# character.faction = DataManagerSingleton.get_chess_data().keys()[randi_range(0, DataManagerSingleton.get_chess_data().keys().size() - 2)] # remove villager
-			# character.chess_name = get_random_character(character.faction)
-			add_child(character)
-			debug_handler.connect_to_chess_signal(character)
-			chess_mover.setup_chess(character)
-			chess_mover._move_chess(character, arena, Vector2(rand_x, rand_y))
-			chess_information.setup_chess(character)
+
+			var character = summon_chess(rand_character_result[0], rand_character_result[1], 2, arena, Vector2i(rand_x, rand_y))
+
+			# var character = chess_scene.instantiate()
+			# character.team = 2
+			# character.arena = arena
+			# character.bench = bench
+			# character.shop = shop
+			# character.faction = rand_character_result[0]
+			# character.chess_name = rand_character_result[1]
+			# character.chess_serial = get_next_serial()
+			# # character.faction = DataManagerSingleton.get_chess_data().keys()[randi_range(0, DataManagerSingleton.get_chess_data().keys().size() - 2)] # remove villager
+			# # character.chess_name = get_random_character(character.faction)
+			# add_child(character)
+			# debug_handler.connect_to_chess_signal(character)
+			# chess_mover.setup_chess(character)
+			# chess_mover._move_chess(character, arena, Vector2(rand_x, rand_y))
+			# chess_information.setup_chess(character)
+			# team_dict[Team.TEAM2_FULL].append(character)
+
 			current_difficulty += character.max_hp
 			current_enemy_cnt += 1
-			team_dict[Team.TEAM2_FULL].append(character)
 			
 	
 func get_random_character(faction_name: String) -> String:
@@ -535,18 +537,21 @@ func load_arena_team():
 	if saved_arena_team.size() != 0:
 		for tile_index in saved_arena_team.keys():
 			if saved_arena_team[tile_index]:
-				var character = chess_scene.instantiate()
-				character.faction = saved_arena_team[tile_index][0]
-				character.chess_name = saved_arena_team[tile_index][1]
-				character.team = 1
-				character.arena = arena
-				character.bench = bench
-				character.shop = shop
-				character.chess_serial = get_next_serial()
-				add_child(character)
-				debug_handler.connect_to_chess_signal(character)
-				chess_mover._move_chess(character, arena, tile_index) 
-				team_dict[Team.TEAM1_FULL].append(character)
+
+				var character = summon_chess(saved_arena_team[tile_index][0], saved_arena_team[tile_index][1], 1, arena, tile_index)
+
+				# var character = chess_scene.instantiate()
+				# character.faction = saved_arena_team[tile_index][0]
+				# character.chess_name = saved_arena_team[tile_index][1]
+				# character.team = 1
+				# character.arena = arena
+				# character.bench = bench
+				# character.shop = shop
+				# character.chess_serial = get_next_serial()
+				# add_child(character)
+				# debug_handler.connect_to_chess_signal(character)
+				# chess_mover._move_chess(character, arena, tile_index) 
+				# team_dict[Team.TEAM1_FULL].append(character)
 		
 func save_arena_team():
 	saved_arena_team = {}
@@ -629,18 +634,6 @@ func generate_random_chess():
 	# Should never reach here if candidates exist
 	return ["human", "ShieldMan"]
 
-func connect_chess_signals() -> void:
-
-	for chess_index in team_dict[Team.TEAM1_FULL]:
-		chess_index.damage_taken.connect(battle_meter.get_damage_data)
-		chess_index.is_died.connect(DataManagerSingleton.record_death_chess)
-		chess_index.is_died.connect(chess_death_handle)
-
-
-	for chess_index in team_dict[Team.TEAM2_FULL]:
-		chess_index.damage_taken.connect(battle_meter.get_damage_data)
-		chess_index.is_died.connect(DataManagerSingleton.record_death_chess)
-		chess_index.is_died.connect(chess_death_handle)
 
 func chess_appearance(play_area: PlayArea):
 
@@ -692,7 +685,12 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, team:
 	if not summon_chess_name in DataManagerSingleton.get_chess_data()[summon_chess_faction].keys():
 		return null
 
-	var summoned_character = chess_scene.instantiate()
+	var summoned_character
+	if DataManagerSingleton.get_chess_data()[summon_chess_faction][summon_chess_name]["spd"] == 0:
+		summoned_character = obstacle_scene.instantiate()
+	else:
+		summoned_character = chess_scene.instantiate()
+
 	summoned_character.faction = summon_chess_faction
 	summoned_character.chess_name = summon_chess_name
 	summoned_character.team = team
@@ -702,14 +700,23 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, team:
 	summoned_character.chess_serial = get_next_serial()
 	add_child(summoned_character)
 	summoned_character._load_chess_stats()
+
 	debug_handler.connect_to_chess_signal(summoned_character)
 	chess_mover.setup_chess(summoned_character)
 	chess_mover._move_chess(summoned_character, summon_arena, summon_position)
 	chess_information.setup_chess(summoned_character)
 
 	summoned_character.damage_taken.connect(battle_meter.get_damage_data)
+	summoned_character.damage_taken.connect(damage_value_display)
 	summoned_character.is_died.connect(DataManagerSingleton.record_death_chess)
 	summoned_character.is_died.connect(chess_death_handle)
+	if summoned_character.has_signal("tween_moving"):
+		summoned_character.tween_moving.connect(
+			func(chess, start_pos, end_pos):
+				arena.unit_grid.remove_unit(start_pos)
+				arena.unit_grid.add_unit(end_pos, chess)
+			)
+
 
 	if team == 1:
 		team_dict[Team.TEAM1_FULL].append(summoned_character)
@@ -720,40 +727,40 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, team:
 		
 	return summoned_character
 
-func summon_obstacle(summon_obstacle_faction: String, summon_chess_name: String, team: int, summon_arena: PlayArea, summon_position: Vector2i) -> Obstacle:
+# func summon_obstacle(summon_obstacle_faction: String, summon_chess_name: String, team: int, summon_arena: PlayArea, summon_position: Vector2i) -> Obstacle:
 
-	if not summon_obstacle_faction in DataManagerSingleton.get_chess_data().keys():
-		return null
-	if not summon_chess_name in DataManagerSingleton.get_chess_data()[summon_obstacle_faction].keys():
-		return null
+# 	if not summon_obstacle_faction in DataManagerSingleton.get_chess_data().keys():
+# 		return null
+# 	if not summon_chess_name in DataManagerSingleton.get_chess_data()[summon_obstacle_faction].keys():
+# 		return null
 
-	var summoned_character = obstacle_scene.instantiate()
-	summoned_character.faction = summon_obstacle_faction
-	summoned_character.chess_name = summon_chess_name
-	summoned_character.team = team
-	summoned_character.arena = arena
-	summoned_character.bench = bench
-	summoned_character.shop = shop
-	summoned_character.chess_serial = get_next_serial()
-	add_child(summoned_character)
-	summoned_character._load_chess_stats()
-	debug_handler.connect_to_chess_signal(summoned_character)
-	chess_mover.setup_chess(summoned_character)
-	chess_mover._move_chess(summoned_character, summon_arena, summon_position)
-	chess_information.setup_chess(summoned_character)
+# 	var summoned_character = obstacle_scene.instantiate()
+# 	summoned_character.faction = summon_obstacle_faction
+# 	summoned_character.chess_name = summon_chess_name
+# 	summoned_character.team = team
+# 	summoned_character.arena = arena
+# 	summoned_character.bench = bench
+# 	summoned_character.shop = shop
+# 	summoned_character.chess_serial = get_next_serial()
+# 	add_child(summoned_character)
+# 	summoned_character._load_chess_stats()
+# 	debug_handler.connect_to_chess_signal(summoned_character)
+# 	chess_mover.setup_chess(summoned_character)
+# 	chess_mover._move_chess(summoned_character, summon_arena, summon_position)
+# 	chess_information.setup_chess(summoned_character)
 
-	summoned_character.damage_taken.connect(battle_meter.get_damage_data)
-	summoned_character.is_died.connect(DataManagerSingleton.record_death_chess)
-	summoned_character.is_died.connect(chess_death_handle)
+# 	summoned_character.damage_taken.connect(battle_meter.get_damage_data)
+# 	summoned_character.is_died.connect(DataManagerSingleton.record_death_chess)
+# 	summoned_character.is_died.connect(chess_death_handle)
 
-	if team == 1:
-		team_dict[Team.TEAM1_FULL].append(summoned_character)
-		team_dict[Team.TEAM1].append(summoned_character)
-	else:
-		team_dict[Team.TEAM2_FULL].append(summoned_character)
-		team_dict[Team.TEAM2].append(summoned_character)
+# 	if team == 1:
+# 		team_dict[Team.TEAM1_FULL].append(summoned_character)
+# 		team_dict[Team.TEAM1].append(summoned_character)
+# 	else:
+# 		team_dict[Team.TEAM2_FULL].append(summoned_character)
+# 		team_dict[Team.TEAM2].append(summoned_character)
 		
-	return summoned_character
+# 	return summoned_character
 
 func update_population():
 	current_population = 0
