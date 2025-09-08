@@ -56,7 +56,7 @@ func _start_dragging():
 	dragging = true
 	starting_position = dragging_item.global_position
 	add_to_group("dragging")
-	dragging_item.z_index = 99  # Bring to front during drag
+	dragging_item.z_index = 998  # Bring to front during drag
 	offset = dragging_item.global_position - get_global_mouse_position()
 	drag_started.emit(starting_position, "started")
 
@@ -90,13 +90,16 @@ func _on_target_input_event(_viewport, event, _shape_idx):
 	if not dragging_enabled:
 		return
 		
-	# Check if another object is being dragged
-	if get_tree().get_first_node_in_group("dragging"):
-		return
+	# # Check if another object is being dragged
+	# if get_tree().get_first_node_in_group("dragging"):
+	# 	return
 		
 	# Start dragging on select input
 	if event.is_action_pressed("select") and not dragging:
 		_start_dragging()
+
+	elif get_tree().get_first_node_in_group("dragging") and dragging and event.is_action_pressed("select"):
+		_drop()
 
 # Handle dragging behavior
 func _handle_dragging():
