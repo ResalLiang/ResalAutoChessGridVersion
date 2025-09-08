@@ -2,6 +2,8 @@ class_name ShopHandler
 extends Node2D
 
 const max_shop_level := 7
+const chess_scene = preload("res://scene/chess.tscn")
+const obstacle_scene = preload("res://scene/obstacle.tscn")
 
 @onready var chess_mover: ChessMover = %chess_mover
 @onready var arena: PlayArea = %arena
@@ -68,16 +70,6 @@ func _ready():
 			debug_handler.write_log("LOG", "Shop upgrade to level: " + str(value) + ".")
 	)
 
-# DataManagerSingeton.add_data_to_dict(DataManagerSingeton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "evase_attack_count"], 1)
-# var chess_stat_sample = {
-# 	"buy_count": 0,
-# 	"sell_count": 0,
-# 	"refresh_count" : 0,
-# 	"max_damage": 0,
-# 	"max_damage_taken": 0,
-# 	"critical_attack_count": 0,
-# 	"evase_attack_count" : 0,
-# 	"cast_spell_count" : 0
 
 func shop_init():
 	remain_coins = game_start_coins
@@ -107,43 +99,48 @@ func shop_refresh() -> void:
 		var shop_row_index = floor(i / shop.unit_grid.size.x)
 		# var rand_faction_index = randi_range(0, get_parent().chess_data.keys().size() - 2) # remove villager
 		# var rand_faction = get_parent().chess_data.keys()[rand_faction_index]
-		var character = get_parent().chess_scene.instantiate()
-		# character.faction = rand_faction
-		# character.chess_name = get_parent().get_random_character(rand_faction)
-		var rand_character_result = get_parent().generate_random_chess()
-		character.faction = rand_character_result[0]
-		character.chess_name = rand_character_result[1]
-		character.team = 1
-		character.arena = arena
-		character.bench = bench
-		character.shop = shop
-		character.chess_serial = get_parent().get_next_serial()
-		add_child(character)
-		debug_handler.connect_to_chess_signal(character)
-		chess_mover.setup_chess(character)
-		chess_mover._move_chess(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
-		chess_information.setup_chess(character)
+
+		var character = get_parent().summon_chess(rand_character_result[0], rand_character_result[1], 1, shop, Vector2i(shop_col_index, shop_row_index))
+
+		# var character = get_parent().chess_scene.instantiate()
+		# # character.faction = rand_faction
+		# # character.chess_name = get_parent().get_random_character(rand_faction)
+		# var rand_character_result = get_parent().generate_random_chess()
+		# character.faction = rand_character_result[0]
+		# character.chess_name = rand_character_result[1]
+		# character.team = 1
+		# character.arena = arena
+		# character.bench = bench
+		# character.shop = shop
+		# character.chess_serial = get_parent().get_next_serial()
+		# add_child(character)
+		# debug_handler.connect_to_chess_signal(character)
+		# chess_mover.setup_chess(character)
+		# chess_mover._move_chess(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
+		# chess_information.setup_chess(character)
 		
 	var debug_chess_faction = ["human", "human", "human", "demon", "elf", "elf", "undead", "dwarf"]
 	var debug_chess_name = ["CrossBowMan", "Mage", "ArchMage", "FireImp", "Queen", "Mage", "Necromancer", "Demolitionist"]
 	for debug_index in range(debug_chess_faction.size()):
-		var character = get_parent().chess_scene.instantiate()
-		character.faction = debug_chess_faction[debug_index]
-		character.chess_name = debug_chess_name[debug_index]
-		character.team = 1
-		character.arena = arena
-		character.bench = bench
-		character.shop = shop
-		character.chess_serial = get_parent().get_next_serial()
-		add_child(character)
-		debug_handler.connect_to_chess_signal(character)
-		chess_mover.setup_chess(character)
-		chess_information.setup_chess(character)
 
 		var shop_col_index = debug_index % shop.unit_grid.size.x
 		var shop_row_index = floor(debug_index / shop.unit_grid.size.x) + 1
 
-		chess_mover._move_chess(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
+		var character = get_parent().summon_chess(debug_chess_faction,debug_chess_name, 1, shop, Vector2i(shop_col_index, shop_row_index))
+
+		# var character = get_parent().chess_scene.instantiate()
+		# character.faction = debug_chess_faction[debug_index]
+		# character.chess_name = debug_chess_name[debug_index]
+		# character.team = 1
+		# character.arena = arena
+		# character.bench = bench
+		# character.shop = shop
+		# character.chess_serial = get_parent().get_next_serial()
+		# add_child(character)
+		# debug_handler.connect_to_chess_signal(character)
+		# chess_mover.setup_chess(character)
+		# chess_information.setup_chess(character)
+		# chess_mover._move_chess(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
 	
 func shop_freeze() -> void:
 	if is_shop_frozen:
