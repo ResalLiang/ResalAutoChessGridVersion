@@ -1,5 +1,6 @@
 class_name FactionBonusManager
 extends Node2D
+const faction_bonus_bar_scene = preload("res://scene/faction_bonus_bar.tscn")
 
 @onready var arena: PlayArea = %arena
 @onready var bench: PlayArea = %bench
@@ -19,7 +20,7 @@ var bonus_level_list : Dictionary = {
 }
 
 # player_faction_count for storing players chess name
-var player_faction_count : Dictionary = {
+var player_faction_count_template : Dictionary = {
 	1 : {
 		"elf" : [],
 		"human" : [],
@@ -41,7 +42,7 @@ var player_faction_count : Dictionary = {
 }
 
 # player_bonus_level_dict for summary player bonus level
-var player_bonus_level_dict : Dictionary = {
+var player_bonus_level_dict_template : Dictionary = {
 	1 : {
 		"elf" : 0,
 		"human" : 0,
@@ -67,6 +68,9 @@ func bonus_refresh() -> void:
 
 	for node in faction_container.get_children():
 		node.queue_free()
+
+	var player_faction_count = player_faction_count_template.duplicate()
+	var player_bonus_level_dict = player_bonus_level_dict_template.duplicate()
 
 	for chess_index in arena.unit_grid.units.values(): #summary all uniqe chess
 
@@ -114,21 +118,26 @@ func add_bonus_bar_to_container(faction: String, level: int):
 			faction_fill_texture = preload("res://asset/sprite/icon/elf_bonus_fill.png")
 		_:
 			faction_fill_texture = preload("res://asset/sprite/icon/elf_bonus_fill.png")
-	var fill_style = StyleBoxTexture.new()
-	fill_style.texture = faction_fill_texture
-	fill_style.axis_stretch_horizontal = StyleBoxTexture.AXIS_STRETCH_MODE_TILE
-	fill_style.axis_stretch_vertical = StyleBoxTexture.AXIS_STRETCH_MODE_TILE_FIT
 
-	var progress_bar = ProgressBar.new()
-	var max_level = bonus_level_list[faction].back()
-	var current_level = max(0, min(max_level, level))
+	var faction_bonus_bar = faction_bonus_bar_scene.instantiate()
+	faction_bonus_bar.texture = faction_fill_texture
+	faction_bonus_bar.value = level
 
-	progress_bar.max_value = max_level
-	progress_bar.value = current_level
-	progress_bar.step = 1
-	progress_bar.add_theme_stylebox_override("fill", fill_style)
-	progress_bar.custom_minimum_size = Vector2(64, 8)
-	faction_container.add_child(progress_bar)
+	# var fill_style = StyleBoxTexture.new()
+	# fill_style.texture = faction_fill_texture
+	# fill_style.axis_stretch_horizontal = StyleBoxTexture.AXIS_STRETCH_MODE_TILE
+	# fill_style.axis_stretch_vertical = StyleBoxTexture.AXIS_STRETCH_MODE_TILE_FIT
+
+	# var progress_bar = ProgressBar.new()
+	# var max_level = bonus_level_list[faction].back()
+	# var current_level = max(0, min(max_level, level))
+
+	# progress_bar.max_value = max_level
+	# progress_bar.value = current_level
+	# progress_bar.step = 1
+	# progress_bar.add_theme_stylebox_override("fill", fill_style)
+	# progress_bar.custom_minimum_size = Vector2(64, 8)
+	# faction_container.add_child(progress_bar)
 
 
 
