@@ -871,7 +871,7 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 	elif chess_name == "Mage" and faction == "elf":
 		cast_spell_result = elf_mage_damage(spell_tgt, 0.2, 10, 80)
 	elif chess_name == "Necromancer" and faction == "undead":
-		cast_spell_result = undead_necromancer_summon("Zombie", 3)
+		cast_spell_result = undead_necromancer_summon("Skelton", 3)
 	elif chess_name == "Demolitionist" and faction == "dwarf":
 		cast_spell_result = dwarf_demolitionist_placebomb(100)
 	elif spell_tgt !=  self:
@@ -1176,12 +1176,12 @@ func elf_mage_damage(spell_target:Obstacle, damage_threshold: float, min_damage_
 
 func undead_necromancer_summon(summoned_chess_name: String, summon_unit_count: int) -> bool:
 	var chess_affected := false
-	var attempt_summon_count := 40
+	var attempt_summon_count := 30
 	var summoned_chess_count := 0
 	if summoned_chess_name in chess_data["undead"].keys():
 		while attempt_summon_count > 0 and summoned_chess_count < summon_unit_count:
-			var rand_x = randi_range(position_id.x - 3, position_id.x + 3)
-			var rand_y = randi_range(position_id.y - 3, position_id.y + 3)
+			var rand_x = randi_range(position_id.x - 2, position_id.x + 2)
+			var rand_y = randi_range(position_id.y - 2, position_id.y + 2)
 			if rand_x >=0 and rand_x < arena.unit_grid.size.x and rand_y >=0 and rand_y < arena.unit_grid.size.y:
 				attempt_summon_count -= 1
 				if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
@@ -1191,6 +1191,10 @@ func undead_necromancer_summon(summoned_chess_name: String, summon_unit_count: i
 
 					if summoned_character.animated_sprite_2d.sprite_frames.has_animation("rise") :
 						summoned_character.animated_sprite_2d.play("rise")
+						await summoned_character.animated_sprite_2d.animation_finished
+					else:
+						summoned_character.animated_sprite_2d.play_backwards("die")
+						await summoned_character.animated_sprite_2d.animation_finished
 
 					summoned_chess_count += 1
 					chess_affected = true
@@ -1207,7 +1211,7 @@ func dwarf_demolitionist_placebomb(spell_range: int) -> bool:
 				attempt_summon_count -= 1
 				if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
 					var game_root_scene = arena.get_parent().get_parent()
-					var summoned_character = game_root_scene.summon_obstacle("dwarf", "Bomb", team, arena, Vector2i(rand_x, rand_y))	
+					var summoned_character = game_root_scene.summon_chess("dwarf", "Bomb", team, arena, Vector2i(rand_x, rand_y))	
 					summoned_character.obstacle_counter = 2
 					summoned_character.obstacle_level = 1
 
