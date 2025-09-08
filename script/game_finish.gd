@@ -1,4 +1,5 @@
 extends Node2D
+class_name GameFinish
 
 @onready var container: VBoxContainer = $container
 
@@ -65,6 +66,7 @@ func calculate_final_score():
 			var item_score = score_bonus * current_player_ingame_data[item]
 			score_label = Label.new()
 			score_label.text = score_reason + " : " + str(score_bonus) + " * " + str(current_player_ingame_data[item]) + " = " + str(item_score)
+			score_label.visible = false
 			container.add_child(score_label)
 			final_score += item_score
 		
@@ -83,6 +85,7 @@ func staggered_fly_in():
 	
 	# 设置所有Label的初始位置
 	for label in labels:
+		label.visible = true
 		label.position.x = get_viewport().get_visible_rect().size.x + 200
 		label.modulate.a = 0.0
 	
