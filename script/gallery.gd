@@ -2,7 +2,9 @@ extends Node2D
 class_name gallery
 
 @onready var chess_data_container : VBoxContainer = $chess_data_container
+
 @onready var chess_container: ScrollContainer = $chess_container
+@onready var chess_vbox_container: VBoxContainer = $chess_container/chess_vbox_container
 
 @onready var buy_count: Label = $chess_data_container/buy_count
 @onready var sell_count: Label = $chess_data_container/sell_count
@@ -27,6 +29,7 @@ func _ready() -> void:
 	animated_sprite_2d.visible = false
 
 	chess_container.mouse_filter = Control.MOUSE_FILTER_PASS
+	chess_vbox_container.mouse_filter = Control.MOUSE_FILTER_PASS
 
 	var current_player_data
 	var current_player_chess_data
@@ -50,7 +53,7 @@ func _ready() -> void:
 				var h_chess_container = HBoxContainer.new()
 				h_chess_container.mouse_filter = Control.MOUSE_FILTER_PASS
 				h_chess_container.custom_minimum_size = Vector2(256, 32)
-				chess_container.add_child(h_chess_container)
+				chess_vbox_container.add_child(h_chess_container)
 				current_h_container = h_chess_container
 
 			var chess_button = TextureButton.new()
@@ -95,10 +98,8 @@ func _on_back_button_pressed() -> void:
 
 func _on_chess_button_pressed(button: TextureButton):
 
-	
 	var faction_index = button.get_meta("faction")
 	var chess_index = button.get_meta("chess_name")
-
 
 	if not DataManagerSingleton.check_key_valid(DataManagerSingleton.player_datas,[DataManagerSingleton.current_player, "chess_stat", faction_index, chess_index]):
 		chess_data_container.visible = false
@@ -129,52 +130,52 @@ func _on_chess_button_pressed(button: TextureButton):
 		animated_sprite_2d.visible = true
 
 		if current_chess_data.has(buy_count):
-			buy_count.text = current_chess_data[buy_count]
+			buy_count.text = str(current_chess_data[buy_count])
 		else:
 			buy_count.text = "/"
 
 		if current_chess_data.has(sell_count):
-			sell_count.text = current_chess_data[sell_count]
+			sell_count.text = str(current_chess_data[sell_count])
 		else:
 			sell_count.text = "/"
 
 		if current_chess_data.has(refresh_count):
-			refresh_count.text = current_chess_data[refresh_count]
+			refresh_count.text = str(current_chess_data[refresh_count])
 		else:
 			refresh_count.text = "/"
 
 		if current_chess_data.has(max_damage):
-			max_damage.text = current_chess_data[max_damage]
+			max_damage.text = str(current_chess_data[max_damage])
 		else:
 			max_damage.text = "/"
 
 		if current_chess_data.has(max_damage_taken):
-			max_damage_taken.text = current_chess_data[max_damage_taken]
+			max_damage_taken.text = str(current_chess_data[max_damage_taken])
 		else:
 			max_damage_taken.text = "/"
 
 		if current_chess_data.has(max_heal):
-			max_heal.text = current_chess_data[max_heal]
+			max_heal.text = str(current_chess_data[max_heal])
 		else:
 			max_heal.text = "/"
 
 		if current_chess_data.has(max_heal_taken):
-			max_heal_taken.text = current_chess_data[max_heal_taken]
+			max_heal_taken.text = str(current_chess_data[max_heal_taken])
 		else:
 			max_heal_taken.text = "/"
 
 		if current_chess_data.has(critical_attack_count):
-			critical_attack_count.text = current_chess_data[critical_attack_count]
+			critical_attack_count.text = str(current_chess_data[critical_attack_count])
 		else:
 			critical_attack_count.text = "/"
 
 		if current_chess_data.has(evase_attack_count):
-			evase_attack_count.text = current_chess_data[evase_attack_count]
+			evase_attack_count.text = str(current_chess_data[evase_attack_count])
 		else:
 			evase_attack_count.text = "/"
 			
 		if current_chess_data.has(cast_spell_count):
-			cast_spell_count.text = current_chess_data[cast_spell_count]
+			cast_spell_count.text = str(current_chess_data[cast_spell_count])
 		else:
 			cast_spell_count.text = "/"
 
@@ -183,25 +184,3 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 	var rand_anim_name = animated_sprite_2d.sprite_frames.get_animation_names()[rand_anim_index]
 	animated_sprite_2d.play(rand_anim_name)
 
-
-# @onready var buy_count: Label = $chess_data_container/buy_count
-# @onready var sell_count: Label = $chess_data_container/sell_count
-# @onready var refresh_count: Label = $chess_data_container/refresh_count
-# @onready var max_damage: Label = $chess_data_container/max_damage
-# @onready var max_damage_taken: Label = $chess_data_container/max_damage_taken
-# @onready var max_heal: Label = $chess_data_container/max_heal
-# @onready var max_heal_taken: Label = $chess_data_container/max_heal_taken
-# @onready var critical_attack_count: Label = $chess_data_container/critical_attack_count
-# @onready var evase_attack_count: Label = $chess_data_container/evase_attack_count
-# @onready var cast_spell_count: Label = $chess_data_container/cast_spell_count		
-
-# var chess_stat_sample = {
-# 	"buy_count": 0,
-# 	"sell_count": 0,
-# 	"refresh_count" : 0,
-# 	"max_damage": 0,
-# 	"max_damage_taken": 0,
-# 	"critical_attack_count": 0,
-# 	"evase_attack_count" : 0,
-# 	"cast_spell_count" : 0
-# }
