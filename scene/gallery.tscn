@@ -27,6 +27,9 @@ offset_top = 8.0
 offset_right = 305.0
 offset_bottom = 306.0
 
+[node name="chess_vbox_container" type="VBoxContainer" parent="chess_container"]
+layout_mode = 2
+
 [node name="chess_data_container" type="VBoxContainer" parent="."]
 offset_left = 358.0
 offset_top = 94.0

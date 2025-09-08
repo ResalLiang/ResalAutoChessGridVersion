@@ -7544,10 +7544,12 @@ unique_name_in_owner = true
 script = ExtResource("14_81276")
 
 [node name="faction_container" type="VBoxContainer" parent="faction_bonus_manager"]
+z_index = 1
 offset_left = 445.0
 offset_top = 110.0
 offset_right = 552.0
 offset_bottom = 179.0
+size_flags_vertical = 0
 
 [node name="chess_order_control" type="Control" parent="."]
 layout_mode = 3

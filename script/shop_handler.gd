@@ -100,12 +100,12 @@ func shop_refresh() -> void:
 		# var rand_faction_index = randi_range(0, get_parent().chess_data.keys().size() - 2) # remove villager
 		# var rand_faction = get_parent().chess_data.keys()[rand_faction_index]
 
+		var rand_character_result = get_parent().generate_random_chess()
 		var character = get_parent().summon_chess(rand_character_result[0], rand_character_result[1], 1, shop, Vector2i(shop_col_index, shop_row_index))
 
 		# var character = get_parent().chess_scene.instantiate()
 		# # character.faction = rand_faction
 		# # character.chess_name = get_parent().get_random_character(rand_faction)
-		# var rand_character_result = get_parent().generate_random_chess()
 		# character.faction = rand_character_result[0]
 		# character.chess_name = rand_character_result[1]
 		# character.team = 1
@@ -126,7 +126,7 @@ func shop_refresh() -> void:
 		var shop_col_index = debug_index % shop.unit_grid.size.x
 		var shop_row_index = floor(debug_index / shop.unit_grid.size.x) + 1
 
-		var character = get_parent().summon_chess(debug_chess_faction,debug_chess_name, 1, shop, Vector2i(shop_col_index, shop_row_index))
+		var character = get_parent().summon_chess(debug_chess_faction[debug_index],debug_chess_name[debug_index], 1, shop, Vector2i(shop_col_index, shop_row_index))
 
 		# var character = get_parent().chess_scene.instantiate()
 		# character.faction = debug_chess_faction[debug_index]

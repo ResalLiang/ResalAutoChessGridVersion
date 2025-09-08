@@ -120,8 +120,13 @@ func add_bonus_bar_to_container(faction: String, level: int):
 			faction_fill_texture = preload("res://asset/sprite/icon/elf_bonus_fill.png")
 
 	var faction_bonus_bar = faction_bonus_bar_scene.instantiate()
-	faction_bonus_bar.texture = faction_fill_texture
-	faction_bonus_bar.value = level
+	var style_box_texture = StyleBoxTexture.new()
+	style_box_texture.texture = faction_fill_texture
+	faction_bonus_bar.add_theme_stylebox_override("fill", style_box_texture)
+	faction_container.add_child(faction_bonus_bar)
+	faction_bonus_bar.bonus_bar.value = level
+	faction_bonus_bar.label.text = faction
+	
 
 	# var fill_style = StyleBoxTexture.new()
 	# fill_style.texture = faction_fill_texture

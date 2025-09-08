@@ -1,9 +1,11 @@
+TextureProgressBar
+HBoxContainer
 Label
 VBoxContainer
-HBoxContainer
+Control
+ProgressBar
 AnimatedSprite2D
 Container
-Control
 TextureRect
 ScrollContainer
 Button
@@ -11,4 +13,3 @@ TileMapLayer
 Timer
 AnimationPlayer
 Node2D
-Node

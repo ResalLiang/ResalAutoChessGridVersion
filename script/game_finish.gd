@@ -7,9 +7,9 @@ var final_score := 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	calculate_final_score()
-	await get_tree().process_frame
-	staggered_fly_in()
+	#calculate_final_score()
+	#await get_tree().process_frame
+	#staggered_fly_in()
 	DataManagerSingleton.record_score(final_score)
 	DataManagerSingleton.save_game_json()
 

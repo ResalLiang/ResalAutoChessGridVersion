@@ -671,7 +671,7 @@ func _handle_attack():
 
 func _handle_action_timeout():
 	#Placeholder for chess passive ability on action finish
-	if not status = STATUS.DIE:
+	if not status == STATUS.DIE:
 		status = STATUS.IDLE
 	action_finished.emit(self)
 	action_timer.stop()
@@ -950,6 +950,7 @@ func _on_damage_taken(taker: Obstacle, damage_value: int, attacker: Obstacle):
 
 	
 func _on_died():
+	pass
 	#Placeholder for chess passive ability on diedchess_data = DataManagerSingleton.get_chess_data()
 
 func update_solid_map():
@@ -1191,10 +1192,10 @@ func undead_necromancer_summon(summoned_chess_name: String, summon_unit_count: i
 
 					if summoned_character.animated_sprite_2d.sprite_frames.has_animation("rise") :
 						summoned_character.animated_sprite_2d.play("rise")
-						await summoned_character.animated_sprite_2d.animation_finished
+						#await summoned_character.animated_sprite_2d.animation_finished
 					else:
 						summoned_character.animated_sprite_2d.play_backwards("die")
-						await summoned_character.animated_sprite_2d.animation_finished
+						#await summoned_character.animated_sprite_2d.animation_finished
 
 					summoned_chess_count += 1
 					chess_affected = true

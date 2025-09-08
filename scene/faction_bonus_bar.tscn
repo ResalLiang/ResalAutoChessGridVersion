@@ -1,0 +1,40 @@
+[gd_scene load_steps=5 format=3 uid="uid://0tel3twsixb3"]
+
+[ext_resource type="Script" uid="uid://oxjyul8a81ej" path="res://script/faction_bonus_bar.gd" id="1_8yi03"]
+[ext_resource type="FontFile" uid="uid://d3b2vvdpmh8cc" path="res://asset/font/Everyday_Tiny_Original.ttf" id="1_sptt2"]
+[ext_resource type="Texture2D" uid="uid://p2g845spg2qa" path="res://asset/sprite/icon/human_bonus_fill.png" id="2_8yi03"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_glq32"]
+texture = ExtResource("2_8yi03")
+axis_stretch_horizontal = 1
+
+[node name="faction_bonus_bar" type="HBoxContainer"]
+custom_minimum_size = Vector2(0, 8)
+offset_right = 121.0
+offset_bottom = 12.0
+script = ExtResource("1_8yi03")
+
+[node name="bonus_bar" type="ProgressBar" parent="."]
+z_index = 2
+custom_minimum_size = Vector2(96, 8)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/outline_size = 0
+theme_override_fonts/font = ExtResource("1_sptt2")
+theme_override_font_sizes/font_size = 4
+theme_override_styles/fill = SubResource("StyleBoxTexture_glq32")
+max_value = 6.0
+step = 1.0
+value = 2.0
+show_percentage = false
+
+[node name="Label" type="Label" parent="."]
+custom_minimum_size = Vector2(32, 8)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource("1_sptt2")
+theme_override_font_sizes/font_size = 4
+text = "1232"
+horizontal_alignment = 1
+vertical_alignment = 1

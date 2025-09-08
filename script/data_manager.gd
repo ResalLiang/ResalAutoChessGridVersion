@@ -48,12 +48,13 @@ func _ready() -> void:
 
 	load_game_json()
 	
-	if player_datas.size() != 0:
+	if player_datas.keys().size() != 0:
 		last_player = player_datas.keys().back()
 		current_player = last_player
 	else:
 		last_player = "Resal"
 		current_player = "Resal"
+		
 	load_chess_stats()
 
 func load_game_binary():

@@ -710,12 +710,12 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, team:
 	summoned_character.damage_taken.connect(damage_value_display)
 	summoned_character.is_died.connect(DataManagerSingleton.record_death_chess)
 	summoned_character.is_died.connect(chess_death_handle)
-	if summoned_character.has_signal("tween_moving"):
-		summoned_character.tween_moving.connect(
-			func(chess, start_pos, end_pos):
-				arena.unit_grid.remove_unit(start_pos)
-				arena.unit_grid.add_unit(end_pos, chess)
-			)
+	#if summoned_character.has_signal("tween_moving"):
+		#summoned_character.tween_moving.connect(
+			#func(chess, start_pos, end_pos):
+				#arena.unit_grid.remove_unit(start_pos)
+				#arena.unit_grid.add_unit(arena.get_tile_from_global(end_pos), chess)
+			#)
 
 
 	if team == 1:
@@ -809,11 +809,12 @@ func damage_value_display(chess: Obstacle, damage_value: int, attacker: Obstacle
 		return
 	var damage_label = Label.new()
 	arena.add_child(damage_label)
-	damage_label.value = damage_value
+	damage_label.text = str(damage_value)
 
 	var old_position = chess.global_position + Vector2(32, -8)
 	damage_label.global_position = old_position
 
+	var damage_tween
 	if damage_tween:
 		damage_tween.kill() # Abort the previous animation.
 	damage_tween = create_tween().set_parallel(true)
@@ -821,6 +822,6 @@ func damage_value_display(chess: Obstacle, damage_value: int, attacker: Obstacle
 	damage_tween.set_trans(Tween.TRANS_CUBIC)
 	damage_tween.tween_property(damage_label, "global_position", old_position + Vector2(0, -16), 1.0)
 	damage_tween.tween_property(damage_label,"modulate.a", 0.0, 1.0)
-	await damage_tween.tween_finished
+	await damage_tween.finished
 	damage_tween.kill()
-	queue_free()
+	damage_label.queue_free()

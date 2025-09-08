@@ -19,88 +19,152 @@ class_name gallery
 
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 
-
 func _ready() -> void:
-
+	# Clean up existing nodes
 	for node in chess_container.get_children():
+		if node != chess_vbox_container:  # Keep the VBoxContainer
+			node.queue_free()
+	
+	# Clean up VBoxContainer's children
+	for node in chess_vbox_container.get_children():
 		node.queue_free()
+	
+	await get_tree().process_frame  # Wait for cleanup to complete
+	
+	# Setup containers
+	chess_container.size = Vector2(400, 300)  # Set appropriate size
+	chess_container.clip_contents = true
+	chess_vbox_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	chess_vbox_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
 
-	chess_data_container.visible = false
-	animated_sprite_2d.visible = false
+	chess_data_container.visible = true
+	animated_sprite_2d.visible = true
 
 	chess_container.mouse_filter = Control.MOUSE_FILTER_PASS
 	chess_vbox_container.mouse_filter = Control.MOUSE_FILTER_PASS
 
-	var current_player_data
-	var current_player_chess_data
+	# Get player data
+	var current_player_data = {}
+	var current_player_chess_data = {}
 	
-	if not DataManagerSingleton.player_datas.has(DataManagerSingleton.current_player):
-		current_player_data = {}
-		current_player_chess_data = {}
-	else:
+	if DataManagerSingleton.player_datas.has(DataManagerSingleton.current_player):
 		current_player_data = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]
-		current_player_chess_data = current_player_data["chess_stat"]
+		if current_player_data.has("chess_stat"):
+			current_player_chess_data = current_player_data["chess_stat"]
 	
 	var chess_displayed_x = 0
 	var chess_displayed_xmax = 8
-	var chess_displayed_y = 0
+	var chess_hbox_container = null
 	
-	var current_h_container
-
+	# Create buttons for each chess piece
 	for faction_index in DataManagerSingleton.chess_data.keys():
 		for chess_index in DataManagerSingleton.chess_data[faction_index].keys():
-			if chess_displayed_x == 0 or not current_h_container:
-				var h_chess_container = HBoxContainer.new()
-				h_chess_container.mouse_filter = Control.MOUSE_FILTER_PASS
-				h_chess_container.custom_minimum_size = Vector2(256, 32)
-				chess_vbox_container.add_child(h_chess_container)
-				current_h_container = h_chess_container
+			if chess_displayed_x == 0:
+				chess_hbox_container = HBoxContainer.new()
+				chess_hbox_container.mouse_filter = Control.MOUSE_FILTER_PASS
+				chess_hbox_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+				chess_hbox_container.custom_minimum_size = Vector2(0, 40)  # Give enough height
+				chess_hbox_container.alignment = BoxContainer.ALIGNMENT_BEGIN
 
-			var chess_button = TextureButton.new()
-			var source_texture = AtlasTexture.new()
-			var sprite_path
-
-			if not DataManagerSingleton.check_key_valid(DataManagerSingleton.player_datas,[DataManagerSingleton.current_player, "chess_stat", faction_index, chess_index, "buy_count"]):
-				sprite_path = "res://asset/animation/" + "human" + "/" + "human" + "ShieldMan" + ".tres"
+			var chess_button = create_chess_button(faction_index, chess_index, current_player_chess_data)
+			if chess_button:
+				chess_hbox_container.add_child(chess_button)
+				print("Successfully added button: ", faction_index, "/", chess_index)
 			
-			elif current_player_chess_data[faction_index][chess_index]["buy_count"] > 0:
-				sprite_path = "res://asset/animation/" + faction_index + "/" + faction_index + chess_index + ".tres"
-				
-			else:
-				sprite_path = "res://asset/animation/" + "human" + "/" + "human" + "ShieldMan" + ".tres"
-
-			# Check if resource exists before loading
-			if not ResourceLoader.exists(sprite_path):
-				sprite_path = "res://asset/animation/" + "human" + "/" + "human" + "ShieldMan" + ".tres"
-
-			var sprite_frames = load(sprite_path) as SpriteFrames
-			source_texture.set_atlas(sprite_frames.get_frame_texture("idle", 0))
-			source_texture.region = Rect2(6, 12, 20, 20)
-
-			chess_button.size = Vector2(32, 32)
-			chess_button.texture_normal = source_texture
-			chess_button.texture_hover = source_texture
-			chess_button.texture_pressed = source_texture
-			chess_button.set_meta("faction", faction_index)
-			chess_button.set_meta("chess_name",chess_index)
-			chess_button.pressed.connect(_on_chess_button_pressed.bind(chess_button))
-
-
-			current_h_container.add_child(chess_button)
 			chess_displayed_x += 1
 			if chess_displayed_x >= chess_displayed_xmax:
 				chess_displayed_x = 0
-				chess_displayed_y += 1
+				chess_vbox_container.add_child(chess_hbox_container)
+				chess_hbox_container = null
+				
+	# Add the last row if it has buttons
+	if chess_hbox_container and chess_hbox_container.get_child_count() > 0:
+		chess_vbox_container.add_child(chess_hbox_container)
 
+	# Debug info
+	print("Total HBoxContainers: ", str(chess_vbox_container.get_children().size()))
+	for i in range(chess_vbox_container.get_children().size()):
+		var hbox = chess_vbox_container.get_child(i)
+		print("HBox ", i, " has ", hbox.get_child_count(), " children")
+
+	# Deferred check to ensure controls are rendered
+	call_deferred("_check_controls_after_ready")
+
+func create_chess_button(faction_index: String, chess_index: String, current_player_chess_data: Dictionary) -> TextureButton:
+	var chess_button = TextureButton.new()
+	var source_texture = AtlasTexture.new()
+	
+	# Determine sprite path
+	var sprite_path = "res://asset/animation/human/humanShieldMan.tres"  # Default fallback
+	
+	if not DataManagerSingleton.check_key_valid(DataManagerSingleton.player_datas,[DataManagerSingleton.current_player, "chess_stat", faction_index, chess_index, "buy_count"]):
+		sprite_path = "res://asset/animation/human/humanShieldMan.tres"
+	elif (current_player_chess_data.has(faction_index) and 
+		  current_player_chess_data[faction_index].has(chess_index) and
+		  current_player_chess_data[faction_index][chess_index].has("buy_count") and
+		  current_player_chess_data[faction_index][chess_index]["buy_count"] > 0):
+		var test_path = "res://asset/animation/%s/%s%s.tres" % [faction_index, faction_index, chess_index]
+		if ResourceLoader.exists(test_path):
+			sprite_path = test_path
+	
+	# Load texture with error handling
+	if ResourceLoader.exists(sprite_path):
+		var sprite_frames = load(sprite_path) as SpriteFrames
+		if sprite_frames and sprite_frames.has_animation("idle") and sprite_frames.get_frame_count("idle") > 0:
+			var frame_texture = sprite_frames.get_frame_texture("idle", 0)
+			if frame_texture:
+				source_texture.atlas = frame_texture
+				source_texture.region = Rect2(6, 12, 20, 20)
+				
+				# Setup button properties
+				chess_button.texture_normal = source_texture
+				chess_button.texture_hover = source_texture
+				chess_button.texture_pressed = source_texture
+				chess_button.custom_minimum_size = Vector2(32, 32)
+				#chess_button.expand_mode = TextureButton.EXPAND_FIT_WIDTH_PROPORTIONAL
+				#chess_button.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
+				
+				# Set metadata and connect signal
+				chess_button.set_meta("faction", faction_index)
+				chess_button.set_meta("chess_name", chess_index)
+				chess_button.z_index = 100
+				chess_button.pressed.connect(_on_chess_button_pressed.bind(chess_button))
+				
+				chess_button.visible = true
+				chess_button.mouse_filter = Control.MOUSE_FILTER_PASS
+				
+				return chess_button
+			else:
+				print("Warning: Could not get frame texture - ", sprite_path)
+		else:
+			print("Warning: Invalid SpriteFrames or no idle animation - ", sprite_path)
+	else:
+		print("Warning: Resource does not exist - ", sprite_path)
+	
+	return null
+
+func _check_controls_after_ready():
+	print("Deferred check - Total HBoxContainers: ", str(chess_vbox_container.get_children().size()))
+	if chess_vbox_container.get_children().size() == 0:
+		print("ERROR: No HBoxContainers found!")
+	
+	print("=== Layout Debug Info ===")
+	print("VBoxContainer child count: ", chess_vbox_container.get_child_count())
+	print("ScrollContainer size: ", chess_container.size)
+	print("VBoxContainer size: ", chess_vbox_container.size)
+	
+	for i in range(chess_vbox_container.get_child_count()):
+		var hbox = chess_vbox_container.get_child(i)
+		print("HBox ", i, " - children: ", hbox.get_child_count(), " size: ", hbox.size)
 
 func _on_back_button_pressed() -> void:
 	get_parent().get_parent().show_main_menu()
 
 func _on_chess_button_pressed(button: TextureButton):
-
 	var faction_index = button.get_meta("faction")
 	var chess_index = button.get_meta("chess_name")
 
+	# Check if chess data exists for current player
 	if not DataManagerSingleton.check_key_valid(DataManagerSingleton.player_datas,[DataManagerSingleton.current_player, "chess_stat", faction_index, chess_index]):
 		chess_data_container.visible = false
 		animated_sprite_2d.visible = false
@@ -108,13 +172,13 @@ func _on_chess_button_pressed(button: TextureButton):
 
 	var current_chess_data = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["chess_stat"][faction_index][chess_index]
 
+	# Check if player owns this chess piece
 	if not current_chess_data.has("buy_count") or current_chess_data["buy_count"] == 0:
 		chess_data_container.visible = false
 		animated_sprite_2d.visible = false
 		return
-
 	else:
-
+		# Load and setup animation
 		var path = "res://asset/animation/%s/%s%s.tres" % [faction_index, faction_index, chess_index]
 		if ResourceLoader.exists(path):
 			var frames = ResourceLoader.load(path)
@@ -126,61 +190,32 @@ func _on_chess_button_pressed(button: TextureButton):
 		else:
 			push_error("Animation resource not found: " + path)
 
+		# Show UI elements
 		chess_data_container.visible = true
 		animated_sprite_2d.visible = true
 
-		if current_chess_data.has(buy_count):
-			buy_count.text = str(current_chess_data[buy_count])
-		else:
-			buy_count.text = "/"
+		# Update statistics labels
+		update_stat_label(buy_count, current_chess_data, "buy_count")
+		update_stat_label(sell_count, current_chess_data, "sell_count")
+		update_stat_label(refresh_count, current_chess_data, "refresh_count")
+		update_stat_label(max_damage, current_chess_data, "max_damage")
+		update_stat_label(max_damage_taken, current_chess_data, "max_damage_taken")
+		update_stat_label(max_heal, current_chess_data, "max_heal")
+		update_stat_label(max_heal_taken, current_chess_data, "max_heal_taken")
+		update_stat_label(critical_attack_count, current_chess_data, "critical_attack_count")
+		update_stat_label(evase_attack_count, current_chess_data, "evase_attack_count")
+		update_stat_label(cast_spell_count, current_chess_data, "cast_spell_count")
 
-		if current_chess_data.has(sell_count):
-			sell_count.text = str(current_chess_data[sell_count])
-		else:
-			sell_count.text = "/"
-
-		if current_chess_data.has(refresh_count):
-			refresh_count.text = str(current_chess_data[refresh_count])
-		else:
-			refresh_count.text = "/"
-
-		if current_chess_data.has(max_damage):
-			max_damage.text = str(current_chess_data[max_damage])
-		else:
-			max_damage.text = "/"
-
-		if current_chess_data.has(max_damage_taken):
-			max_damage_taken.text = str(current_chess_data[max_damage_taken])
-		else:
-			max_damage_taken.text = "/"
-
-		if current_chess_data.has(max_heal):
-			max_heal.text = str(current_chess_data[max_heal])
-		else:
-			max_heal.text = "/"
-
-		if current_chess_data.has(max_heal_taken):
-			max_heal_taken.text = str(current_chess_data[max_heal_taken])
-		else:
-			max_heal_taken.text = "/"
-
-		if current_chess_data.has(critical_attack_count):
-			critical_attack_count.text = str(current_chess_data[critical_attack_count])
-		else:
-			critical_attack_count.text = "/"
-
-		if current_chess_data.has(evase_attack_count):
-			evase_attack_count.text = str(current_chess_data[evase_attack_count])
-		else:
-			evase_attack_count.text = "/"
-			
-		if current_chess_data.has(cast_spell_count):
-			cast_spell_count.text = str(current_chess_data[cast_spell_count])
-		else:
-			cast_spell_count.text = "/"
+func update_stat_label(label: Label, chess_data: Dictionary, stat_key: String):
+	"""Helper function to update stat labels"""
+	if chess_data.has(stat_key):
+		label.text = str(chess_data[stat_key])
+	else:
+		label.text = "/"
 
 func _on_animated_sprite_2d_animation_finished() -> void:
-	var rand_anim_index = randi_range(0, animated_sprite_2d.sprite_frames.get_animation_names().size() - 1)
-	var rand_anim_name = animated_sprite_2d.sprite_frames.get_animation_names()[rand_anim_index]
-	animated_sprite_2d.play(rand_anim_name)
-
+	# Play a random animation when current animation finishes
+	if animated_sprite_2d.sprite_frames and animated_sprite_2d.sprite_frames.get_animation_names().size() > 0:
+		var rand_anim_index = randi_range(0, animated_sprite_2d.sprite_frames.get_animation_names().size() - 1)
+		var rand_anim_name = animated_sprite_2d.sprite_frames.get_animation_names()[rand_anim_index]
+		animated_sprite_2d.play(rand_anim_name)
