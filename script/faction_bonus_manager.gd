@@ -160,9 +160,11 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 
 		if chess_index.team != applier_team:
 			enemy_chess.append(chess_index)
-		elif chess_index.team == applier_team and chess_index.faction == faction:
+			
+		if chess_index.team == applier_team and chess_index.faction == faction:
 			friendly_faction_chess.append(chess_index)
-		elif chess_index.team == applier_team:
+			
+		if chess_index.team == applier_team:
 			friendly_chess.append(chess_index)
 
 

@@ -206,7 +206,7 @@ signal tween_moving	#tween_moving.emit(self, _position, target_pos)
 # ========================
 func _ready():
 	
-	chess_mover = arena.get_parent().chess_mover
+	chess_mover = arena.get_parent().get_parent().chess_mover
 		
 	drag_handler.dragging_enabled = dragging_enabled
 	
@@ -340,7 +340,8 @@ func _process(delta: float) -> void:
 				new_material.set_shader_parameter("outline_color", Color(1, 1, 1, 0.33))
 
 
-	if current_play_area == play_areas.playarea_shop:
+	#if current_play_area == play_areas.playarea_shop:
+	if shop.unit_grid.get_all_units().has(self):
 		match chess_rarity: #"Common", "Uncommon", "Rare", "Epic", "Legendary"
 			"Common":
 				new_material.set_shader_parameter("outline_color", Color.RED)
@@ -492,7 +493,8 @@ func _handle_movement():
 	var current_tile = get_current_tile(self)[1]
 
 	move_started.emit(self, current_tile)
-	if current_play_area == play_areas.playarea_arena:
+	#if current_play_area == play_areas.playarea_arena:
+	if arena.unit_grid.get_all_units().has(self):
 		arena.unit_grid.remove_unit(current_tile)
 
 	animated_sprite_2d.play("move")
@@ -582,7 +584,7 @@ func _handle_action():
 			if chess_spell_target_choice == TARGET_CHOICE.SELF:
 				status = STATUS.SPELL
 				animated_sprite_2d.play("spell")
-				cast_spell_result = _cast_spell(self)
+				cast_spell_result = await _cast_spell(self)
 				if not cast_spell_result:
 					animated_sprite_2d.stop()
 				else:
@@ -592,7 +594,7 @@ func _handle_action():
 			if chess_spell_target:
 				status = STATUS.SPELL
 				animated_sprite_2d.play("spell")
-				cast_spell_result = _cast_spell(chess_spell_target)
+				cast_spell_result = await _cast_spell(chess_spell_target)
 				if not cast_spell_result:
 					animated_sprite_2d.stop()
 				else:
@@ -861,6 +863,7 @@ func take_damage(damage_value: int, attacker: Obstacle):
 	if rng.randf() > evasion_rate and not effect_handler.is_immunity:
 		var real_damage_value = damage_value - armor
 		hp -= max(0, real_damage_value)
+		hp_bar.value = hp
 		attacker.mp += real_damage_value
 		damage_taken.emit(self, real_damage_value, attacker)
 
@@ -998,7 +1001,7 @@ func update_solid_map():
 	# 		astar_grid.set_point_solid(node.position_id, true)
 
 	for chess_index in arena.unit_grid.get_all_units():
-		astar_grid.set_point_solid(get_current_tile(node)[1], true)
+		astar_grid.set_point_solid(get_current_tile(chess_index)[1], true)
 
 func _handle_dragging_state(stating_position: Vector2, drag_action: String):
 	if !is_active:
@@ -1087,7 +1090,7 @@ func connect_to_data_manager():
 	)
 
 func get_current_tile(obstacle : Obstacle):
-	var i := chess_mover._get_play_area_for_position(obstacle.global_position)
+	var i = chess_mover._get_play_area_for_position(obstacle.global_position)
 	var current_tile = chess_mover.play_areas[i].get_tile_from_global(obstacle.global_position)
 	if chess_mover.play_areas[i].unit_grid.units[current_tile] != self:
 		chess_mover.play_areas[i].unit_grid.add_unit(current_tile, self)

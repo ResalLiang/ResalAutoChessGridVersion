@@ -66,12 +66,12 @@ var mp: int = 0:
 
 var max_hp = base_max_hp:
 	set(value):
-		var update_hp = value * (hp / max_hp)
+		var update_hp = value * (1.0 * hp / max_hp)
 		max_hp = value
 		hp = update_hp
 var max_mp = base_max_mp:
 	set(value):
-		var update_mp = value * (mp / max_mp)
+		var update_mp = value * (1.0 * mp / max_mp)
 		max_mp = value
 		mp = update_mp
 
@@ -164,7 +164,7 @@ signal stats_loaded
 # ========================
 func _ready():
 
-	chess_mover = arena.get_parent().chess_mover
+	chess_mover = arena.get_parent().get_parent().chess_mover
 		
 	drag_handler.dragging_enabled = dragging_enabled
 	
@@ -534,7 +534,7 @@ func handle_obstacle_action() -> void:
 		obstacle_counter -= 1
 
 func get_current_tile(obstacle : Obstacle):
-	var i := chess_mover._get_play_area_for_position(obstacle.global_position)
+	var i = chess_mover._get_play_area_for_position(obstacle.global_position)
 	var current_tile = chess_mover.play_areas[i].get_tile_from_global(obstacle.global_position)
 	if chess_mover.play_areas[i].unit_grid.units[current_tile] != self:
 		chess_mover.play_areas[i].unit_grid.add_unit(current_tile, self)

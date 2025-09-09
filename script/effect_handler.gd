@@ -1,7 +1,7 @@
 class_name EffectHandler
 extends Node
 
-var effect_list : Array[ChessEffect]
+var effect_list : Array
 
 var is_immunity := false
 var is_spell_immunity := false
@@ -29,7 +29,7 @@ func _ready() -> void:
 	effect_list_updated.connect(effect_number_refresh)
 
 func add_to_effect_array(chess_effect: ChessEffect):
-	if chess_effect.check_effect_timeout():
+	if not chess_effect.check_effect_timeout():
 		return
 
 	if effect_list.size() > 0:
@@ -47,7 +47,7 @@ func turn_start_timeout_check():
 		effect_list = []
 		for effect_index in new_effect_list:
 			effect_index.start_turn_update()
-			if new_effect_list.check_effect_timeout():
+			if not effect_index.check_effect_timeout():
 				new_effect_list.queue_free()
 			else:
 				add_to_effect_array(effect_index)

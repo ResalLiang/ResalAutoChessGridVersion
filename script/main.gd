@@ -14,20 +14,20 @@ func _ready():
 
 # 显示主菜单
 func show_main_menu():
-	_transition_to_scene("res://scene/menu.tscn", main_container, true)
+	await _transition_to_scene("res://scene/menu.tscn", main_container, true)
 	current_scene.to_game_scene.connect(show_game)
 	current_scene.to_gallery_scene.connect(show_gallery)
 
 # 显示游戏场景
 func show_game():
-	_transition_to_scene("res://scene/game.tscn", main_container, true)
+	await _transition_to_scene("res://scene/game.tscn", main_container, true)
 	current_scene.to_menu_scene.connect(show_main_menu)
 	current_scene.add_round_finish_scene.connect(show_round_finish)
-	current_scene.to_game_scene.connect(show_game_finish)
+	current_scene.to_game_finish_scene.connect(show_game_finish)
 
 # 显示设置菜单
 func show_settings():
-	_transition_to_scene("res://scene/setting.tscn", main_container, true)
+	await _transition_to_scene("res://scene/setting.tscn", main_container, true)
 	
 # 显示设置菜单
 func show_round_finish():
@@ -35,12 +35,12 @@ func show_round_finish():
 	
 # 显示设置菜单
 func show_game_finish():
-	_transition_to_scene("res://scene/game_finish.tscn", main_container, false)
+	await _transition_to_scene("res://scene/game_finish.tscn", main_container, false)
 	current_scene.to_menu_scene.connect(show_main_menu)
 	current_scene.to_game_scene.connect(show_game_finish)
 
 func show_gallery():
-	_transition_to_scene("res://scene/gallery.tscn", main_container, true)
+	await _transition_to_scene("res://scene/gallery.tscn", main_container, true)
 	current_scene.to_menu_scene.connect(show_main_menu)
 
 # 场景切换核心方法 - 这是自定义方法
@@ -63,8 +63,8 @@ func _transition_to_scene(scene_path: String, container: Control, if_transition:
 	if not new_scene:
 		print("Failed to load scene at path: ", scene_path)
 		return
-	container.add_child(new_scene)
 	current_scene = new_scene
+	container.add_child(current_scene)
 	
 	# 隐藏其他容器，显示目标容器
 	main_container.hide()

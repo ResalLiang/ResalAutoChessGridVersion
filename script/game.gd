@@ -331,12 +331,12 @@ func start_new_round():
 	team_dict[Team.TEAM2] = []
 	for chess_index in team_dict[Team.TEAM1_FULL]:
 		if is_instance_valid(chess_index):
-			if chess_index.status != chess_class.STATUS.DIE and chess_index.current_play_area == chess_index.play_areas.playarea_arena:
+			if chess_index.status != chess_class.STATUS.DIE:
 				team_dict[Team.TEAM1].append(chess_index)
 				team1_alive_cnt += 1
 	for chess_index in team_dict[Team.TEAM2_FULL]:
 		if is_instance_valid(chess_index):
-			if chess_index.status != chess_class.STATUS.DIE and chess_index.current_play_area == chess_index.play_areas.playarea_arena:
+			if chess_index.status != chess_class.STATUS.DIE:
 				team_dict[Team.TEAM2].append(chess_index)
 				team2_alive_cnt += 1
 			
@@ -737,10 +737,10 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, team:
 			#)
 
 
-	if team == 1:
+	if team == 1 and summon_arena != shop:
 		team_dict[Team.TEAM1_FULL].append(summoned_character)
 		team_dict[Team.TEAM1].append(summoned_character)
-	else:
+	elif team == 2 and summon_arena != shop:
 		team_dict[Team.TEAM2_FULL].append(summoned_character)
 		team_dict[Team.TEAM2].append(summoned_character)
 		

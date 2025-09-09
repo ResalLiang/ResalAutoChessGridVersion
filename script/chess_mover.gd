@@ -16,7 +16,7 @@ func setup_before_turn_start():
 	# 	setup_chess(obstacle)
 	for area_index in play_areas:
 		for chess_index in area_index.unit_grid.get_all_units():
-			if is_instance_valid(chess_index) and chess_index is Chess and chess_index != chess_index.STATUS.DIE:
+			if is_instance_valid(chess_index) and chess_index is Chess and chess_index.status != chess_index.STATUS.DIE:
 				setup_chess(chess_index)
 		
 func setup_chess(obstacle: Obstacle) -> void:
@@ -46,7 +46,7 @@ func _reset_chess_to_starting_position(starting_position: Vector2, obstacle: Obs
 	play_areas[i].unit_grid.add_unit(tile, obstacle)
 	# obstacle.global_position = play_areas[i].get_global_from_tile(tile)
 	obstacle.reparent(play_areas[i].unit_grid)
-	obstacle._position = obstacle.get_parent().to_local(play_areas[i].get_global_from_tile(tile))
+	obstacle.global_position = play_areas[i].global_position + obstacle.get_parent().to_local(play_areas[i].get_global_from_tile(tile))
 
 
 func _move_chess(obstacle: Obstacle, play_area: PlayArea, tile: Vector2i) -> void:
@@ -59,21 +59,21 @@ func _move_chess(obstacle: Obstacle, play_area: PlayArea, tile: Vector2i) -> voi
 		obstacle.current_play_area = obstacle.play_areas.playarea_bench
 	elif _get_play_area_for_position(obstacle.global_position) == 2:
 		obstacle.current_play_area = obstacle.play_areas.playarea_shop
-	obstacle.global_position = play_area.to_local(play_area.get_global_from_tile(tile))
+	obstacle.global_position = play_area.global_position + play_area.to_local(play_area.get_global_from_tile(tile))
 	chess_moved.emit(obstacle, play_area, tile)
 
 
-func tween_move_chess(obstacle: Obstacle, play_area: PlayArea, tile: Vector2i) -> void:
+func tween_move_chess(obstacle: Obstacle, play_area: PlayArea, chess_position: Vector2i) -> void:
 	var i := _get_play_area_for_position(obstacle.global_position)
 	if play_areas[i].unit_grid.units.values().has(obstacle):
 		var obstacle_tile = play_areas[i].get_tile_from_global(obstacle.global_position)
 		play_areas[i].unit_grid.remove_unit(obstacle_tile)
-	var new_global_position =  play_areas[i].get_global_from_tile(tile)
+	var new_global_position =  play_areas[i].global_position + Vector2(chess_position)
 	var move_tween
 	if move_tween:
 		move_tween.kill()
 	move_tween = create_tween()
-	move_tween.tween_property(obstacle, "global_postion", new_global_position, 0.5)
+	move_tween.tween_property(obstacle, "global_position", new_global_position, 0.5)
 	await move_tween.finished
 
 	if _get_play_area_for_position(obstacle.global_position) == 0:
@@ -83,9 +83,13 @@ func tween_move_chess(obstacle: Obstacle, play_area: PlayArea, tile: Vector2i) -
 	elif _get_play_area_for_position(obstacle.global_position) == 2:
 		obstacle.current_play_area = obstacle.play_areas.playarea_shop
 
-	play_area.unit_grid.add_unit(tile, obstacle)
-	chess_moved.emit(obstacle, play_area, tile)
+	var new_tile = play_areas[i].get_tile_from_global(obstacle.global_position)
+
+	play_area.unit_grid.add_unit(new_tile, obstacle)
+	chess_moved.emit(obstacle, play_area, new_tile)
 	obstacle.reparent(play_area.unit_grid)
+	
+	return
 
 		
 func _on_chess_drag_started(starting_position: Vector2, status: String, obstacle: Obstacle) -> void:
@@ -134,11 +138,11 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 
 	if drop_area_index == -1:
 		_reset_chess_to_starting_position(starting_position, obstacle)
-		chess_dropped.emit(starting_position, obstacle)
+		chess_dropped.emit(obstacle)
 		return
 	elif (old_area_index == 0 or old_area_index == 1) and drop_area_index == 2: # move obstacle back to shop means sell
 		shop_handler.sell_chess(obstacle)
-		chess_dropped.emit(starting_position, obstacle)
+		chess_dropped.emit(obstacle)
 		return
 
 		
@@ -156,7 +160,7 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 			return
 		else:
 			_reset_chess_to_starting_position(starting_position, obstacle)
-			chess_dropped.emit(starting_position, obstacle)
+			chess_dropped.emit(obstacle)
 			return
 
 	if new_area.unit_grid.is_tile_occupied(new_tile):

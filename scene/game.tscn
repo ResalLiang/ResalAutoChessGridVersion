@@ -7669,6 +7669,7 @@ offset_bottom = 288.0
 metadata/_edit_use_anchors_ = true
 
 [node name="effect_icon_container" type="HBoxContainer" parent="chess_information"]
+custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 
 [node name="arrow" type="Control" parent="."]

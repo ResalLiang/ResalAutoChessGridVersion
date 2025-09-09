@@ -1,6 +1,7 @@
+res://asset/sprite/icon
+res://scene
 res://asset/animation/dwarf
 res://asset/sprite/MiniFolks/MinifolksDwarfs/Without Outline
-res://scene
 res://asset/animation/demon
 res://asset/sprite/GandalfHardcore Chests
 res://asset/sprite/GandalfHardcore Icons
@@ -19,6 +20,5 @@ res://asset/sprite
 res://asset
 res://
 res://asset/animation/villager
-res://asset/shader
 D:/LearningGodot/ResalAutoChess/script/hero_stats_raw
 D:/LearningGodot/ResalAutoChess/script

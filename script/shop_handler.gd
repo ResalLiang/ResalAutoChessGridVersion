@@ -89,10 +89,11 @@ func shop_refresh() -> void:
 	is_shop_frozen = false
 	shop_unfreezed.emit()
 
-	for node in get_tree().get_nodes_in_group("obstacle_group"):
-		if node is Chess and node.current_play_area == node.play_areas.playarea_shop:
-			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", node.faction, node.chess_name, "refresh_count"], 1)
-			node.queue_free()	
+	#for node in get_tree().get_nodes_in_group("obstacle_group"):
+	for chess_index in shop.unit_grid.get_all_units():
+		if chess_index is Chess:
+			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess_index.faction, chess_index.chess_name, "refresh_count"], 1)
+			chess_index.queue_free()	
 
 	for i in range(shop_level + 2):
 		var shop_col_index = i % shop.unit_grid.size.x
@@ -103,21 +104,6 @@ func shop_refresh() -> void:
 		var rand_character_result = get_parent().generate_random_chess()
 		var character = get_parent().summon_chess(rand_character_result[0], rand_character_result[1], 1, shop, Vector2i(shop_col_index, shop_row_index))
 
-		# var character = get_parent().chess_scene.instantiate()
-		# # character.faction = rand_faction
-		# # character.chess_name = get_parent().get_random_character(rand_faction)
-		# character.faction = rand_character_result[0]
-		# character.chess_name = rand_character_result[1]
-		# character.team = 1
-		# character.arena = arena
-		# character.bench = bench
-		# character.shop = shop
-		# character.chess_serial = get_parent().get_next_serial()
-		# add_child(character)
-		# debug_handler.connect_to_chess_signal(character)
-		# chess_mover.setup_chess(character)
-		# chess_mover._move_chess(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
-		# chess_information.setup_chess(character)
 		
 	var debug_chess_faction = ["human", "human", "human", "demon", "elf", "elf", "undead", "dwarf"]
 	var debug_chess_name = ["CrossBowMan", "Mage", "ArchMage", "FireImp", "Queen", "Mage", "Necromancer", "Demolitionist"]
@@ -128,20 +114,6 @@ func shop_refresh() -> void:
 
 		var character = get_parent().summon_chess(debug_chess_faction[debug_index],debug_chess_name[debug_index], 1, shop, Vector2i(shop_col_index, shop_row_index))
 
-		# var character = get_parent().chess_scene.instantiate()
-		# character.faction = debug_chess_faction[debug_index]
-		# character.chess_name = debug_chess_name[debug_index]
-		# character.team = 1
-		# character.arena = arena
-		# character.bench = bench
-		# character.shop = shop
-		# character.chess_serial = get_parent().get_next_serial()
-		# add_child(character)
-		# debug_handler.connect_to_chess_signal(character)
-		# chess_mover.setup_chess(character)
-		# chess_information.setup_chess(character)
-		# chess_mover._move_chess(character, get_parent().shop, Vector2(shop_col_index, shop_row_index))
-	
 func shop_freeze() -> void:
 	if is_shop_frozen:
 		shop_unfreezed.emit()

@@ -1,5 +1,7 @@
 class_name ChessInformation
-extends HBoxContainer
+extends VBoxContainer
+
+const effect_icon_scene = preload("res://scene/effect_icon.tscn")
 
 @onready var chess_name: Label = $VBoxContainer/chess_name
 @onready var chess_faction: Label = $VBoxContainer/chess_faction
@@ -11,7 +13,7 @@ extends HBoxContainer
 @onready var attack_speed: Label = $VBoxContainer/attack_speed
 @onready var spell: Label = $VBoxContainer/spell
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
-@onready var effect_icon_container: HBoxContainer = $effect_icon_container
+@onready var icon_container: HBoxContainer = $icon_container
 
 var animation_faction := "human"
 var animation_chess_name := "ShieldMan"
@@ -34,7 +36,7 @@ func setup_chess(obstacle: Obstacle) -> void:
 		
 func show_chess_information(starting_position: Vector2, status: String, obstacle: Obstacle) -> void:
 
-	for node in effect_icon_container.get_children():
+	for node in icon_container.get_children():
 		node.queue_free()
 
 	visible = true
@@ -56,51 +58,10 @@ func show_chess_information(starting_position: Vector2, status: String, obstacle
 		return
 
 	for effect_index in chess_effect_list:
-		var effect_name = effect_index.effect_name
-		var effect_type = effect_index.effect_type
-		var effect_texture = TextureRect.new()
-		match effect_name:
-			"Swift":
-				effect_texture.texture = preload("res://asset/sprite/icon/swift.png")
-			"Wisdom":
-				effect_texture.texture = preload("res://asset/sprite/icon/wisdom.png")
-			"Fortress":
-				effect_texture.texture = preload("res://asset/sprite/icon/fortress.png")
-			"Holy Shield":
-				effect_texture.texture = preload("res://asset/sprite/icon/holy_shield.png")
-			"Strong":
-				effect_texture.texture = preload("res://asset/sprite/icon/strong.png")
-			"Doom":
-				effect_texture.texture = preload("res://asset/sprite/icon/doom.png")
-			"Weak":
-				effect_texture.texture = preload("res://asset/sprite/icon/weak.png")
-			_:
-				effect_texture.texture = preload("res://asset/sprite/icon/wisdom.png")
-				
-				
-		effect_texture.minmum_size = Vector2(16, 16)
+		var effect_icon = effect_icon_scene.instantiate()
+		effect_icon.effect_name = effect_index.effect_name
 
-		var border_style: StyleBoxFlat
-		border_style = StyleBoxFlat.new()
-		border_style.border_width_left = 1
-		border_style.border_width_right = 1
-		border_style.border_width_top = 1
-		border_style.border_width_bottom = 1
-
-		match effect_type:
-			"Buff":
-				border_style.border_color = Color.GREEN
-			"Debuff":
-				border_style.border_color = Color.RED
-			"Faction Bonus":
-				border_style.border_color = Color.YELLOW
-			_:
-				border_style.border_color = Color.WHITE
-
-		effect_texture.border_style.bg_color = Color.TRANSPARENT
-		add_theme_stylebox_override("normal", border_style)
-
-		effect_icon_container.add_child(effect_texture)
+		icon_container.add_child(effect_icon)
 
 		
 func _on_chess_drag_canceled(starting_position: Vector2, status: String, obstacle: Obstacle) -> void:

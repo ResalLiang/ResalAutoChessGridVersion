@@ -17,9 +17,7 @@ func add_unit(tile: Vector2i, obstacle: Obstacle) -> void:
 	unit_grid_changed.emit()
 
 func remove_unit(tile: Vector2i) -> void:
-	var unit := units[tile] as Node
-	
-	if not unit:
+	if not is_instance_valid(units[tile]) or not units[tile]:
 		return
 	
 	units[tile] = null
