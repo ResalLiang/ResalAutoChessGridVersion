@@ -16,6 +16,7 @@ func _ready() -> void:
 	lose_health_pic =	preload("res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames/16x16 Slider4.png")
 	trophy_pic =		preload("res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames/16x16 Slider2.png")
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	get_tree().paused = true
 	set_round_result()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -46,5 +47,5 @@ func set_round_result():
 		trophy.add_child(trophy_icon)
 
 func _on_timer_timeout() -> void:
-	
+	get_tree().paused = false
 	queue_free() # Replace with function body.
