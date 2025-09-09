@@ -42,7 +42,7 @@ func _input(event: InputEvent) -> void:
 	if dragging and event.is_action_pressed("cancel_dragging"):
 		_cancel_dragging()
 	# Handle character drop
-	elif dragging and event.is_action_pressed("drop"):
+	elif dragging and event.is_action_pressed("select") and get_tree().get_first_node_in_group("dragging"):
 		_drop()
 
 # ========================
