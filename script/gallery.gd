@@ -19,6 +19,8 @@ class_name gallery
 
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 
+signal to_menu_scene
+
 func _ready() -> void:
 	# Clean up existing nodes
 	for node in chess_container.get_children():
@@ -88,7 +90,7 @@ func _ready() -> void:
 		print("HBox ", i, " has ", hbox.get_child_count(), " children")
 
 	# Deferred check to ensure controls are rendered
-	call_deferred("_check_controls_after_ready")
+	# call_deferred("_check_controls_after_ready")
 
 func create_chess_button(faction_index: String, chess_index: String, current_player_chess_data: Dictionary) -> TextureButton:
 	var chess_button = TextureButton.new()
@@ -143,22 +145,22 @@ func create_chess_button(faction_index: String, chess_index: String, current_pla
 	
 	return null
 
-func _check_controls_after_ready():
-	print("Deferred check - Total HBoxContainers: ", str(chess_vbox_container.get_children().size()))
-	if chess_vbox_container.get_children().size() == 0:
-		print("ERROR: No HBoxContainers found!")
+# func _check_controls_after_ready():
+# 	print("Deferred check - Total HBoxContainers: ", str(chess_vbox_container.get_children().size()))
+# 	if chess_vbox_container.get_children().size() == 0:
+# 		print("ERROR: No HBoxContainers found!")
 	
-	print("=== Layout Debug Info ===")
-	print("VBoxContainer child count: ", chess_vbox_container.get_child_count())
-	print("ScrollContainer size: ", chess_container.size)
-	print("VBoxContainer size: ", chess_vbox_container.size)
+# 	print("=== Layout Debug Info ===")
+# 	print("VBoxContainer child count: ", chess_vbox_container.get_child_count())
+# 	print("ScrollContainer size: ", chess_container.size)
+# 	print("VBoxContainer size: ", chess_vbox_container.size)
 	
-	for i in range(chess_vbox_container.get_child_count()):
-		var hbox = chess_vbox_container.get_child(i)
-		print("HBox ", i, " - children: ", hbox.get_child_count(), " size: ", hbox.size)
+# 	for i in range(chess_vbox_container.get_child_count()):
+# 		var hbox = chess_vbox_container.get_child(i)
+# 		print("HBox ", i, " - children: ", hbox.get_child_count(), " size: ", hbox.size)
 
 func _on_back_button_pressed() -> void:
-	get_parent().get_parent().show_main_menu()
+	to_menu_scene.emit()
 
 func _on_chess_button_pressed(button: TextureButton):
 	var faction_index = button.get_meta("faction")
@@ -209,9 +211,9 @@ func _on_chess_button_pressed(button: TextureButton):
 func update_stat_label(label: Label, chess_data: Dictionary, stat_key: String):
 	"""Helper function to update stat labels"""
 	if chess_data.has(stat_key):
-		label.text = str(chess_data[stat_key])
+		label.text = stat_key + " : " + str(chess_data[stat_key])
 	else:
-		label.text = "/"
+		label.text = stat_key + " : /"
 
 func _on_animated_sprite_2d_animation_finished() -> void:
 	# Play a random animation when current animation finishes
