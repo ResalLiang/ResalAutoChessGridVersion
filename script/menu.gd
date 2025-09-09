@@ -5,7 +5,10 @@ extends Node2D
 @onready var gallery_button: Button = $button_container/gallery_button
 @onready var statistics_button: Button = $button_container/statistics_button
 @onready var quit_button: Button = $button_container/quit_button
-signal game_started
+
+signal to_game_scene
+signal to_gallery_scene
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -18,13 +21,12 @@ func _process(delta: float) -> void:
 
 
 func _on_start_button_pressed() -> void:
-	game_started.emit()
-	get_parent().get_parent().show_game()
+	to_game_scene.emit()
+
+
+func _on_gallery_button_pressed() -> void:
+	to_gallery_scene.emit()
 
 
 func _on_quit_button_pressed() -> void:
 	get_tree().quit()
-
-
-func _on_gallery_button_pressed() -> void:
-	get_parent().get_parent().show_gallery()
