@@ -125,6 +125,7 @@ func add_bonus_bar_to_container(faction: String, level: int):
 	faction_bonus_bar.add_theme_stylebox_override("fill", style_box_texture)
 	faction_container.add_child(faction_bonus_bar)
 	faction_bonus_bar.bonus_bar.value = level
+	faction_bonus_bar.bonus_bar.max_value = bonus_level_list[faction].size()
 	faction_bonus_bar.label.text = faction
 	
 
