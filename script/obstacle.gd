@@ -25,6 +25,7 @@ const chess_scene = preload("res://scene/chess.tscn")
 @onready var hp_bar: ProgressBar = $hp_bar
 @onready var mp_bar: ProgressBar = $mp_bar
 
+
 # ========================
 # Exported Variables
 # ========================
@@ -94,15 +95,16 @@ var current_play_area = play_areas.playarea_arena
 #============================================
 # Movement Related
 #============================================
-var position_id := Vector2i.ZERO
-var _position := Vector2.ZERO:
-	set(value):
-		_position = value
-		position = _position
-		position_id = Vector2i(
-			snap(value.x, 16),
-			snap(value.y, 16)
-		)
+# var position_id := Vector2i.ZERO
+# var _position := Vector2.ZERO:
+# 	set(value):
+# 		_position = value
+# 		position = _position
+# 		position_id = Vector2i(
+# 			snap(value.x, 16),
+# 			snap(value.y, 16)
+# 		)
+var chess_mover
 var is_active: bool = false
 var grid_offset =Vector2(8, 8)
 
@@ -161,6 +163,8 @@ signal stats_loaded
 # Initialization
 # ========================
 func _ready():
+
+	chess_mover = arena.get_parent().chess_mover
 		
 	drag_handler.dragging_enabled = dragging_enabled
 	
@@ -529,11 +533,18 @@ func handle_obstacle_action() -> void:
 	else:
 		obstacle_counter -= 1
 
+func get_current_tile(obstacle : Obstacle):
+	var i := chess_mover._get_play_area_for_position(obstacle.global_position)
+	var current_tile = chess_mover.play_areas[i].get_tile_from_global(obstacle.global_position)
+	if chess_mover.play_areas[i].unit_grid.units[current_tile] != self:
+		chess_mover.play_areas[i].unit_grid.add_unit(current_tile, self)
+	return [chess_mover.play_areas[i], current_tile]
+	
 func dwarf_bomb_boom():
 	for x in range(-obstacle_level, obstacle_level):
 		for y in range(-obstacle_level, obstacle_level):
 			if x >=0 and x < arena.unit_grid.size.x and y >=0 and y < arena.unit_grid.size.y:
-				var target_area_chess = arena.unit_grid.units[position_id + Vector2i(x, y)]
+				var target_area_chess = arena.unit_grid.units[get_current_tile(self)[1] + Vector2i(x, y)]
 				if is_instance_valid(target_area_chess) and target_area_chess is Obstacle and target_area_chess.status != STATUS.DIE:
 					_apply_damage(target_area_chess, 50 * obstacle_level)
 	is_died.emit(self)		
