@@ -36,6 +36,7 @@ var last_player : String
 var current_player : String
 var chess_data : Dictionary
 
+var difficulty := 1
 
 var won_rounds := 0
 const max_won_rounds := 5
@@ -201,12 +202,46 @@ func add_data_to_dict(dict: Dictionary, key_array: Array[String], value):
 			else:
 				# Overwrite with new value for all other cases
 				current_dict[final_key] = value
+		elif value is bool:
+			current_dict[final_key] = existing_value or value
 		elif value is Array:
 			current_dict[final_key] = existing_value + value
 	else:
 		# Key doesn't exist, simply set the new value
 		current_dict[final_key] = value
 
+func check_key_valid(dict: Dictionary, keys: Array) -> bool:
+	# Check if the keys array is empty
+	if keys.is_empty():
+		return true
+	
+	# Start with the root dictionary
+	var current_dict = dict
+	
+	# Iterate through each key in the sequence
+	for i in range(keys.size()):
+		var key = keys[i]
+		
+		# Check if current level has the required key
+		if not current_dict.has(key):
+			return false
+		
+		# If this is the last key, we've successfully found the path
+		if i == keys.size() - 1:
+			return true
+		
+		# Move to the next level - check if the value is a dictionary
+		var next_value = current_dict[key]
+		if not next_value is Dictionary:
+			# Path exists but next level is not a dictionary
+			return false
+		
+		# Update current_dict to the next level
+		current_dict = next_value
+	
+	# This should never be reached, but included for completeness
+	return false
+	
 func merge_dictionaries(dict1: Dictionary, dict2: Dictionary) -> Dictionary:
 	# Create a copy of the first dictionary to avoid modifying the original
 	var result = dict1.duplicate(true)
@@ -231,6 +266,9 @@ func merge_dictionaries(dict1: Dictionary, dict2: Dictionary) -> Dictionary:
 				TYPE_ARRAY:
 					# Concatenate arrays directly
 					result[key] = value1 + value2
+				TYPE_BOOL:
+					# Concatenate arrays directly
+					result[key] = value1 or value2
 				TYPE_INT, TYPE_FLOAT:
 					# Handle numeric values based on key naming conventions
 					if key.begins_with("max"):
@@ -268,35 +306,3 @@ func record_team(chess_array: Array):
 	for chess_index in chess_array:
 		if chess_index is Chess:
 			player_data["final_team"].append([chess_index.faction, chess_index.chess_name])
-
-func check_key_valid(dict: Dictionary, keys: Array) -> bool:
-	# Check if the keys array is empty
-	if keys.is_empty():
-		return true
-	
-	# Start with the root dictionary
-	var current_dict = dict
-	
-	# Iterate through each key in the sequence
-	for i in range(keys.size()):
-		var key = keys[i]
-		
-		# Check if current level has the required key
-		if not current_dict.has(key):
-			return false
-		
-		# If this is the last key, we've successfully found the path
-		if i == keys.size() - 1:
-			return true
-		
-		# Move to the next level - check if the value is a dictionary
-		var next_value = current_dict[key]
-		if not next_value is Dictionary:
-			# Path exists but next level is not a dictionary
-			return false
-		
-		# Update current_dict to the next level
-		current_dict = next_value
-	
-	# This should never be reached, but included for completeness
-	return false
