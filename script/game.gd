@@ -39,6 +39,7 @@ const chess_class = preload("res://script/chess.gd")
 @onready var chess_information: ChessInformation = $chess_information
 @onready var arrow: CustomArrowRenderer = $arrow
 
+
 enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
 enum ChessActiveOrder { HIGH_HP, LOW_HP, NEAR_CENTER, FAR_CENTER }
 var current_team: Team
@@ -135,6 +136,9 @@ signal player_lose_round
 signal player_won_game
 signal player_lose_game
 
+signal to_menu_scene
+signal add_round_finish_scene
+signal to_game_finish_scene
 
 func _ready():
 
@@ -296,12 +300,23 @@ func new_round_prepare_end():
 	battle_meter.battle_data = {}
 	#if saved_arena_team.size() == 0:
 	team_dict[Team.TEAM1_FULL] = []
-	for node in get_tree().get_nodes_in_group("chess_group"):
-		if node is Obstacle and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
-			team_dict[Team.TEAM1_FULL].append(node)
+	var player_max_hp_sum = 0
+	# for node in get_tree().get_nodes_in_group("chess_group"):
+	# 	if node is Obstacle and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
+	# 		team_dict[Team.TEAM1_FULL].append(node)
+	# 		player_max_hp_sum += node.max_hp
+	for chess_index in arena.unit_grid.get_all_units():
+		if chess_index is Chess and chess_index.team == 1:
+			team_dict[Team.TEAM1_FULL].append(chess_index)
+			player_max_hp_sum += chess_index.max_hp			
 	save_arena_team()
 
-	generate_enemy(shop_handler.get_current_difficulty())
+	if DataManagerSingleton.difficulty == 1:
+		generate_enemy(min(player_max_hp_sum, current_round * 200, shop_handler.get_current_difficulty()))
+	elif DataManagerSingleton.difficulty == 2:
+		generate_enemy(max(player_max_hp_sum, current_round * 200, shop_handler.get_current_difficulty()))
+	elif DataManagerSingleton.difficulty == 3:
+		generate_enemy(max(player_max_hp_sum, current_round * 200, shop_handler.get_current_difficulty()))
 
 	faction_bonus_manager.bonus_refresh()
 
@@ -407,7 +422,7 @@ func handle_character_action_finished():
 
 func handle_round_finished(msg):
 	
-	get_parent().get_parent().show_round_finish()
+	add_round_finish_scene.emit()
 	
 	if msg == "team1":
 		DataManagerSingleton.won_rounds += 1
@@ -441,7 +456,7 @@ func handle_game_end():
 	DataManagerSingleton.merge_game_data()
 	DataManagerSingleton.record_team(team_dict[Team.TEAM1_FULL])
 	#Show report
-	get_parent().get_parent().show_game_finish()
+	to_game_finish_scene.emit()
 
 func sort_characters(team: Team, mode: ChessActiveOrder) -> Array:
 	var chesses_team = team_dict[team]
@@ -557,7 +572,7 @@ func save_arena_team():
 	saved_arena_team = {}
 	for chess_index in arena.unit_grid.units.keys():
 		if not is_instance_valid(arena.unit_grid.units[chess_index]):
-			arena.unit_grid.units[chess_index] = null
+			arena.unit_grid.remove_unit(chess_index)
 		elif arena.unit_grid.units[chess_index] is Obstacle:
 			saved_arena_team[chess_index] = [arena.unit_grid.units[chess_index].faction, arena.unit_grid.units[chess_index].chess_name]
 
@@ -584,10 +599,14 @@ func generate_random_chess():
 	# --- Existing Chesses Tracking ---
 	# Count existing chess instances (faction+name pairs)
 	var existing_chess_counts := {}
-	for node in get_tree().get_nodes_in_group("chess_group"):
-		if node is Chess:
-			var composite_key = "%s_%s" % [node.faction, node.chess_name]
-			existing_chess_counts[composite_key] = existing_chess_counts.get(composite_key, 0) + 1
+	# for node in get_tree().get_nodes_in_group("chess_group"):
+	# 	if node is Chess:
+	# 		var composite_key = "%s_%s" % [node.faction, node.chess_name]
+	# 		existing_chess_counts[composite_key] = existing_chess_counts.get(composite_key, 0) + 1
+	for chess_index in (arena.unit_grid.get_all_units() + bench.unit_grid.get_all_units()):
+		if chess_index is Chess:
+			var composite_key = "%s_%s" % [chess_index.faction, chess_index.chess_name]
+			existing_chess_counts[composite_key] = existing_chess_counts.get(composite_key, 0) + 1	
 
 	# --- Eligible Chesses Filtering ---
 	var candidate_chesses := []
@@ -660,17 +679,17 @@ func chess_appearance(play_area: PlayArea):
 
 	for chess_index in team_dict[Team.TEAM1_FULL]:
 		current_chess_count += 1
-		chess_index._position.y -= before_appreance_height
+		chess_index.global_position.y -= before_appreance_height
 		chess_index.visible = true
-		appearance_tween.tween_property(chess_index, "_position", chess_index._position + Vector2(0, before_appreance_height) , 0.5)
+		appearance_tween.tween_property(chess_index, "global_position", chess_index.global_position + Vector2(0, before_appreance_height) , 0.5)
 
 	for chess_index in team_dict[Team.TEAM2_FULL]:
 		current_chess_count += 1
-		chess_index._position.y -= before_appreance_height
+		chess_index.global_position.y -= before_appreance_height
 		chess_index.visible = true
-		appearance_tween.tween_property(chess_index, "_position", chess_index._position + Vector2(0, before_appreance_height) , 0.5)
+		appearance_tween.tween_property(chess_index, "global_position", chess_index.global_position + Vector2(0, before_appreance_height) , 0.5)
 
-	# position_tween.tween_property(self, "_position", target_pos, 0.1)
+	# position_tween.tween_property(self, "global_position", target_pos, 0.1)
 
 	
 func get_next_serial() -> int:
@@ -727,45 +746,13 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, team:
 		
 	return summoned_character
 
-# func summon_obstacle(summon_obstacle_faction: String, summon_chess_name: String, team: int, summon_arena: PlayArea, summon_position: Vector2i) -> Obstacle:
-
-# 	if not summon_obstacle_faction in DataManagerSingleton.get_chess_data().keys():
-# 		return null
-# 	if not summon_chess_name in DataManagerSingleton.get_chess_data()[summon_obstacle_faction].keys():
-# 		return null
-
-# 	var summoned_character = obstacle_scene.instantiate()
-# 	summoned_character.faction = summon_obstacle_faction
-# 	summoned_character.chess_name = summon_chess_name
-# 	summoned_character.team = team
-# 	summoned_character.arena = arena
-# 	summoned_character.bench = bench
-# 	summoned_character.shop = shop
-# 	summoned_character.chess_serial = get_next_serial()
-# 	add_child(summoned_character)
-# 	summoned_character._load_chess_stats()
-# 	debug_handler.connect_to_chess_signal(summoned_character)
-# 	chess_mover.setup_chess(summoned_character)
-# 	chess_mover._move_chess(summoned_character, summon_arena, summon_position)
-# 	chess_information.setup_chess(summoned_character)
-
-# 	summoned_character.damage_taken.connect(battle_meter.get_damage_data)
-# 	summoned_character.is_died.connect(DataManagerSingleton.record_death_chess)
-# 	summoned_character.is_died.connect(chess_death_handle)
-
-# 	if team == 1:
-# 		team_dict[Team.TEAM1_FULL].append(summoned_character)
-# 		team_dict[Team.TEAM1].append(summoned_character)
-# 	else:
-# 		team_dict[Team.TEAM2_FULL].append(summoned_character)
-# 		team_dict[Team.TEAM2].append(summoned_character)
-		
-# 	return summoned_character
-
 func update_population():
 	current_population = 0
-	for node in get_tree().get_nodes_in_group("chess_group"):
-		if is_instance_valid(node) and node is Chess and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
+	# for node in get_tree().get_nodes_in_group("chess_group"):
+	# 	if is_instance_valid(node) and node is Chess and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
+	# 		current_population += 1
+	for chess_index in arena.unit_grid.get_all_units():
+		if is_instance_valid(chess_index) and chess_index is Chess and chess_index.team == 1:
 			current_population += 1
 	max_population = shop_handler.get_max_population()
 	population_label.text = "Population = " + str(current_population)	+ "/" + str(max_population)
@@ -782,7 +769,7 @@ func update_population():
 
 func chess_death_handle(obstacle: Obstacle):
 
-	arena.unit_grid.remove_unit(obstacle.position_id)
+	arena.unit_grid.remove_unit(obstacle.get_current_tile(obstacle)[1])
 
 func control_shaker(control: Control):
 	var old_position = control.global_position
@@ -801,7 +788,7 @@ func control_shaker(control: Control):
 
 
 func _on_back_button_pressed() -> void:
-	get_parent().get_parent().show_main_menu()
+	to_menu_scene.emit()
 
 
 func damage_value_display(chess: Obstacle, damage_value: int, attacker: Obstacle):
@@ -810,6 +797,19 @@ func damage_value_display(chess: Obstacle, damage_value: int, attacker: Obstacle
 	var damage_label = Label.new()
 	arena.add_child(damage_label)
 	damage_label.text = str(damage_value)
+
+	# Create a new theme
+	var new_theme = Theme.new()
+	
+	# Load font resource
+	var font = load("res://fonts/your_font.ttf") as FontFile
+	
+	# Set font and size in theme using correct methods
+	new_theme.set_font("font", "Label", font)
+	new_theme.set_font_size("font_size", "Label", 8)
+	
+	# Apply theme to label
+	damage_label.theme = new_theme
 
 	var old_position = chess.global_position + Vector2(32, -8)
 	damage_label.global_position = old_position
