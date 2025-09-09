@@ -39,9 +39,9 @@ func get_first_empty_tile() -> Vector2i:
 
 func get_all_units() -> Array[Obstacle]:
 	var unit_arry: Array[Obstacle] = []
-	for hro in units.values():
-		if hro != null:
-			unit_arry.append(hro)
+	for chess_index in units.values():
+		if is_instance_valid(chess_index) and chess_index is Obstacle and chess_index.status != chess_index.STATUS.DIE:
+			unit_arry.append(chess_index)
 	return unit_arry
 
 func has_valid_chess(tile: Vector2i) -> bool:
