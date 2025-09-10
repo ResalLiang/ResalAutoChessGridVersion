@@ -13,8 +13,15 @@ func _ready() -> void:
 			units[Vector2i(x,y)] = null
 	
 func add_unit(tile: Vector2i, obstacle: Obstacle) -> void:
-	units[tile] = obstacle
-	unit_grid_changed.emit()
+	if units.values().has(obstacle):
+		for tile_index in units.keys():
+			if units[tile_index] == obstacle:
+				remove_unit(tile_index)
+		units[tile] = obstacle
+		unit_grid_changed.emit()
+	else:
+		units[tile] = obstacle
+		unit_grid_changed.emit()
 
 func remove_unit(tile: Vector2i) -> void:
 	if not is_instance_valid(units[tile]) or not units[tile]:
