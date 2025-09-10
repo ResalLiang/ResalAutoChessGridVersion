@@ -31,16 +31,20 @@ func _ready() -> void:
 	drag_timer.set_wait_time(0.3)
 	drag_timer.set_one_shot(true)
 	drag_timer.set_autostart(true)
+	drag_timer.start()
 
 	drop_timer.set_wait_time(0.3)
 	drop_timer.set_one_shot(true)
 	drop_timer.set_autostart(true)
+	drop_timer.start()
 
 	# Connect signals
 	area_2d.input_event.connect(_on_target_input_event)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	print(str(drag_timer.time_left))
+	print(str(drop_timer.time_left))
 	pass
 	
 func _physics_process(delta: float) -> void:
@@ -100,7 +104,7 @@ func _on_target_input_event(_viewport, event, _shape_idx):
 	if event.is_action_pressed("select"):
 		is_clicked.emit(starting_position, "clicked")
 	
-	if not dragging_enabled or drag_timer.time_left <= 0:
+	if not dragging_enabled or drag_timer.time_left > 0:
 		return
 		
 	# # Check if another object is being dragged

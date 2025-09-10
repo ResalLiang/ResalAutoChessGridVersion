@@ -82,7 +82,7 @@ func effect_number_refresh():
 	for effect_index in effect_list:
 
 		is_immunity = is_immunity or effect_index.is_immunity
-		is_spell_immunity = is_spell_immunity or effect_index.is_spell_mmunity
+		is_spell_immunity = is_spell_immunity or effect_index.is_spell_immunity
 		is_silenced = false if is_spell_immunity else is_silenced or effect_index.is_silenced
 		is_disarmed = false if is_spell_immunity else is_disarmed or effect_index.is_disarmed
 		is_stunned = false if is_spell_immunity else is_stunned or effect_index.is_stunned

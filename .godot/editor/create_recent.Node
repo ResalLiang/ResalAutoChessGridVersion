@@ -1,3 +1,4 @@
+Timer
 VBoxContainer
 HBoxContainer
 TextureRect
@@ -10,5 +11,4 @@ Container
 ScrollContainer
 Button
 TileMapLayer
-Timer
 AnimationPlayer

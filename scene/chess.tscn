@@ -508,7 +508,7 @@ y_sort_enabled = true
 material = SubResource("ShaderMaterial_dbi3s")
 position = Vector2(0, -11)
 sprite_frames = ExtResource("3_n4hse")
-animation = &"crit_melee_attack"
+animation = &"block"
 
 [node name="Area2D" type="Area2D" parent="."]
 position = Vector2(0, -13)
@@ -534,6 +534,16 @@ visible = false
 
 [node name="drag_handler" type="Node2D" parent="."]
 script = ExtResource("4_ddkfs")
+
+[node name="drag_timer" type="Timer" parent="drag_handler"]
+wait_time = 0.3
+one_shot = true
+autostart = true
+
+[node name="drop_timer" type="Timer" parent="drag_handler"]
+wait_time = 0.3
+one_shot = true
+autostart = true
 
 [node name="melee_attack_animation" type="AnimationPlayer" parent="."]
 libraries = {
