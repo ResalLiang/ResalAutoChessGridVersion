@@ -220,7 +220,8 @@ func _ready():
 	)
 	chess_mover.chess_moved.connect(
 		func(chess: Obstacle, play_area: PlayArea, tile: Vector2i):
-			update_population()
+			if not is_game_turn_start:
+				update_population()
 	)
 	
 	chess_mover.chess_raised.connect(
@@ -811,7 +812,7 @@ func damage_value_display(chess: Obstacle, damage_value: int, attacker: Obstacle
 	# Apply theme to label
 	damage_label.theme = new_theme
 
-	var old_position = chess.global_position + Vector2(32, -8)
+	var old_position = chess.global_position + Vector2(16, -8)
 	damage_label.global_position = old_position
 
 	var damage_tween
