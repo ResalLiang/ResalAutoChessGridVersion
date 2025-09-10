@@ -240,7 +240,7 @@ func _ready():
 	idle_timer.start()  # Start idle state timer
 	
 	# Play idle animation
-	#animated_sprite_2d.play("idle")
+	animated_sprite_2d.play("idle")
 	
 	if team == 2:
 		animated_sprite_2d.flip_h = true
