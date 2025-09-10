@@ -37,7 +37,7 @@ func show_round_finish():
 func show_game_finish():
 	await _transition_to_scene("res://scene/game_finish.tscn", main_container, false)
 	current_scene.to_menu_scene.connect(show_main_menu)
-	current_scene.to_game_scene.connect(show_game_finish)
+	current_scene.to_game_scene.connect(show_game)
 
 func show_gallery():
 	await _transition_to_scene("res://scene/gallery.tscn", main_container, true)
