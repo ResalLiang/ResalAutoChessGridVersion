@@ -32,7 +32,7 @@ func _ready():
 	setup_cursor_system()
 	
 	# 设置显示属性
-	z_index = 1000
+	z_index = 999
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 func _process(_delta):
