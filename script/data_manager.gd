@@ -43,6 +43,8 @@ const max_won_rounds := 5
 var lose_rounds := 0
 const max_lose_rounds := 2
 
+var version := "V0.5"
+
 func _ready() -> void:
 
 	in_game_data = player_data.duplicate()

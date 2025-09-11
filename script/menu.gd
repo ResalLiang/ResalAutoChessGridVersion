@@ -5,6 +5,8 @@ extends Node2D
 @onready var gallery_button: Button = $button_container/gallery_button
 @onready var statistics_button: Button = $button_container/statistics_button
 @onready var quit_button: Button = $button_container/quit_button
+@onready var version: Label = $version
+@onready var current_player: Label = $current_player
 
 signal to_game_scene
 signal to_gallery_scene
@@ -12,8 +14,8 @@ signal to_gallery_scene
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
-
+	current_player.text = DataManagerSingleton.current_player
+	version.text = DataManagerSingleton.version
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
