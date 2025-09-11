@@ -1,4 +1,5 @@
 extends VBoxContainer
+class_name EffectIcon
 
 @onready var texture_rect: TextureRect = $TextureRect
 
@@ -7,7 +8,7 @@ var effect_name: String:
 	set(value):
 		var icon_texture: Texture2D
 		texture_rect = TextureRect.new()
-		match effect_name:
+		match value:
 			"Swift":
 				icon_texture = preload("res://asset/sprite/icon/swift.png")
 			"Wisdom":
@@ -29,7 +30,6 @@ var effect_name: String:
 		
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
