@@ -49,7 +49,8 @@ func turn_start_timeout_check():
 		for effect_index in new_effect_list:
 			effect_index.start_turn_update()
 			if not effect_index.check_effect_timeout():
-				new_effect_list.queue_free()
+				pass
+				#new_effect_list.queue_free()
 			else:
 				add_to_effect_array(effect_index)
 

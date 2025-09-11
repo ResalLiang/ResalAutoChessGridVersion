@@ -38,6 +38,7 @@ const chess_class = preload("res://script/chess.gd")
 @onready var battle_meter: BattleMeter = $battle_meter
 @onready var chess_information: ChessInformation = $chess_information
 @onready var arrow: CustomArrowRenderer = $arrow
+@onready var debug: Label = $debug
 
 
 enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
@@ -246,6 +247,10 @@ func _ready():
 	current_round = 0
 	
 	start_new_game()
+
+func _process(delta: float) -> void:
+	var chess_count = arena.unit_grid.get_all_units().size()
+	debug.text = str(chess_count)
 
 func start_new_game() -> void:
 
@@ -490,23 +495,6 @@ func generate_enemy(difficulty : int) -> void:
 
 			var character = summon_chess(rand_character_result[0], rand_character_result[1], 2, arena, Vector2i(rand_x, rand_y))
 
-			# var character = chess_scene.instantiate()
-			# character.team = 2
-			# character.arena = arena
-			# character.bench = bench
-			# character.shop = shop
-			# character.faction = rand_character_result[0]
-			# character.chess_name = rand_character_result[1]
-			# character.chess_serial = get_next_serial()
-			# # character.faction = DataManagerSingleton.get_chess_data().keys()[randi_range(0, DataManagerSingleton.get_chess_data().keys().size() - 2)] # remove villager
-			# # character.chess_name = get_random_character(character.faction)
-			# add_child(character)
-			# debug_handler.connect_to_chess_signal(character)
-			# chess_mover.setup_chess(character)
-			# chess_mover._move_chess(character, arena, Vector2(rand_x, rand_y))
-			# chess_information.setup_chess(character)
-			# team_dict[Team.TEAM2_FULL].append(character)
-
 			current_difficulty += character.max_hp
 			current_enemy_cnt += 1
 			
@@ -555,19 +543,6 @@ func load_arena_team():
 			if saved_arena_team[tile_index]:
 
 				var character = summon_chess(saved_arena_team[tile_index][0], saved_arena_team[tile_index][1], 1, arena, tile_index)
-
-				# var character = chess_scene.instantiate()
-				# character.faction = saved_arena_team[tile_index][0]
-				# character.chess_name = saved_arena_team[tile_index][1]
-				# character.team = 1
-				# character.arena = arena
-				# character.bench = bench
-				# character.shop = shop
-				# character.chess_serial = get_next_serial()
-				# add_child(character)
-				# debug_handler.connect_to_chess_signal(character)
-				# chess_mover._move_chess(character, arena, tile_index) 
-				# team_dict[Team.TEAM1_FULL].append(character)
 		
 func save_arena_team():
 	saved_arena_team = {}

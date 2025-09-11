@@ -1,8 +1,15 @@
 class_name ChessMover
 extends Node
 
-@export var play_areas: Array[PlayArea]
+@export var play_areas: Array[PlayArea] = [arena, bench, shop]
 @onready var shop_handler: ShopHandler = %shop_handler
+
+
+@onready var arena: PlayArea = %arena
+@onready var bench: PlayArea = %bench
+@onready var shop: PlayArea = %shop
+
+
 signal chess_moved(obstacle: Obstacle, play_area: PlayArea, tile: Vector2i)
 signal chess_raised(chess_position: Vector2, obstacle: Obstacle)
 signal chess_dropped(obstacle: Obstacle)

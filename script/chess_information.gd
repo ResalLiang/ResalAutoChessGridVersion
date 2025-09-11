@@ -21,13 +21,13 @@ var animation_chess_name := "ShieldMan"
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	visible = false
-	max_hp.tooltips_text = "Health points. Unit dies when reaching 0."
-	armor.tooltips_text = "Reduces damage taken by this amount."
-	speed.tooltips_text = "Movement range per turn (tiles)."
-	damage.tooltips_text = "Damage dealt per attack(melee/ranged)."
-	attack_range.tooltips_text = "Attack distance (tiles)."
-	attack_speed.tooltips_text = "Attacks per turn."
-	spell.tooltips_text = "Special ability (requires full MP)."
+	max_hp.tooltip_text = "Health points. Unit dies when reaching 0."
+	armor.tooltip_text = "Reduces damage taken by this amount."
+	speed.tooltip_text = "Movement range per turn (tiles)."
+	damage.tooltip_text = "Damage dealt per attack(melee/ranged)."
+	attack_range.tooltip_text = "Attack distance (tiles)."
+	attack_speed.tooltip_text = "Attacks per turn."
+	spell.tooltip_text = "Special ability (requires full MP)."
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -49,7 +49,7 @@ func show_chess_information(starting_position: Vector2, status: String, obstacle
 	visible = true
 	chess_name.text = "Chess Name = " + obstacle.chess_name
 	chess_faction.text = "Faction = " + obstacle.faction
-	max_hp.text = "Max HP = " + str(obstacle.max_hp)
+	max_hp.text = "HP = " + str(obstacle.hp) + " / " + str(obstacle.max_hp)
 	armor.text = "Armor = " + str(obstacle.armor)
 	speed.text = "Speed = " + str(obstacle.speed)
 	damage.text = "Damage = " + str(obstacle.melee_damage) + " / " + str(obstacle.ranged_damage)

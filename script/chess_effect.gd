@@ -1,7 +1,7 @@
 class_name ChessEffect
 extends Node
 
-var effect_name := "Effect Name Placeholder":
+var effect_name := "Effect Name Placeholder"
 var effect_icon : Texture2D
 var effect_description : String
 var effect_type : String # Buff/Debuff/Passive

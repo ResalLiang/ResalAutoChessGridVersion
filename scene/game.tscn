@@ -7495,6 +7495,17 @@ theme_override_font_sizes/font_size = 4
 text = "Current shop level = "
 metadata/_edit_use_anchors_ = true
 
+[node name="debug" type="Label" parent="."]
+z_index = 1
+offset_left = 93.0
+offset_top = 30.0
+offset_right = 201.0
+offset_bottom = 38.0
+theme_override_colors/font_color = Color(1, 1, 0, 1)
+theme_override_fonts/font = ExtResource("9_81276")
+theme_override_font_sizes/font_size = 4
+metadata/_edit_use_anchors_ = true
+
 [node name="population_label" type="Label" parent="."]
 z_index = 1
 offset_left = 266.0

@@ -4,34 +4,38 @@ class_name EffectIcon
 @onready var texture_rect: TextureRect = $TextureRect
 
 var effect_type: String = "Default"
+var _effect_name: String  # 私有变量存储实际值
 var effect_name: String:
 	set(value):
-		var icon_texture: Texture2D
-		texture_rect = TextureRect.new()
-		match value:
-			"Swift":
-				icon_texture = preload("res://asset/sprite/icon/swift.png")
-			"Wisdom":
-				icon_texture = preload("res://asset/sprite/icon/wisdom.png")
-			"Fortress":
-				icon_texture = preload("res://asset/sprite/icon/fortress.png")
-			"Holy Shield":
-				icon_texture = preload("res://asset/sprite/icon/holy_shield.png")
-			"Strong":
-				icon_texture = preload("res://asset/sprite/icon/strong.png")
-			"Doom":
-				icon_texture = preload("res://asset/sprite/icon/doom.png")
-			"Weak":
-				icon_texture = preload("res://asset/sprite/icon/weak.png")
-			_:
-				icon_texture = preload("res://asset/sprite/icon/wisdom.png")
-		texture_rect.texture = icon_texture
-		effect_name = value
+		_effect_name = value
+		_update_texture()
+	get:
+		return _effect_name
+
+func _update_texture():
+	if not texture_rect:
+		return
 		
-# Called when the node enters the scene tree for the first time.
+	var icon_texture: Texture2D
+	match _effect_name:
+		"Swift":
+			icon_texture = preload("res://asset/sprite/icon/swift.png")
+		"Wisdom":
+			icon_texture = preload("res://asset/sprite/icon/wisdom.png")
+		"Fortress":
+			icon_texture = preload("res://asset/sprite/icon/fortress.png")
+		"Holy Shield":
+			icon_texture = preload("res://asset/sprite/icon/holy_shield.png")
+		"Strong":
+			icon_texture = preload("res://asset/sprite/icon/strong.png")
+		"Doom":
+			icon_texture = preload("res://asset/sprite/icon/doom.png")
+		"Weak":
+			icon_texture = preload("res://asset/sprite/icon/weak.png")
+		_:
+			icon_texture = preload("res://asset/sprite/icon/wisdom.png")
+	
+	texture_rect.texture = icon_texture
+
 func _ready() -> void:
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+	_update_texture()  # 确保在节点准备好后更新纹理

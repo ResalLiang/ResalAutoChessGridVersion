@@ -611,8 +611,7 @@ func _handle_action():
 				cast_spell_result = await _cast_spell(chess_spell_target)
 				if not cast_spell_result:
 					animated_sprite_2d.stop()
-				else:
-					await animated_sprite_2d.animation_finished
+
 
 			if cast_spell_result:
 				action_timer.set_wait_time(action_timer_wait_time)
@@ -644,7 +643,7 @@ func _handle_attack():
 	remain_attack_count -= 1
 	if current_distance_to_target <= attack_range and (not effect_handler.is_stunned and not effect_handler.is_disarmed):
 
-		if has_melee_target() is null and current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
+		if not has_melee_target() and current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
 			status = STATUS.RANGED_ATTACK
 			damage = ranged_damage
 			if ResourceLoader.exists("res://asset/animation/%s/%s%s_projectile.tres" % [faction, faction, chess_name]):
@@ -929,7 +928,7 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 	elif chess_name == "Mage" and faction == "elf":
 		cast_spell_result = elf_mage_damage(spell_tgt, 0.2, 10, 80)
 	elif chess_name == "Necromancer" and faction == "undead":
-		cast_spell_result = await undead_necromancer_summon("Skelton", 3)
+		cast_spell_result = await undead_necromancer_summon("Skeleton", 3)
 	elif chess_name == "Demolitionist" and faction == "dwarf":
 		cast_spell_result = dwarf_demolitionist_placebomb(100)
 	elif spell_tgt !=  self:
@@ -1007,7 +1006,9 @@ func update_solid_map():
 
 	for chess_index in arena.unit_grid.get_all_units():
 		astar_grid.set_point_solid(get_current_tile(chess_index)[1], true)
-
+	
+	var test1
+	
 func _handle_dragging_state(stating_position: Vector2, drag_action: String):
 	if !is_active:
 		match drag_action:
@@ -1098,8 +1099,8 @@ func connect_to_data_manager():
 func get_current_tile(obstacle : Obstacle):
 	var i = chess_mover._get_play_area_for_position(obstacle.global_position)
 	var current_tile = chess_mover.play_areas[i].get_tile_from_global(obstacle.global_position)
-	if chess_mover.play_areas[i].unit_grid.units[current_tile] != self:
-		chess_mover.play_areas[i].unit_grid.add_unit(current_tile, self)
+	#if chess_mover.play_areas[i].unit_grid.units[current_tile] != self:
+		#chess_mover.play_areas[i].unit_grid.add_unit(current_tile, self)
 	return [chess_mover.play_areas[i], current_tile]
 	
 func has_melee_target():
@@ -1107,7 +1108,7 @@ func has_melee_target():
 		for y_index in range(-1, 1):
 			if not arena.unit_grid.has_valid_chess(Vector2i(x_index, y_index)):
 				continue
-			var current_chess = arena.unit_grid.units(Vector2i(x_index, y_index))
+			var current_chess = arena.unit_grid.units[Vector2i(x_index, y_index)]
 			if current_chess.team != team:
 				return current_chess
 
@@ -1236,8 +1237,9 @@ func dwarf_demolitionist_placebomb(spell_range: int) -> bool:
 	if chess_spell_target.status != STATUS.DIE and chess_spell_target.team != team and chess_spell_target.global_position.distance_to(global_position) <= spell_range:
 		while attempt_summon_count >= 0:
 			var current_tile = get_current_tile(self)[1]
-			var rand_x = randi_range(chess_spell_target.current_tile.x - 1, chess_spell_target.current_tile.x + 1)
-			var rand_y = randi_range(chess_spell_target.current_tile.y - 1, chess_spell_target.current_tile.y + 1)
+			var target_current_tile = chess_spell_target.get_current_tile(self)[1]
+			var rand_x = randi_range(target_current_tile.x - 1, target_current_tile.x + 1)
+			var rand_y = randi_range(target_current_tile.y - 1, target_current_tile.y + 1)
 			if rand_x >=0 and rand_x < arena.unit_grid.size.x and rand_y >=0 and rand_y < arena.unit_grid.size.y:
 				attempt_summon_count -= 1
 				if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
