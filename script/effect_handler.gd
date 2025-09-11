@@ -11,10 +11,11 @@ var is_silenced := false
 var is_disarmed := false
 var is_stunned := false
 
-var spd_modifier := 0
+var speed_modifier := 0
 var attack_rng_modifier := 0
-var attack_spd_modifier := 0
-var attack_dmg_modifier := 0
+var attack_speed_modifier := 0
+var melee_attack_damage_modifier := 0
+var ranged_attack_damage_modifier := 0
 var continuous_hp_modifier := 0
 var continuous_mp_modifier := 0
 var armor_modifier := 0
@@ -64,10 +65,11 @@ func effect_number_refresh():
 	is_taunt = false
 	is_stealth = false
 
-	spd_modifier = 0
+	speed_modifier = 0
 	attack_rng_modifier = 0
-	attack_spd_modifier = 0
-	attack_dmg_modifier = 0
+	attack_speed_modifier = 0
+	melee_attack_damage_modifier = 0
+	ranged_attack_damage_modifier = 0
 	continuous_hp_modifier = 0
 	continuous_mp_modifier = 0
 	armor_modifier = 0
@@ -89,14 +91,16 @@ func effect_number_refresh():
 		is_taunt = is_taunt or effect_index.is_taunt 
 		is_stealth = is_stealth or effect_index.is_stealth
 
-		spd_modifier = spd_modifier + (max(0, effect_index.spd_modifier) if is_spell_immunity 
-			else effect_index.spd_modifier)
+		speed_modifier = speed_modifier + (max(0, effect_index.speed_modifier) if is_spell_immunity 
+			else effect_index.speed_modifier)
 		attack_rng_modifier = attack_rng_modifier + (max(0, effect_index.attack_rng_modifier) if is_spell_immunity 
 			else effect_index.attack_rng_modifier)
-		attack_spd_modifier = attack_spd_modifier + (max(0, effect_index.attack_spd_modifier) if is_spell_immunity 
-			else effect_index.attack_spd_modifier)
-		attack_dmg_modifier = attack_dmg_modifier + (max(0, effect_index.attack_dmg_modifier) if is_spell_immunity 
-			else effect_index.attack_dmg_modifier)
+		attack_speed_modifier = attack_speed_modifier + (max(0, effect_index.attack_speed_modifier) if is_spell_immunity 
+			else effect_index.attack_speed_modifier)
+		melee_attack_damage_modifier = melee_attack_damage_modifier + (max(0, effect_index.melee_attack_damage_modifier) if is_spell_immunity 
+			else effect_index.melee_attack_damage_modifier)
+		ranged_attack_damage_modifier = ranged_attack_damage_modifier + (max(0, effect_index.ranged_attack_damage_modifier) if is_spell_immunity 
+			else effect_index.ranged_attack_damage_modifier)
 		continuous_hp_modifier = continuous_hp_modifier + (max(0, effect_index.continuous_hp_modifier) if is_immunity or is_spell_immunity 
 			else effect_index.continuous_hp_modifier)
 		continuous_mp_modifier = continuous_mp_modifier + (max(0, effect_index.continuous_mp_modifier) if is_spell_immunity 
