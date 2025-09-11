@@ -183,6 +183,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				effect_instance.effect_name = "Swift"
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Elf Faction Bonus"
+				effect_instance.effect_description = "Friendly faction chesses gain evasion and critical rate boost."
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
 
@@ -197,6 +198,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				effect_instance.effect_name = "Wisdom"
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Human Faction Bonus"
+				effect_instance.effect_description = "Friendly chesses continuously gain MP."
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
 
@@ -211,6 +213,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				effect_instance.effect_name = "Fortress"
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Dwarf Faction Bonus"
+				effect_instance.effect_description = "Friendly chesses continuously gain armor boost."
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
 
@@ -224,6 +227,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				effect_instance.effect_name = "Holy Shield"
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Holy Warrior Faction Bonus"
+				effect_instance.effect_description = "Friendly faction chesses gain immunity."
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
 
@@ -241,6 +245,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				effect_instance.effect_name = "Strong"
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Forest Protector Faction Bonus"
+				effect_instance.effect_description = "Friendly faction chesses gain Max HP boost."
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
 
@@ -256,6 +261,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				effect_instance.effect_name = "Doom"
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Demon Faction Bonus"
+				effect_instance.effect_description = "Enemy chesses suffer damage each turn."
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
 
@@ -267,11 +273,12 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				var effect_instance = ChessEffect.new()
 				effect_instance.armor_modifier = -5 * bonus_level
 				effect_instance.armor_modifier_duration = 999
-				effect_instance.spd_modifier = -2
-				effect_instance.spd_modifier_duration = bonus_level
+				effect_instance.speed_modifier = -2
+				effect_instance.speed_modifier_duration = bonus_level
 				effect_instance.effect_name = "Weak"
 				effect_instance.effect_type = "Faction Bonus"
-				effect_instance.effect_applier = "Elf Faction Bonus"
+				effect_instance.effect_applier = "Undead Faction Bonus"
+				effect_instance.effect_description = "Enemy chesses suffer speed and armor loss."
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
 
