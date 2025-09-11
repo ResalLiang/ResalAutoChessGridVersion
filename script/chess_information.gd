@@ -21,6 +21,13 @@ var animation_chess_name := "ShieldMan"
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	visible = false
+	max_hp.tooltips_text = "Health points. Unit dies when reaching 0."
+	armor.tooltips_text = "Reduces damage taken by this amount."
+	speed.tooltips_text = "Movement range per turn (tiles)."
+	damage.tooltips_text = "Damage dealt per attack(melee/ranged)."
+	attack_range.tooltips_text = "Attack distance (tiles)."
+	attack_speed.tooltips_text = "Attacks per turn."
+	spell.tooltips_text = "Special ability (requires full MP)."
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -44,10 +51,10 @@ func show_chess_information(starting_position: Vector2, status: String, obstacle
 	chess_faction.text = "Faction = " + obstacle.faction
 	max_hp.text = "Max HP = " + str(obstacle.max_hp)
 	armor.text = "Armor = " + str(obstacle.armor)
-	speed.text = "Speed = " + str(obstacle.spd)
-	damage.text = "Damage = " + str(obstacle.damage)
+	speed.text = "Speed = " + str(obstacle.speed)
+	damage.text = "Damage = " + str(obstacle.melee_damage) + " / " + str(obstacle.ranged_damage)
 	attack_range.text = "Attack Range = " + str(obstacle.attack_range)
-	attack_speed.text = "Attack Speed = " + str(obstacle.attack_spd)
+	attack_speed.text = "Attack Speed = " + str(obstacle.attack_speed)
 	spell.text = "Spell = " + obstacle.skill_name
 	animation_faction = obstacle.faction
 	animation_chess_name = obstacle.chess_name
@@ -60,7 +67,7 @@ func show_chess_information(starting_position: Vector2, status: String, obstacle
 	for effect_index in chess_effect_list:
 		var effect_icon = effect_icon_scene.instantiate()
 		effect_icon.effect_name = effect_index.effect_name
-
+		effect_icon.tooltip_text = effect_index.effect_name + " by " + effect_index.effect_applier + " :\n" + effect_index.effect_description
 		icon_container.add_child(effect_icon)
 
 		
