@@ -34,7 +34,7 @@ func _ready() -> void:
 	await get_tree().process_frame  # Wait for cleanup to complete
 	
 	# Setup containers
-	chess_container.size = Vector2(400, 300)  # Set appropriate size
+	chess_container.size = Vector2(256, 256)  # Set appropriate size
 	chess_container.clip_contents = true
 	chess_vbox_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	chess_vbox_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -82,15 +82,6 @@ func _ready() -> void:
 	# Add the last row if it has buttons
 	if chess_hbox_container and chess_hbox_container.get_child_count() > 0:
 		chess_vbox_container.add_child(chess_hbox_container)
-
-	# Debug info
-	print("Total HBoxContainers: ", str(chess_vbox_container.get_children().size()))
-	for i in range(chess_vbox_container.get_children().size()):
-		var hbox = chess_vbox_container.get_child(i)
-		print("HBox ", i, " has ", hbox.get_child_count(), " children")
-
-	# Deferred check to ensure controls are rendered
-	# call_deferred("_check_controls_after_ready")
 
 func create_chess_button(faction_index: String, chess_index: String, current_player_chess_data: Dictionary) -> TextureButton:
 	var chess_button = TextureButton.new()
