@@ -521,7 +521,7 @@ func get_random_character(faction_name: String) -> String:
 	# Prepare candidate list and weight list
 	for chess_name_index in DataManagerSingleton.get_chess_data()[faction_name]:
 		var rarity = DataManagerSingleton.get_chess_data()[faction_name][chess_name_index]["rarity"]
-		if RARITY_WEIGHTS[min(6, shop_handler.shop_level)].has(rarity) and DataManagerSingleton.get_chess_data()[faction_name][chess_name_index]["spd"] != 0:
+		if RARITY_WEIGHTS[min(6, shop_handler.shop_level)].has(rarity) and DataManagerSingleton.get_chess_data()[faction_name][chess_name_index]["speed"] != 0:
 			candidates.append(chess_name_index)
 			weights.append(RARITY_WEIGHTS[min(6, shop_handler.shop_level)][rarity])
 	
@@ -623,7 +623,7 @@ func generate_random_chess():
 			var chess_attributes = DataManagerSingleton.get_chess_data()[faction][chess_name]
 			
 			# Validation checks
-			if chess_attributes["spd"] == 0 || chess_attributes["rarity"] != selected_rarity:
+			if chess_attributes["speed"] == 0 || chess_attributes["rarity"] != selected_rarity:
 				continue
 				
 			# Calculate dynamic weight with duplicate penalty
@@ -706,7 +706,7 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, team:
 		return null
 
 	var summoned_character
-	if DataManagerSingleton.get_chess_data()[summon_chess_faction][summon_chess_name]["spd"] == 0:
+	if DataManagerSingleton.get_chess_data()[summon_chess_faction][summon_chess_name]["speed"] == 0:
 		summoned_character = obstacle_scene.instantiate()
 	else:
 		summoned_character = chess_scene.instantiate()
