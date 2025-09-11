@@ -56,9 +56,10 @@ enum TARGET_CHOICE {CLOSE, FAR, STRONG, WEAK, ALLY, SELF}
 #
 #var base_max_hp := 100  # Maximum health points
 #var base_max_mp := 50   # Maximum magic points
-#var base_spd := 8
-var base_damage := 20   # Attack damage
-var base_attack_spd := 1 # Attack speed (attacks per turn)
+#var base_speed := 8
+var base_melee_damage := 20   # Attack damage
+var base_ranged_damage := 20   # Attack damage
+var base_attack_speed := 1 # Attack speed (attacks per turn)
 var base_attack_range := 20 # Attack range (pixels)
 var base_evasion_rate := 0.10
 var base_critical_rate := 0.10
@@ -84,9 +85,11 @@ var base_critical_rate := 0.10
 		#max_mp = value
 		#mp = update_mp
 
-var spd = base_spd
-var damage = base_damage
-var attack_spd = base_attack_spd
+var speed = base_speed
+var melee_damage = base_melee_damage
+var ranged_damage = base_ranged_damage
+var damage
+var attack_speed = base_attack_speed
 var attack_range = base_attack_range
 var evasion_rate := 0.10
 var critical_rate := 0.10
@@ -445,11 +448,20 @@ func _load_chess_stats():
 	# Safely retrieve stats if available
 	if chess_data.has(faction) and chess_data[faction].has(chess_name):
 		var stats = chess_data[faction][chess_name]
-		base_spd = stats["spd"]
+		base_speed = stats["speed"]
 		base_max_hp = stats["max_health"]
-		base_damage = stats["attack_damage"]
 		base_attack_range = stats["attack_range"]
-		base_attack_spd = stats["attack_speed"]
+		base_attack_speed = stats["attack_speed"]
+		if base_attack_speed == 0:
+			base_melee_damage = 0
+			base_ranged_damage = 0
+		elif (not animated_sprite_2d.sprite_frames.has_animation("melee_attack") and not animated_sprite_2d.sprite_frames.has_animation("attack")) or not stats.keys().has("melee_attack_damage"):
+			base_melee_damage = 0
+		elif base_attack_range <= 32 or not animated_sprite_2d.sprite_frames.has_animation("ranged_attack") or not stats.keys().has("ranged_attack_damage"):
+			base_ranged_damage = 0
+		else:
+			base_melee_damage = stats["melee_attack_damage"]
+			base_ranged_damage = stats["ranged_attack_damage"]
 		skill_name = stats["skill_name"]
 		skill_description = stats["skill_description"]
 		chess_rarity = stats["rarity"]
@@ -470,7 +482,7 @@ func start_turn():
 
 	update_effect()
 
-	remain_attack_count = attack_spd
+	remain_attack_count = attack_speed
 
 	if not chess_target or not is_instance_valid(chess_target) or chess_target.status == STATUS.DIE:
 		target_lost.emit(self)
@@ -519,7 +531,7 @@ func _handle_movement():
 			move_timer.set_wait_time(move_timer_wait_time)
 			move_timer.start()
 		else:
-			var move_steps = min(spd, move_path.size() - 1)
+			var move_steps = min(speed, move_path.size() - 1)
 
 			# if position_tween:
 			# 	position_tween.kill() # Abort the previous animation.
@@ -561,6 +573,8 @@ func _handle_movement():
 # 		move_timer.start()
 						
 func _handle_action():
+
+	arena.unit_grid.add_unit(get_current_tile(self)[1], self)
 
 	if status == STATUS.DIE:
 		action_timer.set_wait_time(action_timer_wait_time)
@@ -629,8 +643,10 @@ func _handle_attack():
 	var current_distance_to_target = global_position.distance_to(chess_target.global_position)
 	remain_attack_count -= 1
 	if current_distance_to_target <= attack_range and (not effect_handler.is_stunned and not effect_handler.is_disarmed):
-		if current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
+
+		if has_melee_target() is null and current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
 			status = STATUS.RANGED_ATTACK
+			damage = ranged_damage
 			if ResourceLoader.exists("res://asset/animation/%s/%s%s_projectile.tres" % [faction, faction, chess_name]):
 				
 				animated_sprite_2d.play("ranged_attack")
@@ -654,7 +670,13 @@ func _handle_attack():
 
 				handle_special_effect(chess_target, self)
 
-		elif current_distance_to_target < ranged_attack_threshold:
+		elif current_distance_to_target < ranged_attack_threshold or (has_melee_target() is Obstacle and current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack")):
+			damage = melee_damage
+
+			if current_distance_to_target >= ranged_attack_threshold:
+				chess_target = has_melee_target()
+
+
 			if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
 				status = STATUS.MELEE_ATTACK
 				melee_attack_animation.play("melee_attack")
@@ -851,7 +873,6 @@ func _launch_projectile(target: Obstacle):
 	projectile.penetration = projectile_penetration
 	projectile.is_active = true
 	
-	
 	return projectile
 
 # Add damage handling method
@@ -884,7 +905,6 @@ func take_damage(damage_value: int, attacker: Obstacle):
 
 	else:
 		attack_evased.emit(self, attacker)
-
 
 func take_heal(heal_value: int, healer: Obstacle):
 	#Placeholder for chess passive ability on take heal
@@ -925,12 +945,14 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 func _apply_damage(damage_target: Obstacle = chess_target, damage_value: int = damage):
 	if chess_target and damage_value > 0:
 		#Placeholder for chess passive ability on apply damage
-		var crit_damage_value =  damage_value * 2
+		var applied_damage_value
 		if rng.randf() <= critical_rate:
-			chess_target.take_damage(crit_damage_value, self)
+			applied_damage_value =  damage_value * 2
+			chess_target.take_damage(applied_damage_value, self)
 			critical_damage_applied.emit(self, damage_target)
 		else:
-			chess_target.take_damage(damage_value, self)
+			applied_damage_value = damage_value
+			chess_target.take_damage(applied_damage_value, self)
 			damage_applied.emit(self, damage_target)		
 
 func _apply_heal(heal_target: Obstacle = chess_spell_target, heal_value: int = damage):
@@ -969,23 +991,6 @@ func get_points_in_radius(target: Vector2i, radius: int) -> Array[Vector2i]:
 			if Vector2i(x,y).distance_to(target) <= radius:
 				points.append(Vector2i(x,y))
 	return points
-
-# func _on_damage_taken(taker: Obstacle, damage_value: int, attacker: Obstacle):
-# 	if hp <= 0:
-# 		status = STATUS.DIE
-# 		animated_sprite_2d.stop()
-# 		animated_sprite_2d.play("die")
-# 		await animated_sprite_2d.animation_finished
-# 		visible = false
-# 		is_died.emit(self)
-				
-# 	else:
-# 		#Placeholder for chess passive ability on hit
-# 		status = STATUS.HIT
-# 		animated_sprite_2d.play("hit")
-# 		await animated_sprite_2d.animation_finished
-# 		status = STATUS.IDLE
-
 	
 func _on_died():
 	pass
@@ -1033,10 +1038,11 @@ func update_effect():
 	mp += effect_handler.continuous_mp_modifier
 
 	armor = base_armor + effect_handler.armor_modifier
-	spd = base_spd + effect_handler.spd_modifier
-	damage = base_damage + effect_handler.attack_dmg_modifier
+	speed = base_speed + effect_handler.speed_modifier
+	melee_damage = base_melee_damage + effect_handler.melee_attack_damage_modifier
+	ranged_damage = base_ranged_damage + effect_handler.ranged_attack_damage_modifier
 	attack_range = base_attack_range + effect_handler.attack_rng_modifier
-	attack_spd = base_attack_spd + effect_handler.attack_spd_modifier
+	attack_speed = base_attack_speed + effect_handler.attack_speed_modifier
 
 	max_hp = base_max_hp + effect_handler.max_hp_modifier
 	max_mp = base_max_mp + effect_handler.max_mp_modifier
@@ -1096,6 +1102,17 @@ func get_current_tile(obstacle : Obstacle):
 		chess_mover.play_areas[i].unit_grid.add_unit(current_tile, self)
 	return [chess_mover.play_areas[i], current_tile]
 	
+func has_melee_target():
+	for x_index in range(-1, 1):
+		for y_index in range(-1, 1):
+			if not arena.unit_grid.has_valid_chess(Vector2i(x_index, y_index)):
+				continue
+			var current_chess = arena.unit_grid.units(Vector2i(x_index, y_index))
+			if current_chess.team != team:
+				return current_chess
+
+	return null
+
 func human_mage_taunt(spell_duration: int) -> bool:
 	var chess_affected := true
 
