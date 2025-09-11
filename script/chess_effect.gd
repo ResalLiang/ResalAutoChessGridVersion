@@ -2,10 +2,8 @@ class_name ChessEffect
 extends Node
 
 var effect_name := "Effect Name Placeholder":
-	set(value):
-		effect_name = value
-		# Placeholder for icon load
 var effect_icon : Texture2D
+var effect_description : String
 var effect_type : String # Buff/Debuff/Passive
 var effect_applier : String
 
@@ -68,12 +66,12 @@ var stunned_duration := 0:
 			stunned_duration = value
 			is_stunned = true
 
-var spd_modifier := 0
-var spd_modifier_duration := 0:
+var speed_modifier := 0
+var speed_modifier_duration := 0:
 		set(value):
-			spd_modifier_duration = value
+			speed_modifier_duration = value
 			if value <= 0:
-				spd_modifier = 0
+				speed_modifier = 0
 
 var attack_rng_modifier := 0
 var attack_rng_modifier_duration := 0:
@@ -82,19 +80,26 @@ var attack_rng_modifier_duration := 0:
 			if value <= 0:
 				attack_rng_modifier = 0
 
-var attack_spd_modifier := 0
-var attack_spd_modifier_duration := 0:
+var attack_speed_modifier := 0
+var attack_speed_modifier_duration := 0:
 		set(value):
-			attack_spd_modifier_duration = value
+			attack_speed_modifier_duration = value
 			if value <= 0:
-				attack_spd_modifier = 0
+				attack_speed_modifier = 0
 
-var attack_dmg_modifier := 0
-var attack_dmg_modifier_duration := 0:
+var melee_attack_damage_modifier := 0
+var melee_attack_damage_modifier_duration := 0:
 		set(value):
-			attack_dmg_modifier_duration = value
+			melee_attack_damage_modifier_duration = value
 			if value <= 0:
-				attack_dmg_modifier = 0
+				melee_attack_damage_modifier = 0
+
+var ranged_attack_damage_modifier := 0
+var ranged_attack_damage_modifier_duration := 0:
+		set(value):
+			ranged_attack_damage_modifier_duration = value
+			if value <= 0:
+				ranged_attack_damage_modifier = 0
 
 var continuous_hp_modifier := 0
 var continuous_hp_modifier_duration := 0:
@@ -168,16 +173,19 @@ func check_effect_timeout() -> bool:
 	if stunned_duration > 0:
 		return true
 
-	if spd_modifier_duration > 0 and spd_modifier != 0:
+	if speed_modifier_duration > 0 and speed_modifier != 0:
 		return true
 
 	if attack_rng_modifier_duration > 0 and attack_rng_modifier != 0:
 		return true
 
-	if attack_spd_modifier_duration > 0 and attack_spd_modifier != 0:
+	if attack_speed_modifier_duration > 0 and attack_speed_modifier != 0:
 		return true
 
-	if attack_dmg_modifier_duration > 0 and attack_dmg_modifier != 0:
+	if melee_attack_damage_modifier_duration > 0 and melee_attack_damage_modifier != 0:
+		return true
+
+	if ranged_attack_damage_modifier_duration > 0 and ranged_attack_damage_modifier != 0:
 		return true
 
 	if continuous_hp_modifier_duration > 0 and continuous_hp_modifier != 0:
@@ -201,7 +209,7 @@ func check_effect_timeout() -> bool:
 	if evasion_rate_modifier_duration > 0 and evasion_rate_modifier != 0:
 		return true
 
-	if spd_modifier_duration > 0 and spd_modifier != 0:
+	if speed_modifier_duration > 0 and speed_modifier != 0:
 		return true
 
 	return false
@@ -217,10 +225,11 @@ func start_turn_update():
 	stealth_duration = max(0, stealth_duration - 1)
 
 
-	spd_modifier_duration = max(0, spd_modifier_duration - 1)
+	speed_modifier_duration = max(0, speed_modifier_duration - 1)
 	attack_rng_modifier_duration = max(0, attack_rng_modifier_duration - 1)
-	attack_spd_modifier_duration = max(0, attack_spd_modifier_duration - 1)
-	attack_dmg_modifier_duration = max(0, attack_dmg_modifier_duration - 1)
+	attack_speed_modifier_duration = max(0, attack_speed_modifier_duration - 1)
+	melee_attack_damage_modifier_duration = max(0, melee_attack_damage_modifier_duration - 1)
+	ranged_attack_damage_modifier_duration = max(0, ranged_attack_damage_modifier_duration - 1)
 	continuous_hp_modifier_duration = max(0, continuous_hp_modifier_duration - 1)
 	continuous_mp_modifier_duration = max(0, continuous_mp_modifier_duration - 1)
 	armor_modifier_duration = max(0, armor_modifier_duration - 1)
