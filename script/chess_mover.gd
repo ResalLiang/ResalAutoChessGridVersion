@@ -50,6 +50,10 @@ func _reset_chess_to_starting_position(starting_position: Vector2, obstacle: Obs
 
 
 func _move_chess(obstacle: Obstacle, play_area: PlayArea, tile: Vector2i) -> void:
+	
+	'''add chess to play_area.unit_grid, add child'''
+	'''_move_chess(obstacle: Obstacle, play_area: PlayArea, tile: Vector2i)'''
+
 	play_area.unit_grid.add_unit(tile, obstacle)
 	# obstacle.global_position = play_area.get_global_from_tile(tile)
 	obstacle.reparent(play_area.unit_grid)
