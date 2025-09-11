@@ -52,7 +52,7 @@ var obstacle_level := 1
 
 var base_max_hp := 100  # Maximum health points
 var base_max_mp := 50   # Maximum magic points
-var base_spd := 0
+var base_speed := 0
 var base_armor := 0
 
 var hp: int = base_max_hp:
@@ -348,7 +348,7 @@ func _load_chess_stats():
 	# Safely retrieve stats if available
 	if chess_data.has(faction) and chess_data[faction].has(chess_name):
 		var stats = chess_data[faction][chess_name]
-		base_spd = stats["spd"]
+		base_speed = stats["speed"]
 		base_max_hp = stats["max_health"]
 		skill_name = stats["skill_name"]
 		skill_description = stats["skill_description"]
