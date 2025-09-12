@@ -25,6 +25,8 @@ var attacker: Obstacle = null:
 		else:
 			animated_sprite_2d.sprite_frames = ResourceLoader.load("res://asset/animation/default_projectile.tres")
 
+var current_damage: int
+
 signal projectile_vanished
 signal projectile_hit
 
@@ -32,6 +34,7 @@ signal projectile_hit
 
 
 func _ready():
+
 	# 设置初始朝向
 	if initial_flip:
 		animated_sprite_2d.flip_h = true
@@ -46,6 +49,7 @@ func setup(pos: Vector2, dir: Vector2, team: int, is_flipped: bool, chess_attack
 	initial_flip = is_flipped
 	rotation = dir.angle()  # 根据方向旋转
 	attacker = chess_attack
+	current_damage = chess_attack.ranged_damage
 
 func _physics_process(delta):
 	if is_active:
@@ -57,7 +61,7 @@ func _physics_process(delta):
 		traveled_distance += movement.length()
 		
 		# 超出最大距离或穿透次数耗尽时消失
-		if traveled_distance > max_distance || penetration <= 0:
+		if traveled_distance > max_distance or penetration <= 0 or current_damage < 5:
 			projectile_vanished.emit()
 			queue_free()
 
@@ -67,11 +71,12 @@ func _on_area_entered(area):
 		projectile_hit.emit(obstacle, attacker)
 		# 只伤害敌方队伍
 		if obstacle.team != source_team and attacker != null:
-			obstacle.take_damage(damage, attacker)
+			obstacle.take_damage(current_damage, attacker)
 			penetration -= 1  # 减少穿透计数
-			
+			current_damage /= 3.0
+
 			# 穿透次数耗尽时消失
-			if penetration <= 0:
+			if penetration <= 0 or current_damage < 5:
 				projectile_vanished.emit()
 				queue_free()
 
