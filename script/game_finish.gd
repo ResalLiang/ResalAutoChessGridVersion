@@ -3,6 +3,8 @@ class_name GameFinish
 
 @onready var container: VBoxContainer = $container
 
+const score_label_scene = preload("res://scene/score_label.tscn")
+
 signal to_menu_scene
 signal to_game_scene
 
@@ -13,7 +15,7 @@ func _ready() -> void:
 	calculate_final_score()
 	await get_tree().process_frame
 	staggered_fly_in()
-	DataManagerSingleton.record_score(final_score)
+	DataManagerSingleton.record_game(final_score, DataManagerSingleton.current_chess_array)
 	DataManagerSingleton.save_game_json()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -67,22 +69,26 @@ func calculate_final_score():
 				
 		if item is String and current_player_ingame_data[item] is int and score_bonus != -1:
 			var item_score = score_bonus * current_player_ingame_data[item]
-			score_label = Label.new()
 
-			# Create a new theme
-			var new_theme = Theme.new()
-			
-			# Load font resource
-			var font = load("res://fonts/your_font.ttf") as FontFile
-			
-			# Set font and size in theme using correct methods
-			new_theme.set_font("font", "Label", font)
-			new_theme.set_font_size("font_size", "Label", 8)
-			
-			# Apply theme to label
-			score_label.theme = new_theme
-
+			var score_label = score_label_scene.instantiate()
 			score_label.text = score_reason + " : " + str(score_bonus) + " * " + str(current_player_ingame_data[item]) + " = " + str(item_score)
+
+			# score_label = Label.new()
+
+			# # Create a new theme
+			# var new_theme = Theme.new()
+			
+			# # Load font resource
+			# var font = load("res://fonts/your_font.ttf") as FontFile
+			
+			# # Set font and size in theme using correct methods
+			# new_theme.set_font("font", "Label", font)
+			# new_theme.set_font_size("font_size", "Label", 8)
+			
+			# # Apply theme to label
+			# score_label.theme = new_theme
+
+			# score_label.text = score_reason + " : " + str(score_bonus) + " * " + str(current_player_ingame_data[item]) + " = " + str(item_score)
 			score_label.visible = false
 			container.add_child(score_label)
 			final_score += item_score
