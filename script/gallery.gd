@@ -59,8 +59,8 @@ func _ready() -> void:
 	var chess_hbox_container = null
 	
 	# Create buttons for each chess piece
-	for faction_index in DataManagerSingleton.chess_data.keys():
-		for chess_index in DataManagerSingleton.chess_data[faction_index].keys():
+	for faction_index in DataManagerSingleton.get_chess_data().keys():
+		for chess_index in DataManagerSingleton.get_chess_data()[faction_index].keys():
 			if chess_displayed_x == 0:
 				chess_hbox_container = HBoxContainer.new()
 				chess_hbox_container.mouse_filter = Control.MOUSE_FILTER_PASS
@@ -71,7 +71,6 @@ func _ready() -> void:
 			var chess_button = create_chess_button(faction_index, chess_index, current_player_chess_data)
 			if chess_button:
 				chess_hbox_container.add_child(chess_button)
-				print("Successfully added button: ", faction_index, "/", chess_index)
 			
 			chess_displayed_x += 1
 			if chess_displayed_x >= chess_displayed_xmax:
@@ -92,13 +91,14 @@ func create_chess_button(faction_index: String, chess_index: String, current_pla
 	
 	if not DataManagerSingleton.check_key_valid(DataManagerSingleton.player_datas,[DataManagerSingleton.current_player, "chess_stat", faction_index, chess_index, "buy_count"]):
 		sprite_path = "res://asset/animation/human/humanShieldMan.tres"
-	elif (current_player_chess_data.has(faction_index) and 
-		  current_player_chess_data[faction_index].has(chess_index) and
-		  current_player_chess_data[faction_index][chess_index].has("buy_count") and
-		  current_player_chess_data[faction_index][chess_index]["buy_count"] > 0):
+		chess_button.disabled = true
+	elif DataManagerSingleton.check_key_valid(current_player_chess_data, [faction_index, chess_index, "buy_count"]) and current_player_chess_data[faction_index][chess_index]["buy_count"] > 0):
 		var test_path = "res://asset/animation/%s/%s%s.tres" % [faction_index, faction_index, chess_index]
 		if ResourceLoader.exists(test_path):
 			sprite_path = test_path
+	else:
+		sprite_path = "res://asset/animation/human/humanShieldMan.tres"
+		chess_button.disabled = true
 	
 	# Load texture with error handling
 	if ResourceLoader.exists(sprite_path):
@@ -135,20 +135,6 @@ func create_chess_button(faction_index: String, chess_index: String, current_pla
 		print("Warning: Resource does not exist - ", sprite_path)
 	
 	return null
-
-# func _check_controls_after_ready():
-# 	print("Deferred check - Total HBoxContainers: ", str(chess_vbox_container.get_children().size()))
-# 	if chess_vbox_container.get_children().size() == 0:
-# 		print("ERROR: No HBoxContainers found!")
-	
-# 	print("=== Layout Debug Info ===")
-# 	print("VBoxContainer child count: ", chess_vbox_container.get_child_count())
-# 	print("ScrollContainer size: ", chess_container.size)
-# 	print("VBoxContainer size: ", chess_vbox_container.size)
-	
-# 	for i in range(chess_vbox_container.get_child_count()):
-# 		var hbox = chess_vbox_container.get_child(i)
-# 		print("HBox ", i, " - children: ", hbox.get_child_count(), " size: ", hbox.size)
 
 func _on_back_button_pressed() -> void:
 	to_menu_scene.emit()
