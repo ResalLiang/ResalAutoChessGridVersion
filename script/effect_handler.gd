@@ -27,7 +27,7 @@ var evasion_rate_modifier := 0.0
 signal effect_list_updated
 
 func _ready() -> void:
-	effect_list_updated.connect(effect_number_refresh)
+	effect_list_updated.connect(refresh_effects)
 
 func add_to_effect_array(chess_effect: ChessEffect):
 	if not chess_effect.check_effect_timeout():
@@ -54,9 +54,9 @@ func turn_start_timeout_check():
 			else:
 				add_to_effect_array(effect_index)
 
-	effect_number_refresh()
+	refresh_effects()
 
-func effect_number_refresh():
+func refresh_effects():
 
 	is_immunity = false
 	is_spell_immunity = false
@@ -123,4 +123,4 @@ func effect_clean():
 
 	effect_list = []
 
-	effect_number_refresh()
+	refresh_effects()
