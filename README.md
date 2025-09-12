@@ -1,102 +1,104 @@
-# 游戏开发记录
+# Game Development Log
 
-## 概述
-这是一个用来记录游戏开发过程中完成和未完成功能的记事本。  
-完成的项目以 **"✔️"** 开头，未完成的项目以 **"🕗"** 开头。
+## Overview
+This is a notepad for recording completed and incomplete features during game development.
+Completed items start with **"✔️"** and incomplete items start with **"🕗"** .
 
----
+## Feature List
+### ⭐Start Scene
+- ✔️ Title -Done, @2025/09/02
+- ✔️ Start Game Button -Done, @2025/09/02
+- ✔️ Options Button -Done, @2025/09/02
+- ✔️ Game Codex Button -Done, @2025/09/02
+- ✔️ Game Statistics Button -Done, @2025/09/02
+- ✔️ Use virtual mouse to implement scene image transitions -Done, @2025/09/02
+- 🕗 Game music & sound effects
+- ✔️ Fixed game resolution
+- ✔️ Save/Load functionality (username, achievement stats, dead piece statistics...) -Done, wait debug @2025/09/02
+- 🕗 Meta progression effects, meta coins, upgrade starting coins, etc., unlock races
+- ✔️ Current player name display
+- ✔️ Current game version display
 
-## 功能清单
-
-### ⭐开始场景
-- ✔️ 标题 -Done, @2025/09/02
-- ✔️ 游戏开始按钮 -Done, @2025/09/02
-- ✔️ 选项按钮 -Done, @2025/09/02
-- ✔️ 游戏图鉴按钮 -Done, @2025/09/02
-- ✔️ 游戏统计按钮 -Done, @2025/09/02
-- 🕗 使用虚拟鼠标实现不同场景图片切换 -Done, @2025/09/02
-- 🕗 游戏音乐 & 音效
-- 🕗 固定游戏尺寸
-- ✔️ 存档, 载入功能(用户名, 成就统计, 死亡棋子统计...) -Done, wait debug @2025/09/02
-- 🕗 局外成长效果, 局外金币, 升级初始金币等等, 解锁种族
-- 🕗 当前玩家名显示
-- 🕗 当前游戏版本显示
-
-### ⭐战斗系统
-#### 基础战斗按钮
-- ✔️ 战斗开始按钮
-- ✔️ 游戏重开按钮
-- ✔️ 优先高HP行动按钮
-- ✔️ 优先低HP行动按钮
-- ✔️ 优先靠近中心行动按钮
-- ✔️ 优先远离中心行动按钮
-- 🕗 暂停按钮（用于检视电脑棋子属性）-Pending, 2025/08/28
-- ✔️ 游戏进行中某些按钮应该是禁用状态  -Done @2025/08/28
-
-#### 棋子移动与战斗逻辑
-- ✔️ 棋子若目标在攻击范围内，按距离判断选择远程或近战攻击
-- 🕗 暴击动画
-- ✔️ 未闪避时对目标造成伤害，并将伤害累积至棋子MP
-- ✔️ 攻击后可能触发特效接口（debuff等） -Done @2025/08/28
-- 🕗 若MP满且有法术能力，释放法术并清空MP(英雄法术没做完)
-- ✔️ Buff/Debuff会根据效果影响棋子的行动
-- ✔️ 局内召唤技能逻辑 -Done @2025/08/28
-- ✔️ 战斗日志记录功能
-- 🕗 Buff/Debuff状态图标显示
-- 🕗 暴击/闪避/法术等粒子效果
-- ✔️ 长按棋子显示数据 - Done @2025/08/28
-- 🕗 战斗音乐与音效
-- ✔️ 人口上限系统 -Done @2025/08/29
-- 🕗 新建物品逻辑(炸弹,障碍物, 棋子...)以及可使用物品(药水...)
-- 🕗 UI里面具体数值的显示(包含加成), 术语介绍(spd)
-- 🕗 棋子选中放置修改为点击不用拖动, 对于鼠标当前位置通过箭头显示移动方向
-
-#### 胜负机制
-- ✔️ 玩家达成指定胜利或失败条件后游戏结束
-
-#### 羁绊机制
-- 🕗 同阵营的棋子达到特定数量后触发羁绊效果（增益或特殊属性） -Done, wait debug @2025/08/29
+### ⭐Battle System
+#### Basic Battle Buttons
+- ✔️ Battle start button
+- ✔️ Game restart button
+- ✔️ Prioritize high HP action button
+- ✔️ Prioritize low HP action button
+- ✔️ Prioritize close to center action button
+- ✔️ Prioritize away from center action button
+- ✔️ Pause button (for inspecting AI piece properties)
+- ✔️ Certain buttons should be disabled during gameplay
 
 ---
 
-### ⭐等待区域
-- ✔️ 等待区域的棋子不会移动或行动
-- ✔️ 等待区域的棋子不计入羁绊能力
+#### Piece Movement & Combat Logic
+- ✔️ If target is within attack range, choose ranged or melee attack based on distance
+- ✔️ Critical hit animation
+- ✔️ When not dodged, deal damage to target and accumulate damage to piece MP
+- ✔️ After attack, may trigger special effect interface (debuff, etc.) -Done @2025/08/28
+- ✔️ If MP is full and has spell ability, cast spell and clear MP (hero spells not complete)
+- ✔️ Buff/Debuff affects piece actions based on effects
+- ✔️ In-battle summoning skill logic -Done @2025/08/28
+- ✔️ Battle log recording functionality
+- ✔️ Buff/Debuff status icon display
+- 🕗 Critical/dodge/spell particle effects
+- ✔️ Long press piece to show stats - Done @2025/08/28
+- 🕗 Battle music and sound effects
+- ✔️ Population limit system -Done @2025/08/29
+- 🕗 New item logic (bombs, obstacles, pieces...) and usable items (potions...)
+- ✔️ Display specific values in UI (including bonuses), terminology explanations (spd)
+- ✔️ Change piece selection placement to click instead of drag, show movement direction with arrow at current mouse position
 
 ---
 
-### ⭐商店系统
-- ✔️ 商店刷新的棋子数量与稀有度受商店等级影响
-- ✔️ 商店升级需要花费金币
-- ✔️ 每局结束时若未锁住商店则自动刷新 -Done, @2025/08/28
-- 🕗 购买棋子时显示羁绊提示
-- ✔️ 棋子的购买和出售效果接口
+#### Win/Loss Conditions
+- ✔️ Game ends when player achieves specified victory or defeat conditions
 
 ---
 
-### ⭐游戏结束场景
-- 🕗 游戏失败或胜利时显示动画
-- 🕗 游戏重开按钮
-- 🕗 数据统计记分界面
+#### Synergy System
+- ✔️ When pieces of the same faction reach specific numbers, trigger synergy effects (buffs or special attributes) -Done, wait debug @2025/08/29
 
 ---
 
-### ⭐选项场景
-- 🕗 种族解锁与选择
-- 🕗 难度调整
-- 🕗 音量设置
-- 🕗 游戏速度调整 -Done, wait debug @2025/09/02
+### ⭐Waiting Area
+- ✔️ Pieces in waiting area do not move or act
+- ✔️ Pieces in waiting area do not count towards synergy abilities
 
 ---
 
-### ⭐图鉴场景
-- 🕗 已获得的棋子在图鉴中解锁显示，其余棋子呈灰色
+### ⭐Shop System
+- ✔️ Number and rarity of shop refresh pieces affected by shop level
+- ✔️ Shop upgrade requires spending coins
+- ✔️ Auto-refresh at end of each round if shop not locked -Done, @2025/08/28
+- 🕗 Show synergy hints when buying pieces
+- ✔️ Piece buy and sell effect interface
 
 ---
 
-### ⭐统计场景
-- 🕗 统计游戏时间、胜利场数、购买棋子数量 -Done, wait debug @2025/09/02
-- 🕗 统计每个棋子购买, 卖出, 死亡, 刷新掉次数
-- 🕗 数据重置按钮 -Done, wait debug @2025/09/02
-- 🕗 小游戏(用杀掉的地方棋子玩俄罗斯方块, 打牌, 扫雷, 用己方死掉的搞个纪念馆)
+### ⭐Game End Scene
+- ✔️ Show animation when game fails or succeeds
+- ✔️ Game restart button
+- ✔️ Data statistics scoring interface
 
+---
+
+### ⭐Options Scene
+- 🕗 Faction unlock and selection
+- ✔️ Difficulty adjustment
+- 🕗 Volume settings
+- ✔️ Game speed adjustment -Done, wait debug @2025/09/02
+
+---
+
+### ⭐Codex Scene
+- ✔️ Obtained pieces are unlocked in codex, other pieces appear grayed out
+
+---
+
+### ⭐Statistics Scene
+- ✔️ Track game time, victory count, purchased piece count -Done, wait debug @2025/09/02
+- ✔️ Track each piece's purchase, sell, death, refresh count
+- ✔️ Data reset button -Done, wait debug @2025/09/02
+- 🕗 Mini-games (use killed enemy pieces for Tetris, card games, Minesweeper, create memorial for dead allied pieces)
