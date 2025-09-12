@@ -291,3 +291,5 @@ func clean_chess_faction_bonus(chess: Chess) -> void:
 	for effect_index in chess_effect_list:
 		if not effect_index.effect_applier == "Faction Bonus":
 			chess.effect_handler.add_to_effect_array(effect_index)
+
+	chess.effect_handler.refresh_effects()
