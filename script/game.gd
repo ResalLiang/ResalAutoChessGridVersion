@@ -318,11 +318,13 @@ func new_round_prepare_end():
 	save_arena_team()
 
 	if DataManagerSingleton.difficulty == 1:
-		generate_enemy(min(player_max_hp_sum, current_round * 200, shop_handler.get_current_difficulty()))
+		generate_enemy(min(player_max_hp_sum, current_round * 200, shop_handler.shop_level * 200))
+
 	elif DataManagerSingleton.difficulty == 2:
-		generate_enemy(max(player_max_hp_sum, current_round * 200, shop_handler.get_current_difficulty()))
+		generate_enemy(max(player_max_hp_sum * 1.2, current_round * 200, shop_handler.shop_level * 200))
+
 	elif DataManagerSingleton.difficulty == 3:
-		generate_enemy(max(player_max_hp_sum, current_round * 200, shop_handler.get_current_difficulty()))
+		generate_enemy(max(player_max_hp_sum * 1.5, current_round * 300, shop_handler, shop_handler.shop_level * 300))
 
 	faction_bonus_manager.bonus_refresh()
 
@@ -460,7 +462,11 @@ func handle_round_finished(msg):
 
 func handle_game_end():
 	DataManagerSingleton.merge_game_data()
-	DataManagerSingleton.record_team(team_dict[Team.TEAM1_FULL])
+	DataManagerSingleton.current_chess_array = []
+	for chess_index in saved_arena_team.values(): #[faction, chess_name]
+		DataManagerSingleton.current_chess_array.append([chess_index[0], chess_index[1]])
+
+	# DataManagerSingleton.current_chess_array = team_dict[Team.TEAM1_FULL] # TODO, this moment team_dict maybe empty
 	#Show report
 	to_game_finish_scene.emit()
 
