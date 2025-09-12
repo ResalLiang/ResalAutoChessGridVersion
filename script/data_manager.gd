@@ -36,6 +36,8 @@ var last_player : String
 var current_player : String
 var chess_data : Dictionary
 
+var current_chess_array = []
+
 var difficulty := 1
 
 var won_rounds := 0
@@ -60,13 +62,13 @@ func _ready() -> void:
 		
 	load_chess_stats()
 
-func load_game_binary():
-	if FileAccess.file_exists("user://gamedata.dat"):
-		var file = FileAccess.open("user://savegame.dat", FileAccess.READ)
-		var player_datas = file.get_var(true)
-		file.close()
-		if player_datas.keys().has(current_player):
-			player_data = player_datas[current_player]
+# func load_game_binary():
+# 	if FileAccess.file_exists("user://gamedata.dat"):
+# 		var file = FileAccess.open("user://savegame.dat", FileAccess.READ)
+# 		var player_datas = file.get_var(true)
+# 		file.close()
+# 		if player_datas.keys().has(current_player):
+# 			player_data = player_datas[current_player]
 
 
 func merge_game_data():
@@ -75,13 +77,13 @@ func merge_game_data():
 
 	player_datas[current_player] = merge_dictionaries(player_data, in_game_data) 	
 
-func save_game_binary():
-	if current_player == "":
-		return
+# func save_game_binary():
+# 	if current_player == "":
+# 		return
 
-	var file = FileAccess.open("user://savegame.dat", FileAccess.WRITE)
-	file.store_var(player_datas, true)  # true enables full length encoding
-	file.close()
+# 	var file = FileAccess.open("user://savegame.dat", FileAccess.WRITE)
+# 	file.store_var(player_datas, true)  # true enables full length encoding
+# 	file.close()
 
 func save_game_json():
 	if current_player == "":
@@ -111,7 +113,7 @@ func load_game_json():
 	
 	if player_datas == null:
 		push_error("JSON parsing failed for savegame.json")
-		player_datas = {}  # 如果解析失败，初始化为空字典
+		player_datas = {}
 		return
 
 func load_chess_stats():
@@ -148,23 +150,18 @@ func record_death_chess(chess: Obstacle) -> void:
 
 func handle_player_won_round():
 	add_data_to_dict(in_game_data, ["total_won_round"], 1)
-	# in_game_data["total_won_round"] += 1
 
 func handle_player_won_game():
 	add_data_to_dict(in_game_data, ["total_won_game"], 1)
-	# in_game_data["total_won_game"] += 1
 
 func handle_player_lose_round():
 	add_data_to_dict(in_game_data, ["total_lose_round"], 1)
-	# in_game_data["total_lose_round"] += 1
 
 func handle_player_lose_game():
 	add_data_to_dict(in_game_data, ["total_lose_game"], 1)
-	# in_game_data["total_lose_game"] += 1
 
 func handle_coin_spend(value: int, reason: String):
 	add_data_to_dict(in_game_data, ["total_coin_spend"], max(0, value))
-	# in_game_data["total_coin_spend"] += max(0, value)
 
 func get_chess_data():
 	return chess_data
@@ -291,20 +288,27 @@ func merge_dictionaries(dict1: Dictionary, dict2: Dictionary) -> Dictionary:
 	
 	return result
 
-func record_score(score: int):
+func record_game(score: int, chess_array: Array):
+	var current_game_record = []
 	var datetime = Time.get_datetime_dict_from_system()
 	var today_date = "log_%04d%02d%02d_%02d%02d%02d.txt" % [
 		datetime.year, datetime.month, datetime.day,
 		datetime.hour, datetime.minute, datetime.second
 	]
-	if player_data["total_won_game"] > 0:
-		player_data["game_record"] = ["WON", today_date]
-	else:
-		player_data["game_record"] = ["LOSE", today_date]
-	player_data["total_experience"] += score
 
-func record_team(chess_array: Array):
-	player_data["final_team"] = []
+	if in_game_data["total_won_game"] > 0:
+		current_game_record += ["WON", today_date]
+	else:
+		current_game_record += ["LOSE", today_date]
+
+
+	# player_data["final_team"] = []
 	for chess_index in chess_array:
 		if chess_index is Chess:
-			player_data["final_team"].append([chess_index.faction, chess_index.chess_name])
+			current_chess_array.append([chess_index.faction, chess_index.chess_name])
+
+	current_game_record.append(current_chess_array)
+
+	add_data_to_dict(player_data, ["game_record"], current_game_record)
+
+	add_data_to_dict(player_data, ["total_experience"], score)
