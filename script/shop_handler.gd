@@ -128,6 +128,10 @@ func shop_upgrade() -> void:
 		coins_decreased.emit(current_upgrade_price, "upgrading shop")
 		shop_level += 1
 		shop_upgraded.emit(shop_level)
+	elif remain_coins < current_upgrade_price:
+		get_parent().control_shaker(get_parent().remain_coins_label)
+	elif shop_level >= max_shop_level:
+		get_parent().control_shaker(get_parent().current_shop_level)
 
 func get_shop_upgrade_price():
 	return shop_level + 2 
