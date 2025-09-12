@@ -864,7 +864,7 @@ func _launch_projectile(target: Obstacle):
 	projectile.initial_flip = is_flipped
 	projectile.attacker = self
 	
-	projectile_damage = damage
+	projectile_damage = ranged_damage
 
 	# Configure projectile properties
 	projectile.speed = projectile_speed
@@ -998,6 +998,10 @@ func _on_died():
 func update_solid_map():
 		
 	astar_grid.fill_solid_region(astar_grid_region, false)
+	var block_array = [Rect2i(-1, -1, 1, 16), Rect2i(16, -1, 1, 16), Rect2i(-1, -1, 16, 1), Rect2i(-1, 16, 16, 1)]
+	for rect_index in block_array:
+		astar_grid.fill_solid_region(rect_index, true)
+		
 	astar_grid.update()
 
 	# for node in get_tree().get_nodes_in_group("obstacle_group"):

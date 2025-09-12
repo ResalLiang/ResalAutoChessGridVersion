@@ -167,10 +167,18 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 			shop_handler.buy_chess(obstacle)
 			_move_chess(obstacle, new_area, new_tile)
 			return
-		else:
+		elif not shop_handler.can_pay_chess(obstacle):
 			_reset_chess_to_starting_position(starting_position, obstacle)
 			get_parent().control_shaker(get_parent().remain_coins_label)
 			return
+		elif get_parent().current_population >= get_parent().max_population:
+			_reset_chess_to_starting_position(starting_position, obstacle)
+			get_parent().control_shaker(get_parent().population_label)
+			return
+		else:
+			_reset_chess_to_starting_position(starting_position, obstacle)
+			return
+			
 
 	if new_area.unit_grid.is_tile_occupied(new_tile):
 		var old_obstacle: Obstacle = new_area.unit_grid.units[new_tile]

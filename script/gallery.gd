@@ -92,7 +92,7 @@ func create_chess_button(faction_index: String, chess_index: String, current_pla
 	if not DataManagerSingleton.check_key_valid(DataManagerSingleton.player_datas,[DataManagerSingleton.current_player, "chess_stat", faction_index, chess_index, "buy_count"]):
 		sprite_path = "res://asset/animation/human/humanShieldMan.tres"
 		chess_button.disabled = true
-	elif DataManagerSingleton.check_key_valid(current_player_chess_data, [faction_index, chess_index, "buy_count"]) and current_player_chess_data[faction_index][chess_index]["buy_count"] > 0):
+	elif DataManagerSingleton.check_key_valid(current_player_chess_data, [faction_index, chess_index, "buy_count"]) and current_player_chess_data[faction_index][chess_index]["buy_count"] > 0:
 		var test_path = "res://asset/animation/%s/%s%s.tres" % [faction_index, faction_index, chess_index]
 		if ResourceLoader.exists(test_path):
 			sprite_path = test_path

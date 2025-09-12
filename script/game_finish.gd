@@ -67,10 +67,10 @@ func calculate_final_score():
 				score_bonus = -1
 				score_reason = "Default"
 				
-		if item is String and current_player_ingame_data[item] is int and score_bonus != -1:
+		if item is String and (current_player_ingame_data[item] is int or current_player_ingame_data[item] is float) and score_bonus != -1:
 			var item_score = score_bonus * current_player_ingame_data[item]
 
-			var score_label = score_label_scene.instantiate()
+			score_label = score_label_scene.instantiate()
 			score_label.text = score_reason + " : " + str(score_bonus) + " * " + str(current_player_ingame_data[item]) + " = " + str(item_score)
 
 			# score_label = Label.new()

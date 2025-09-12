@@ -74,6 +74,10 @@ visible = false
 [node name="drag_handler" type="Node2D" parent="."]
 script = ExtResource("4_xtxa8")
 
+[node name="drag_timer" type="Timer" parent="drag_handler"]
+
+[node name="drop_timer" type="Timer" parent="drag_handler"]
+
 [node name="hp_bar" type="ProgressBar" parent="."]
 offset_left = -8.0
 offset_top = -20.0

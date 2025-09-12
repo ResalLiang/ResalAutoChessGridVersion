@@ -1,13 +1,23 @@
 extends Control
 class_name GameSpeedController
+#
+#@onready var speed_slider: HSlider = $VBox/SpeedSlider
+#@onready var speed_label: Label = $VBox/SpeedLabel
+#@onready var preset_buttons: HBoxContainer = $VBox/PresetButtons
+#
+#@onready var slow_button: Button = $VBox/PresetButtons/SlowButton
+#@onready var normal_button: Button = $VBox/PresetButtons/NormalButton
+#@onready var fast_button: Button = $VBox/PresetButtons/FastButton
 
-@onready var speed_slider: HSlider = $VBox/SpeedSlider
-@onready var speed_label: Label = $VBox/SpeedLabel
-@onready var preset_buttons: HBoxContainer = $VBox/PresetButtons
 
-@onready var slow_button: Button = $VBox/PresetButtons/SlowButton
-@onready var normal_button: Button = $VBox/PresetButtons/NormalButton
-@onready var fast_button: Button = $VBox/PresetButtons/FastButton
+@onready var preset_buttons: HBoxContainer = $VBox/preset_buttons
+@onready var slow_button: Button = $VBox/preset_buttons/slow_button
+@onready var normal_button: Button = $VBox/preset_buttons/normal_button
+@onready var fast_button: Button = $VBox/preset_buttons/fast_button
+@onready var speed_slider: HSlider = $VBox/speed_slider
+@onready var speed_label: Label = $VBox/speed_label
+
+
 
 func _ready():
 	# 设置滑条范围

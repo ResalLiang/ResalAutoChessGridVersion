@@ -508,13 +508,13 @@ y_sort_enabled = true
 material = SubResource("ShaderMaterial_dbi3s")
 position = Vector2(0, -11)
 sprite_frames = ExtResource("3_n4hse")
-animation = &"crit_melee_attack"
+animation = &"block"
 
 [node name="Area2D" type="Area2D" parent="."]
 position = Vector2(0, -13)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-z_index = 2
+z_index = 5
 position = Vector2(-0.5, 5.5)
 shape = SubResource("RectangleShape2D_10qbj")
 

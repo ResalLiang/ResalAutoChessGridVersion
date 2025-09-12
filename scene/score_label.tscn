@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://sbx43f8hrgwb"]
+
+[ext_resource type="FontFile" uid="uid://d3b2vvdpmh8cc" path="res://asset/font/Everyday_Tiny_Original.ttf" id="1_r26d0"]
+
+[node name="score_label" type="Label"]
+z_index = 5
+custom_minimum_size = Vector2(64, 8)
+theme_override_fonts/font = ExtResource("1_r26d0")
+theme_override_font_sizes/font_size = 4
+text = "bonus = "
+vertical_alignment = 1

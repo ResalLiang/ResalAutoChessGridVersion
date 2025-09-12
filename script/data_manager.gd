@@ -115,6 +115,9 @@ func load_game_json():
 		push_error("JSON parsing failed for savegame.json")
 		player_datas = {}
 		return
+		
+	if player_datas.keys().has(current_player):
+		player_data = player_datas[current_player]
 
 func load_chess_stats():
 	var file = FileAccess.open("res://script/chess_stats.json", FileAccess.READ)

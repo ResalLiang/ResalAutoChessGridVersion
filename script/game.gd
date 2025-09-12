@@ -38,7 +38,6 @@ const chess_class = preload("res://script/chess.gd")
 @onready var battle_meter: BattleMeter = $battle_meter
 @onready var chess_information: ChessInformation = $chess_information
 @onready var arrow: CustomArrowRenderer = $arrow
-@onready var debug: Label = $debug
 
 
 enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
@@ -249,8 +248,7 @@ func _ready():
 	start_new_game()
 
 func _process(delta: float) -> void:
-	var chess_count = arena.unit_grid.get_all_units().size()
-	debug.text = str(chess_count)
+	pass
 
 func start_new_game() -> void:
 
@@ -679,7 +677,7 @@ func get_next_serial() -> int:
 	return chess_serial
 
 
-func summon_chess(summon_chess_faction: String, summon_chess_name: String, team: int, summon_arena: PlayArea, summon_position: Vector2i) -> Chess:
+func summon_chess(summon_chess_faction: String, summon_chess_name: String, team: int, summon_arena: PlayArea, summon_position: Vector2i):
 
 	if not summon_chess_faction in DataManagerSingleton.get_chess_data().keys():
 		return null

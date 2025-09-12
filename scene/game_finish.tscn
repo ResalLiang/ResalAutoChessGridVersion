@@ -44,21 +44,5 @@ offset_top = 127.0
 offset_right = 112.0
 offset_bottom = 167.0
 
-[node name="Label" type="Label" parent="container"]
-layout_mode = 2
-text = "1"
-
-[node name="Label2" type="Label" parent="container"]
-layout_mode = 2
-text = "1"
-
-[node name="Label3" type="Label" parent="container"]
-layout_mode = 2
-text = "1"
-
-[node name="Label4" type="Label" parent="container"]
-layout_mode = 2
-text = "1"
-
 [connection signal="pressed" from="restart_button" to="." method="_on_restart_button_pressed"]
 [connection signal="pressed" from="back_button" to="." method="_on_back_button_pressed"]
