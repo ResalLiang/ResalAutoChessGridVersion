@@ -197,7 +197,7 @@ func _ready():
 
 	shop_handler.coins_increased.connect(
 		func(value, reason):
-			remain_coins_label.text = "Remaining Coins    = " + str(shop_handler.remain_coins)
+			remain_coins_label.text = "Remaining Coins = " + str(shop_handler.remain_coins)
 			if shop_handler.remain_coins >= shop_handler.shop_upgrade_price:
 				shop_refresh_button.disabled = false
 	)
@@ -210,7 +210,7 @@ func _ready():
 	)
 	shop_handler.shop_upgraded.connect(
 		func(value):
-			current_shop_level.text = "Current Shop Level is :" + str(shop_handler.shop_level)
+			current_shop_level.text = "Current Shop Level is : " + str(shop_handler.shop_level)
 			update_population()
 	)
 	chess_appearance_finished.connect(
@@ -281,7 +281,7 @@ func start_new_game() -> void:
 
 func new_round_prepare_start():
 	# start shopping
-	current_shop_level.text = "Current Shop Level is :" + str(shop_handler.shop_level)
+	current_shop_level.text = "Current Shop Level is : " + str(shop_handler.shop_level)
 	update_population()
 	
 	current_round += 1
