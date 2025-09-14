@@ -1,4 +1,5 @@
 AudioStreamPlayer
+AudioStreamPlayer2D
 Timer
 VBoxContainer
 Button
@@ -11,4 +12,3 @@ ColorRect
 TextureRect
 TextureProgressBar
 ProgressBar
-AnimatedSprite2D

@@ -19,3 +19,5 @@ res://scene/faction_bonus_bar.tscn
 res://scene/effect_icon.tscn
 res://scene/hero_infomation.tscn
 res://scene/score_label.tscn
+res://script/obstacle.gd
+res://script/projectile.gd
