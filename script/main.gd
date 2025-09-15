@@ -10,16 +10,19 @@ var tween
 
 func _ready():
 	# 初始化显示主菜单
+	AudioManagerSingleton.play_music("menu")
 	show_main_menu()
 
 # 显示主菜单
 func show_main_menu():
+	AudioManagerSingleton.play_music("menu")
 	await _transition_to_scene("res://scene/menu.tscn", main_container, true)
 	current_scene.to_game_scene.connect(show_game)
 	current_scene.to_gallery_scene.connect(show_gallery)
 
 # 显示游戏场景
 func show_game():
+	AudioManagerSingleton.play_music("battle")
 	await _transition_to_scene("res://scene/game.tscn", main_container, true)
 	current_scene.to_menu_scene.connect(show_main_menu)
 	current_scene.add_round_finish_scene.connect(show_round_finish)
@@ -27,6 +30,7 @@ func show_game():
 
 # 显示设置菜单
 func show_settings():
+	AudioManagerSingleton.play_music("menu")
 	await _transition_to_scene("res://scene/setting.tscn", main_container, true)
 	
 # 显示设置菜单
@@ -40,6 +44,7 @@ func show_game_finish():
 	current_scene.to_game_scene.connect(show_game)
 
 func show_gallery():
+	AudioManagerSingleton.play_music("menu")
 	await _transition_to_scene("res://scene/gallery.tscn", main_container, true)
 	current_scene.to_menu_scene.connect(show_main_menu)
 

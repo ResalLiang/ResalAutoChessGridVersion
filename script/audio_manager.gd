@@ -8,25 +8,32 @@ extends Node
 
 # Dictionaries to store the preloaded audio resources.
 @export var bgm_resources: Dictionary = {
-	"main_menu": preload("res://audio/music/main_theme.ogg"),
-	"battle": preload("res://audio/music/battle_theme.ogg")
+	"menu": preload("res://asset/audio/RPG-Music-Pack/02-Home_Town.wav"),
+	"battle": preload("res://asset/audio/RPG-Music-Pack/06-Battle.wav")
 }
 
 @export var sfx_resources: Dictionary = {
-	"alliance": {
-		"knight": {
-			"attack": preload("res://audio/sfx/sword_swing.wav"),
-			"death": preload("res://audio/sfx/human_death.wav")
-		},
+	"human": {
 		"mage": {
-			"attack": preload("res://audio/sfx/fireball.wav")
+			"melee_attack_started": preload("res://asset/audio/90_RPG_Battle_SFX/19_Slash_01.wav"),
+			"ranged_attack_started": preload("res://asset/audio/90_RPG_Battle_SFX/41_bow_draw_01.wav"),
+			"spell_casted": preload("res://asset/audio/50_RPG_Battle_Magic_SFX/04_Fire_explosion_04_medium.wav"),
+			"damage_taken": preload("res://asset/audio/90_RPG_Battle_SFX/09_Impact_01.wav"),
+			"critical_damage_taken": preload("res://asset/audio/90_RPG_Battle_SFX/09_Impact_01.wav"),
+			"attack_evased": preload("res://asset/audio/90_RPG_Battle_SFX/35_Miss_Evade_02.wav"),
+			"projectile_lauched": preload("res://asset/audio/90_RPG_Battle_SFX/47_Bow_hit_01.wav"),
+			"is_died": preload("res://asset/audio/90_RPG_Battle_SFX/69_Enemy_death_01.wav")
 		}
 	},
-	"horde": {
-		"grunt": {
-			"attack": preload("res://audio/sfx/axe_swing.wav"),
-			"death": preload("res://audio/sfx/orc_death.wav")
-		}
+	"default": {
+		"melee_attack_started": preload("res://asset/audio/90_RPG_Battle_SFX/19_Slash_01.wav"),
+		"ranged_attack_started": preload("res://asset/audio/90_RPG_Battle_SFX/41_bow_draw_01.wav"),
+		"spell_casted": preload("res://asset/audio/50_RPG_Battle_Magic_SFX/04_Fire_explosion_04_medium.wav"),
+		"damage_taken": preload("res://asset/audio/90_RPG_Battle_SFX/09_Impact_01.wav"),
+		"critical_damage_taken": preload("res://asset/audio/90_RPG_Battle_SFX/09_Impact_01.wav"),
+		"attack_evased": preload("res://asset/audio/90_RPG_Battle_SFX/35_Miss_Evade_02.wav"),
+		"projectile_lauched": preload("res://asset/audio/90_RPG_Battle_SFX/47_Bow_hit_01.wav"),
+		"is_died": preload("res://asset/audio/90_RPG_Battle_SFX/69_Enemy_death_01.wav")
 	}
 }
 
@@ -37,8 +44,7 @@ extends Node
 @export var sfx_pool_size: int = 10
 
 # Node references.
-@onready var bgm_player: AudioStreamPlayer = $BGMPlayer
-@onready var sfx_player_pool_container: Node = $SFXPlayerPool
+var bgm_player
 
 # This array will be populated in the _ready() function.
 var sfx_player_pool: Array[AudioStreamPlayer] = []
@@ -46,14 +52,20 @@ var sfx_player_pool: Array[AudioStreamPlayer] = []
 # --- Godot Lifecycle Methods ---
 
 func _ready():
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	
 	# Dynamically create and add SFX players to the pool.
+	bgm_player = AudioStreamPlayer.new()
+	bgm_player.set_volume_db(-20)
+	add_child(bgm_player)
 	bgm_player.set_bus("BGM")
 
 	for i in range(sfx_pool_size):
 		var sfx_player = AudioStreamPlayer.new()
+		sfx_player.set_volume_db(0)
 		sfx_player.name = "SFXPlayer_" + str(i + 1)
 		sfx_player.set_bus("SFX")
-		sfx_player_pool_container.add_child(sfx_player)
+		add_child(sfx_player)
 		sfx_player_pool.append(sfx_player)
 	print("AudioManager (Singleton) is ready. Created ", sfx_pool_size, " SFX players.")
 
@@ -79,14 +91,25 @@ func play_music(music_key: String):
 	bgm_player.play()
 	print("Playing BGM with key: ", music_key)
 
-func play_sfx(faction: String, chess_name: String, action: String):
-	var keys = [faction, chess_name, action]
+#summoned_character.spell_casted.connect(AudioManagerSingleton.play_sfx.bind("spell_casted"))
+#summoned_character.ranged_attack_started.connect(AudioManagerSingleton.play_sfx.bind("ranged_attack_started"))
+#summoned_character.melee_attack_started.connect(AudioManagerSingleton.play_sfx.bind("melee_attack_started"))
+#summoned_character.projectile_lauched.connect(AudioManagerSingleton.play_sfx.bind("projectile_lauched"))
+#summoned_character.damage_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("damage_taken"))
+#summoned_character.critical_damage_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("critical_damage_taken"))
+#summoned_character.heal_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("heal_taken"))
+#summoned_character.attack_evased.connect(AudioManagerSingleton.play_sfx.unbind(1).bind("attack_evased"))
+#summoned_character.is_died.connect(AudioManagerSingleton.play_sfx.bind("is_died"))
 	
-	if not check_key_valid(sfx_resources, keys):
-		push_warning("SFX resource not found for: " + str(keys))
-		return
+func play_sfx(obstacle: Obstacle, action: String):
+	var keys = [obstacle.faction, obstacle.chess_name, action]
 	
-	var sfx_stream: AudioStream = sfx_resources[faction][chess_name][action]
+	var sfx_stream: AudioStream
+	
+	if not DataManagerSingleton.check_key_valid(sfx_resources, keys):
+		sfx_stream = sfx_resources["default"][action]
+	else:
+		sfx_stream = sfx_resources[obstacle.faction][obstacle.chess_name][action]
 	
 	for player in sfx_player_pool:
 		if not player.is_playing():
@@ -96,16 +119,3 @@ func play_sfx(faction: String, chess_name: String, action: String):
 			return
 	
 	push_warning("No available SFX players in the pool. Could not play: " + str(keys))
-
-# --- Helper Methods ---
-
-func check_key_valid(dict: Dictionary, keys: Array) -> bool:
-	var current_level = dict
-	for i in range(keys.size()):
-		var key = keys[i]
-		if not current_level.has(key):
-			return false
-		current_level = current_level[key]
-		if i < keys.size() - 1 and not typeof(current_level) == TYPE_DICTIONARY:
-			return false
-	return true

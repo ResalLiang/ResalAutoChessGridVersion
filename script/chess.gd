@@ -915,7 +915,7 @@ func take_heal(heal_value: int, healer: Obstacle):
 
 	hp += max(0, heal_value)
 
-	if herler != self:
+	if healer != self:
 		healer.mp += heal_value
 		heal_taken.emit(self, healer, heal_value)
 
@@ -947,19 +947,19 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 
 
 func _apply_damage(damage_target: Obstacle = chess_target, damage_value: int = damage):
-	if chess_target and damage_value > 0:
+	if damage_target and damage_value > 0:
 		#Placeholder for chess passive ability on apply damage
 		var applied_damage_value
 		var damage_result = false
 
 		if rng.randf() <= critical_rate:
 			applied_damage_value =  damage_value * 2
-			if chess_target.take_damage(applied_damage_value, self) and chess_target != self:
-				damage_applied.emit(self, damage_target, damage_target)	
+			if await damage_target.take_damage(applied_damage_value, self) and damage_target != self:
+				critical_damage_applied.emit(self, damage_target, applied_damage_value)	
 		else:
 			applied_damage_value = damage_value
-			if damage_result = chess_target.take_damage(applied_damage_value, self) and chess_target != self:
-				critical_damage_applied.emit(self, damage_target, damage_target)	
+			if await damage_target.take_damage(applied_damage_value, self) and damage_target != self:
+				damage_applied.emit(self, damage_target, applied_damage_value)	
 			
 
 func _apply_heal(heal_target: Obstacle = chess_spell_target, heal_value: int = damage):
@@ -1098,7 +1098,7 @@ func connect_to_data_manager():
 	)
 
 	critical_damage_applied.connect(
-		func(chess, attacker):
+		func(chess, attacker, damage_value):
 			if chess.team == 1:
 				DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "critical_attack_count"], 1)
 	)

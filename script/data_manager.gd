@@ -212,6 +212,10 @@ func add_data_to_dict(dict: Dictionary, key_array: Array[String], value):
 		# Key doesn't exist, simply set the new value
 		current_dict[final_key] = value
 
+## @Check if keys are valid in dictionary
+## @dict: Dictionary for key checking
+## @keys: Function will trace hicharically from keys array to check if key in dictionary
+## @return: bool
 func check_key_valid(dict: Dictionary, keys: Array) -> bool:
 	# Check if the keys array is empty
 	if keys.is_empty():

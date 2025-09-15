@@ -710,18 +710,18 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, team:
 	summoned_character.damage_applied.connect(battle_value_display.bind("damage_applied"))
 	summoned_character.critical_damage_applied.connect(battle_value_display.bind("critical_damage_applied"))
 	summoned_character.heal_taken.connect(battle_value_display.bind("heal_taken"))
-	summoned_character.attack_evased.connect(battle_value_display.bind("attack_evased"))
+	summoned_character.attack_evased.connect(battle_value_display.bind(0, "attack_evased"))
 	summoned_character.is_died.connect(battle_value_display.bind("is_died"))
 
-	summoned_character.spell_casted.connect(AudioManagerSingleton.play_sound_effect.bind("spell_casted"))
-	summoned_character.ranged_attack_started.connect(AudioManagerSingleton.play_sound_effect.bind("ranged_attack_started"))
-	summoned_character.melee_attack_started.connect(AudioManagerSingleton.play_sound_effect.bind("melee_attack_started"))
-	summoned_character.projectile_lauched.connect(AudioManagerSingleton.play_sound_effect.bind("projectile_lauched"))
-	summoned_character.damage_taken.connect(AudioManagerSingleton.play_sound_effect.unbind(2).bind("damage_taken"))
-	summoned_character.critical_damage_taken.connect(AudioManagerSingleton.play_sound_effect.unbind(2).bind("critical_damage_taken"))
-	summoned_character.heal_taken.connect(AudioManagerSingleton.play_sound_effect.unbind(2).bind("heal_taken"))
-	summoned_character.attack_evased.connect(AudioManagerSingleton.play_sound_effect.unbind(1).bind("attack_evased"))
-	summoned_character.is_died.connect(AudioManagerSingleton.play_sound_effect.bind("is_died"))
+	summoned_character.spell_casted.connect(AudioManagerSingleton.play_sfx.bind("spell_casted"))
+	summoned_character.ranged_attack_started.connect(AudioManagerSingleton.play_sfx.bind("ranged_attack_started"))
+	summoned_character.melee_attack_started.connect(AudioManagerSingleton.play_sfx.bind("melee_attack_started"))
+	summoned_character.projectile_lauched.connect(AudioManagerSingleton.play_sfx.bind("projectile_lauched"))
+	summoned_character.damage_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("damage_taken"))
+	summoned_character.critical_damage_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("critical_damage_taken"))
+	summoned_character.heal_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("heal_taken"))
+	summoned_character.attack_evased.connect(AudioManagerSingleton.play_sfx.unbind(1).bind("attack_evased"))
+	summoned_character.is_died.connect(AudioManagerSingleton.play_sfx.bind("is_died"))
 
 	summoned_character.is_died.connect(DataManagerSingleton.record_death_chess)
 	summoned_character.is_died.connect(chess_death_handle)
@@ -779,54 +779,56 @@ func control_shaker(control: Control):
 func _on_back_button_pressed() -> void:
 	to_menu_scene.emit()
 
+func battle_value_display(chess: Obstacle, chess2: Obstacle, display_value, signal_name: String):
 
-func battle_value_display(chess: Obstacle, chess2: Obstacle, display_value: int, signal_name: String):
+	#summoned_character.damage_applied.connect(battle_value_display.bind("damage_applied"))
+	#summoned_character.critical_damage_applied.connect(battle_value_display.bind("critical_damage_applied"))
+	#summoned_character.heal_taken.connect(battle_value_display.bind("heal_taken"))
+	#summoned_character.attack_evased.connect(battle_value_display.bind("attack_evased"))
+	#summoned_character.is_died.connect(battle_value_display.bind("is_died"))
 
-	summoned_character.damage_applied.connect(battle_value_display.bind("damage_applied"))
-	summoned_character.critical_damage_applied.connect(battle_value_display.bind("critical_damage_applied"))
-	summoned_character.heal_taken.connect(battle_value_display.bind("heal_taken"))
-	summoned_character.attack_evased.connect(battle_value_display.bind("attack_evased"))
-	summoned_character.is_died.connect(battle_value_display.bind("is_died"))
-
-	if damage_value <= 0 and (signal_name == "damage_applied" or signal_name == "critical_damage_applied" or signal_name == "heal_taken"):
+	if display_value <= 0 and (signal_name == "damage_applied" or signal_name == "critical_damage_applied" or signal_name == "heal_taken"):
 		return
 
 	var battle_label = Label.new()
+	battle_label.z_index = 6
 	arena.add_child(battle_label)
 
 	# Create a new theme
 	var new_theme = Theme.new()
 	
 	# Load font resource
-	var font = load("res://asset/font/Everyday_Tiny") as FontFile
+	var font = load("res://asset/font/Everyday_Tiny.ttf") as FontFile
 	
 	# Set font and size in theme using correct methods
 	new_theme.set_font("font", "Label", font)
-	new_theme.set_font_size("font_size", "Label", 8)
 	
 	# Apply theme to label
 	battle_label.theme = new_theme
-
+	
+	var label_settings = LabelSettings.new()
+	label_settings.font_size = 4
 	match signal_name:
 		"damage_applied":
-			add_theme_color_override("font_color", Color.YELLOW)
+			label_settings.font_color = Color.YELLOW
 			battle_label.text = str(display_value)
 		"critical_damage_applied":
-			add_theme_color_override("font_color", Color.RED)
+			label_settings.font_color = Color.RED
 			battle_label.text = "!" + str(display_value)
 		"heal_taken":
-			add_theme_color_override("font_color", Color.GREEN)
+			label_settings.font_color = Color.GREEN
 			battle_label.text = str(display_value)
 		"attack_evased":
-			add_theme_color_override("font_color", Color.CYAN)
+			label_settings.font_color = Color.CYAN
 			battle_label.text = "MISS"
 		"is_died":
-			add_theme_color_override("font_color", Color.GRAY)
+			label_settings.font_color = Color.GRAY
 			battle_label.text = "RIP..."
 		_:
-			add_theme_color_override("font_color", Color.WHITE)
+			label_settings.font_color = Color.WHITE
 			battle_label.text = ""
-
+	battle_label.label_settings = label_settings
+	
 	var old_position = chess.global_position + Vector2(16, -8)
 	battle_label.global_position = old_position
 
