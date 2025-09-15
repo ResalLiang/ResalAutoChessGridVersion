@@ -47,9 +47,12 @@ var sfx_player_pool: Array[AudioStreamPlayer] = []
 
 func _ready():
 	# Dynamically create and add SFX players to the pool.
+	bgm_player.set_bus("BGM")
+
 	for i in range(sfx_pool_size):
 		var sfx_player = AudioStreamPlayer.new()
 		sfx_player.name = "SFXPlayer_" + str(i + 1)
+		sfx_player.set_bus("SFX")
 		sfx_player_pool_container.add_child(sfx_player)
 		sfx_player_pool.append(sfx_player)
 	print("AudioManager (Singleton) is ready. Created ", sfx_pool_size, " SFX players.")
