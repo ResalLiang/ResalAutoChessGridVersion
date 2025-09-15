@@ -173,36 +173,36 @@ var astar_grid_region = Rect2i(0, 0, 16, 16)
 #============================================
 # Signals
 #============================================
-signal attack_landed(target: Obstacle, damage: int)  # Emitted when attack hits target
-#signal is_died                                      # Emitted when die
-#signal turn_finished
 
-signal move_started
-signal move_finished
-#signal action_started
-#signal action_finished
+# signal stats_loaded(obstacle: Obstacle)
+# signal animated_sprite_loaded(obstacle: Obstacle)
 
-#signal damage_taken
-#signal heal_taken
-#
-#signal is_hit
-#signal spell_casted
-signal ranged_attack_started
-signal melee_attack_started
-signal ranged_attack_finished
-signal melee_attack_finished
+# signal target_found(obstacle: Obstacle, target: Obstacle)
+# signal target_lost(obstacle: Obstacle)
 
-#signal critical_damage_applied
-#signal damage_applied
-#signal heal_applied
-signal attack_evased #attack_evased.emit(self, attacker.chess_name)
-#signal projectile_lauched
+# signal move_started(obstacle: Obstacle, current_position: Vector2i) # for audio player
+# signal move_finished(obstacle: Obstacle, current_position: Vector2i) # for audio player
+# signal action_started(obstacle: Obstacle)
+# signal action_finished(obstacle: Obstacle)
 
-#signal animated_sprite_loaded
-#signal stats_loaded
-signal target_lost	#target_lost.emit(self)
-signal target_found	#target_found.emit(self, chess_target.chess_name)
-signal tween_moving	#tween_moving.emit(self, _position, target_pos)
+# signal spell_casted(obstacle: Obstacle, spell_name: String) # for audio player
+# signal ranged_attack_started(obstacle: Obstacle) # for audio player
+# signal ranged_attack_finished(obstacle: Obstacle)
+# signal melee_attack_started(obstacle: Obstacle) # for audio player
+# signal melee_attack_finished(obstacle: Obstacle)
+# signal projectile_lauched(obstacle: Obstacle) # for audio player
+
+# signal damage_applied(obstacle: Obstacle, attack_target: Obstacle, damage_value: float)
+# signal critical_damage_applied(obstacle: Obstacle, attack_target: Obstacle, damage_value: float)
+# signal heal_applied(obstacle: Obstacle, heal_target: Obstacle, heal_value: float)
+
+# signal damage_taken(obstacle: Obstacle, attacker: Obstacle, damage_value: float) # for audio player and display
+# signal critical_damage_taken(obstacle: Obstacle, attacker: Obstacle, damage_value: float) # for audio player and display
+# signal heal_taken(obstacle: Obstaclet, healer: Obstacle, heal_value: floa) # for audio player and display
+# signal attack_evased(obstacle: Obstacle, attacker: Obstacle) # for audio player and display
+
+# signal is_died(obstacle: Obstacle) # for audio player and display
+
 
 # ========================
 # Initialization
@@ -233,7 +233,6 @@ func _ready():
 	drag_handler.drag_canceled.connect(_handle_dragging_state)
 	drag_handler.drag_dropped.connect(_handle_dragging_state)
 	
-	# damage_taken.connect(_on_damage_taken)
 
 	is_died.connect(_on_died)
 	
@@ -875,17 +874,18 @@ func _launch_projectile(target: Obstacle):
 	return projectile
 
 # Add damage handling method
-func take_damage(damage_value: int, attacker: Obstacle):
+func take_damage(damage_value: int, attacker: Obstacle) -> bool:
 	#Placeholder for chess passive ability on take damage
 	if damage_value <= 0:
-		return
+		return false
 
 	if rng.randf() > evasion_rate and not effect_handler.is_immunity:
 		var real_damage_value = damage_value - armor
 		hp -= max(0, real_damage_value)
 		hp_bar.value = hp
-		attacker.mp += real_damage_value
-		damage_taken.emit(self, real_damage_value, attacker)
+		if attacker != self:
+			attacker.mp += real_damage_value
+			damage_taken.emit(self, attacker, real_damage_value)
 
 		if hp <= 0:
 			status = STATUS.DIE
@@ -902,8 +902,11 @@ func take_damage(damage_value: int, attacker: Obstacle):
 			await animated_sprite_2d.animation_finished
 			status = STATUS.IDLE
 
+		return true
+
 	else:
 		attack_evased.emit(self, attacker)
+		return false
 
 func take_heal(heal_value: int, healer: Obstacle):
 	#Placeholder for chess passive ability on take heal
@@ -911,8 +914,10 @@ func take_heal(heal_value: int, healer: Obstacle):
 		return
 
 	hp += max(0, heal_value)
-	healer.mp += heal_value
-	heal_taken.emit(self, heal_value, healer)
+
+	if herler != self:
+		healer.mp += heal_value
+		heal_taken.emit(self, healer, heal_value)
 
 
 func _cast_spell(spell_tgt: Obstacle) -> bool:
@@ -945,20 +950,24 @@ func _apply_damage(damage_target: Obstacle = chess_target, damage_value: int = d
 	if chess_target and damage_value > 0:
 		#Placeholder for chess passive ability on apply damage
 		var applied_damage_value
+		var damage_result = false
+
 		if rng.randf() <= critical_rate:
 			applied_damage_value =  damage_value * 2
-			chess_target.take_damage(applied_damage_value, self)
-			critical_damage_applied.emit(self, damage_target)
+			if chess_target.take_damage(applied_damage_value, self) and chess_target != self:
+				damage_applied.emit(self, damage_target, damage_target)	
 		else:
 			applied_damage_value = damage_value
-			chess_target.take_damage(applied_damage_value, self)
-			damage_applied.emit(self, damage_target)		
+			if damage_result = chess_target.take_damage(applied_damage_value, self) and chess_target != self:
+				critical_damage_applied.emit(self, damage_target, damage_target)	
+			
 
 func _apply_heal(heal_target: Obstacle = chess_spell_target, heal_value: int = damage):
 	if heal_target and heal_value > 0:
 		#Placeholder for chess passive ability on apply heal
 		heal_target.take_heal(heal_value, self)
-		heal_applied.emit(self, heal_value, heal_target)
+		if heal_target != self:
+			heal_applied.emit(self, heal_target, heal_value)
 		
 func snap(value: float, grid_size: int) -> int:
 	return floor(value / grid_size)
@@ -1103,8 +1112,6 @@ func connect_to_data_manager():
 func get_current_tile(obstacle : Obstacle):
 	var i = chess_mover._get_play_area_for_position(obstacle.global_position)
 	var current_tile = chess_mover.play_areas[i].get_tile_from_global(obstacle.global_position)
-	#if chess_mover.play_areas[i].unit_grid.units[current_tile] != self:
-		#chess_mover.play_areas[i].unit_grid.add_unit(current_tile, self)
 	return [chess_mover.play_areas[i], current_tile]
 	
 func has_melee_target():
