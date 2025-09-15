@@ -70,14 +70,14 @@ func connect_to_chess_signal(obstacle: Obstacle):
 		)
 	if obstacle.has_signal("damage_taken"):
 		obstacle.damage_taken.connect(
-			func(obstacle, damage_value, attacker):
+			func(obstacle, attacker, damage_value):
 				write_log("LOG", obstacle.chess_name + " has taken " + str(damage_value) + "points damage from " + attacker.chess_name + ".")
 				if debug_mode:
 					print(obstacle.chess_name + " has taken " + str(damage_value) + "points damage from " + attacker.chess_name + ".")
 		)
 	if obstacle.has_signal("heal_taken"):
 		obstacle.heal_taken.connect(
-			func(obstacle, heal_value, healer):
+			func(obstacle, healer, heal_value):
 				write_log("LOG", obstacle.chess_name + " has taken " + str(heal_value) + "points heal from " + healer.chess_name + ".")
 				if debug_mode:
 					print(obstacle.chess_name + " has taken " + str(heal_value) + "points heal from " + healer.chess_name + ".")
@@ -126,21 +126,21 @@ func connect_to_chess_signal(obstacle: Obstacle):
 		)
 	if obstacle.has_signal("damage_applied"):
 		obstacle.damage_applied.connect(
-			func(obstacle, damage_value, target):
+			func(obstacle, target, damage_value):
 				write_log("LOG", obstacle.chess_name + " has applied damage " + str(damage_value) + " points to " + target.chess_name)
 				if debug_mode:
 					print(obstacle.chess_name + " has applied damage " + str(damage_value) + " points to " + target.chess_name)
 		)
 	if obstacle.has_signal("critical_damage_applied"):
 		obstacle.critical_damage_applied.connect(
-			func(obstacle, damage_value, target):
+			func(obstacle, target, damage_value):
 				write_log("LOG", obstacle.chess_name + " has applied CRITICAL damage " + str(damage_value) + " points to " + target.chess_name)
 				if debug_mode:
 					print(obstacle.chess_name + " has applied CRITICAL damage " + str(damage_value) + " points to " + target.chess_name)
 		)
 	if obstacle.has_signal("heal_applied"):
 		obstacle.heal_applied.connect(
-			func(obstacle, heal_value, target):
+			func(obstacle, target, heal_value):
 				write_log("LOG", obstacle.chess_name + " has applied heal " + str(heal_value) + " points to " + target.chess_name)
 				if debug_mode:
 					print(obstacle.chess_name + " has applied heal " + str(heal_value) + " points to " + target.chess_name)
