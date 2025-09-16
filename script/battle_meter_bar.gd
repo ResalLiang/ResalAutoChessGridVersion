@@ -114,7 +114,7 @@ func _update_damage_display():
 	if label:
 		label.text = str(damage_value)
 
-func init(faction: String, chess_name: String, team: int, max_value: int, value: int):
+func init(faction: String, chess_name: String, team: int, max_value: float, value: float):
 	sprite_faction = faction
 	sprite_name = chess_name
 	chess_team = team
