@@ -247,6 +247,8 @@ func _ready():
 	
 	start_new_game()
 
+	last_turn_label.text = '-'
+
 func _process(delta: float) -> void:
 	pass
 
@@ -428,18 +430,18 @@ func handle_character_action_finished():
 
 func handle_round_finished(msg):
 	
-	add_round_finish_scene.emit()
-	
 	if msg == "team1":
 		DataManagerSingleton.won_rounds += 1
 		print("Round %d over, you won!" % current_round)
 		player_won_round.emit()
 		last_turn_label.text = 'WON'
+		add_round_finish_scene.emit('WON')
 	elif msg == "team2":
 		DataManagerSingleton.lose_rounds += 1
 		print("Round %d over, you lose..." % current_round)
 		player_lose_round.emit()
 		last_turn_label.text = 'LOSE'
+		add_round_finish_scene.emit('LOSE')
 
 	print("You have won %d rounds, and lose %d rounds." % [DataManagerSingleton.won_rounds, DataManagerSingleton.lose_rounds])
 
@@ -780,12 +782,6 @@ func _on_back_button_pressed() -> void:
 	to_menu_scene.emit()
 
 func battle_value_display(chess: Obstacle, chess2: Obstacle, display_value, signal_name: String):
-
-	#summoned_character.damage_applied.connect(battle_value_display.bind("damage_applied"))
-	#summoned_character.critical_damage_applied.connect(battle_value_display.bind("critical_damage_applied"))
-	#summoned_character.heal_taken.connect(battle_value_display.bind("heal_taken"))
-	#summoned_character.attack_evased.connect(battle_value_display.bind("attack_evased"))
-	#summoned_character.is_died.connect(battle_value_display.bind("is_died"))
 
 	if display_value <= 0 and (signal_name == "damage_applied" or signal_name == "critical_damage_applied" or signal_name == "heal_taken"):
 		return
