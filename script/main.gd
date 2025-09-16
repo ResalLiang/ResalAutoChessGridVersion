@@ -6,6 +6,7 @@ class_name Main
 
 # 当前活跃的场景
 var current_scene: Node2D = null
+var added_scene: Noed2D = null
 var tween
 
 func _ready():
@@ -34,8 +35,12 @@ func show_settings():
 	await _transition_to_scene("res://scene/setting.tscn", main_container, true)
 	
 # 显示设置菜单
-func show_round_finish():
+func show_round_finish(result: String):
 	add_scene("res://scene/round_finish.tscn", main_container, false)
+	if result = "WON":
+		added_scene.label.text = "You Won This Round!"
+	else:
+		added_scene.label.text = "You Lose This Round..."
 	
 # 显示设置菜单
 func show_game_finish():
@@ -96,6 +101,7 @@ func add_scene(scene_path: String, container: Control, if_transition: bool):
 	if not new_scene:
 		print("Failed to load scene at path: ", scene_path)
 		return
+	added_scene = new_scene
 	container.add_child(new_scene)
 	
 	# 隐藏其他容器，显示目标容器
