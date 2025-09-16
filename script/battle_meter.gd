@@ -9,7 +9,7 @@ var battle_data: Dictionary = {}
 var battle_meter_type := DAMAGE_TYPE.DAMAGE_APPLIED
 
 
-func get_damage_data(obstacle: Obstacle, value: int, attacker: Obstacle):
+func get_damage_data(obstacle: Obstacle, value: float, attacker: Obstacle):
 	var attacker_index = [attacker.faction, attacker.chess_name, attacker.chess_serial, attacker.team]
 	var chess_index = [obstacle.faction, obstacle.chess_name, obstacle.chess_serial, obstacle.team]
 
@@ -27,7 +27,7 @@ func get_damage_data(obstacle: Obstacle, value: int, attacker: Obstacle):
 
 	update_ranking()
 
-func get_heal_data(obstacle: Obstacle, value: int, healer: Obstacle):
+func get_heal_data(obstacle: Obstacle, value: float, healer: Obstacle):
 	var healer_index = [healer.faction, healer.chess_name, healer.chess_serial, healer.team]
 	var chess_index = [obstacle.faction, obstacle.chess_name, obstacle.chess_serial, obstacle.team]
 
