@@ -9,7 +9,7 @@ extends Node
 @onready var bench: PlayArea = %bench
 @onready var shop: PlayArea = %shop
 
-@export var play_areas: Array[PlayArea] = [arena, bench, shop]
+@export var play_areas: Array[PlayArea]
 
 
 signal chess_moved(obstacle: Obstacle, play_area: PlayArea, tile: Vector2i)
