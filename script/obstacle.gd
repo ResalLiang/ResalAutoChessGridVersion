@@ -50,16 +50,16 @@ var is_obstacle := true
 var obstacle_counter := 1
 var obstacle_level := 1
 
-var base_max_hp := 100  # Maximum health points
-var base_max_mp := 50   # Maximum magic points
+var base_max_hp := 100.0  # Maximum health points
+var base_max_mp := 50.0   # Maximum magic points
 var base_speed := 0
 var base_armor := 0
 
-var hp: int = base_max_hp:
+var hp: float = base_max_hp:
 	set(value):
 		hp = min(value, max_hp)
 		hp = max(0, hp)
-var mp: int = 0:
+var mp: float = 0:
 	set(value):
 		mp = min(value, max_mp)
 		mp = max(0, mp)
@@ -447,7 +447,7 @@ func _launch_projectile(target: Obstacle):
 	return projectile
 
 # Add damage handling method
-func take_damage(damage_value: int, attacker: Obstacle) -> bool:
+func take_damage(damage_value: float, attacker: Obstacle) -> bool:
 	#Placeholder for chess passive ability on take damage
 	if damage_value <= 0:
 		return false
@@ -477,7 +477,7 @@ func take_damage(damage_value: int, attacker: Obstacle) -> bool:
 	return true
 
 
-func take_heal(heal_value: int, healer: Obstacle):
+func take_heal(heal_value: float, healer: Obstacle):
 	#Placeholder for chess passive ability on take heal
 	if heal_value <= 0:
 		return
@@ -488,7 +488,7 @@ func take_heal(heal_value: int, healer: Obstacle):
 		healer.mp += heal_value
 		heal_taken.emit(self, healer, heal_value)
 
-func _apply_damage(damage_target: Obstacle, damage_value: int):
+func _apply_damage(damage_target: Obstacle, damage_value: float):
 	if damage_target and damage_value > 0:
 		#Placeholder for chess passive ability on apply damage
 		var applied_damage_value
@@ -500,7 +500,7 @@ func _apply_damage(damage_target: Obstacle, damage_value: int):
 			critical_damage_applied.emit(self, damage_target, damage_target)	
 			
 
-func _apply_heal(heal_target: Obstacle, heal_value: int):
+func _apply_heal(heal_target: Obstacle, heal_value: float):
 	if heal_target and heal_value > 0:
 		#Placeholder for chess passive ability on apply heal
 		heal_target.take_heal(heal_value, self)
