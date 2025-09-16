@@ -19,7 +19,7 @@ var shop_refresh_price := 3
 var shop_upgrade_price := 3
 
 var remain_coins := 0
-var game_start_coins := 999
+var base_income := 10
 var is_shop_frozen := false
 
 var shop_level := 1
@@ -72,7 +72,7 @@ func _ready():
 
 
 func shop_init():
-	remain_coins = game_start_coins
+	remain_coins = 0 #game_start_coins
 	shop_level = 1
 	is_shop_frozen = false
 	shop_refresh()
@@ -166,8 +166,17 @@ func get_chess_sell_price(chess: Chess):
 	return shop_sell_price
 
 func turn_start_income(current_round: int):
-	var turn_start_interest = floor(remain_coins / 5)
-	remain_coins += turn_start_interest
-	coins_increased.emit(turn_start_interest, "interest")
-	remain_coins += current_round + 2
-	coins_increased.emit(current_round + 2, "routine income")
+	var play_interest_bonus := 0
+	var player_income_bonus := 0
+
+	if DataManagerSingleton[current_player].has("interest_bonus"):
+		play_interest_bonus = DataManagerSingleton[current_player]["interest_bonus"]
+	if DataManagerSingleton[current_player].has("income_bonus"):
+		player_income_bonus = DataManagerSingleton[current_player]["income_bonus"]
+
+	var turn_start_interest = floor(remain_coins * (0.2 + play_interest_bonus))
+	if turn_start_interest > 0:
+		remain_coins += turn_start_interest
+		coins_increased.emit(turn_start_interest, "interest")
+	remain_coins += current_round - 1 + base_income + player_income_bonus
+	coins_increased.emit(current_round - 1 + base_income, "routine income")
