@@ -874,7 +874,7 @@ func _launch_projectile(target: Obstacle):
 	return projectile
 
 # Add damage handling method
-func take_damage(damage_value: int, attacker: Obstacle) -> bool:
+func take_damage(damage_value: float, attacker: Obstacle) -> bool:
 	#Placeholder for chess passive ability on take damage
 	if damage_value <= 0:
 		return false
@@ -908,7 +908,7 @@ func take_damage(damage_value: int, attacker: Obstacle) -> bool:
 		attack_evased.emit(self, attacker)
 		return false
 
-func take_heal(heal_value: int, healer: Obstacle):
+func take_heal(heal_value: float, healer: Obstacle):
 	#Placeholder for chess passive ability on take heal
 	if heal_value <= 0:
 		return
@@ -946,7 +946,7 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 	return cast_spell_result
 
 
-func _apply_damage(damage_target: Obstacle = chess_target, damage_value: int = damage):
+func _apply_damage(damage_target: Obstacle = chess_target, damage_value: float = damage):
 	if damage_target and damage_value > 0:
 		#Placeholder for chess passive ability on apply damage
 		var applied_damage_value
@@ -962,7 +962,7 @@ func _apply_damage(damage_target: Obstacle = chess_target, damage_value: int = d
 				damage_applied.emit(self, damage_target, applied_damage_value)	
 			
 
-func _apply_heal(heal_target: Obstacle = chess_spell_target, heal_value: int = damage):
+func _apply_heal(heal_target: Obstacle = chess_spell_target, heal_value: float = damage):
 	if heal_target and heal_value > 0:
 		#Placeholder for chess passive ability on apply heal
 		heal_target.take_heal(heal_value, self)
@@ -1150,7 +1150,7 @@ func human_mage_taunt(spell_duration: int) -> bool:
 					chess_affected = true
 	return chess_affected
 
-func human_archmage_heal(spell_duration: int, heal_value: int) -> bool:
+func human_archmage_heal(spell_duration: int, heal_value: float) -> bool:
 	var chess_affected := true
 	var arena_unitgrid = arena.unit_grid.units
 	# var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.human_archmage_heal_template)
@@ -1175,7 +1175,7 @@ func human_archmage_heal(spell_duration: int, heal_value: int) -> bool:
 					chess_affected =  true
 	return chess_affected
 
-func elf_queen_stun(spell_duration: int, damage_value: int) -> bool:
+func elf_queen_stun(spell_duration: int, damage_value: float) -> bool:
 	var chess_affected := true
 	var arena_unitgrid = arena.unit_grid.units
 	# var affected_index_array = area_effect_handler.find_affected_units(position_id, 0, area_effect_handler.human_archmage_heal_template)
