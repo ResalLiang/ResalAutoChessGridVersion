@@ -240,6 +240,8 @@ func _ready():
 	player_won_game.connect(DataManagerSingleton.handle_player_won_game)
 	player_lose_game.connect(DataManagerSingleton.handle_player_lose_game)
 
+	chess_mover.play_areas = [arena, bench, shop]
+
 	center_point = Vector2(tile_size.x * 16 / 2, tile_size.y * 16 / 2)
 
 	shop_handler.shop_refresh()
