@@ -92,8 +92,8 @@ func bonus_refresh() -> void:
 			if player_index == 1 and player_bonus_level_dict[player_index][faction_index] > 0:
 				add_bonus_bar_to_container(faction_index, player_bonus_level_dict[player_index][faction_index])
 
-	for faction_index in player_bonus_level_dict[1].keys():	#apply bonus to each player/faction 
-		for player_index in player_faction_count.keys(): #[1, 2]
+	for player_index in player_faction_count.keys(): #[1, 2]
+		for faction_index in player_bonus_level_dict[player_index].keys():	#apply bonus to each player/faction 
 			var curren_bonus_level = player_bonus_level_dict[player_index][faction_index]
 			if curren_bonus_level > 0:
 				apply_faction_bonus(faction_index, curren_bonus_level, player_index)
@@ -128,24 +128,6 @@ func add_bonus_bar_to_container(faction: String, level: int):
 	faction_bonus_bar.bonus_bar.max_value = bonus_level_list[faction].size()
 	faction_bonus_bar.label.text = faction
 	
-
-	# var fill_style = StyleBoxTexture.new()
-	# fill_style.texture = faction_fill_texture
-	# fill_style.axis_stretch_horizontal = StyleBoxTexture.AXIS_STRETCH_MODE_TILE
-	# fill_style.axis_stretch_vertical = StyleBoxTexture.AXIS_STRETCH_MODE_TILE_FIT
-
-	# var progress_bar = ProgressBar.new()
-	# var max_level = bonus_level_list[faction].back()
-	# var current_level = max(0, min(max_level, level))
-
-	# progress_bar.max_value = max_level
-	# progress_bar.value = current_level
-	# progress_bar.step = 1
-	# progress_bar.add_theme_stylebox_override("fill", fill_style)
-	# progress_bar.custom_minimum_size = Vector2(64, 8)
-	# faction_container.add_child(progress_bar)
-
-
 
 func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -> void:
 
