@@ -67,28 +67,12 @@ func calculate_final_score():
 				score_bonus = -1
 				score_reason = "Default"
 				
-		if item is String and (current_player_ingame_data[item] is int or current_player_ingame_data[item] is float) and score_bonus != -1:
+		if (current_player_ingame_data[item] is int or current_player_ingame_data[item] is float) and score_bonus != -1:
 			var item_score = score_bonus * current_player_ingame_data[item]
 
 			score_label = score_label_scene.instantiate()
 			score_label.text = score_reason + " : " + str(score_bonus) + " * " + str(current_player_ingame_data[item]) + " = " + str(item_score)
 
-			# score_label = Label.new()
-
-			# # Create a new theme
-			# var new_theme = Theme.new()
-			
-			# # Load font resource
-			# var font = load("res://fonts/your_font.ttf") as FontFile
-			
-			# # Set font and size in theme using correct methods
-			# new_theme.set_font("font", "Label", font)
-			# new_theme.set_font_size("font_size", "Label", 8)
-			
-			# # Apply theme to label
-			# score_label.theme = new_theme
-
-			# score_label.text = score_reason + " : " + str(score_bonus) + " * " + str(current_player_ingame_data[item]) + " = " + str(item_score)
 			score_label.visible = false
 			container.add_child(score_label)
 			final_score += item_score
