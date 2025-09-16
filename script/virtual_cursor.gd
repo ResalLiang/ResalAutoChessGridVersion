@@ -7,6 +7,8 @@ signal cursor_moved(position: Vector2)
 # 移除 @onready，在 _ready() 中初始化
 var cursor_sprite: TextureRect
 var click_animation: AnimationPlayer
+#@onready var cursor_sprite: TextureRect = $cursor_sprite
+#@onready var click_animation: AnimationPlayer = $click_animation
 
 var current_cursor_type: String = "default"
 var cursor_textures: Dictionary = {}

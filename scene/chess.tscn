@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cmj65pa4j3u1u" path="res://script/chess.gd" id="1_q0pof"]
 [ext_resource type="Shader" uid="uid://d3tyrfwlw2c1g" path="res://asset/shader/LightweightPixelPerfectOutline.gdshader" id="2_8icae"]
-[ext_resource type="SpriteFrames" uid="uid://ctf4qrg5efuvu" path="res://asset/animation/dwarf/dwarfArmoredBearRider.tres" id="3_n4hse"]
+[ext_resource type="SpriteFrames" uid="uid://clg47lqicj0s1" path="res://asset/animation/human/humanArchMage.tres" id="3_n4hse"]
 [ext_resource type="Script" uid="uid://pmtyv1bl3nog" path="res://script/drag_handler.gd" id="4_ddkfs"]
 [ext_resource type="Script" uid="uid://c101twvdkyo0l" path="res://script/area_effect_handler.gd" id="7_8osrc"]
 [ext_resource type="Script" uid="uid://f2vi2gwgn32i" path="res://script/effect_handler.gd" id="8_feolq"]
@@ -14,7 +14,7 @@ shader_parameter/blink_color = Color(1, 1, 1, 1)
 shader_parameter/blink_time_scale = 0.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_10qbj"]
-size = Vector2(23, 25)
+size = Vector2(16, 15)
 
 [sub_resource type="Animation" id="Animation_dbi3s"]
 length = 0.75
@@ -508,14 +508,14 @@ y_sort_enabled = true
 material = SubResource("ShaderMaterial_dbi3s")
 position = Vector2(0, -11)
 sprite_frames = ExtResource("3_n4hse")
-animation = &"block"
+animation = &"die"
 
 [node name="Area2D" type="Area2D" parent="."]
 position = Vector2(0, -13)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 z_index = 5
-position = Vector2(-0.5, 5.5)
+position = Vector2(0, 10.5)
 shape = SubResource("RectangleShape2D_10qbj")
 
 [node name="idle_timer" type="Timer" parent="."]

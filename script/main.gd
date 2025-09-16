@@ -6,7 +6,7 @@ class_name Main
 
 # 当前活跃的场景
 var current_scene: Node2D = null
-var added_scene: Noed2D = null
+var added_scene: Node2D = null
 var tween
 
 func _ready():
@@ -37,7 +37,7 @@ func show_settings():
 # 显示设置菜单
 func show_round_finish(result: String):
 	add_scene("res://scene/round_finish.tscn", main_container, false)
-	if result = "WON":
+	if result == "WON":
 		added_scene.label.text = "You Won This Round!"
 	else:
 		added_scene.label.text = "You Lose This Round..."

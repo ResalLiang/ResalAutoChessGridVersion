@@ -281,12 +281,12 @@ func start_new_game() -> void:
 	DataManagerSingleton.lose_rounds = 0
 
 	shop_handler.shop_init()
+	update_population()
 	new_round_prepare_start()
 
 func new_round_prepare_start():
 	# start shopping
 	current_shop_level.text = "Current Shop Level is : " + str(shop_handler.shop_level)
-	update_population()
 	
 	current_round += 1
 	
@@ -300,6 +300,8 @@ func new_round_prepare_start():
 	clear_play_area(arena)
 	if saved_arena_team.size() != 0:
 		load_arena_team()
+		
+	update_population()
 	chess_mover.setup_before_turn_start()
 	shop_handler.turn_start_income(current_round)
 
@@ -349,6 +351,8 @@ func start_new_round():
 			if chess_index.status != chess_class.STATUS.DIE:
 				team_dict[Team.TEAM2].append(chess_index)
 				team2_alive_cnt += 1
+				
+	update_population()
 			
 	if team1_alive_cnt == 0:
 		round_finished.emit("team2")
@@ -740,13 +744,19 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, team:
 	return summoned_character
 
 func update_population():
+	if is_game_turn_start:
+		return
+		
 	current_population = 0
+	var current_chess_array = []
 	# for node in get_tree().get_nodes_in_group("chess_group"):
 	# 	if is_instance_valid(node) and node is Chess and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
 	# 		current_population += 1
 	for chess_index in arena.unit_grid.get_all_units():
-		if is_instance_valid(chess_index) and chess_index is Chess and chess_index.team == 1:
+		if is_instance_valid(chess_index) and chess_index is Chess and chess_index.team == 1 and not current_chess_array.has(chess_index):
 			current_population += 1
+			current_chess_array.append(chess_index)
+			
 	max_population = shop_handler.get_max_population()
 	population_label.text = "Population = " + str(current_population)	+ "/" + str(max_population)
 	var label_settings = LabelSettings.new()

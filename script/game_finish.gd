@@ -18,10 +18,6 @@ func _ready() -> void:
 	DataManagerSingleton.record_game(final_score, DataManagerSingleton.current_chess_array)
 	DataManagerSingleton.save_game_json()
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-
 func _on_restart_button_pressed() -> void:
 	to_game_scene.emit()
 

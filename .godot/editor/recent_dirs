@@ -1,3 +1,4 @@
+res://asset/shader
 res://scene
 res://asset/sprite/icon
 res://asset/animation/dwarf
@@ -19,6 +20,5 @@ res://asset/animation/elf
 res://asset/sprite
 res://asset
 res://
-res://asset/animation/villager
 D:/LearningGodot/ResalAutoChess/script/hero_stats_raw
 D:/LearningGodot/ResalAutoChess/script

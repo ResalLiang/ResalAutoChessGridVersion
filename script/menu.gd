@@ -17,9 +17,6 @@ func _ready() -> void:
 	current_player.text = DataManagerSingleton.current_player
 	version.text = DataManagerSingleton.version
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
 
 
 func _on_start_button_pressed() -> void:

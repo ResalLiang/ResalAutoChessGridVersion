@@ -1457,35 +1457,42 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("4_1qlln")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 12
 text = "Game Start"
 
 [node name="setting_button" type="Button" parent="button_container"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("4_1qlln")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 12
 text = "Setting"
+
+[node name="upgrade_button" type="Button" parent="button_container"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("4_1qlln")
+theme_override_font_sizes/font_size = 12
+text = "Upgrade"
 
 [node name="gallery_button" type="Button" parent="button_container"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("4_1qlln")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 12
 text = "Gallery"
 
 [node name="statistics_button" type="Button" parent="button_container"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("4_1qlln")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 12
 text = "Statistics"
 
 [node name="quit_button" type="Button" parent="button_container"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("4_1qlln")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 12
 text = "Quit"
 
 [connection signal="pressed" from="button_container/start_button" to="." method="_on_start_button_pressed"]

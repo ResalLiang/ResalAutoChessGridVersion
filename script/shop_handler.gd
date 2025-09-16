@@ -80,6 +80,7 @@ func shop_init():
 func shop_manual_refresh() -> void:
 	if remain_coins >= shop_refresh_price:
 		remain_coins -= shop_refresh_price
+		coins_decreased.emit(shop_refresh_price, "refresh shop")
 		shop_refresh()	
 
 func shop_refresh() -> void:
@@ -169,10 +170,10 @@ func turn_start_income(current_round: int):
 	var play_interest_bonus := 0
 	var player_income_bonus := 0
 
-	if DataManagerSingleton[current_player].has("interest_bonus"):
-		play_interest_bonus = DataManagerSingleton[current_player]["interest_bonus"]
-	if DataManagerSingleton[current_player].has("income_bonus"):
-		player_income_bonus = DataManagerSingleton[current_player]["income_bonus"]
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player].has("interest_bonus"):
+		play_interest_bonus = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["interest_bonus"]
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player].has("income_bonus"):
+		player_income_bonus = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["income_bonus"]
 
 	var turn_start_interest = floor(remain_coins * (0.2 + play_interest_bonus))
 	if turn_start_interest > 0:
