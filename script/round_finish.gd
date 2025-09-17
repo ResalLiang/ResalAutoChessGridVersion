@@ -38,7 +38,7 @@ func set_round_result():
 		
 	for health_index in range(DataManagerSingleton.lose_rounds):
 		var lose_health_icon = TextureRect.new()
-		lose_health_icon.texture = remain_health_pic
+		lose_health_icon.texture = lose_health_pic
 		heart.add_child(lose_health_icon)
 		
 	for trophy_index in range(DataManagerSingleton.won_rounds):
