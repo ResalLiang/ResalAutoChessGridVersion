@@ -102,7 +102,7 @@ func shop_refresh() -> void:
 		# var rand_faction_index = randi_range(0, get_parent().chess_data.keys().size() - 2) # remove villager
 		# var rand_faction = get_parent().chess_data.keys()[rand_faction_index]
 
-		var rand_character_result = get_parent().generate_random_chess()
+		var rand_character_result = get_parent().generate_random_chess(true)
 		var character = get_parent().summon_chess(rand_character_result[0], rand_character_result[1], 1, shop, Vector2i(shop_col_index, shop_row_index))
 
 		
@@ -170,10 +170,10 @@ func turn_start_income(current_round: int):
 	var play_interest_bonus := 0
 	var player_income_bonus := 0
 
-	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player].has("interest_bonus"):
-		play_interest_bonus = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["interest_bonus"]
-	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player].has("income_bonus"):
-		player_income_bonus = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["income_bonus"]
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"].has("interest_bonus"):
+		play_interest_bonus = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["interest_bonus"]
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"].has("income_bonus"):
+		player_income_bonus = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["income_bonus"]
 
 	var turn_start_interest = floor(remain_coins * (0.2 + play_interest_bonus))
 	if turn_start_interest > 0:
