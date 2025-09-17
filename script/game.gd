@@ -503,7 +503,7 @@ func generate_enemy(difficulty : int) -> void:
 		var rand_x = randi_range(arena.unit_grid.size.x / 2, arena.unit_grid.size.x - 1)
 		var rand_y = randi_range(0, arena.unit_grid.size.y - 1)
 		if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
-			var rand_character_result = generate_random_chess()
+			var rand_character_result = generate_random_chess(false)
 
 			var character = summon_chess(rand_character_result[0], rand_character_result[1], 2, arena, Vector2i(rand_x, rand_y))
 
@@ -565,7 +565,7 @@ func save_arena_team():
 			saved_arena_team[chess_index] = [arena.unit_grid.units[chess_index].faction, arena.unit_grid.units[chess_index].chess_name]
 
 # Generates random chess based on shop level and rarity weights
-func generate_random_chess():
+func generate_random_chess(lock_faction: bool):
 	# --- Rarity Selection Phase ---
 	# Calculate total weight for current shop level
 	var total_rarity_weight := 0
@@ -603,7 +603,7 @@ func generate_random_chess():
 	# Pre-process all eligible chesses with calculated weights
 	for faction in DataManagerSingleton.get_chess_data():
 		# Skip special faction
-		if faction == "villager":
+		if (lock_faction and not DataManagerSingleton[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"][faction]) or faction == "villager":
 			continue
 			
 		for chess_name in DataManagerSingleton.get_chess_data()[faction]:
@@ -746,6 +746,8 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, team:
 func update_population():
 	if is_game_turn_start:
 		return
+
+	arena.unit_grid.refresh_units()
 		
 	current_population = 0
 	var current_chess_array = []
