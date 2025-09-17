@@ -257,7 +257,7 @@ func _process(delta: float) -> void:
 func start_new_game() -> void:
 
 	DataManagerSingleton.load_game_json()
-	DataManagerSingleton.in_game_data = DataManagerSingleton.player_data.duplicate()
+	DataManagerSingleton.in_game_data = DataManagerSingleton.player_data_template.duplicate()
 
 	debug_handler.write_log("LOG", "Game Start.")
 	
@@ -603,7 +603,7 @@ func generate_random_chess(lock_faction: bool):
 	# Pre-process all eligible chesses with calculated weights
 	for faction in DataManagerSingleton.get_chess_data():
 		# Skip special faction
-		if (lock_faction and not DataManagerSingleton[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"][faction]) or faction == "villager":
+		if (lock_faction and DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"][faction]) or faction == "villager":
 			continue
 			
 		for chess_name in DataManagerSingleton.get_chess_data()[faction]:

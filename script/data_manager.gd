@@ -47,6 +47,8 @@ var player_upgrade_template = {
 
 var in_game_data : Dictionary
 
+var player_data : Dictionary
+
 var last_player : String
 var current_player : String
 var chess_data : Dictionary
@@ -65,8 +67,6 @@ var version := "V0.5"
 func _ready() -> void:
 
 	in_game_data = player_data_template.duplicate()
-
-	load_game_json()
 	
 	if player_datas.keys().size() != 0:
 		last_player = player_datas.keys().back()
@@ -75,9 +75,8 @@ func _ready() -> void:
 		last_player = "Resal"
 		current_player = "Resal"
 
-	if not player_datas[current_player].has("player_upgrade"):
-		 player_datas[current_player]["player_upgrade"] = player_upgrade_template.duplicate()
-		
+	load_game_json()
+	
 	load_chess_stats()
 
 # func load_game_binary():
@@ -136,6 +135,9 @@ func load_game_json():
 		
 	if player_datas.keys().has(current_player):
 		player_data = player_datas[current_player]
+
+	if not player_datas[current_player].has("player_upgrade"):
+		player_datas[current_player]["player_upgrade"] = player_upgrade_template.duplicate()
 
 func load_chess_stats():
 	var file = FileAccess.open("res://script/chess_stats.json", FileAccess.READ)

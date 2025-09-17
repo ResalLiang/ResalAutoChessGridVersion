@@ -1,0 +1,15 @@
+[gd_resource type="Theme" load_steps=4 format=3 uid="uid://b4hwtdp2epofe"]
+
+[ext_resource type="Texture2D" uid="uid://bo1r34gjsrw3s" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/Toggle buttons 2.png" id="1_lvm42"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cqei2"]
+atlas = ExtResource("1_lvm42")
+region = Rect2(0, 0, 32, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wkefk"]
+atlas = ExtResource("1_lvm42")
+region = Rect2(32, 0, 32, 16)
+
+[resource]
+CheckButton/icons/checked = SubResource("AtlasTexture_cqei2")
+CheckButton/icons/unchecked = SubResource("AtlasTexture_wkefk")

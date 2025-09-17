@@ -1,5 +1,7 @@
-res://asset/shader
+res://asset/theme
+res://asset/sprite/GandalfHardcore Pixel Art Game UI
 res://scene
+res://asset/shader
 res://asset/sprite/icon
 res://asset/animation/dwarf
 res://asset/sprite/MiniFolks/MinifolksDwarfs/Without Outline
@@ -18,7 +20,5 @@ res://asset/sprite/MiniFolks/MinifolksUndead
 res://asset/sprite/SpinningCoin
 res://asset/animation/elf
 res://asset/sprite
-res://asset
-res://
 D:/LearningGodot/ResalAutoChess/script/hero_stats_raw
 D:/LearningGodot/ResalAutoChess/script

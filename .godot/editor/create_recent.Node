@@ -1,10 +1,11 @@
+CheckButton
+Label
+HBoxContainer
+VBoxContainer
 AudioStreamPlayer
 AudioStreamPlayer2D
 Timer
-VBoxContainer
 Button
-HBoxContainer
-Label
 HSlider
 Control
 TileMap

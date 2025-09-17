@@ -59,8 +59,8 @@ func has_valid_chess(tile: Vector2i) -> bool:
 	return false
 
 func refresh_units():
-	units.clear()
-
+	_ready()
+	
 	var child_nodes = get_children()
 	if child_nodes.size() == 0:
 		return
@@ -68,4 +68,4 @@ func refresh_units():
 	for node in child_nodes:
 		if not is_instance_valid(node) or not node is Obstacle or node.status == node.STATUS.DIE:
 			return
-		units[node.get_current_tile] = node
+		units[node.get_current_tile(node)[1]] = node

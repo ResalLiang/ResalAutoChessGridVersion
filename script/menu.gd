@@ -10,14 +10,13 @@ extends Node2D
 
 signal to_game_scene
 signal to_gallery_scene
+signal to_upgrade_scene
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	current_player.text = DataManagerSingleton.current_player
 	version.text = DataManagerSingleton.version
-
-
 
 func _on_start_button_pressed() -> void:
 	to_game_scene.emit()
@@ -29,3 +28,7 @@ func _on_gallery_button_pressed() -> void:
 
 func _on_quit_button_pressed() -> void:
 	get_tree().quit()
+
+
+func _on_upgrade_button_pressed() -> void:
+	to_upgrade_scene.emit()

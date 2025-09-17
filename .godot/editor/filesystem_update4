@@ -1,0 +1,12 @@
+res://scene/player_upgrade.tscn
+res://asset/animation/elf/elfArcaneArcher_projectile.tres
+res://asset/shader/LightweightPixelPerfectOutline.gdshader
+res://asset/animation/human/humanArchMage.tres
+res://asset/animation/elf/elfArcaneArcher.tres
+res://asset/tileset/dungeon_tileset.tres
+res://asset/animation/demon/demonDemoness.tres
+res://asset/animation/forestProtector/forestProtectorDryadEnchantress.tres
+res://asset/theme/toggle.tres
+res://asset/shader/SoftDropShadow.gdshader
+res://script/player_upgrade.gd
+res://script/game.gd

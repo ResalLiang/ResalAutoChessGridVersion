@@ -20,7 +20,8 @@ func show_main_menu():
 	await _transition_to_scene("res://scene/menu.tscn", main_container, true)
 	current_scene.to_game_scene.connect(show_game)
 	current_scene.to_gallery_scene.connect(show_gallery)
-
+	current_scene.to_upgrade_scene.connect(show_player_upgrade)
+	
 # 显示游戏场景
 func show_game():
 	AudioManagerSingleton.play_music("battle")
@@ -41,6 +42,11 @@ func show_round_finish(result: String):
 		added_scene.label.text = "You Won This Round!"
 	else:
 		added_scene.label.text = "You Lose This Round..."
+
+func show_player_upgrade():
+	AudioManagerSingleton.play_music("menu")
+	await _transition_to_scene("res://scene/player_upgrade.tscn", main_container, true)
+	current_scene.to_menu_scene.connect(show_main_menu)
 	
 # 显示设置菜单
 func show_game_finish():
