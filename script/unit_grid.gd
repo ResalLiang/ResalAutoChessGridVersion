@@ -43,6 +43,7 @@ func get_first_empty_tile() -> Vector2i:
 	return Vector2i(-1, -1)
 
 func get_all_units() -> Array[Obstacle]:
+	refresh_units()
 	var unit_arry: Array[Obstacle] = []
 	for chess_index in units.values():
 		if is_instance_valid(chess_index) and chess_index is Obstacle and chess_index.status != chess_index.STATUS.DIE:
@@ -56,3 +57,15 @@ func has_valid_chess(tile: Vector2i) -> bool:
 		if is_instance_valid(unit_result) and unit_result is Obstacle and unit_result.status != unit_result.STATUS.DIE:
 			return true
 	return false
+
+func refresh_units():
+	units.clear()
+
+	var child_nodes = get_children()
+	if child_nodes.size() == 0:
+		return
+
+	for node in child_nodes:
+		if not is_instance_valid(node) or not node is Obstacle or node.status == node.STATUS.DIE:
+			return
+		units[node.get_current_tile] = node
