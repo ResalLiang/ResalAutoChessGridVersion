@@ -8,5 +8,3 @@ res://asset/animation/demon/demonDemoness.tres
 res://asset/animation/forestProtector/forestProtectorDryadEnchantress.tres
 res://asset/theme/toggle.tres
 res://asset/shader/SoftDropShadow.gdshader
-res://script/player_upgrade.gd
-res://script/game.gd
