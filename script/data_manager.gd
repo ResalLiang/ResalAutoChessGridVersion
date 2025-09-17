@@ -2,7 +2,7 @@ class_name DataManager
 extends Node
 
 var player_datas := {}
-var player_data : Dictionary = {
+var player_data_template : Dictionary = {
 	"total_gems": 0,
 	"total_experience": 0,
 	"enemy_death_count": 0,
@@ -19,7 +19,7 @@ var player_data : Dictionary = {
 	"chess_stat" : {}
 }
 
-var chess_stat_sample = {
+var chess_stat_template = {
 	"buy_count": 0,
 	"sell_count": 0,
 	"refresh_count" : 0,
@@ -28,6 +28,21 @@ var chess_stat_sample = {
 	"critical_attack_count": 0,
 	"evase_attack_count" : 0,
 	"cast_spell_count" : 0
+}
+
+var player_upgrade_template = {
+	"faction_locked": {
+		"elf" : false,
+		"human" : false,
+		"dwarf" : false,
+		"holy" : true,
+		"forestProtector" : true,
+		"undead" : true,
+		"demon" : true,
+		"villager" : true
+	},
+	"interest_bonus" : 0.0,
+	"income_bonus" : 0.0
 }
 
 var in_game_data : Dictionary
@@ -49,7 +64,7 @@ var version := "V0.5"
 
 func _ready() -> void:
 
-	in_game_data = player_data.duplicate()
+	in_game_data = player_data_template.duplicate()
 
 	load_game_json()
 	
@@ -59,6 +74,9 @@ func _ready() -> void:
 	else:
 		last_player = "Resal"
 		current_player = "Resal"
+
+	if not player_datas[current_player].has("player_upgrade"):
+		 player_datas[current_player]["player_upgrade"] = player_upgrade_template.duplicate()
 		
 	load_chess_stats()
 
@@ -133,10 +151,10 @@ func load_chess_stats():
 		return
 				
 func clean_player_data(player: String = current_player):
-	in_game_data = {}
-	if player in player_datas.keys():
-		player_datas[player] = {}
-		save_game_json()
+	in_game_data = player_data_template.duplicate()
+
+	player_datas[current_player] = player_data_template.duplicate()
+	save_game_json()
 		
 func record_death_chess(chess: Obstacle) -> void:
 
