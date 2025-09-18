@@ -50,6 +50,8 @@ var is_obstacle := true
 var obstacle_counter := 1
 var obstacle_level := 1
 
+var chess_level := 1
+
 var base_max_hp := 100.0  # Maximum health points
 var base_max_mp := 50.0   # Maximum magic points
 var base_speed := 0
