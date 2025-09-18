@@ -27,6 +27,7 @@ func _on_gallery_button_pressed() -> void:
 
 
 func _on_quit_button_pressed() -> void:
+	DataManagerSingleton.save_game_json()
 	get_tree().quit()
 
 
