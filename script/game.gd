@@ -503,7 +503,7 @@ func generate_enemy(difficulty : int) -> void:
 		var rand_x = randi_range(arena.unit_grid.size.x / 2, arena.unit_grid.size.x - 1)
 		var rand_y = randi_range(0, arena.unit_grid.size.y - 1)
 		if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
-			var rand_character_result = generate_random_chess(false)
+			var rand_character_result = generate_random_chess(shop_handler.shop_level, false, "all")
 
 			var character = summon_chess(rand_character_result[0], rand_character_result[1], 2, arena, Vector2i(rand_x, rand_y))
 
@@ -554,7 +554,7 @@ func load_arena_team():
 		for tile_index in saved_arena_team.keys():
 			if saved_arena_team[tile_index]:
 
-				var character = summon_chess(saved_arena_team[tile_index][0], saved_arena_team[tile_index][1], 1, arena, tile_index)
+				var character = summon_chess(saved_arena_team[tile_index][0], saved_arena_team[tile_index][1], saved_arena_team[tile_index][2], 1, arena, tile_index)
 		
 func save_arena_team():
 	saved_arena_team = {}
@@ -562,14 +562,15 @@ func save_arena_team():
 		if not is_instance_valid(arena.unit_grid.units[chess_index]):
 			arena.unit_grid.remove_unit(chess_index)
 		elif arena.unit_grid.units[chess_index] is Obstacle:
-			saved_arena_team[chess_index] = [arena.unit_grid.units[chess_index].faction, arena.unit_grid.units[chess_index].chess_name]
+			saved_arena_team[chess_index] = [arena.unit_grid.units[chess_index].faction, arena.unit_grid.units[chess_index].chess_name, arena.unit_grid.units[chess_index].chess_level]
 
 # Generates random chess based on shop level and rarity weights
-func generate_random_chess(lock_faction: bool):
+'''func generate_random_chess(generate_level: int, lock_faction: bool, specific_faction: String):'''
+func generate_random_chess(generate_level: int, lock_faction: bool, specific_faction: String):
 	# --- Rarity Selection Phase ---
 	# Calculate total weight for current shop level
 	var total_rarity_weight := 0
-	for weight in RARITY_WEIGHTS[min(6,shop_handler.shop_level)].values():
+	for weight in RARITY_WEIGHTS[max(1,min(6,generate_level))].values():
 		total_rarity_weight += weight
 	
 	# Get random value within weight range
@@ -578,8 +579,8 @@ func generate_random_chess(lock_faction: bool):
 	# Determine selected rarity tier
 	var accumulated_rarity_weight := 0
 	var selected_rarity: String
-	for rarity_type in RARITY_WEIGHTS[min(6,shop_handler.shop_level)]:
-		accumulated_rarity_weight += RARITY_WEIGHTS[min(6,shop_handler.shop_level)][rarity_type]
+	for rarity_type in RARITY_WEIGHTS[max(1,min(6,generate_level))]:
+		accumulated_rarity_weight += RARITY_WEIGHTS[max(1,min(6,generate_level))][rarity_type]
 		if accumulated_rarity_weight > random_rarity_threshold:
 			selected_rarity = rarity_type
 			break
@@ -603,8 +604,11 @@ func generate_random_chess(lock_faction: bool):
 	# Pre-process all eligible chesses with calculated weights
 	for faction in DataManagerSingleton.get_chess_data():
 		# Skip special faction
+		if DataManagerSingleton.get_chess_data().has(specific_faction) and faction != specific_faction:
+			continue # Skip all not specific faction chess
+
 		if (lock_faction and DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"][faction]) or faction == "villager":
-			continue
+			continue # Skip all locked chess and villager
 			
 		for chess_name in DataManagerSingleton.get_chess_data()[faction]:
 			var chess_attributes = DataManagerSingleton.get_chess_data()[faction][chess_name]
@@ -685,7 +689,7 @@ func get_next_serial() -> int:
 	return chess_serial
 
 
-func summon_chess(summon_chess_faction: String, summon_chess_name: String, team: int, summon_arena: PlayArea, summon_position: Vector2i):
+func summon_chess(summon_chess_faction: String, summon_chess_name: String, chess_level: int, team: int, summon_arena: PlayArea, summon_position: Vector2i):
 
 	if not summon_chess_faction in DataManagerSingleton.get_chess_data().keys():
 		return null
@@ -775,6 +779,7 @@ func update_population():
 func chess_death_handle(obstacle: Obstacle):
 
 	arena.unit_grid.remove_unit(obstacle.get_current_tile(obstacle)[1])
+	obstacle.visible = false
 
 func control_shaker(control: Control):
 	var old_position = control.global_position
@@ -853,3 +858,70 @@ func battle_value_display(chess: Obstacle, chess2: Obstacle, display_value, sign
 	await damage_tween.finished
 	damage_tween.kill()
 	battle_label.queue_free()
+
+
+func check_chess_merge() -> bool:
+
+	if is_game_turn_start:
+		return false
+
+	var merge_result := false
+	for merge_level in [1, 2]:
+		var merge_checked := []
+		for node in arena.get_children() + bench.get_children():
+			if not is_instance_valid(node) or not node is Chess or node.status == node.STATUS.DIE or merge_checked.has([node.faction, node.chess_name]) or node.chess_level != merge_level:
+				continue
+			if node.visible = false:
+				continue
+			if node.team != 1:
+				continue
+
+			var merge_count := 0
+			var wait_merge := []
+
+			for other_node in arena.get_children() + bench.get_children():
+				if not is_instance_valid(other_node) or not other_node is Chess or other_node.status == other_node.STATUS.DIE or merge_checked.has([other_node.faction, other_node.chess_name]) or other_node.chess_level != merge_level:
+					continue
+				if other_node.visible = false:
+					continue
+				if other_node.team != 1:
+					continue
+
+				if node.faction == other_node.faction and node.chess_name == other_node.chess_name:
+					merge_count += 1
+					wait_merge.append(other_node)
+					if merge_count >= 3:
+						var merged_chess_faction = other_node.faction
+						var merged_chess_name = other_node.chess_name
+						var merged_play_area = other_node.get_current_tile(other_node)[0]
+						var merged_tile = other_node.get_current_tile(other_node)[1]
+
+						for removed_chess in wait_merge:
+							var removed_chess_faction = removed_chess.faction
+							var removed_chess_name = removed_chess.chess_name
+							var removed_chess_play_area = removed_chess.get_current_tile(removed_chess)[0]
+							var removed_chess_tile = removed_chess.get_current_tile(removed_chess)[1]
+
+							removed_chess_play_area.unit_grid.remove_unit(removed_chess_tile)
+
+							removed_chess.visible = false
+
+						summoned_chess(merged_chess_faction, merged_chess_name, merge_level + 1, 1, merged_play_area, merged_tile)
+
+						merge_count = 0
+						merge_result = true
+						merge_checked.append([node.faction, node.chess_name])
+						break
+
+			merge_checked.append([node.faction, node.chess_name])
+
+	for node in arena.get_children():
+		if node.visible = false:
+			node.queue_free()
+
+	if merge_result:
+		update_population()
+
+	await get_tree().process_frame
+
+	return merge_result
