@@ -3,16 +3,16 @@ render_mode skip_vertex_transform;
 
 // 描边设置
 uniform vec4 outline_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
-uniform bool enable_outline : hint_range(0.0, 1.0) = true;
+uniform bool enable_outline = true;
 
 // 闪烁效果设置
-uniform bool enable_blink : hint_range(0.0, 1.0) = false;
+uniform bool enable_blink = false;
 uniform vec4 blink_color : source_color = vec4(1.0, 0.0, 0.0, 1.0);
 uniform float blink_time_scale : hint_range(0.0, 10.0, 0.1) = 2.0;
 
 // 阴影/光晕设置
-uniform bool enable_shadow : hint_range(0.0, 1.0) = true;
-uniform bool shadow_only : hint_range(0.0, 1.0) = false;
+uniform bool enable_shadow = true;
+uniform bool shadow_only = false;
 uniform vec4 shadow_color : source_color = vec4(0.0, 0.0, 0.0, 0.5);
 uniform float blur_std : hint_range(0.1, 5.0, 0.1) = 1.0;
 
@@ -35,11 +35,11 @@ float gaussian(float x) {
 	return 1.0 / sqrt(8.0) / blur_std + erf(x / sqrt(2.0) / blur_std) / sqrt(PI);
 }
 
-# // 高斯函数 - 修正实现
-# float gaussian(float x) {
-# 	float pi = 3.14159265359;
-# 	return exp(-0.5 * x * x / (blur_std * blur_std)) / (blur_std * sqrt(2.0 * pi));
-# }
+//// 高斯函数 - 修正实现
+//float gaussian(float x) {
+	//float pi = 3.14159265359;
+	//return exp(-0.5 * x * x / (blur_std * blur_std)) / (blur_std * sqrt(2.0 * pi));
+//}
 
 void vertex() {
 	vec2 texture_size = vec2(1.0, 1.0) / TEXTURE_PIXEL_SIZE;
@@ -62,29 +62,29 @@ void vertex() {
 	modulate = COLOR;
 }
 
-# void vertex() {
-# 	vec2 texture_size = vec2(1.0, 1.0) / TEXTURE_PIXEL_SIZE;
-	
-# 	// 计算需要的padding
-# 	float outline_padding = enable_outline ? 1.0 : 0.0;
-# 	float shadow_padding = enable_shadow ? ceil(blur_std * 3.0) : 0.0;
-# 	float total_padding = outline_padding + shadow_padding;
-	
-# 	// 修正：先计算局部坐标的扩展
-# 	vec2 expanded_vertex = VERTEX;
-# 	expanded_vertex = expanded_vertex - texture_size * 0.5;
-# 	expanded_vertex = expanded_vertex * (vec2(1.0, 1.0) + total_padding * 2.0 * TEXTURE_PIXEL_SIZE);
-# 	expanded_vertex = expanded_vertex + texture_size * 0.5;
-	
-# 	// 然后应用变换矩阵
-# 	VERTEX = (MODEL_MATRIX * vec4(expanded_vertex, 0.0, 1.0)).xy;
-	
-# 	// 调整UV坐标
-# 	vec2 factor = (vec2(1.0, 1.0) + 2.0 * total_padding * TEXTURE_PIXEL_SIZE);
-# 	UV = factor * UV + vec2(0.5, 0.5) - 0.5 * factor;
-	
-# 	modulate = COLOR;
-# }
+//void vertex() {
+	//vec2 texture_size = vec2(1.0, 1.0) / TEXTURE_PIXEL_SIZE;
+//
+	//// 计算需要的padding
+	//float outline_padding = enable_outline ? 1.0 : 0.0;
+	//float shadow_padding = enable_shadow ? ceil(blur_std * 3.0) : 0.0;
+	//float total_padding = outline_padding + shadow_padding;
+//
+	//// 修正：先计算局部坐标的扩展
+	//vec2 expanded_vertex = VERTEX;
+	//expanded_vertex = expanded_vertex - texture_size * 0.5;
+	//expanded_vertex = expanded_vertex * (vec2(1.0, 1.0) + total_padding * 2.0 * TEXTURE_PIXEL_SIZE);
+	//expanded_vertex = expanded_vertex + texture_size * 0.5;
+//
+	//// 然后应用变换矩阵
+	//VERTEX = (MODEL_MATRIX * vec4(expanded_vertex, 0.0, 1.0)).xy;
+//
+	//// 调整UV坐标
+	//vec2 factor = (vec2(1.0, 1.0) + 2.0 * total_padding * TEXTURE_PIXEL_SIZE);
+	//UV = factor * UV + vec2(0.5, 0.5) - 0.5 * factor;
+//
+	//modulate = COLOR;
+//}
 
 void fragment() {
 	vec2 pixel_size = TEXTURE_PIXEL_SIZE;
@@ -123,20 +123,20 @@ void fragment() {
 		}
 	}
 
-	# // === 2. 计算阴影/光晕 === 修正版本
-	# float shadow_weight = 0.0;
-	# if (enable_shadow) {
-	# 	float blur_radius = ceil(blur_std * 3.0);
-		
-	# 	for (float x = -blur_radius; x <= blur_radius; x += 1.0) {
-	# 		for (float y = -blur_radius; y <= blur_radius; y += 1.0) {
-	# 			vec2 offset = vec2(x, y) * TEXTURE_PIXEL_SIZE;
-	# 			float distance = length(vec2(x, y));
-	# 			float weight = gaussian(distance);
-	# 			shadow_weight += weight * padded_sample(TEXTURE, UV + offset).a;
-	# 		}
-	# 	}
-	# }
+	//// === 2. 计算阴影/光晕 === 修正版本
+	//float shadow_weight = 0.0;
+	//if (enable_shadow) {
+		//float blur_radius = ceil(blur_std * 3.0);
+		//
+		//for (float x = -blur_radius; x <= blur_radius; x += 1.0) {
+			//for (float y = -blur_radius; y <= blur_radius; y += 1.0) {
+				//vec2 offset = vec2(x, y) * TEXTURE_PIXEL_SIZE;
+				//float distance = length(vec2(x, y));
+				//float weight = gaussian(distance);
+				//shadow_weight += weight * padded_sample(TEXTURE, UV + offset).a;
+			//}
+		//}
+	//}
 	
 	// === 3. 组合最终颜色 ===
 	vec4 final_color;
@@ -175,41 +175,41 @@ void fragment() {
 	COLOR = final_color * modulate;
 }
 
-# extends Sprite2D
-
-# func _ready():
-#     # 创建shader材质
-#     var shader_material = ShaderMaterial.new()
-#     shader_material.shader = load("res://shaders/pixel_outline_shadow.gdshader")
-#     material = shader_material
-    
-#     # 设置参数
-#     setup_outline()
-#     setup_blink_effect()
-#     setup_shadow()
-
-# func setup_outline():
-#     # 启用描边并设置颜色
-#     material.set_shader_parameter("enable_outline", true)
-#     material.set_shader_parameter("outline_color", Color.WHITE)
-
-# func setup_blink_effect():
-#     # 启用闪烁效果
-#     material.set_shader_parameter("enable_blink", true)
-#     material.set_shader_parameter("blink_color", Color.RED)
-#     material.set_shader_parameter("blink_time_scale", 3.0)
-
-# func setup_shadow():
-#     # 启用阴影效果
-#     material.set_shader_parameter("enable_shadow", true)
-#     material.set_shader_parameter("shadow_color", Color(0, 0, 0, 0.6))
-#     material.set_shader_parameter("blur_std", 2.0)
-#     material.set_shader_parameter("shadow_only", false)
-
-# # 动态切换效果的示例函数
-# func toggle_blink():
-#     var current = material.get_shader_parameter("enable_blink")
-#     material.set_shader_parameter("enable_blink", !current)
-
-# func set_outline_color(color: Color):
-#     material.set_shader_parameter("outline_color", color)
+//extends Sprite2D
+//
+//func _ready():
+    //创建shader材质
+    //var shader_material = ShaderMaterial.new()
+    //shader_material.shader = load("res://shaders/pixel_outline_shadow.gdshader")
+    //material = shader_material
+    //
+    //设置参数
+    //setup_outline()
+    //setup_blink_effect()
+    //setup_shadow()
+//
+//func setup_outline():
+    //启用描边并设置颜色
+    //material.set_shader_parameter("enable_outline", true)
+    //material.set_shader_parameter("outline_color", Color.WHITE)
+//
+//func setup_blink_effect():
+    //启用闪烁效果
+    //material.set_shader_parameter("enable_blink", true)
+    //material.set_shader_parameter("blink_color", Color.RED)
+    //material.set_shader_parameter("blink_time_scale", 3.0)
+//
+//func setup_shadow():
+    //启用阴影效果
+    //material.set_shader_parameter("enable_shadow", true)
+    //material.set_shader_parameter("shadow_color", Color(0, 0, 0, 0.6))
+    //material.set_shader_parameter("blur_std", 2.0)
+    //material.set_shader_parameter("shadow_only", false)
+//
+//动态切换效果的示例函数
+//func toggle_blink():
+    //var current = material.get_shader_parameter("enable_blink")
+    //material.set_shader_parameter("enable_blink", !current)
+//
+//func set_outline_color(color: Color):
+    //material.set_shader_parameter("outline_color", color)

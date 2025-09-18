@@ -544,6 +544,7 @@ func get_random_character(faction_name: String) -> String:
 	return candidates[0] # Default return first one (shouldn't reach here)
 
 func clear_play_area(play_area_to_clear: PlayArea):
+	await get_tree().process_frame
 	var all_children = play_area_to_clear.unit_grid.get_children()
 	for node in all_children:
 		if node is Obstacle:
@@ -847,7 +848,7 @@ func battle_value_display(chess: Obstacle, chess2: Obstacle, display_value, sign
 			battle_label.text = ""
 	battle_label.label_settings = label_settings
 	
-	var old_position = chess.global_position + Vector2(16, -8)
+	var old_position = chess.global_position + Vector2(8, -8)
 	battle_label.global_position = old_position
 
 	var damage_tween

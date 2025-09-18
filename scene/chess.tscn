@@ -583,6 +583,7 @@ script = ExtResource("7_8osrc")
 script = ExtResource("8_feolq")
 
 [node name="level_label" type="Label" parent="."]
+z_index = 6
 offset_left = 8.0
 offset_top = -16.0
 offset_right = 14.0
