@@ -2,11 +2,7 @@ extends Node2D
 class_name PlayerUpgrade
 
 @onready var faction_lock_container : VBoxContainer = $faction_lock_container
-# 修改成一个HBoxContainer = label + CheckButton的格式
-#@onready var holy_faction_lock : CheckButton = $faction_lock_container/holy_faction_lock
-#@onready var forestProtector_faction_lock : CheckButton = $faction_lock_container/forestProtector_faction_lock
-#@onready var undead_faction_lock : CheckButton = $faction_lock_container/undead_faction_lock
-#@onready var demon_faction_lock : CheckButton = $faction_lock_container/demon_faction_lock
+
 @onready var holy_lock_container: HBoxContainer = $faction_lock_container/holy_lock_container
 @onready var label: Label = $faction_lock_container/holy_lock_container/Label
 @onready var holy_faction_lock: CheckButton = $faction_lock_container/holy_lock_container/holy_faction_lock
@@ -41,4 +37,5 @@ func faction_lock_button_toggled(toggled_on: bool, button_index: CheckButton):
 
 
 func _on_back_button_pressed() -> void:
+	DataManagerSingleton.save_game_json()
 	to_menu_scene.emit()
