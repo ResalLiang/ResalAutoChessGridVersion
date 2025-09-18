@@ -103,7 +103,7 @@ func shop_refresh() -> void:
 		# var rand_faction = get_parent().chess_data.keys()[rand_faction_index]
 
 		var rand_character_result = get_parent().generate_random_chess(shop_level, true, "all")
-		var character = get_parent().summon_chess(rand_character_result[0], rand_character_result[1], 1, shop, Vector2i(shop_col_index, shop_row_index))
+		var character = get_parent().summon_chess(rand_character_result[0], rand_character_result[1], 1, 1, shop, Vector2i(shop_col_index, shop_row_index))
 
 		
 	var debug_chess_faction = ["human", "human", "human", "demon", "elf", "elf", "undead", "dwarf"]
@@ -113,7 +113,7 @@ func shop_refresh() -> void:
 		var shop_col_index = debug_index % shop.unit_grid.size.x
 		var shop_row_index = floor(debug_index / shop.unit_grid.size.x) + 1
 
-		var character = get_parent().summon_chess(debug_chess_faction[debug_index],debug_chess_name[debug_index], 1, shop, Vector2i(shop_col_index, shop_row_index))
+		var character = get_parent().summon_chess(debug_chess_faction[debug_index],debug_chess_name[debug_index], 1, 1, shop, Vector2i(shop_col_index, shop_row_index))
 
 func shop_freeze() -> void:
 	if is_shop_frozen:

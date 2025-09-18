@@ -8,3 +8,10 @@ res://asset/animation/demon/demonDemoness.tres
 res://asset/animation/forestProtector/forestProtectorDryadEnchantress.tres
 res://asset/theme/toggle.tres
 res://asset/shader/SoftDropShadow.gdshader
+res://script/game.gd
+res://script/shop_handler.gd
+res://scene/chess.tscn
+res://script/obstacle.gd
+res://script/chess.gd
+res://scene/game.tscn
+res://scene/menu.tscn

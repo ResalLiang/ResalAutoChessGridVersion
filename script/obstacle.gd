@@ -24,6 +24,7 @@ const chess_scene = preload("res://scene/chess.tscn")
 @onready var area_effect_handler: AreaEffectHandler = $area_effect_handler
 @onready var hp_bar: ProgressBar = $hp_bar
 @onready var mp_bar: ProgressBar = $mp_bar
+@onready var level_label: Label = $level_label
 
 
 # ========================

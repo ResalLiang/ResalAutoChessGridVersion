@@ -211,7 +211,7 @@ func _ready():
 	shop_handler.shop_upgraded.connect(
 		func(value):
 			current_shop_level.text = "Current Shop Level is : " + str(shop_handler.shop_level)
-			update_population()
+			update_population(true)
 	)
 	chess_appearance_finished.connect(
 		func(play_area):
@@ -221,7 +221,7 @@ func _ready():
 	chess_mover.chess_moved.connect(
 		func(chess: Obstacle, play_area: PlayArea, tile: Vector2i):
 			if not is_game_turn_start:
-				update_population()
+				update_population(false)
 	)
 	
 	chess_mover.chess_raised.connect(
@@ -261,9 +261,9 @@ func start_new_game() -> void:
 
 	debug_handler.write_log("LOG", "Game Start.")
 	
-	clear_play_area(arena)
-	clear_play_area(shop)
-	clear_play_area(bench)
+	await clear_play_area(arena)
+	await clear_play_area(shop)
+	await clear_play_area(bench)
 
 	saved_arena_team = {}
 
@@ -281,7 +281,7 @@ func start_new_game() -> void:
 	DataManagerSingleton.lose_rounds = 0
 
 	shop_handler.shop_init()
-	update_population()
+	update_population(true)
 	new_round_prepare_start()
 
 func new_round_prepare_start():
@@ -297,11 +297,11 @@ func new_round_prepare_start():
 
 	game_turn_finished.emit()
 
-	clear_play_area(arena)
+	await clear_play_area(arena)
 	if saved_arena_team.size() != 0:
 		load_arena_team()
 		
-	update_population()
+	update_population(true)
 	chess_mover.setup_before_turn_start()
 	shop_handler.turn_start_income(current_round)
 
@@ -352,7 +352,7 @@ func start_new_round():
 				team_dict[Team.TEAM2].append(chess_index)
 				team2_alive_cnt += 1
 				
-	update_population()
+	update_population(true)
 			
 	if team1_alive_cnt == 0:
 		round_finished.emit("team2")
@@ -505,7 +505,7 @@ func generate_enemy(difficulty : int) -> void:
 		if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
 			var rand_character_result = generate_random_chess(shop_handler.shop_level, false, "all")
 
-			var character = summon_chess(rand_character_result[0], rand_character_result[1], 2, arena, Vector2i(rand_x, rand_y))
+			var character = summon_chess(rand_character_result[0], rand_character_result[1], 1, 2, arena, Vector2i(rand_x, rand_y))
 
 			current_difficulty += character.max_hp
 			current_enemy_cnt += 1
@@ -544,9 +544,11 @@ func get_random_character(faction_name: String) -> String:
 	return candidates[0] # Default return first one (shouldn't reach here)
 
 func clear_play_area(play_area_to_clear: PlayArea):
-	for node in play_area_to_clear.unit_grid.get_children():
+	var all_children = play_area_to_clear.unit_grid.get_children()
+	for node in all_children:
 		if node is Obstacle:
 			node.queue_free()
+			await get_tree().process_frame
 
 func load_arena_team():
 	team_dict[Team.TEAM1_FULL] = []
@@ -709,6 +711,7 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, chess
 	summoned_character.bench = bench
 	summoned_character.shop = shop
 	summoned_character.chess_serial = get_next_serial()
+	summoned_character.chess_level = chess_level
 	add_child(summoned_character)
 	summoned_character._load_chess_stats()
 
@@ -747,8 +750,8 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, chess
 		
 	return summoned_character
 
-func update_population():
-	if is_game_turn_start:
+func update_population(forced_update: bool):
+	if is_game_turn_start and not forced_update:
 		return
 
 	arena.unit_grid.refresh_units()
@@ -868,10 +871,10 @@ func check_chess_merge() -> bool:
 	var merge_result := false
 	for merge_level in [1, 2]:
 		var merge_checked := []
-		for node in arena.get_children() + bench.get_children():
+		for node in arena.unit_grid.get_children() + bench.unit_grid.get_children():
 			if not is_instance_valid(node) or not node is Chess or node.status == node.STATUS.DIE or merge_checked.has([node.faction, node.chess_name]) or node.chess_level != merge_level:
 				continue
-			if node.visible = false:
+			if node.visible == false:
 				continue
 			if node.team != 1:
 				continue
@@ -879,10 +882,10 @@ func check_chess_merge() -> bool:
 			var merge_count := 0
 			var wait_merge := []
 
-			for other_node in arena.get_children() + bench.get_children():
+			for other_node in arena.unit_grid.get_children() + bench.unit_grid.get_children():
 				if not is_instance_valid(other_node) or not other_node is Chess or other_node.status == other_node.STATUS.DIE or merge_checked.has([other_node.faction, other_node.chess_name]) or other_node.chess_level != merge_level:
 					continue
-				if other_node.visible = false:
+				if other_node.visible == false:
 					continue
 				if other_node.team != 1:
 					continue
@@ -906,7 +909,7 @@ func check_chess_merge() -> bool:
 
 							removed_chess.visible = false
 
-						summoned_chess(merged_chess_faction, merged_chess_name, merge_level + 1, 1, merged_play_area, merged_tile)
+						summon_chess(merged_chess_faction, merged_chess_name, merge_level + 1, 1, merged_play_area, merged_tile)
 
 						merge_count = 0
 						merge_result = true
@@ -915,12 +918,12 @@ func check_chess_merge() -> bool:
 
 			merge_checked.append([node.faction, node.chess_name])
 
-	for node in arena.get_children():
-		if node.visible = false:
+	for node in arena.unit_grid.get_children():
+		if node is Chess and node.visible == false:
 			node.queue_free()
 
 	if merge_result:
-		update_population()
+		update_population(true)
 
 	await get_tree().process_frame
 

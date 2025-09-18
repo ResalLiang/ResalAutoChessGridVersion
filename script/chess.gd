@@ -304,6 +304,8 @@ func _process(delta: float) -> void:
 
 	hp_bar.max_value = max_hp
 	mp_bar.max_value = max_mp
+	
+	level_label.text = "I".repeat(chess_level)
 
 	hp_bar.visible = true #hp != max_hp
 		
@@ -749,12 +751,12 @@ func _find_new_target(tgt) -> Obstacle:
 		TARGET_CHOICE.FAR:
 			if enemy_chesses.size() > 0:
 				enemy_chesses.sort_custom(func(a, b): return _compare_distance)
-				new_target = enemy_chesses.front()  # Farthest enemy
+				new_target = enemy_chesses.back()  # Farthest enemy
 		
 		TARGET_CHOICE.CLOSE:
 			if enemy_chesses.size() > 0:
 				enemy_chesses.sort_custom(func(a, b): return _compare_distance)
-				new_target = enemy_chesses.back() # Closest enemy
+				new_target = enemy_chesses.front() # Closest enemy
 		
 		TARGET_CHOICE.STRONG:
 			if enemy_chesses.size() > 0:
@@ -1229,7 +1231,7 @@ func undead_necromancer_summon(summoned_chess_name: String, summon_unit_count: i
 				if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
 					
 					var game_root_scene = arena.get_parent().get_parent()
-					var summoned_character = game_root_scene.summon_chess("undead", summoned_chess_name, team, arena, Vector2i(rand_x, rand_y))
+					var summoned_character = game_root_scene.summon_chess("undead", summoned_chess_name, 1, team, arena, Vector2i(rand_x, rand_y))
 
 					if summoned_character.animated_sprite_2d.sprite_frames.has_animation("rise") :
 						summoned_character.animated_sprite_2d.play("rise")
