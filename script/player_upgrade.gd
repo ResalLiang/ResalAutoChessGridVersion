@@ -13,7 +13,7 @@ class_name PlayerUpgrade
 @onready var demon_lock_container: HBoxContainer = $faction_lock_container/demon_lock_container
 @onready var demon_faction_lock: CheckButton = $faction_lock_container/demon_lock_container/demon_faction_lock
 @onready var back_button: Button = $back_button
-
+#TODO: add debug button
 signal to_menu_scene
 
 var current_player_upgrade : Dictionary
@@ -31,9 +31,11 @@ func _ready():
 
 
 func faction_lock_button_toggled(toggled_on: bool, button_index: CheckButton):
-	# button_index.button_pressed = not button_index.button_pressed
-	var faction_name = button_index.get_name().replace("_faction_lock", "")
-	current_player_upgrade["faction_locked"][faction_name] = toggled_on
+	if button_index.get_name() == "debug_mode_button":
+		DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] = toggled_on
+	else:
+		var faction_name = button_index.get_name().replace("_faction_lock", "")
+		current_player_upgrade["faction_locked"][faction_name] = toggled_on
 
 
 func _on_back_button_pressed() -> void:
