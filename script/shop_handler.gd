@@ -70,6 +70,9 @@ func _ready():
 			debug_handler.write_log("LOG", "Shop upgrade to level: " + str(value) + ".")
 	)
 
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
+		base_income = 999
+
 
 func shop_init():
 	remain_coins = 0 #game_start_coins
@@ -102,12 +105,12 @@ func shop_refresh() -> void:
 		# var rand_faction_index = randi_range(0, get_parent().chess_data.keys().size() - 2) # remove villager
 		# var rand_faction = get_parent().chess_data.keys()[rand_faction_index]
 
-		var rand_character_result = get_parent().generate_random_chess(shop_level, true, "all")
+		var rand_character_result = get_parent().generate_random_chess(shop_level, false, "all")
 		var character = get_parent().summon_chess(rand_character_result[0], rand_character_result[1], 1, 1, shop, Vector2i(shop_col_index, shop_row_index))
 
 		
-	var debug_chess_faction = ["human", "human", "human", "demon", "elf", "elf", "undead", "dwarf"]
-	var debug_chess_name = ["CrossBowMan", "Mage", "ArchMage", "FireImp", "Queen", "Mage", "Necromancer", "Demolitionist"]
+	var debug_chess_faction = ["human", "human", "human", "elf", "elf", "dwarf"]
+	var debug_chess_name = ["CrossBowMan", "Mage", "ArchMage", "Queen", "Mage", "Demolitionist"]
 	for debug_index in range(debug_chess_faction.size()):
 
 		var shop_col_index = debug_index % shop.unit_grid.size.x
