@@ -16,6 +16,7 @@ var player_data_template : Dictionary = {
 	"total_coin_spend": 0,
 	"total_refresh_count" : 0,
 	"highest_score" : 0,
+	"debug_mode" : false,
 	"chess_stat" : {}
 }
 
