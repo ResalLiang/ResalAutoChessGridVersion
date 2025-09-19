@@ -85,6 +85,7 @@ var base_critical_rate := 0.10
 		#max_mp = value
 		#mp = update_mp
 
+var role: String
 var speed = base_speed
 var melee_damage = base_melee_damage
 var ranged_damage = base_ranged_damage
@@ -94,9 +95,13 @@ var attack_range = base_attack_range
 var evasion_rate := 0.10
 var critical_rate := 0.10
 #var armor := 0
+var decline_ratio := 3.0
 var chess_rarity := "Common" #	"Common", "Uncommon", "Rare", "Epic", "Legendary"
 
 var remain_attack_count
+var total_movement := 0
+
+var target_changed := false
 
 #var chess_data: Dictionary  # Stores chess stats loaded from JSON
 #
@@ -449,6 +454,7 @@ func _load_chess_stats():
 	# Safely retrieve stats if available
 	if chess_data.has(faction) and chess_data[faction].has(chess_name):
 		var stats = chess_data[faction][chess_name]
+		role = stats["role"]
 		base_speed = stats["speed"]
 		base_max_hp = stats["max_health"]
 		base_attack_range = stats["attack_range"]
@@ -460,9 +466,14 @@ func _load_chess_stats():
 			base_melee_damage = 0
 		elif base_attack_range <= 32 or not animated_sprite_2d.sprite_frames.has_animation("ranged_attack") or not stats.keys().has("ranged_attack_damage"):
 			base_ranged_damage = 0
+			decline_ratio = 100.0
+			projectile_penetration = 1
 		else:
 			base_melee_damage = stats["melee_attack_damage"]
 			base_ranged_damage = stats["ranged_attack_damage"]
+			decline_ratio = stats["decline_ratio"]
+			projectile_penetration = stats["projectile_penetration"]
+			
 		skill_name = stats["skill_name"]
 		skill_description = stats["skill_description"]
 		chess_rarity = stats["rarity"]
@@ -471,6 +482,9 @@ func _load_chess_stats():
 		push_error("Stats not found for %s/%s" % [faction, chess_name])
 
 func start_turn():
+
+	total_movement = 0
+	target_changed = false
 	
 	#Placeholder for chess passive ability on start turn
 	if status == STATUS.DIE:
@@ -497,7 +511,7 @@ func start_turn():
 
 func _handle_movement():
 	#Placeholder for chess passive ability on movement
-	
+
 	if status == STATUS.DIE:
 		action_timer.set_wait_time(action_timer_wait_time)
 		action_timer.start()
@@ -551,6 +565,7 @@ func _handle_movement():
 				# position_tween.tween_property(self, "_position", target_pos, 0.1)
 				# tween_moving.emit(self, _position, target_pos)
 				remain_step -= 1
+				total_movement += 1
 
 			astar_grid.set_point_solid(get_current_tile(self)[1], true)
 			astar_grid.set_point_solid(get_current_tile(chess_target)[1], true)
@@ -558,20 +573,6 @@ func _handle_movement():
 			move_finished.emit(self,get_current_tile(self)[1])
 			move_timer.set_wait_time(move_timer_wait_time)
 			move_timer.start()
-
-# func _on_move_completed():
-# 	remain_step -= 1
-# 	if remain_step <= 0 or global_position.distance_to(chess_target.global_position) <= attack_range:
-# 		position_tween.pause()
-# 		position_tween.kill()
-# 		astar_grid.set_point_solid(position_id, true)
-# 		astar_grid.set_point_solid(chess_target.position_id, true)
-# 		if current_play_area == play_areas.playarea_arena:
-# 			arena.unit_grid.add_unit(position_id, self)
-# 		#Placeholder for chess passive ability on move finish
-# 		move_finished.emit(self, _position)
-# 		move_timer.set_wait_time(move_timer_wait_time)
-# 		move_timer.start()
 						
 func _handle_action():
 
@@ -671,7 +672,15 @@ func _handle_attack():
 				handle_special_effect(chess_target, self)
 
 		elif current_distance_to_target < ranged_attack_threshold or (has_melee_target() is Obstacle and current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack")):
-			damage = melee_damage
+			
+			if role == "knight" and total_movement >=5:
+				var knight_bonus := 0
+				for effect_index in effect_handler.effect_list:
+					if effect_index.get_slice(" ", 0) == "KnightSkill":
+						knight_level = max(knight_level, int(effect_index.get_slice(" ", -1)))
+				damage = melee_damage * (1 + 0.15 * knight_level)
+			else:
+				damage = melee_damage
 
 			if current_distance_to_target >= ranged_attack_threshold:
 				chess_target = has_melee_target()
@@ -732,6 +741,7 @@ func _handle_targeting():
 	if chess_target:
 		chess_target.is_died.connect(handle_target_death)
 	attack_target_line.visible = true
+	target_changed = true
 		
 # Find a new target based on selection strategy
 func _find_new_target(tgt) -> Obstacle:
@@ -871,6 +881,7 @@ func _launch_projectile(target: Obstacle):
 	projectile.speed = projectile_speed
 	projectile.damage = projectile_damage
 	projectile.penetration = projectile_penetration
+	projectile.decline_ratio = decline_ratio
 	projectile.is_active = true
 	
 	return projectile
