@@ -79,6 +79,9 @@ func _ready() -> void:
 	load_game_json()
 	
 	load_chess_stats()
+	
+	if not player_datas[current_player].has("debug_mode"):
+		player_datas[current_player]["debug_mode"] = false
 
 # func load_game_binary():
 # 	if FileAccess.file_exists("user://gamedata.dat"):

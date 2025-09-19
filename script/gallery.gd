@@ -136,9 +136,6 @@ func create_chess_button(faction_index: String, chess_index: String, current_pla
 	
 	return null
 
-func _on_back_button_pressed() -> void:
-	to_menu_scene.emit()
-
 func _on_chess_button_pressed(button: TextureButton):
 	var faction_index = button.get_meta("faction")
 	var chess_index = button.get_meta("chess_name")
@@ -198,3 +195,9 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 		var rand_anim_index = randi_range(0, animated_sprite_2d.sprite_frames.get_animation_names().size() - 1)
 		var rand_anim_name = animated_sprite_2d.sprite_frames.get_animation_names()[rand_anim_index]
 		animated_sprite_2d.play(rand_anim_name)
+
+func _on_back_button_pressed() -> void:
+	to_menu_scene.emit()
+
+func _on_reset_button_pressed() -> void:
+	DataManagerSingleton.clean_player_data()

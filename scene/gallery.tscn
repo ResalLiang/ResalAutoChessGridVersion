@@ -21,6 +21,14 @@ offset_bottom = 310.0
 theme_override_fonts/font = ExtResource("3_l8qdg")
 text = "Back"
 
+[node name="reset_button" type="Button" parent="."]
+offset_left = 452.0
+offset_top = 214.0
+offset_right = 556.0
+offset_bottom = 254.0
+theme_override_fonts/font = ExtResource("3_l8qdg")
+text = "Reset"
+
 [node name="chess_container" type="ScrollContainer" parent="."]
 offset_left = 25.0
 offset_top = 8.0
@@ -102,3 +110,5 @@ sprite_frames = ExtResource("5_5uns2")
 animation = &"die"
 
 [connection signal="pressed" from="back_button" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="reset_button" to="." method="_on_reset_button_pressed"]
+[connection signal="pressed" from="reset_button" to="." method="_on_back_button_pressed"]

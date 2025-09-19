@@ -86,6 +86,23 @@ size_flags_horizontal = 8
 theme = ExtResource("4_ky6jo")
 icon_alignment = 2
 
+[node name="debug_container" type="HBoxContainer" parent="faction_lock_container"]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="Label" type="Label" parent="faction_lock_container/debug_container"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_4xgvd")
+theme_override_font_sizes/font_size = 8
+text = "Debug"
+
+[node name="debug_mode_button" type="CheckButton" parent="faction_lock_container/debug_container"]
+custom_minimum_size = Vector2(32, 16)
+layout_mode = 2
+size_flags_horizontal = 8
+theme = ExtResource("4_ky6jo")
+icon_alignment = 2
+
 [node name="back_button" type="Button" parent="."]
 offset_left = 452.0
 offset_top = 270.0

@@ -12,6 +12,8 @@ class_name PlayerUpgrade
 @onready var undead_faction_lock: CheckButton = $faction_lock_container/undead_lock_container/undead_faction_lock
 @onready var demon_lock_container: HBoxContainer = $faction_lock_container/demon_lock_container
 @onready var demon_faction_lock: CheckButton = $faction_lock_container/demon_lock_container/demon_faction_lock
+@onready var debug_mode_button: CheckButton = $faction_lock_container/debug_container/debug_mode_button
+
 @onready var back_button: Button = $back_button
 #TODO: add debug button
 signal to_menu_scene
@@ -21,8 +23,15 @@ var current_player_upgrade : Dictionary
 func _ready():
 	current_player_upgrade = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]
 	for button_index in faction_lock_container.get_children():
+
+			
 		for node in button_index.get_children():
 			if not node is CheckButton:
+				continue
+				
+			if node.get_name() == "debug_mode_button":
+				node.set_pressed(DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"])
+				node.toggled.connect(faction_lock_button_toggled.bind(node))
 				continue
 				
 			var faction_name = node.get_name().replace("_faction_lock", "")

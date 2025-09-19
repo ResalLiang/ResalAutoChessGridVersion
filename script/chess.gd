@@ -474,8 +474,9 @@ func _load_chess_stats():
 			decline_ratio = stats["decline_ratio"]
 			projectile_penetration = stats["projectile_penetration"]
 			
-		skill_name = stats["skill_name"]
-		skill_description = stats["skill_description"]
+		if stats.has("skill_name"):
+			skill_name = stats["skill_name"]
+			skill_description = stats["skill_description"]
 		chess_rarity = stats["rarity"]
 		stats_loaded.emit(self, stats)
 	else:
@@ -674,10 +675,10 @@ func _handle_attack():
 		elif current_distance_to_target < ranged_attack_threshold or (has_melee_target() is Obstacle and current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack")):
 			
 			if role == "knight" and total_movement >=5:
-				var knight_bonus := 0
+				var knight_level := 0
 				for effect_index in effect_handler.effect_list:
-					if effect_index.get_slice(" ", 0) == "KnightSkill":
-						knight_level = max(knight_level, int(effect_index.get_slice(" ", -1)))
+					if effect_index.effect_name.get_slice(" ", 0) == "KnightSkill":
+						knight_level = max(knight_level, int(effect_index.effect_name.get_slice(" ", -1)))
 				damage = melee_damage * (1 + 0.15 * knight_level)
 			else:
 				damage = melee_damage
@@ -1268,7 +1269,7 @@ func dwarf_demolitionist_placebomb(spell_range: int) -> bool:
 				attempt_summon_count -= 1
 				if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
 					var game_root_scene = arena.get_parent().get_parent()
-					var summoned_character = game_root_scene.summon_chess("dwarf", "Bomb", team, arena, Vector2i(rand_x, rand_y))	
+					var summoned_character = game_root_scene.summon_chess("dwarf", "Bomb", 1, team, arena, Vector2i(rand_x, rand_y))	
 					summoned_character.obstacle_counter = 2
 					summoned_character.obstacle_level = 1
 

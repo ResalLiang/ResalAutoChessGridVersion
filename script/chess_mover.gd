@@ -172,6 +172,11 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 				await get_parent().check_chess_merge()
 			return
 
+		elif shop_handler.can_pay_chess(obstacle) and not new_area.unit_grid.is_tile_occupied(new_tile) and (old_area_index == 2 and drop_area_index == 1):
+			shop_handler.buy_chess(obstacle)
+			_move_chess(obstacle, new_area, new_tile)
+			return
+			
 		elif not shop_handler.can_pay_chess(obstacle): # cannot pay
 			_reset_chess_to_starting_position(starting_position, obstacle)
 			get_parent().control_shaker(get_parent().remain_coins_label)

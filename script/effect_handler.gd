@@ -39,7 +39,7 @@ func add_to_effect_array(chess_effect: ChessEffect):
 				effect_index = chess_effect
 				effect_list_updated.emit()
 				return
-			if chess_effect.effect_name.slice(" ", 0) == effect_index.effect_name.slice(" ", 0) and int(chess_effect.effect_name.slice(" ", -1)) >= int(effect_index.effect_name.slice(" ", -1)):
+			if chess_effect.effect_name.get_slice(" ", 0) == effect_index.effect_name.get_slice(" ", 0) and int(chess_effect.effect_name.get_slice(" ", -1)) >= int(effect_index.effect_name.get_slice(" ", -1)):
 				effect_index = chess_effect
 				effect_list_updated.emit()
 				return

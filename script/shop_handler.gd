@@ -70,8 +70,10 @@ func _ready():
 			debug_handler.write_log("LOG", "Shop upgrade to level: " + str(value) + ".")
 	)
 
-	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
-		base_income = 999
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player].has("debug_mode"):
+		base_income = 999 if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] else 10
+	else:
+		base_income = 10
 
 
 func shop_init():
