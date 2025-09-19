@@ -6,6 +6,7 @@ var effect_icon : Texture2D
 var effect_description : String
 var effect_type : String # Buff/Debuff/Passive
 var effect_applier : String
+var effect_duration := 0
 
 signal extra_func_called
 
@@ -150,6 +151,9 @@ var evasion_rate_modifier_duration := 0:
 			if value <= 0:
 				evasion_rate_modifier = 0
 
+func _ready() -> void:
+	extra_func_called.connect(extra_func)
+
 func check_effect_timeout() -> bool:
 	
 	if immunity_duration > 0:
@@ -212,9 +216,14 @@ func check_effect_timeout() -> bool:
 	if speed_modifier_duration > 0 and speed_modifier != 0:
 		return true
 
+	if effect_duration > 0:
+		return true
+
 	return false
 	
 func start_turn_update():
+
+	effect_duration = max(0, effect_duration - 1)
 
 	immunity_duration = max(0, immunity_duration - 1)
 	spell_immunity_duration = max(0, spell_immunity_duration - 1)
@@ -237,3 +246,8 @@ func start_turn_update():
 	max_hp_modifier_duration = max(0, max_hp_modifier_duration - 1)
 	critical_rate_modifier_duration = max(0, critical_rate_modifier_duration - 1)
 	evasion_rate_modifier_duration = max(0, evasion_rate_modifier_duration - 1)
+
+func extra_func(chess: Chess):
+	if effect_name.get_slice(" ", 0) == "RangerSkill" and chess.role == "ranger":
+		chess.projectile_penetration = max(chess.projectile_penetration, 1 + int(effect_name.get_slice(" ", -1)))
+		chess.decline_ratio = min(chess.decline_ratio, 3 - 0.5 * int(effect_name.get_slice(" ", -1)))
