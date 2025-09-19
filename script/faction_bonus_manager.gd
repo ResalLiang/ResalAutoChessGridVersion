@@ -16,7 +16,13 @@ var bonus_level_list : Dictionary = {
 	"holy" : [3, 6],
 	"forestProtector" : [2, 4, 6],
 	"undead" : [2, 4, 6],
-	"demon" : [2, 4, 6]	
+	"demon" : [2, 4, 6],
+
+	"warrior" : [2, 4, 6],
+	"pikeman" : [2, 4, 6],
+	"ranger" : [2, 4, 6],
+	"knight" : [2, 4, 6],
+	"speller" : [2, 4, 6]
 }
 
 # player_faction_count for storing players chess name
@@ -28,7 +34,13 @@ var player_faction_count_template : Dictionary = {
 		"holy" : [],
 		"forestProtector" : [],
 		"undead" : [],
-		"demon" : []
+		"demon" : [],
+	
+		"warrior" : [],
+		"pikeman" : [],
+		"ranger" : [],
+		"knight" : [],
+		"speller" : []
 	},
 	2 : {
 		"elf" : [],
@@ -37,7 +49,13 @@ var player_faction_count_template : Dictionary = {
 		"holy" : [],
 		"forestProtector" : [],
 		"undead" : [],
-		"demon" : []
+		"demon" : [],
+	
+		"warrior" : [],
+		"pikeman" : [],
+		"ranger" : [],
+		"knight" : [],
+		"speller" : []
 	}
 }
 
@@ -50,7 +68,13 @@ var player_bonus_level_dict_template : Dictionary = {
 		"holy" : 0,
 		"forestProtector" : 0,
 		"undead" : 0,
-		"demon" : 0
+		"demon" : 0,
+	
+		"warrior" : 0,
+		"pikeman" : 0,
+		"ranger" : 0,
+		"knight" : 0,
+		"speller" : 0
 	},
 	2 : {
 		"elf" : 0,
@@ -59,7 +83,13 @@ var player_bonus_level_dict_template : Dictionary = {
 		"holy" : 0,
 		"forestProtector" : 0,
 		"undead" : 0,
-		"demon" : 0
+		"demon" : 0,
+	
+		"warrior" : 0,
+		"pikeman" : 0,
+		"ranger" : 0,
+		"knight" : 0,
+		"speller" : 0
 	}
 }
 
@@ -82,6 +112,9 @@ func bonus_refresh() -> void:
 		if not player_faction_count[chess_index.team][chess_index.faction].has(chess_index.chess_name):
 			player_faction_count[chess_index.team][chess_index.faction].append(chess_index.chess_name)
 
+		if not player_faction_count[chess_index.team][chess_index.role].has(chess_index.chess_name):
+			player_faction_count[chess_index.team][chess_index.role].append(chess_index.chess_name)
+
 	for player_index in player_faction_count.keys(): # summary each team, each faction uniqe chess count and bonus level 
 		for faction_index in bonus_level_list.keys():
 			var bonus_level = 0
@@ -92,6 +125,7 @@ func bonus_refresh() -> void:
 			if player_index == 1 and player_bonus_level_dict[player_index][faction_index] > 0:
 				add_bonus_bar_to_container(faction_index, player_bonus_level_dict[player_index][faction_index])
 
+
 	for player_index in player_faction_count.keys(): #[1, 2]
 		for faction_index in player_bonus_level_dict[player_index].keys():	#apply bonus to each player/faction 
 			var curren_bonus_level = player_bonus_level_dict[player_index][faction_index]
@@ -100,24 +134,25 @@ func bonus_refresh() -> void:
 
 func add_bonus_bar_to_container(faction: String, level: int):
 
-	var faction_fill_texture
-	match faction:
-		"elf":
-			faction_fill_texture = preload("res://asset/sprite/icon/elf_bonus_fill.png")
-		"human":
-			faction_fill_texture = preload("res://asset/sprite/icon/human_bonus_fill.png")
-		"dwarf":
-			faction_fill_texture = preload("res://asset/sprite/icon/dwarf_bonus_fill.png")
-		"holy":
-			faction_fill_texture = preload("res://asset/sprite/icon/holy_bonus_fill.png")
-		"forestProtector":
-			faction_fill_texture = preload("res://asset/sprite/icon/forestProtector_bonus_fill.png")
-		"demon":
-			faction_fill_texture = preload("res://asset/sprite/icon/elf_bonus_fill.png")
-		"undead":
-			faction_fill_texture = preload("res://asset/sprite/icon/elf_bonus_fill.png")
-		_:
-			faction_fill_texture = preload("res://asset/sprite/icon/elf_bonus_fill.png")
+	var faction_fill_texture = load(AssetPathManagerSingleton.get_asset_path("faction_bar", faction))
+
+	# match faction:
+	# 	"elf":
+	# 		faction_fill_texture = preload("res://asset/sprite/icon/elf_bonus_fill.png")
+	# 	"human":
+	# 		faction_fill_texture = preload("res://asset/sprite/icon/human_bonus_fill.png")
+	# 	"dwarf":
+	# 		faction_fill_texture = preload("res://asset/sprite/icon/dwarf_bonus_fill.png")
+	# 	"holy":
+	# 		faction_fill_texture = preload("res://asset/sprite/icon/holy_bonus_fill.png")
+	# 	"forestProtector":
+	# 		faction_fill_texture = preload("res://asset/sprite/icon/forestProtector_bonus_fill.png")
+	# 	"demon":
+	# 		faction_fill_texture = preload("res://asset/sprite/icon/elf_bonus_fill.png")
+	# 	"undead":
+	# 		faction_fill_texture = preload("res://asset/sprite/icon/elf_bonus_fill.png")
+	# 	_:
+	# 		faction_fill_texture = preload("res://asset/sprite/icon/elf_bonus_fill.png")
 
 	var faction_bonus_bar = faction_bonus_bar_scene.instantiate()
 	var style_box_texture = StyleBoxTexture.new()
@@ -162,7 +197,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				effect_instance.evasion_rate_modifier_duration = 999
 				effect_instance.critical_rate_modifier = 0.1 * bonus_level
 				effect_instance.critical_rate_modifier_duration = 999
-				effect_instance.effect_name = "Swift"
+				effect_instance.effect_name = "Swift - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Elf Faction Bonus"
 				effect_instance.effect_description = "Friendly faction chesses gain evasion and critical rate boost."
@@ -177,7 +212,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				var effect_instance = ChessEffect.new()
 				effect_instance.continuous_mp_modifier = 20 * bonus_level
 				effect_instance.continuous_mp_modifier_duration = 999
-				effect_instance.effect_name = "Wisdom"
+				effect_instance.effect_name = "Wisdom - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Human Faction Bonus"
 				effect_instance.effect_description = "Friendly chesses continuously gain MP."
@@ -192,7 +227,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				var effect_instance = ChessEffect.new()
 				effect_instance.armor_modifier = 5 * bonus_level
 				effect_instance.armor_modifier_duration = 999
-				effect_instance.effect_name = "Fortress"
+				effect_instance.effect_name = "Fortress - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Dwarf Faction Bonus"
 				effect_instance.effect_description = "Friendly chesses continuously gain armor boost."
@@ -206,7 +241,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 			for chess_index in friendly_faction_chess:
 				var effect_instance = ChessEffect.new()
 				effect_instance.immunity_duration = bonus_level
-				effect_instance.effect_name = "Holy Shield"
+				effect_instance.effect_name = "HolyShield - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Holy Warrior Faction Bonus"
 				effect_instance.effect_description = "Friendly faction chesses gain immunity."
@@ -224,7 +259,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				effect_instance.continuous_hp_modifier_duration = 999
 				effect_instance.max_hp_modifier = 30 * bonus_level
 				effect_instance.max_hp_modifier_duration = 999
-				effect_instance.effect_name = "Strong"
+				effect_instance.effect_name = "Strong - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Forest Protector Faction Bonus"
 				effect_instance.effect_description = "Friendly faction chesses gain Max HP boost."
@@ -240,7 +275,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				effect_instance.continuous_hp_modifier = -5 * bonus_level
 				effect_instance.continuous_hp_modifier_duration = bonus_level
 				effect_instance.silence_duration = bonus_level
-				effect_instance.effect_name = "Doom"
+				effect_instance.effect_name = "Doom - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Demon Faction Bonus"
 				effect_instance.effect_description = "Enemy chesses suffer damage each turn."
@@ -257,14 +292,46 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				effect_instance.armor_modifier_duration = 999
 				effect_instance.speed_modifier = -2
 				effect_instance.speed_modifier_duration = bonus_level
-				effect_instance.effect_name = "Weak"
+				effect_instance.effect_name = "Weak - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Undead Faction Bonus"
 				effect_instance.effect_description = "Enemy chesses suffer speed and armor loss."
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
 
-func clean_chess_faction_bonus(chess: Chess) -> void:
+		"knight":
+			if friendly_chess.size() <= 0:
+				return
+
+			for chess_index in friendly_chess:
+				if chess_index.role != "knight":
+					continue
+				var effect_instance = ChessEffect.new()
+				effect_instance.effect_duration = 999
+				effect_instance.effect_name = "KnightSkill - Level " + str(bonus_level)
+				effect_instance.effect_type = "Faction Bonus"
+				effect_instance.effect_applier = "Knight Role Bonus"
+				effect_instance.effect_description = "When moving more than 5 grid, friendly knights will gain damage bonus."
+				chess_index.effect_handler.add_to_effect_array(effect_instance)
+				chess_index.effect_handler.add_child(effect_instance)
+
+		"ranger":
+			if friendly_chess.size() <= 0:
+				return
+
+			for chess_index in friendly_chess:
+				if chess_index.role != "ranger":
+					continue
+				var effect_instance = ChessEffect.new()
+				effect_instance.effect_duration = 999
+				effect_instance.effect_name = "RangerSkill - Level " + str(bonus_level)
+				effect_instance.effect_type = "Faction Bonus"
+				effect_instance.effect_applier = "Ranger Role Bonus"
+				effect_instance.effect_description = "All ranged ally gain penetration and decline_ratio bonus."
+				chess_index.effect_handler.add_to_effect_array(effect_instance)
+				chess_index.effect_handler.add_child(effect_instance)
+
+func clean_chess_faction_bonus(chess: Obstacle) -> void:
 	var chess_effect_list = chess.effect_handler.effect_list.duplicate()
 	if chess_effect_list.size() == 0:
 		return
