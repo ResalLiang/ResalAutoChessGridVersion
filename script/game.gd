@@ -352,7 +352,7 @@ func start_new_round():
 				team_dict[Team.TEAM2].append(chess_index)
 				team2_alive_cnt += 1
 				
-	update_population(true)
+	# update_population(true)
 			
 	if team1_alive_cnt == 0:
 		round_finished.emit("team2")
@@ -472,7 +472,6 @@ func handle_game_end():
 	for chess_index in saved_arena_team.values(): #[faction, chess_name]
 		DataManagerSingleton.current_chess_array.append([chess_index[0], chess_index[1]])
 
-	# DataManagerSingleton.current_chess_array = team_dict[Team.TEAM1_FULL] # TODO, this moment team_dict maybe empty
 	#Show report
 	to_game_finish_scene.emit()
 
