@@ -9,6 +9,11 @@ var log_path = "user://logs/"
 
 func _ready():
 	_init_log_file()
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player].keys().has("debug_mode"):
+		debug_mode = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]
+	else:
+		DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] = false
+		debug_mode = false
 
 # Initialize log file with timestamp
 func _init_log_file():
