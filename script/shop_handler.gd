@@ -111,8 +111,8 @@ func shop_refresh() -> void:
 		var character = get_parent().summon_chess(rand_character_result[0], rand_character_result[1], 1, 1, shop, Vector2i(shop_col_index, shop_row_index))
 
 		
-	var debug_chess_faction = ["human", "human", "human", "elf", "elf", "dwarf"]
-	var debug_chess_name = ["CrossBowMan", "Mage", "ArchMage", "Queen", "Mage", "Demolitionist"]
+	var debug_chess_faction = ["human", "human", "human", "elf", "elf", "dwarf", "dwarf"]
+	var debug_chess_name = ["CrossBowMan", "Mage", "ArchMage", "Queen", "Mage", "Demolitionist", "Grenadier"]
 	for debug_index in range(debug_chess_faction.size()):
 
 		var shop_col_index = debug_index % shop.unit_grid.size.x

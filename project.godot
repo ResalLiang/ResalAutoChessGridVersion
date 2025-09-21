@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 DataManagerSingleton="*res://script/data_manager.gd"
 VirtualCursorSingleton="*res://script/virtual_cursor.gd"
 AudioManagerSingleton="*res://script/audio_manager.gd"
+AssetPathManagerSingleton="*res://script/asset_path_manager.gd"
 
 [display]
 

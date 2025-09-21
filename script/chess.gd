@@ -1159,7 +1159,7 @@ func human_mage_taunt(spell_duration: int) -> bool:
 
 	for affected_index in affected_index_array:
 			if arena_unitgrid.has(affected_index) and is_instance_valid(arena_unitgrid[affected_index]):
-				if arena_unitgrid[affected_index] is Obstacle and arena_unitgrid[affected_index].team != team:
+				if arena_unitgrid[affected_index] is Chess and arena_unitgrid[affected_index].team != team:
 					arena_unitgrid[affected_index].chess_target = self
 					chess_affected = true
 	return chess_affected

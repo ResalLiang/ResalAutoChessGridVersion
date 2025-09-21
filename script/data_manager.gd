@@ -17,7 +17,8 @@ var player_data_template : Dictionary = {
 	"total_refresh_count" : 0,
 	"highest_score" : 0,
 	"debug_mode" : false,
-	"chess_stat" : {}
+	"chess_stat" : {},
+	"player_upgrade" : {}
 }
 
 var chess_stat_template = {
@@ -59,9 +60,9 @@ var current_chess_array = []
 var difficulty := 1
 
 var won_rounds := 0
-const max_won_rounds := 5
+const max_won_rounds := 3
 var lose_rounds := 0
-const max_lose_rounds := 2
+const max_lose_rounds := 3
 
 var version := "V0.5"
 
@@ -160,6 +161,7 @@ func clean_player_data(player: String = current_player):
 	in_game_data = player_data_template.duplicate()
 
 	player_datas[current_player] = player_data_template.duplicate()
+	player_datas[current_player]["player_upgrade"] = player_upgrade_template.duplicate()
 	save_game_json()
 		
 func record_death_chess(chess: Obstacle) -> void:

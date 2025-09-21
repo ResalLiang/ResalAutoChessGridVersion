@@ -362,8 +362,6 @@ func _load_chess_stats():
 		var stats = chess_data[faction][chess_name]
 		base_speed = stats["speed"]
 		base_max_hp = stats["max_health"]
-		skill_name = stats["skill_name"]
-		skill_description = stats["skill_description"]
 		stats_loaded.emit(self, stats)
 	else:
 		push_error("Stats not found for %s/%s" % [faction, chess_name])

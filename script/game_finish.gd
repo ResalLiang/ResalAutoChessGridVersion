@@ -9,14 +9,25 @@ signal to_menu_scene
 signal to_game_scene
 
 var final_score := 0
+@onready var label: Label = $Label
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	if DataManagerSingleton.won_rounds == DataManagerSingleton.max_won_rounds:
+		label.text = "You Won the Game!"
+	else:
+		label.text = "You Lose the Game..."
 	calculate_final_score()
 	await get_tree().process_frame
 	staggered_fly_in()
 	DataManagerSingleton.record_game(final_score, DataManagerSingleton.current_chess_array)
 	DataManagerSingleton.save_game_json()
+	
+#var won_rounds := 0
+#const max_won_rounds := 5
+#var lose_rounds := 0
+#const max_lose_rounds := 2
+
 
 func _on_restart_button_pressed() -> void:
 	to_game_scene.emit()
@@ -91,6 +102,7 @@ func staggered_fly_in():
 		label.visible = true
 		label.position.x = get_viewport().get_visible_rect().size.x + 200
 		label.modulate.a = 0.0
+		label.z_index = 6
 	
 	# 依次播放动画
 	for i in range(labels.size()):

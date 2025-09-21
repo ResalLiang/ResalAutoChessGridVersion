@@ -71,7 +71,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_ilfri")
 }],
 "loop": false,
-"name": &"boom",
+"name": &"die",
 "speed": 8.0
 }, {
 "frames": [{

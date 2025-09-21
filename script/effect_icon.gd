@@ -18,25 +18,25 @@ func _update_texture():
 		
 	var icon_texture: Texture2D
 
-	#icon_texture = load(AssetPathManagerSingleton.get_asset_path("effect_icon", _effect_name.get_slice(" ", 0)))
+	icon_texture = load(AssetPathManagerSingleton.get_asset_path("effect_icon", _effect_name.get_slice(" ", 0)))
 
-	match _effect_name:
-		"Swift":
-			icon_texture = preload("res://asset/sprite/icon/swift.png")
-		"Wisdom":
-			icon_texture = preload("res://asset/sprite/icon/wisdom.png")
-		"Fortress":
-			icon_texture = preload("res://asset/sprite/icon/fortress.png")
-		"HolyShield":
-			icon_texture = preload("res://asset/sprite/icon/holy_shield.png")
-		"Strong":
-			icon_texture = preload("res://asset/sprite/icon/strong.png")
-		"Doom":
-			icon_texture = preload("res://asset/sprite/icon/doom.png")
-		"Weak":
-			icon_texture = preload("res://asset/sprite/icon/weak.png")
-		_:
-			icon_texture = preload("res://asset/sprite/icon/wisdom.png")
+	#match _effect_name:
+		#"Swift":
+			#icon_texture = preload("res://asset/sprite/icon/swift.png")
+		#"Wisdom":
+			#icon_texture = preload("res://asset/sprite/icon/wisdom.png")
+		#"Fortress":
+			#icon_texture = preload("res://asset/sprite/icon/fortress.png")
+		#"HolyShield":
+			#icon_texture = preload("res://asset/sprite/icon/holy_shield.png")
+		#"Strong":
+			#icon_texture = preload("res://asset/sprite/icon/strong.png")
+		#"Doom":
+			#icon_texture = preload("res://asset/sprite/icon/doom.png")
+		#"Weak":
+			#icon_texture = preload("res://asset/sprite/icon/weak.png")
+		#_:
+			#icon_texture = preload("res://asset/sprite/icon/wisdom.png")
 	
 	texture_rect.texture = icon_texture
 

@@ -20,29 +20,33 @@ theme_override_fonts/font = ExtResource("3_7qkl5")
 text = "You Won the game!"
 
 [node name="restart_button" type="Button" parent="."]
-offset_left = 241.0
-offset_top = 161.0
-offset_right = 355.0
-offset_bottom = 192.0
+offset_left = 249.0
+offset_top = 183.0
+offset_right = 363.0
+offset_bottom = 214.0
 theme_override_fonts/font = ExtResource("3_7qkl5")
 theme_override_font_sizes/font_size = 8
 text = "Restart"
 
 [node name="back_button" type="Button" parent="."]
-offset_left = 236.0
-offset_top = 201.0
-offset_right = 360.0
-offset_bottom = 232.0
+offset_left = 244.0
+offset_top = 223.0
+offset_right = 368.0
+offset_bottom = 254.0
 theme_override_fonts/font = ExtResource("3_7qkl5")
 theme_override_font_sizes/font_size = 8
 text = "Back to Menu"
 
 [node name="container" type="VBoxContainer" parent="."]
-z_index = 1
-offset_left = 72.0
-offset_top = 127.0
-offset_right = 112.0
-offset_bottom = 167.0
+z_index = 6
+offset_left = 130.0
+offset_top = 99.0
+offset_right = 473.0
+offset_bottom = 174.0
+
+[node name="Label" type="Label" parent="container"]
+layout_mode = 2
+text = "11"
 
 [connection signal="pressed" from="restart_button" to="." method="_on_restart_button_pressed"]
 [connection signal="pressed" from="back_button" to="." method="_on_back_button_pressed"]

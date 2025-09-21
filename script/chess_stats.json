@@ -204,7 +204,7 @@
 	  "speed": 4,
 	  "melee_attack_damage": 15,
 	  "ranged_attack_damage": 20,
-	  "attack_range": 50,
+	  "attack_range": 150,
 	  "decline_ratio": 3.0,
 	  "projectile_penetration": 3,
 	  "attack_speed": 1,
@@ -277,6 +277,10 @@
 	  "armor": 0,
 	  "rarity": "Rare",
 	  "target_priority": "CLOSE"
+	},
+	"Bomb": {
+	  "speed": 0,
+	  "max_health": 20
 	},
 	"ArmoredBearRider": {
 	  "role": "knight",

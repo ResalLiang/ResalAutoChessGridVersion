@@ -120,7 +120,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_ajhys")
 }],
 "loop": false,
-"name": &"boom",
+"name": &"die",
 "speed": 8.0
 }, {
 "frames": [{

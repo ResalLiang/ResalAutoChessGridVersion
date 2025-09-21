@@ -1,8 +1,9 @@
-AudioStreamPlayer
 Label
+VBoxContainer
+TextureButton
+AudioStreamPlayer
 CheckButton
 HBoxContainer
-VBoxContainer
 AudioStreamPlayer2D
 Timer
 Button
@@ -11,4 +12,3 @@ Control
 TileMap
 ColorRect
 TextureRect
-TextureProgressBar

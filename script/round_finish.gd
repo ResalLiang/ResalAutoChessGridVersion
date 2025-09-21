@@ -12,9 +12,13 @@ var trophy_pic
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	remain_health_pic =	preload("res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames/16x16 Slider1.png")
-	lose_health_pic =	preload("res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames/16x16 Slider4.png")
-	trophy_pic =		preload("res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames/16x16 Slider2.png")
+	#remain_health_pic =	preload("res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames/16x16 Slider1.png")
+	#lose_health_pic =	preload("res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames/16x16 Slider4.png")
+	#trophy_pic =		preload("res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames/16x16 Slider2.png")
+	remain_health_pic =	load(AssetPathManagerSingleton.get_asset_path("battle_result", "remain_health"))
+	lose_health_pic =	load(AssetPathManagerSingleton.get_asset_path("battle_result", "lose_health"))
+	trophy_pic =		load(AssetPathManagerSingleton.get_asset_path("battle_result", "winning_trophy"))
+	
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().paused = true
 	set_round_result()

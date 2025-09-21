@@ -28,12 +28,13 @@ var attacker: Obstacle = null:
 		else:
 			animated_sprite_2d.sprite_frames = ResourceLoader.load("res://asset/animation/default_projectile.tres")
 
+var damage_finished := false
+var die_animation
 
 signal projectile_vanished
 signal projectile_hit
 
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
-
 
 func _ready():
 
@@ -44,7 +45,7 @@ func _ready():
 
 	current_penetration = penetration
 		
-	animated_sprite_2d.play("default")
+	animated_sprite_2d.play("move")
 
 #func setup(pos: Vector2, dir: Vector2, team: int, is_flipped: bool, chess_attack: Obstacle):
 	#global_position = pos
@@ -65,7 +66,7 @@ func _physics_process(delta):
 		traveled_distance += movement.length()
 		
 		# 超出最大距离或穿透次数耗尽时消失
-		if traveled_distance > max_distance or current_penetration <= 0 or damage < 5:
+		if damage_finished and (traveled_distance > max_distance or current_penetration <= 0 or damage < 5):
 			projectile_vanished.emit()
 			queue_free()
 
@@ -75,15 +76,35 @@ func _on_area_entered(area):
 		projectile_hit.emit(obstacle, attacker)
 		# 只伤害敌方队伍
 		if obstacle.team != source_team and attacker != null:
+			if animated_sprite_2d.sprite_frames.has_animation("die"):
+				damage_finished = false
+				die_animation = AnimatedSprite2D.new()
+				obstacle.add_child(die_animation)
+				die_animation.z_index = 6
+				die_animation.global_position = obstacle.global_position
+				die_animation.sprite_frames = animated_sprite_2d.sprite_frames.duplicate()
+				die_animation.play("die")
+			
+				var obstacle_tile = obstacle.get_current_tile(obstacle)[1]
+				for pos_offset in [Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(1, 1)]:
+					if obstacle.arena.unit_grid.units.has(obstacle_tile + pos_offset) and obstacle.arena.unit_grid.units[obstacle_tile + pos_offset] is Obstacle:
+						var indirect_obstacle = obstacle.arena.unit_grid.units[obstacle_tile + pos_offset]
+						if indirect_obstacle.status == indirect_obstacle.STATUS.DIE or indirect_obstacle.visible == false:
+							continue
+						indirect_obstacle.take_damage(damage, attacker)
+				damage_finished = true
+					
 			obstacle.take_damage(damage, attacker)
-			await projectile_damage_display(obstacle, damage)
-			current_penetration -= 1  # 减少穿透计数
-			damage /= decline_ratio
 
-			# 穿透次数耗尽时消失
-			if current_penetration <= 0 or damage < 5:
-				projectile_vanished.emit()
-				queue_free()
+		await projectile_damage_display(obstacle, damage)
+		damage_finished = true
+		current_penetration -= 1  # 减少穿透计数
+		damage /= decline_ratio
+		
+		# 穿透次数耗尽时消失
+		if current_penetration <= 0 or damage < 5:
+			projectile_vanished.emit()
+			queue_free()
 
 # 处理离开屏幕
 func _on_visibility_notifier_screen_exited():
@@ -134,3 +155,7 @@ func projectile_damage_display(chess: Obstacle, display_value: float):
 	await damage_tween.finished
 	damage_tween.kill()
 	battle_label.queue_free()
+
+
+func _on_animated_sprite_2d_animation_finished() -> void:
+	die_animation.queue_free()

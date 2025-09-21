@@ -439,14 +439,14 @@ func handle_round_finished(msg):
 	if msg == "team1":
 		DataManagerSingleton.won_rounds += 1
 		print("Round %d over, you won!" % current_round)
-		player_won_round.emit()
 		last_turn_label.text = 'WON'
+		player_won_round.emit()
 		add_round_finish_scene.emit('WON')
 	elif msg == "team2":
 		DataManagerSingleton.lose_rounds += 1
 		print("Round %d over, you lose..." % current_round)
-		player_lose_round.emit()
 		last_turn_label.text = 'LOSE'
+		player_lose_round.emit()
 		add_round_finish_scene.emit('LOSE')
 
 	print("You have won %d rounds, and lose %d rounds." % [DataManagerSingleton.won_rounds, DataManagerSingleton.lose_rounds])

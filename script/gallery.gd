@@ -19,9 +19,17 @@ class_name gallery
 
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 
+@onready var back_button: Button = $back_button
+@onready var reset_button: Button = $reset_button
+
 signal to_menu_scene
 
 func _ready() -> void:
+	
+	refresh_gallery()
+	
+func refresh_gallery():
+
 	# Clean up existing nodes
 	for node in chess_container.get_children():
 		if node != chess_vbox_container:  # Keep the VBoxContainer
@@ -34,7 +42,7 @@ func _ready() -> void:
 	await get_tree().process_frame  # Wait for cleanup to complete
 	
 	# Setup containers
-	chess_container.size = Vector2(256, 256)  # Set appropriate size
+	chess_container.size = Vector2(320, 240)  # Set appropriate size
 	chess_container.clip_contents = true
 	chess_vbox_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	chess_vbox_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -200,4 +208,5 @@ func _on_back_button_pressed() -> void:
 	to_menu_scene.emit()
 
 func _on_reset_button_pressed() -> void:
-	DataManagerSingleton.clean_player_data()
+	DataManagerSingleton.clean_player_data(DataManagerSingleton.current_player)
+	refresh_gallery()

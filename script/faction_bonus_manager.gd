@@ -102,7 +102,7 @@ func bonus_refresh() -> void:
 	var player_faction_count = player_faction_count_template.duplicate()
 	var player_bonus_level_dict = player_bonus_level_dict_template.duplicate()
 
-	for chess_index in arena.unit_grid.units.values(): #summary all uniqe chess
+	for chess_index in arena.unit_grid.get_all_units(): #summary all uniqe chess
 
 		if not is_instance_valid(chess_index) or not chess_index is Chess:
 			continue
@@ -134,27 +134,7 @@ func bonus_refresh() -> void:
 
 func add_bonus_bar_to_container(faction: String, level: int):
 
-	#var faction_fill_texture = load(AssetPathManagerSingleton.get_asset_path("faction_bar", faction))
-	
-	var faction_fill_texture
-	
-	match faction:
-		"elf":
-			faction_fill_texture = preload("res://asset/sprite/icon/elf_bonus_fill.png")
-		"human":
-			faction_fill_texture = preload("res://asset/sprite/icon/human_bonus_fill.png")
-		"dwarf":
-			faction_fill_texture = preload("res://asset/sprite/icon/dwarf_bonus_fill.png")
-		"holy":
-			faction_fill_texture = preload("res://asset/sprite/icon/holy_bonus_fill.png")
-		"forestProtector":
-			faction_fill_texture = preload("res://asset/sprite/icon/forestProtector_bonus_fill.png")
-		"demon":
-			faction_fill_texture = preload("res://asset/sprite/icon/elf_bonus_fill.png")
-		"undead":
-			faction_fill_texture = preload("res://asset/sprite/icon/elf_bonus_fill.png")
-		_:
-			faction_fill_texture = preload("res://asset/sprite/icon/elf_bonus_fill.png")
+	var faction_fill_texture = load(AssetPathManagerSingleton.get_asset_path("faction_bar", faction))
 
 	var faction_bonus_bar = faction_bonus_bar_scene.instantiate()
 	var style_box_texture = StyleBoxTexture.new()
