@@ -80,34 +80,83 @@ func calculate_final_score():
 			score_label = score_label_scene.instantiate()
 			score_label.text = score_reason + " : " + str(score_bonus) + " * " + str(current_player_ingame_data[item]) + " = " + str(item_score)
 
-			score_label.visible = false
+			score_label.visible = true
 			container.add_child(score_label)
 			final_score += item_score
 		
-	score_label = Label.new()
+	score_label = score_label_scene.instantiate()
+	score_label.text = "--------------------------"
+	container.add_child(score_label)
+	
+	score_label = score_label_scene.instantiate()
 	score_label.text = "Total Score" + " : " + str(final_score)
 	container.add_child(score_label)
 
 
+#func staggered_fly_in():
+	#var labels = []
+	#
+	## 收集容器中的所有Label
+	#for child in container.get_children():
+		#if child is Label:
+			#labels.append(child)
+	#
+	## 设置所有Label的初始位置
+	#for label in labels:
+		#label.visible = true
+		#label.position.x = get_viewport().get_visible_rect().size.x + 200
+		#label.modulate.a = 0.0
+		#label.z_index = 6
+	#
+	## 依次播放动画
+	#for i in range(labels.size()):
+		#var label = labels[i]
+		#var delay = i * 0.2  # 每个延迟0.2秒
+		#
+		#await get_tree().create_timer(delay).timeout
+		#
+		#var tween = create_tween()
+		#tween.set_parallel(true)
+		#tween.set_ease(Tween.EASE_OUT)
+		#tween.set_trans(Tween.TRANS_BACK)
+		#
+		## 获取最终位置（由容器布局决定）
+		#var final_pos = Vector2.ZERO  # 相对于容器的位置
+		#
+		#tween.tween_property(label, "position.x", final_pos.x, 0.6)
+		#tween.tween_property(label, "modulate.a", 1.0, 0.4)
+
 func staggered_fly_in():
 	var labels = []
+	var original_parents = []
+	var original_positions = []
 	
-	# 收集容器中的所有Label
+	# 收集容器中的所有Label并记录原始信息
 	for child in container.get_children():
 		if child is Label:
 			labels.append(child)
+			original_parents.append(child.get_parent())
+			# 获取在容器中的最终位置
+			await get_tree().process_frame  # 等待布局更新
+			original_positions.append(child.global_position)
 	
-	# 设置所有Label的初始位置
-	for label in labels:
-		label.visible = true
-		label.position.x = get_viewport().get_visible_rect().size.x + 200
+	# 临时将Label移到主场景，这样就能自由控制位置
+	for i in range(labels.size()):
+		var label = labels[i]
+		var original_pos = original_positions[i]
+		
+		# 移到主场景
+		label.reparent(self)
+		
+		# 设置初始位置（屏幕右侧）
+		label.global_position = Vector2(get_viewport().get_visible_rect().size.x + 200, original_pos.y)
 		label.modulate.a = 0.0
-		label.z_index = 6
 	
 	# 依次播放动画
 	for i in range(labels.size()):
 		var label = labels[i]
-		var delay = i * 0.2  # 每个延迟0.2秒
+		var delay = i * 0.2
+		var final_pos = original_positions[i]
 		
 		await get_tree().create_timer(delay).timeout
 		
@@ -116,8 +165,11 @@ func staggered_fly_in():
 		tween.set_ease(Tween.EASE_OUT)
 		tween.set_trans(Tween.TRANS_BACK)
 		
-		# 获取最终位置（由容器布局决定）
-		var final_pos = Vector2.ZERO  # 相对于容器的位置
+		tween.tween_property(label, "global_position", final_pos, 0.6)
+		tween.tween_property(label, "modulate:a", 1.0, 0.4)
 		
-		tween.tween_property(label, "position.x", final_pos.x, 0.6)
-		tween.tween_property(label, "modulate.a", 1.0, 0.4)
+		# 动画完成后，将Label放回Container
+		await tween.finished
+		remove_child(label)
+		container.add_child(label)
+		label.modulate.a = 1.0  # 确保完全可见

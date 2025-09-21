@@ -66,6 +66,6 @@ func refresh_units():
 		return
 
 	for node in child_nodes:
-		if not is_instance_valid(node) or not node is Obstacle or node.status == node.STATUS.DIE:
+		if not is_instance_valid(node) or not node is Obstacle or node.status == node.STATUS.DIE or not node.visible:
 			return
 		units[node.get_current_tile(node)[1]] = node

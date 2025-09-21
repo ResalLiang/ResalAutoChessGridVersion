@@ -506,7 +506,7 @@ func start_turn():
 		
 	if chess_target and chess_target.status != STATUS.DIE:
 		target_found.emit(self, chess_target)
-		_handle_movement()
+		await _handle_movement()
 	else:
 		action_timer.start()
 
@@ -626,7 +626,7 @@ func _handle_action():
 		action_timer.start()
 		return
 	else:
-		_handle_attack()
+		await _handle_attack()
 
 func _handle_attack():
 
@@ -698,7 +698,7 @@ func _handle_attack():
 				status = STATUS.MELEE_ATTACK
 				animated_sprite_2d.play("attack")
 				melee_attack_started.emit(self)
-				chess_target.take_damage(damage, self)	
+				await chess_target.take_damage(damage, self)	
 
 				handle_special_effect(chess_target, self)
 
@@ -721,7 +721,7 @@ func _handle_attack():
 		action_timer.start()
 
 	if remain_attack_count > 0:
-		_handle_attack()
+		await _handle_attack()
 	else:
 		status = STATUS.IDLE
 		action_timer.set_wait_time(action_timer_wait_time)

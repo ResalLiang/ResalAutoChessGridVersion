@@ -91,10 +91,10 @@ func _on_area_entered(area):
 						var indirect_obstacle = obstacle.arena.unit_grid.units[obstacle_tile + pos_offset]
 						if indirect_obstacle.status == indirect_obstacle.STATUS.DIE or indirect_obstacle.visible == false:
 							continue
-						indirect_obstacle.take_damage(damage, attacker)
+						await indirect_obstacle.take_damage(damage, attacker)
 				damage_finished = true
 					
-			obstacle.take_damage(damage, attacker)
+			await obstacle.take_damage(damage, attacker)
 
 		await projectile_damage_display(obstacle, damage)
 		damage_finished = true

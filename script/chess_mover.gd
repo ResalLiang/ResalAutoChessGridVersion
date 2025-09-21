@@ -56,6 +56,7 @@ func _reset_chess_to_starting_position(starting_position: Vector2, obstacle: Obs
 	# obstacle.global_position = play_areas[i].get_global_from_tile(tile)
 	obstacle.reparent(play_areas[i].unit_grid)
 	obstacle.global_position = play_areas[i].global_position + obstacle.get_parent().to_local(play_areas[i].get_global_from_tile(tile))
+	chess_moved.emit(obstacle, play_areas[i], tile)
 
 
 func _move_chess(obstacle: Obstacle, play_area: PlayArea, tile: Vector2i) -> void:
@@ -166,6 +167,7 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 	if (old_area_index == 2 and drop_area_index == 0 and not get_parent().is_game_turn_start) or (old_area_index == 2 and drop_area_index == 1): # buy chesss
 
 		if shop_handler.can_pay_chess(obstacle) and not new_area.unit_grid.is_tile_occupied(new_tile) and get_parent().current_population < get_parent().max_population:
+			# has enough money and population for buying
 			shop_handler.buy_chess(obstacle)
 			_move_chess(obstacle, new_area, new_tile)
 			if not get_parent().is_game_turn_start:
@@ -173,6 +175,7 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 			return
 
 		elif shop_handler.can_pay_chess(obstacle) and not new_area.unit_grid.is_tile_occupied(new_tile) and (old_area_index == 2 and drop_area_index == 1):
+			# 
 			shop_handler.buy_chess(obstacle)
 			_move_chess(obstacle, new_area, new_tile)
 			return
@@ -186,7 +189,7 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 			_move_chess(obstacle, new_area, new_tile)
 			var merge_result = await get_parent().check_chess_merge()
 			if merge_result and get_parent().current_population <= get_parent().max_population:
-				shop_handler.buy_chess(obstacle)
+				shop_handler.buy_chess(merge_result)
 				return
 			else:
 				_reset_chess_to_starting_position(starting_position, obstacle)

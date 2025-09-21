@@ -552,7 +552,7 @@ func handle_projectile_hit(chess:Obstacle, attacker:Obstacle):
 func handle_obstacle_action() -> void:
 	if obstacle_counter <= 0:
 		if chess_name == "Bomb" and faction == "dwarf":
-			dwarf_bomb_boom()
+			await dwarf_bomb_boom()
 	else:
 		obstacle_counter -= 1
 

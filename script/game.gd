@@ -241,6 +241,7 @@ func _ready():
 	player_lose_game.connect(DataManagerSingleton.handle_player_lose_game)
 
 	chess_mover.play_areas = [arena, bench, shop]
+	#arena.bounds = Rect2i(0, 0, 6, 12)
 
 	center_point = Vector2(tile_size.x * 16 / 2, tile_size.y * 16 / 2)
 
@@ -502,53 +503,21 @@ func generate_enemy(difficulty : int) -> void:
 		var rand_x = randi_range(arena.unit_grid.size.x / 2, arena.unit_grid.size.x - 1)
 		var rand_y = randi_range(0, arena.unit_grid.size.y - 1)
 		if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
-			var rand_character_result = generate_random_chess(shop_handler.shop_level, false, "all")
+			var rand_character_result = generate_random_chess(shop_handler.shop_level, "all")
 
 			var character = summon_chess(rand_character_result[0], rand_character_result[1], 1, 2, arena, Vector2i(rand_x, rand_y))
 
 			current_difficulty += character.max_hp
 			current_enemy_cnt += 1
 			
-	
-func get_random_character(faction_name: String) -> String:
-	if not DataManagerSingleton.get_chess_data().has(faction_name):
-		return ""
-	
-	var candidates = []
-	var weights = []
-	
-	# Prepare candidate list and weight list
-	for chess_name_index in DataManagerSingleton.get_chess_data()[faction_name]:
-		var rarity = DataManagerSingleton.get_chess_data()[faction_name][chess_name_index]["rarity"]
-		if RARITY_WEIGHTS[min(6, shop_handler.shop_level)].has(rarity) and DataManagerSingleton.get_chess_data()[faction_name][chess_name_index]["speed"] != 0:
-			candidates.append(chess_name_index)
-			weights.append(RARITY_WEIGHTS[min(6, shop_handler.shop_level)][rarity])
-	
-	if candidates.size() == 0:
-		return ""
-	
-	# Perform weighted random selection
-	var total_weight = 0
-	for w in weights:
-		total_weight += w
-	
-	var random_value = randi() % total_weight
-	var weight_sum = 0
-	
-	for i in range(candidates.size()):
-		weight_sum += weights[i]
-		if random_value < weight_sum:
-			return candidates[i]
-	
-	return candidates[0] # Default return first one (shouldn't reach here)
 
 func clear_play_area(play_area_to_clear: PlayArea):
 	await get_tree().process_frame
 	var all_children = play_area_to_clear.unit_grid.get_children()
 	for node in all_children:
 		if node is Obstacle:
-			node.queue_free()
-			await get_tree().process_frame
+			node.free()
+	await get_tree().process_frame
 
 func load_arena_team():
 	team_dict[Team.TEAM1_FULL] = []
@@ -567,8 +536,8 @@ func save_arena_team():
 			saved_arena_team[chess_index] = [arena.unit_grid.units[chess_index].faction, arena.unit_grid.units[chess_index].chess_name, arena.unit_grid.units[chess_index].chess_level]
 
 # Generates random chess based on shop level and rarity weights
-'''func generate_random_chess(generate_level: int, lock_faction: bool, specific_faction: String):'''
-func generate_random_chess(generate_level: int, lock_faction: bool, specific_faction: String):
+'''func generate_random_chess(generate_level: int, specific_faction: String):'''
+func generate_random_chess(generate_level: int, specific_faction: String):
 	# --- Rarity Selection Phase ---
 	# Calculate total weight for current shop level
 	var total_rarity_weight := 0
@@ -606,10 +575,10 @@ func generate_random_chess(generate_level: int, lock_faction: bool, specific_fac
 	# Pre-process all eligible chesses with calculated weights
 	for faction in DataManagerSingleton.get_chess_data():
 		# Skip special faction
-		if DataManagerSingleton.get_chess_data().has(specific_faction) and faction != specific_faction:
+		if DataManagerSingleton.get_chess_data().has(specific_faction) and faction != specific_faction and specific_faction != "all":
 			continue # Skip all not specific faction chess
 
-		if (lock_faction and DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"][faction]) or faction == "villager":
+		if (specific_faction == "locked" and DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"][faction]) or faction == "villager":
 			continue # Skip all locked chess and villager
 			
 		for chess_name in DataManagerSingleton.get_chess_data()[faction]:
@@ -863,12 +832,12 @@ func battle_value_display(chess: Obstacle, chess2: Obstacle, display_value, sign
 	battle_label.queue_free()
 
 
-func check_chess_merge() -> bool:
+func check_chess_merge():
 
 	if is_game_turn_start:
 		return false
 
-	var merge_result := false
+	var merge_result = null
 	for merge_level in [1, 2]:
 		var merge_checked := []
 		for node in arena.unit_grid.get_children() + bench.unit_grid.get_children():
@@ -909,10 +878,10 @@ func check_chess_merge() -> bool:
 
 							removed_chess.visible = false
 
-						summon_chess(merged_chess_faction, merged_chess_name, merge_level + 1, 1, merged_play_area, merged_tile)
+						var upgrade_chess = summon_chess(merged_chess_faction, merged_chess_name, merge_level + 1, 1, merged_play_area, merged_tile)
 
 						merge_count = 0
-						merge_result = true
+						merge_result = upgrade_chess
 						merge_checked.append([node.faction, node.chess_name])
 						break
 
@@ -920,7 +889,8 @@ func check_chess_merge() -> bool:
 
 	for node in arena.unit_grid.get_children():
 		if node is Chess and node.visible == false:
-			node.queue_free()
+			node.free()
+
 
 	if merge_result:
 		update_population(true)
