@@ -16,6 +16,7 @@ const chess_class = preload("res://script/chess.gd")
 @onready var chess_mover: ChessMover = %chess_mover
 @onready var shop_handler: ShopHandler = %shop_handler
 @onready var faction_bonus_manager: FactionBonusManager = %faction_bonus_manager
+@onready var damage_manager: DamageManager = $damage_manager
 
 @onready var remain_coins_label: Label = $remain_coins_label
 @onready var current_shop_level: Label = $current_shop_level
@@ -691,11 +692,13 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, chess
 
 	summoned_character.damage_taken.connect(battle_meter.get_damage_data)
 
+	summoned_character.deal_damage.connect(damage_manager.damage_handler)
+
 	summoned_character.damage_applied.connect(battle_value_display.bind("damage_applied"))
 	summoned_character.critical_damage_applied.connect(battle_value_display.bind("critical_damage_applied"))
 	summoned_character.heal_taken.connect(battle_value_display.bind("heal_taken"))
 	summoned_character.attack_evased.connect(battle_value_display.bind(0, "attack_evased"))
-	summoned_character.is_died.connect(battle_value_display.bind("is_died"))
+	summoned_character.is_died.connect(battle_value_display.bind(0, "is_died"))
 
 	summoned_character.spell_casted.connect(AudioManagerSingleton.play_sfx.bind("spell_casted"))
 	summoned_character.ranged_attack_started.connect(AudioManagerSingleton.play_sfx.bind("ranged_attack_started"))
@@ -795,28 +798,37 @@ func battle_value_display(chess: Obstacle, chess2: Obstacle, display_value, sign
 	
 	var label_settings = LabelSettings.new()
 	label_settings.font_size = 4
+
+	var old_position
+
 	match signal_name:
 		"damage_applied":
 			label_settings.font_color = Color.YELLOW
 			battle_label.text = str(display_value)
+			old_position = chess2.global_position + Vector2(8, -8)
 		"critical_damage_applied":
 			label_settings.font_color = Color.RED
 			battle_label.text = "!" + str(display_value)
+			old_position = chess2.global_position + Vector2(8, -8)
 		"heal_taken":
 			label_settings.font_color = Color.GREEN
 			battle_label.text = str(display_value)
+			old_position = chess.global_position + Vector2(8, -8)
 		"attack_evased":
 			label_settings.font_color = Color.CYAN
 			battle_label.text = "MISS"
+			old_position = chess.global_position + Vector2(8, -8)
 		"is_died":
 			label_settings.font_color = Color.GRAY
 			battle_label.text = "RIP..."
+			old_position = chess.global_position + Vector2(8, -8)
 		_:
 			label_settings.font_color = Color.WHITE
 			battle_label.text = ""
+			old_position = chess.global_position + Vector2(8, -8)
+
 	battle_label.label_settings = label_settings
 	
-	var old_position = chess.global_position + Vector2(8, -8)
 	battle_label.global_position = old_position
 
 	var damage_tween
