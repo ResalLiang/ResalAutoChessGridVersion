@@ -100,6 +100,7 @@ var chess_rarity := "Common" #	"Common", "Uncommon", "Rare", "Epic", "Legendary"
 
 var remain_attack_count
 var total_movement := 0
+var is_phantom := false
 
 var target_changed := false
 
@@ -669,7 +670,6 @@ func _handle_attack():
 
 				ranged_attack_animation.play("ranged_attack")
 				ranged_attack_started.emit(self)
-
 				handle_special_effect(chess_target, self)
 
 		elif current_distance_to_target < ranged_attack_threshold or (has_melee_target() is Obstacle and current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack")):
@@ -698,7 +698,7 @@ func _handle_attack():
 				status = STATUS.MELEE_ATTACK
 				animated_sprite_2d.play("attack")
 				melee_attack_started.emit(self)
-				await chess_target.take_damage(damage, self)	
+				deal_damage.emit(self, chess_target, damage, "melee_attack", [])	
 
 				handle_special_effect(chess_target, self)
 
@@ -888,39 +888,29 @@ func _launch_projectile(target: Obstacle):
 	return projectile
 
 # Add damage handling method
-func take_damage(damage_value: float, attacker: Obstacle) -> bool:
+func take_damage(attacker: Obstacle, damage_value: float):
 	#Placeholder for chess passive ability on take damage
-	if damage_value <= 0:
-		return false
 
-	if rng.randf() > evasion_rate and not effect_handler.is_immunity:
-		var real_damage_value = damage_value - armor
-		hp -= max(0, real_damage_value)
-		hp_bar.value = hp
-		if attacker != self:
-			attacker.mp += real_damage_value
-			damage_taken.emit(self, attacker, real_damage_value)
+	hp -= damage_value
+	hp_bar.value = hp
 
-		if hp <= 0:
-			status = STATUS.DIE
-			animated_sprite_2d.stop()
-			animated_sprite_2d.play("die")
-			await animated_sprite_2d.animation_finished
-			visible = false
-			is_died.emit(self)
-					
-		else:
-			#Placeholder for chess passive ability on hit
-			status = STATUS.HIT
-			animated_sprite_2d.play("hit")
-			await animated_sprite_2d.animation_finished
-			status = STATUS.IDLE
+	if attacker != self:
+		attacker.mp += real_damage_value
 
-		return true
-
+	if hp <= 0:
+		status = STATUS.DIE
+		animated_sprite_2d.stop()
+		animated_sprite_2d.play("die")
+		await animated_sprite_2d.animation_finished
+		visible = false
+		is_died.emit(self)
+				
 	else:
-		attack_evased.emit(self, attacker)
-		return false
+		#Placeholder for chess passive ability on hit
+		status = STATUS.HIT
+		animated_sprite_2d.play("hit")
+		await animated_sprite_2d.animation_finished
+		status = STATUS.IDLE
 
 func take_heal(heal_value: float, healer: Obstacle):
 	#Placeholder for chess passive ability on take heal
@@ -960,20 +950,11 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 	return cast_spell_result
 
 
-func _apply_damage(damage_target: Obstacle = chess_target, damage_value: float = damage):
-	if damage_target and damage_value > 0:
-		#Placeholder for chess passive ability on apply damage
-		var applied_damage_value
-		var damage_result = false
-
-		if rng.randf() <= critical_rate:
-			applied_damage_value =  damage_value * 2
-			if await damage_target.take_damage(applied_damage_value, self) and damage_target != self:
-				critical_damage_applied.emit(self, damage_target, applied_damage_value)	
-		else:
-			applied_damage_value = damage_value
-			if await damage_target.take_damage(applied_damage_value, self) and damage_target != self:
-				damage_applied.emit(self, damage_target, applied_damage_value)	
+func _apply_damage():
+	if status == STATUS.RANGED_ATTACK:
+		deal_damage.emit(self, chess_target, damage, "Ranged_attack", [])
+	elif status == STATUS.MELEE_ATTACK:
+		deal_damage.emit(self, chess_target, damage, "Melee_attack", [])
 			
 
 func _apply_heal(heal_target: Obstacle = chess_spell_target, heal_value: float = damage):
@@ -1061,7 +1042,8 @@ func update_effect():
 	if effect_handler.continuous_hp_modifier >= 0:
 		_apply_heal(self, max(0, effect_handler.continuous_hp_modifier))
 	else:
-		_apply_damage(self, max(0, effect_handler.continuous_hp_modifier))
+		# _apply_damage(self, max(0, effect_handler.continuous_hp_modifier))
+		deal_damage.emit(self, self, max(0, effect_handler.continuous_hp_modifier), "Continuous_effect", [])
 
 	mp += effect_handler.continuous_mp_modifier
 
@@ -1139,6 +1121,28 @@ func has_melee_target():
 
 	return null
 
+func summon_meteorite(meteorite_count: int) -> bool:
+	var chess_affected := true
+	var remain_metrorite_count = meteorite_count
+	var arena_size = arena.unit_grid.size
+	var rand_x
+	var rand_y
+
+	while(meteorite_count > 0):
+		
+		rand_x = randi_range(0, arena_size.x)
+		rand_y = randi_range(0, arena_size.y)
+		var meteorite_animation = AnimatedSprite2D.new()
+		add_child(meteorite_animation)
+		meteorite_animation.sprite_frames = preload("XXX")
+		meteorite_animation.global_position = arena.get_global_from_tile(Vector2i(rand_x, rand_y))
+		if DataManagerSingleton.check_obstacle_valid(arena.unit_grid.units[Vector2i(rand_x, rand_y)]):
+			var current_spell_target = arena.unit_grid.units[Vector2i(rand_x, rand_y)]
+			deal_damage.emit(self, current_spell_target, 50, "Magic_attack", [])
+		meteorite_count -= 1
+	return chess_affected
+
+
 func human_mage_taunt(spell_duration: int) -> bool:
 	var chess_affected := true
 
@@ -1210,7 +1214,8 @@ func elf_queen_stun(spell_duration: int, damage_value: float) -> bool:
 				arena_unitgrid[affected_index].effect_handler.add_to_effect_array(effect_instance)
 				arena_unitgrid[affected_index].effect_handler.add_child(effect_instance)
 
-				_apply_damage(arena_unitgrid[affected_index], damage_value)
+				# _apply_damage(arena_unitgrid[affected_index], damage_value)
+				deal_damage.emit(self, arena_unitgrid[affected_index], damage_value, "Magic_attack", [])
 
 				chess_affected =  true
 	return chess_affected
@@ -1220,10 +1225,12 @@ func elf_mage_damage(spell_target:Obstacle, damage_threshold: float, min_damage_
 	if spell_target.status != STATUS.DIE and spell_target.team != team and spell_target.global_position.distance_to(global_position) <= spell_range:
 
 		if spell_target.hp <= spell_target.max_hp * damage_threshold:
-			_apply_damage(spell_target, spell_target.hp)
+			# _apply_damage(spell_target, spell_target.hp)
+			deal_damage.emit(self, spell_target, spell_target.hp, "Magic_attack", [])
 			
 		else:
-			_apply_damage(spell_target, min_damage_value)
+			# _apply_damage(spell_target, min_damage_value)
+			deal_damage.emit(self, spell_target, min_damage_value, "Magic_attack", [])
 
 		chess_affected = true
 
