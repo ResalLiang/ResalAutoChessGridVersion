@@ -5,6 +5,7 @@ var effect_list : Array
 
 var is_immunity := false
 var is_spell_immunity := false
+var is_critical_immunity := false
 var is_taunt := false
 var is_stealth := false
 var is_silenced := false
@@ -28,6 +29,16 @@ signal effect_list_updated
 
 func _ready() -> void:
 	effect_list_updated.connect(refresh_effects)
+
+func search_effect(search_effect_name: String):
+	if effect_list.size() > 0:
+		for effect_index in effect_list:
+			if chess_effect.effect_name == search_effect_name:
+				return effect_index
+			else:
+				continue
+	else:
+		return null
 
 func add_to_effect_array(chess_effect: ChessEffect):
 	if not chess_effect.check_effect_timeout():
@@ -65,6 +76,7 @@ func refresh_effects():
 
 	is_immunity = false
 	is_spell_immunity = false
+	is_critical_immunity = false
 	is_silenced = false
 	is_disarmed = false
 	is_stunned =  false
@@ -91,6 +103,7 @@ func refresh_effects():
 
 		is_immunity = is_immunity or effect_index.is_immunity
 		is_spell_immunity = is_spell_immunity or effect_index.is_spell_immunity
+		is_critical_immunity = is_critical_immunity or effect_index.is_critical_immunity
 		is_silenced = false if is_spell_immunity else is_silenced or effect_index.is_silenced
 		is_disarmed = false if is_spell_immunity else is_disarmed or effect_index.is_disarmed
 		is_stunned = false if is_spell_immunity else is_stunned or effect_index.is_stunned
