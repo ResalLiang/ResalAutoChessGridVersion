@@ -91,12 +91,13 @@ func _on_area_entered(area):
 						var indirect_obstacle = obstacle.arena.unit_grid.units[obstacle_tile + pos_offset]
 						if indirect_obstacle.status == indirect_obstacle.STATUS.DIE or indirect_obstacle.visible == false:
 							continue
-						await indirect_obstacle.take_damage(damage, attacker)
+						# await indirect_obstacle.take_damage(damage, attacker)
+						attacker.deal_damage.emit(attacker, indirect_obstacle, damage, "Ranged_attack", [])
 				damage_finished = true
 					
-			await obstacle.take_damage(damage, attacker)
+			# await obstacle.take_damage(damage, attacker)
+			attacker.deal_damage.emit(attacker, obstacle, damage, "Ranged_attack", [])
 
-		await projectile_damage_display(obstacle, damage)
 		damage_finished = true
 		current_penetration -= 1  # 减少穿透计数
 		damage /= decline_ratio
@@ -112,49 +113,49 @@ func _on_visibility_notifier_screen_exited():
 	queue_free()
 
 
-func projectile_damage_display(chess: Obstacle, display_value: float):
+# func projectile_damage_display(chess: Obstacle, display_value: float):
 
-	if display_value <= 0:
-		return
+# 	if display_value <= 0:
+# 		return
 
-	var battle_label = Label.new()
-	battle_label.z_index = 6
-	add_child(battle_label)
+# 	var battle_label = Label.new()
+# 	battle_label.z_index = 6
+# 	add_child(battle_label)
 
-	# Create a new theme
-	var new_theme = Theme.new()
+# 	# Create a new theme
+# 	var new_theme = Theme.new()
 	
-	# Load font resource
-	var font = load("res://asset/font/Everyday_Tiny.ttf") as FontFile
+# 	# Load font resource
+# 	var font = load("res://asset/font/Everyday_Tiny.ttf") as FontFile
 	
-	# Set font and size in theme using correct methods
-	new_theme.set_font("font", "Label", font)
+# 	# Set font and size in theme using correct methods
+# 	new_theme.set_font("font", "Label", font)
 	
-	# Apply theme to label
-	battle_label.theme = new_theme
+# 	# Apply theme to label
+# 	battle_label.theme = new_theme
 	
-	var label_settings = LabelSettings.new()
-	label_settings.font_size = 4
+# 	var label_settings = LabelSettings.new()
+# 	label_settings.font_size = 4
 
-	label_settings.font_color = Color.YELLOW
-	battle_label.text = str(display_value)
+# 	label_settings.font_color = Color.YELLOW
+# 	battle_label.text = str(display_value)
 
-	battle_label.label_settings = label_settings
+# 	battle_label.label_settings = label_settings
 	
-	var old_position = chess.global_position + Vector2(8, -8)
-	battle_label.global_position = old_position
+# 	var old_position = chess.global_position + Vector2(8, -8)
+# 	battle_label.global_position = old_position
 
-	var damage_tween
-	if damage_tween:
-		damage_tween.kill() # Abort the previous animation.
-	damage_tween = create_tween().set_parallel(true)
-	damage_tween.set_ease(Tween.EASE_IN_OUT)
-	damage_tween.set_trans(Tween.TRANS_CUBIC)
-	damage_tween.tween_property(battle_label, "global_position", old_position + Vector2(0, -16), 1.0)
-	damage_tween.tween_property(battle_label,"modulate.a", 0.0, 1.0)
-	await damage_tween.finished
-	damage_tween.kill()
-	battle_label.queue_free()
+# 	var damage_tween
+# 	if damage_tween:
+# 		damage_tween.kill() # Abort the previous animation.
+# 	damage_tween = create_tween().set_parallel(true)
+# 	damage_tween.set_ease(Tween.EASE_IN_OUT)
+# 	damage_tween.set_trans(Tween.TRANS_CUBIC)
+# 	damage_tween.tween_property(battle_label, "global_position", old_position + Vector2(0, -16), 1.0)
+# 	damage_tween.tween_property(battle_label,"modulate.a", 0.0, 1.0)
+# 	await damage_tween.finished
+# 	damage_tween.kill()
+# 	battle_label.queue_free()
 
 
 func _on_animated_sprite_2d_animation_finished() -> void:
