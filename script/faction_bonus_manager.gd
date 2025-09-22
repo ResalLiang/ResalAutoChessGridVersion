@@ -192,12 +192,11 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 
 			for chess_index in friendly_chess:
 				var effect_instance = ChessEffect.new()
-				effect_instance.continuous_mp_modifier = 20 * bonus_level
-				effect_instance.continuous_mp_modifier_duration = 999
+				effect_instance.effect_duration = 999
 				effect_instance.effect_name = "Wisdom - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Human Faction Bonus"
-				effect_instance.effect_description = "Friendly chesses continuously gain MP."
+				effect_instance.effect_description = "Every 2 times buy human chess, shop will add a villager chess."
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
 
@@ -281,6 +280,22 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
 
+		"warrior":
+			if friendly_chess.size() <= 0:
+				return
+
+			for chess_index in friendly_chess:
+				if chess_index.role != "warrior":
+					continue
+				var effect_instance = ChessEffect.new()
+				effect_instance.effect_duration = 999
+				effect_instance.effect_name = "WarriorSkill - Level " + str(bonus_level)
+				effect_instance.effect_type = "Faction Bonus"
+				effect_instance.effect_applier = "Warrior Role Bonus"
+				effect_instance.effect_description = "Nothing happens."
+				chess_index.effect_handler.add_to_effect_array(effect_instance)
+				chess_index.effect_handler.add_child(effect_instance)
+
 		"knight":
 			if friendly_chess.size() <= 0:
 				return
@@ -294,6 +309,38 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Knight Role Bonus"
 				effect_instance.effect_description = "When moving more than 5 grid, friendly knights will gain damage bonus."
+				chess_index.effect_handler.add_to_effect_array(effect_instance)
+				chess_index.effect_handler.add_child(effect_instance)
+
+		"pikeman":
+			if friendly_chess.size() <= 0:
+				return
+
+			for chess_index in friendly_chess:
+				if chess_index.role != "pikeman":
+					continue
+				var effect_instance = ChessEffect.new()
+				effect_instance.effect_duration = 999
+				effect_instance.effect_name = "PikemanSkill - Level " + str(bonus_level)
+				effect_instance.effect_type = "Faction Bonus"
+				effect_instance.effect_applier = "Pikeman Role Bonus"
+				effect_instance.effect_description = "When B2B with other friendly pikeman, chess gain damage bonus."
+				chess_index.effect_handler.add_to_effect_array(effect_instance)
+				chess_index.effect_handler.add_child(effect_instance)
+
+		"speller":
+			if friendly_chess.size() <= 0:
+				return
+
+			for chess_index in friendly_chess:
+				if chess_index.role != "speller":
+					continue
+				var effect_instance = ChessEffect.new()
+				effect_instance.effect_duration = 999
+				effect_instance.effect_name = "SpellerSkill - Level " + str(bonus_level)
+				effect_instance.effect_type = "Faction Bonus"
+				effect_instance.effect_applier = "Speller Role Bonus"
+				effect_instance.effect_description = "Speller gain magic damage bonus."
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
 
