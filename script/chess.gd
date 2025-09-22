@@ -238,7 +238,7 @@ func _ready():
 
 	drag_handler.drag_canceled.connect(_handle_dragging_state)
 	drag_handler.drag_dropped.connect(_handle_dragging_state)
-	
+	damage_taken.connet(take_damage.unbind(0))
 
 	is_died.connect(_on_died)
 	
@@ -670,6 +670,7 @@ func _handle_attack():
 
 				ranged_attack_animation.play("ranged_attack")
 				ranged_attack_started.emit(self)
+				deal_damage.emit(self, chess_target, damage, "Ranged_attack", [])
 				handle_special_effect(chess_target, self)
 
 		elif current_distance_to_target < ranged_attack_threshold or (has_melee_target() is Obstacle and current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack")):
@@ -912,6 +913,7 @@ func take_damage(attacker: Obstacle, damage_value: float):
 		await animated_sprite_2d.animation_finished
 		status = STATUS.IDLE
 
+
 func take_heal(heal_value: float, healer: Obstacle):
 	#Placeholder for chess passive ability on take heal
 	if heal_value <= 0:
@@ -955,6 +957,20 @@ func _apply_damage():
 		deal_damage.emit(self, chess_target, damage, "Ranged_attack", [])
 	elif status == STATUS.MELEE_ATTACK:
 		deal_damage.emit(self, chess_target, damage, "Melee_attack", [])
+
+	# if damage_target and damage_value > 0:
+	# 	#Placeholder for chess passive ability on apply damage
+	# 	var applied_damage_value
+	# 	var damage_result = false
+
+	# 	if rng.randf() <= critical_rate:
+	# 		applied_damage_value =  damage_value * 2
+	# 		if await damage_target.take_damage(applied_damage_value, self) and damage_target != self:
+	# 			critical_damage_applied.emit(self, damage_target, applied_damage_value)	
+	# 	else:
+	# 		applied_damage_value = damage_value
+	# 		if await damage_target.take_damage(applied_damage_value, self) and damage_target != self:
+	# 			damage_applied.emit(self, damage_target, applied_damage_value)	
 			
 
 func _apply_heal(heal_target: Obstacle = chess_spell_target, heal_value: float = damage):
