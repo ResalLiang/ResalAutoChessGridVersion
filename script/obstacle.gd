@@ -171,6 +171,7 @@ signal heal_taken(obstacle: Obstacle, healer: Obstacle, heal_value: float) # for
 signal attack_evased(obstacle: Obstacle, attacker: Obstacle) # for audio player and display
 
 signal is_died(obstacle: Obstacle) # for audio player and display
+signal deal_damage(attacker: Obstacle, target: Obstacle, damage_value: float, damage_type: String, affix_array: Array[String])
 
 # ========================
 # Initialization
@@ -200,7 +201,7 @@ func _ready():
 
 	drag_handler.drag_canceled.connect(_handle_dragging_state)
 	drag_handler.drag_dropped.connect(_handle_dragging_state)
-	
+	damage_taken.connet(take_damage.unbind(0))
 
 	is_died.connect(_on_died)
 	
@@ -448,17 +449,14 @@ func _launch_projectile(target: Obstacle):
 	return projectile
 
 # Add damage handling method
-func take_damage(damage_value: float, attacker: Obstacle) -> bool:
+func take_damage(attacker: Obstacle, damage_value: float):
 	#Placeholder for chess passive ability on take damage
-	if damage_value <= 0:
-		return false
 
-	var real_damage_value = damage_value - armor
-	hp -= max(0, real_damage_value)
+	hp -= damage_value
 	hp_bar.value = hp
+
 	if attacker != self:
 		attacker.mp += real_damage_value
-		damage_taken.emit(self, attacker, real_damage_value)
 
 	if hp <= 0:
 		status = STATUS.DIE
@@ -475,8 +473,6 @@ func take_damage(damage_value: float, attacker: Obstacle) -> bool:
 		await animated_sprite_2d.animation_finished
 		status = STATUS.IDLE
 
-	return true
-
 
 func take_heal(heal_value: float, healer: Obstacle):
 	#Placeholder for chess passive ability on take heal
@@ -490,15 +486,16 @@ func take_heal(heal_value: float, healer: Obstacle):
 		heal_taken.emit(self, healer, heal_value)
 
 func _apply_damage(damage_target: Obstacle, damage_value: float):
-	if damage_target and damage_value > 0:
-		#Placeholder for chess passive ability on apply damage
-		var applied_damage_value
-		var damage_result = false
+	pass
+	# if damage_target and damage_value > 0:
+	# 	#Placeholder for chess passive ability on apply damage
+	# 	var applied_damage_value
+	# 	var damage_result = false
 
 
-		applied_damage_value = damage_value
-		if await damage_target.take_damage(applied_damage_value, self) and damage_target != self:
-			critical_damage_applied.emit(self, damage_target, damage_target)	
+	# 	applied_damage_value = damage_value
+	# 	if await damage_target.take_damage(applied_damage_value, self) and damage_target != self:
+	# 		critical_damage_applied.emit(self, damage_target, damage_target)	
 			
 
 func _apply_heal(heal_target: Obstacle, heal_value: float):
@@ -536,7 +533,8 @@ func update_effect():
 	if effect_handler.continuous_hp_modifier >= 0:
 		_apply_heal(self, max(0, effect_handler.continuous_hp_modifier))
 	else:
-		_apply_damage(self, max(0, effect_handler.continuous_hp_modifier))
+		# _apply_damage(self, max(0, effect_handler.continuous_hp_modifier))
+		deal_damage.emit(self, self, max(0, effect_handler.continuous_hp_modifier), "Continuous_effect", [])
 
 	mp += effect_handler.continuous_mp_modifier
 
@@ -567,7 +565,8 @@ func dwarf_bomb_boom():
 			if x >=0 and x < arena.unit_grid.size.x and y >=0 and y < arena.unit_grid.size.y:
 				var target_area_chess = arena.unit_grid.units[get_current_tile(self)[1] + Vector2i(x, y)]
 				if is_instance_valid(target_area_chess) and target_area_chess is Obstacle and target_area_chess.status != STATUS.DIE:
-					_apply_damage(target_area_chess, 50 * obstacle_level)
+					# _apply_damage(target_area_chess, 50 * obstacle_level)
+					deal_damage.emit(self, target_area_chess, 50 * obstacle_level, "Ranged_attack", [])
 					
 	status = STATUS.DIE
 	animated_sprite_2d.stop()
