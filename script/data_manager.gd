@@ -345,3 +345,21 @@ func record_game(score: int, chess_array: Array):
 	add_data_to_dict(player_data, ["game_record"], current_game_record)
 
 	add_data_to_dict(player_data, ["total_experience"], score)
+
+func check_obstacle_valid(node):
+	if not is_instance_valid(node):
+		return false
+
+	if not node:
+		return false
+
+	if not node is Obstacle:
+		return false
+
+	if node.visible == false:
+		return false
+
+	if node.status == node.STATUS.DIE:
+		return false
+
+	return true
