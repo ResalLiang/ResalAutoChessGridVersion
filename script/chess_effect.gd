@@ -28,6 +28,15 @@ var spell_immunity_duration := 0:
 		else:
 			is_spell_immunity = false
 
+var is_critical_immunity := false
+var critical_immunity_duration := 0:
+	set(value):
+		if value > 0:
+			critical_immunity_duration = value
+			is_critical_immunity = true
+		else:
+			is_critical_immunity = false
+
 var is_taunt := false
 var taunt_duration := 0:
 	set(value):
@@ -161,6 +170,9 @@ func check_effect_timeout() -> bool:
 	
 	if spell_immunity_duration > 0:
 		return true
+	
+	if critical_immunity_duration > 0:
+		return true
 
 	if taunt_duration > 0:
 		return true
@@ -227,6 +239,7 @@ func start_turn_update():
 
 	immunity_duration = max(0, immunity_duration - 1)
 	spell_immunity_duration = max(0, spell_immunity_duration - 1)
+	critical_immunity_duration = max(0, critical_immunity_duration - 1)
 	silence_duration = max(0, silence_duration - 1)
 	disarmed_duration = max(0, disarmed_duration - 1)
 	stunned_duration = max(0, stunned_duration - 1)
