@@ -238,7 +238,7 @@ func _ready():
 
 	drag_handler.drag_canceled.connect(_handle_dragging_state)
 	drag_handler.drag_dropped.connect(_handle_dragging_state)
-	damage_taken.connet(take_damage.unbind(0))
+	damage_taken.connect(take_damage)
 
 	is_died.connect(_on_died)
 	
@@ -692,7 +692,8 @@ func _handle_attack():
 				status = STATUS.MELEE_ATTACK
 				melee_attack_animation.play("melee_attack")
 				melee_attack_started.emit(self)
-
+				await melee_attack_animation.animation_finished
+				
 				handle_special_effect(chess_target, self)
 
 			elif animated_sprite_2d.sprite_frames.has_animation("attack"):
@@ -889,14 +890,14 @@ func _launch_projectile(target: Obstacle):
 	return projectile
 
 # Add damage handling method
-func take_damage(attacker: Obstacle, damage_value: float):
+func take_damage(target:Obstacle, attacker: Obstacle, damage_value: float):
 	#Placeholder for chess passive ability on take damage
 
 	hp -= damage_value
 	hp_bar.value = hp
 
 	if attacker != self:
-		attacker.mp += real_damage_value
+		attacker.mp += damage_value
 
 	if hp <= 0:
 		status = STATUS.DIE
@@ -952,26 +953,11 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 	return cast_spell_result
 
 
-func _apply_damage():
+func chess_apply_damage():
 	if status == STATUS.RANGED_ATTACK:
 		deal_damage.emit(self, chess_target, damage, "Ranged_attack", [])
 	elif status == STATUS.MELEE_ATTACK:
 		deal_damage.emit(self, chess_target, damage, "Melee_attack", [])
-
-	# if damage_target and damage_value > 0:
-	# 	#Placeholder for chess passive ability on apply damage
-	# 	var applied_damage_value
-	# 	var damage_result = false
-
-	# 	if rng.randf() <= critical_rate:
-	# 		applied_damage_value =  damage_value * 2
-	# 		if await damage_target.take_damage(applied_damage_value, self) and damage_target != self:
-	# 			critical_damage_applied.emit(self, damage_target, applied_damage_value)	
-	# 	else:
-	# 		applied_damage_value = damage_value
-	# 		if await damage_target.take_damage(applied_damage_value, self) and damage_target != self:
-	# 			damage_applied.emit(self, damage_target, applied_damage_value)	
-			
 
 func _apply_heal(heal_target: Obstacle = chess_spell_target, heal_value: float = damage):
 	if heal_target and heal_value > 0:
@@ -1150,7 +1136,7 @@ func summon_meteorite(meteorite_count: int) -> bool:
 		rand_y = randi_range(0, arena_size.y)
 		var meteorite_animation = AnimatedSprite2D.new()
 		add_child(meteorite_animation)
-		meteorite_animation.sprite_frames = preload("XXX")
+		meteorite_animation.sprite_frames = preload("res://asset/animation/spell_animation/FireBeam.tres")
 		meteorite_animation.global_position = arena.get_global_from_tile(Vector2i(rand_x, rand_y))
 		if DataManagerSingleton.check_obstacle_valid(arena.unit_grid.units[Vector2i(rand_x, rand_y)]):
 			var current_spell_target = arena.unit_grid.units[Vector2i(rand_x, rand_y)]

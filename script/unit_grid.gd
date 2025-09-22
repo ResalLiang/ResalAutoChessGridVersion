@@ -31,7 +31,7 @@ func remove_unit(tile: Vector2i) -> void:
 	unit_grid_changed.emit()
 	
 func is_tile_occupied(tile: Vector2i) -> bool:
-	return DataManagerSingleton.check_obstacle_valid(units[tile]) != null
+	return DataManagerSingleton.check_obstacle_valid(units[tile])
 	
 func is_grid_full() -> bool:
 	return units.key.all(is_tile_occupied)

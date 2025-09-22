@@ -1,3 +1,5 @@
+res://asset/animation/spell_animation
+res://asset/sprite/spell_effect/Elemental Effects/Fire effect 03/Fire Beam
 res://asset/shader
 res://asset/theme
 res://asset/sprite/GandalfHardcore Pixel Art Game UI
@@ -18,7 +20,5 @@ res://asset/cursor/cursors
 res://asset/sprite/MiniFolks/MinifolksHumans
 res://asset/sprite/MiniFolks/MinifolksUndead
 res://asset/sprite/SpinningCoin
-res://asset/animation/elf
-res://asset/sprite
 D:/LearningGodot/ResalAutoChess/script/hero_stats_raw
 D:/LearningGodot/ResalAutoChess/script

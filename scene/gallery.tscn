@@ -113,6 +113,7 @@ text = "Back"
 
 [node name="reset_button" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.23921569, 0.39215687, 1)
 theme_override_fonts/font = ExtResource("3_l8qdg")
 text = "Reset"
 

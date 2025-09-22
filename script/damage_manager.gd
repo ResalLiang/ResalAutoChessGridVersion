@@ -1,7 +1,7 @@
 extends Node
 class_name DamageManager
 
-func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, damage_type: String, affix_array: Array[String]):
+func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, damage_type: String, affix_array: Array):
 
 	var damage_result = damage_value
 	var critical_damage := false
@@ -15,7 +15,7 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 	if not is_instance_valid(target) or target.visible == false or not target is Obstacle or target.status == target.STATUS.DIE:
 		return
 
-	if not target.effect_handler.is_immunity or (damage_value == "Magic_attack" and target.effect_handler.is_spell_immunity):
+	if target.effect_handler.is_immunity or (damage_type == "Magic_attack" and target.effect_handler.is_spell_immunity):
 		return
 
 	if randf() <= target.evasion_rate and not affix_array.has("ignore_evasion"):

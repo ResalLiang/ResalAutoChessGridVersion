@@ -201,7 +201,7 @@ func _ready():
 
 	drag_handler.drag_canceled.connect(_handle_dragging_state)
 	drag_handler.drag_dropped.connect(_handle_dragging_state)
-	damage_taken.connet(take_damage.unbind(0))
+	damage_taken.connect(take_damage)
 
 	is_died.connect(_on_died)
 	
@@ -449,14 +449,14 @@ func _launch_projectile(target: Obstacle):
 	return projectile
 
 # Add damage handling method
-func take_damage(attacker: Obstacle, damage_value: float):
+func take_damage(target:Obstacle, attacker: Obstacle, damage_value: float):
 	#Placeholder for chess passive ability on take damage
 
 	hp -= damage_value
 	hp_bar.value = hp
 
 	if attacker != self:
-		attacker.mp += real_damage_value
+		attacker.mp += damage_value
 
 	if hp <= 0:
 		status = STATUS.DIE
@@ -485,7 +485,7 @@ func take_heal(heal_value: float, healer: Obstacle):
 		healer.mp += heal_value
 		heal_taken.emit(self, healer, heal_value)
 
-func _apply_damage(damage_target: Obstacle, damage_value: float):
+func _apply_damage():
 	pass
 	# if damage_target and damage_value > 0:
 	# 	#Placeholder for chess passive ability on apply damage

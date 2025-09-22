@@ -33,7 +33,7 @@ func _ready() -> void:
 func search_effect(search_effect_name: String):
 	if effect_list.size() > 0:
 		for effect_index in effect_list:
-			if chess_effect.effect_name == search_effect_name:
+			if effect_index.effect_name == search_effect_name:
 				return effect_index
 			else:
 				continue

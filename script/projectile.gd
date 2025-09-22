@@ -98,9 +98,9 @@ func _on_area_entered(area):
 			# await obstacle.take_damage(damage, attacker)
 			attacker.deal_damage.emit(attacker, obstacle, damage, "Ranged_attack", [])
 
-		damage_finished = true
-		current_penetration -= 1  # 减少穿透计数
-		damage /= decline_ratio
+			damage_finished = true
+			current_penetration -= 1  # 减少穿透计数
+			damage /= decline_ratio
 		
 		# 穿透次数耗尽时消失
 		if current_penetration <= 0 or damage < 5:
