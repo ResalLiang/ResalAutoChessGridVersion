@@ -411,10 +411,10 @@ func _on_idle_timeout():
 
 
 # Launch projectile at target
-func _launch_projectile(target: Obstacle):
+func _launch_projectile_to_target(target: Obstacle):
 	
 	# Calculate direction to target
-	var direction = (target.global_position - global_position).normalized()
+	var direction = (target_position - global_position).normalized()
 	
 	# Determine if we need to flip the projectile sprite
 	var is_flipped = direction.x < 0
@@ -427,7 +427,7 @@ func _launch_projectile(target: Obstacle):
 		return
 		
 	# Create projectile instance
-	get_parent().add_child(projectile)
+	add_child(projectile)
 	
 	
 	# Set up projectile
@@ -437,14 +437,51 @@ func _launch_projectile(target: Obstacle):
 	projectile.initial_flip = is_flipped
 	projectile.attacker = self
 	
-	projectile_damage = 20
+	projectile_damage = ranged_damage
 
 	# Configure projectile properties
 	projectile.speed = projectile_speed
 	projectile.damage = projectile_damage
 	projectile.penetration = projectile_penetration
+	projectile.decline_ratio = decline_ratio
 	projectile.is_active = true
 	
+	return projectile
+
+# Launch projectile at target
+func _launch_projectile_to_degree(direction_degree: float):
+	
+	
+	# Determine if we need to flip the projectile sprite
+	var is_flipped = direction.x < 0
+	
+	
+	projectile = projectile_scene.instantiate()
+	
+	if not projectile:
+		push_error("Projectile scene is not set!")
+		return
+		
+	# Create projectile instance
+	add_child(projectile)
+	
+	
+	# Set up projectile
+	projectile.global_position = global_position
+	projectile.direction_degree = direction_degree
+	projectile.source_team = team
+	projectile.initial_flip = is_flipped
+	projectile.attacker = self
+	projectile.projectile_animation = ""
+	
+	projectile_damage = ranged_damage
+
+	# Configure projectile properties
+	projectile.speed = projectile_speed
+	projectile.damage = projectile_damage
+	projectile.penetration = projectile_penetration
+	projectile.decline_ratio = decline_ratio
+	projectile.is_active = true
 	
 	return projectile
 
@@ -558,7 +595,27 @@ func get_current_tile(obstacle : Obstacle):
 	var i = chess_mover._get_play_area_for_position(obstacle.global_position)
 	var current_tile = chess_mover.play_areas[i].get_tile_from_global(obstacle.global_position)
 	return [chess_mover.play_areas[i], current_tile]
-	
+
+
+# Load appropriate animations for the chess
+func effect_animation_display(effect_name: String, display_play_area: PlayArea, display_tile: Vector2i):
+	var effect_animation = AnimatedSprite2D.new()
+	var effect_animation_path = AssetPathManagerSingleton.get_asset_path("effect_animation", effect_name)
+	if ResourceLoader.exists(effect_animation_path):
+		var frames = ResourceLoader.load(effect_animation_path)
+		for anim_name in frames.get_animation_names():
+			frames.set_animation_loop(anim_name, false)
+			frames.set_animation_speed(anim_name, 8.0)
+		effect_animation.sprite_frames = frames
+	else:
+		push_error("Animation resource not found: " + path)
+	effect_animation.global_position = display_play_area.get_global_from_tile(display_tile)
+	add_child(effect_animation)
+	effect_animation.z_index = 6
+	effect_animation.play("default")
+	await effect_animation.animation_finished
+	effect_animation.queue_free()
+
 func dwarf_bomb_boom():
 	for x in range(-obstacle_level, obstacle_level):
 		for y in range(-obstacle_level, obstacle_level):
