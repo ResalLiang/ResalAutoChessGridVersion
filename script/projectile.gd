@@ -8,10 +8,15 @@ extends Area2D
 
 var current_penetration
 
-var direction: Vector2 = Vector2.ZERO:
+var direction: Vector2:
 	set(value):
 		direction = value
 		animated_sprite_2d.rotation = atan2(value.y, value.x)
+
+var direction_degree: float:
+	set(value):
+		direction_degree = value
+		animated_sprite_2d.rotation = deg_to_rad(direction_degree)
 		
 var traveled_distance: float = 0.0
 var source_team: int = -1  # 发射队伍
@@ -27,6 +32,15 @@ var attacker: Obstacle = null:
 			animated_sprite_2d.sprite_frames = ResourceLoader.load("res://asset/animation/" + attacker.faction + "/" +  "default_projectile.tres")
 		else:
 			animated_sprite_2d.sprite_frames = ResourceLoader.load("res://asset/animation/default_projectile.tres")
+
+var projectile_animation: String:
+	set(value):
+		projectile_animation = value
+		if ResourceLoader.exists(AssetPathManagerSingleton.get_asset_path("effect_animation", ""):
+			animated_sprite_2d.sprite_frames = ResourceLoader.load(AssetPathManagerSingleton.get_asset_path("effect_animation", "")
+		else:
+			animated_sprite_2d.sprite_frames = ResourceLoader.load(AssetPathManagerSingleton.get_asset_path("effect_animation", "Default")
+
 
 var damage_finished := false
 var die_animation
