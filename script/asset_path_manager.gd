@@ -30,6 +30,11 @@ var battle_result_path = {
 	"Dafault" = "res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames/16x16 Slider1.png"
 }
 
+var effect_animation_path = {
+	"FireBeam" = "res://asset/animation/spell_animation/FireBeam.tres",
+	"Default" = "res://asset/animation/spell_animation/FireBeam.tres"
+}
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.
@@ -40,7 +45,7 @@ func _process(delta: float) -> void:
 	pass
 	
 func get_asset_path(asset_type: String, asset_name: String) -> String:
-	if not ["effect_icon", "faction_bar", "battle_result"].has(asset_type):
+	if not ["effect_icon", "faction_bar", "battle_result", "effect_animation"].has(asset_type):
 		return ""
 		
 	match  asset_type:
@@ -59,5 +64,10 @@ func get_asset_path(asset_type: String, asset_name: String) -> String:
 				return battle_result_path[asset_name]
 			else:
 				return battle_result_path["Default"]
+		"effect_animation":
+			if effect_animation_path.has(asset_name):
+				return effect_animation_path[asset_name]
+			else:
+				return effect_animation_path["Default"]
 				
 	return ""
