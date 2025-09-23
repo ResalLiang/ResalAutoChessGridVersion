@@ -1,5 +1,4 @@
-res://script/projectile.gd
-res://scene/game.tscn
+res://scene/chess.tscn
 res://asset/animation/elf/elfArcaneArcher_projectile.tres
 res://asset/shader/LightweightPixelPerfectOutline.gdshader
 res://asset/animation/elf/elfArcaneArcher.tres
@@ -9,10 +8,7 @@ res://asset/animation/forestProtector/forestProtectorDryadEnchantress.tres
 res://asset/theme/toggle.tres
 res://asset/shader/SoftDropShadow.gdshader
 res://asset/shader/new_shader.gdshader
-res://asset/animation/human/humanArcherMan.tres
 res://asset/animation/projectile_animation/ice.tres
-res://script/asset_path_manager.gd
-res://script/chess.gd
-res://script/obstacle.gd
 res://asset/animation/spell_animation/FireBeam.tres
-res://script/game.gd
+res://scene/menu.tscn
+res://script/chess.gd

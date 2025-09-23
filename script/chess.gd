@@ -1186,7 +1186,7 @@ func sun_strike(strike_count: int) -> bool:
 	var rand_x
 	var rand_y
 	var damage_count:= 0
-	while(strike_count > 0 and damage_count >= 3):
+	while(remain_strike_count > 0 and damage_count < 3):
 		
 		rand_x = randi_range(0, arena_size.x - 1)
 		rand_y = randi_range(0, arena_size.y - 1)
