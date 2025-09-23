@@ -851,43 +851,80 @@ func _on_idle_timeout():
 		idle_timer.set_wait_time(rng.randf_range(1.0,5.0))
 
 
-# Launch projectile at target
-func _launch_projectile(target: Obstacle):
+# # Launch projectile at target
+# func _launch_projectile_to_target(target: Obstacle):
 	
-	# Calculate direction to target
-	var direction = (target.global_position - global_position).normalized()
+# 	# Calculate direction to target
+# 	var direction = (target_position - global_position).normalized()
 	
-	# Determine if we need to flip the projectile sprite
-	var is_flipped = direction.x < 0
+# 	# Determine if we need to flip the projectile sprite
+# 	var is_flipped = direction.x < 0
 	
 	
-	projectile = projectile_scene.instantiate()
+# 	projectile = projectile_scene.instantiate()
 	
-	if not projectile:
-		push_error("Projectile scene is not set!")
-		return
+# 	if not projectile:
+# 		push_error("Projectile scene is not set!")
+# 		return
 		
-	# Create projectile instance
-	get_parent().add_child(projectile)
+# 	# Create projectile instance
+# 	add_child(projectile)
 	
 	
-	# Set up projectile
-	projectile.global_position = global_position
-	projectile.direction = direction
-	projectile.source_team = team
-	projectile.initial_flip = is_flipped
-	projectile.attacker = self
+# 	# Set up projectile
+# 	projectile.global_position = global_position
+# 	projectile.direction = direction
+# 	projectile.source_team = team
+# 	projectile.initial_flip = is_flipped
+# 	projectile.attacker = self
 	
-	projectile_damage = ranged_damage
+# 	projectile_damage = ranged_damage
 
-	# Configure projectile properties
-	projectile.speed = projectile_speed
-	projectile.damage = projectile_damage
-	projectile.penetration = projectile_penetration
-	projectile.decline_ratio = decline_ratio
-	projectile.is_active = true
+# 	# Configure projectile properties
+# 	projectile.speed = projectile_speed
+# 	projectile.damage = projectile_damage
+# 	projectile.penetration = projectile_penetration
+# 	projectile.decline_ratio = decline_ratio
+# 	projectile.is_active = true
 	
-	return projectile
+# 	return projectile
+
+# # Launch projectile at target
+# func _launch_projectile_to_degree(direction_degree: float):
+	
+	
+# 	# Determine if we need to flip the projectile sprite
+# 	var is_flipped = direction.x < 0
+	
+	
+# 	projectile = projectile_scene.instantiate()
+	
+# 	if not projectile:
+# 		push_error("Projectile scene is not set!")
+# 		return
+		
+# 	# Create projectile instance
+# 	add_child(projectile)
+	
+	
+# 	# Set up projectile
+# 	projectile.global_position = global_position
+# 	projectile.direction_degree = direction_degree
+# 	projectile.source_team = team
+# 	projectile.initial_flip = is_flipped
+# 	projectile.attacker = self
+# 	projectile.projectile_animation = ""
+
+# 	projectile_damage = ranged_damage
+
+# 	# Configure projectile properties
+# 	projectile.speed = projectile_speed
+# 	projectile.damage = projectile_damage
+# 	projectile.penetration = projectile_penetration
+# 	projectile.decline_ratio = decline_ratio
+# 	projectile.is_active = true
+	
+# 	return projectile
 
 # Add damage handling method
 func take_damage(target:Obstacle, attacker: Obstacle, damage_value: float):
@@ -932,9 +969,9 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 	var cast_spell_result := false
 
 	if chess_name == "Mage" and faction == "human":
-		cast_spell_result = human_mage_taunt(2)
+		cast_spell_result = await sun_strike(15)
 	elif chess_name == "ArchMage" and faction == "human":
-		cast_spell_result = human_archmage_heal(2, 20)
+		cast_spell_result = freezing_field(20)
 	elif chess_name == "Queen" and faction == "elf":
 		cast_spell_result = elf_queen_stun(2, 5)
 	elif chess_name == "Mage" and faction == "elf":
@@ -1123,27 +1160,66 @@ func has_melee_target():
 
 	return null
 
-func summon_meteorite(meteorite_count: int) -> bool:
+# # Load appropriate animations for the chess
+# func effect_animation_display(effect_name):
+# 	var effect_animation = AnimatedSprite2D.new()
+# 	var effect_animation_path = AssetPathManagerSingleton.get_asset_path("effect_animation", effect_name)
+# 	if ResourceLoader.exists(effect_animation_path):
+# 		var frames = ResourceLoader.load(effect_animation_path)
+# 		for anim_name in frames.get_animation_names():
+# 			frames.set_animation_loop(anim_name, false)
+# 			frames.set_animation_speed(anim_name, 8.0)
+# 		effect_animation.sprite_frames = frames
+# 	else:
+# 		push_error("Animation resource not found: " + path)
+# 	add_child(effect_animation)
+# 	effect_animation.z_index = 6
+# 	effect_animation.play("default")
+# 	await effect_animation.animation_finished
+# 	effect_animation.queue_free()
+
+
+func sun_strike(strike_count: int) -> bool:
 	var chess_affected := true
-	var remain_metrorite_count = meteorite_count
+	var remain_strike_count = strike_count
 	var arena_size = arena.unit_grid.size
 	var rand_x
 	var rand_y
 
-	while(meteorite_count > 0):
+	while(strike_count > 0):
 		
 		rand_x = randi_range(0, arena_size.x)
 		rand_y = randi_range(0, arena_size.y)
-		var meteorite_animation = AnimatedSprite2D.new()
-		add_child(meteorite_animation)
-		meteorite_animation.sprite_frames = preload("res://asset/animation/spell_animation/FireBeam.tres")
-		meteorite_animation.global_position = arena.get_global_from_tile(Vector2i(rand_x, rand_y))
+		await effect_animation_display("FireBeam", arena, Vector2i(randx, rand_y))
+
 		if DataManagerSingleton.check_obstacle_valid(arena.unit_grid.units[Vector2i(rand_x, rand_y)]):
 			var current_spell_target = arena.unit_grid.units[Vector2i(rand_x, rand_y)]
 			deal_damage.emit(self, current_spell_target, 50, "Magic_attack", [])
+
 		meteorite_count -= 1
+
 	return chess_affected
 
+func freezing_field(arrow_count: int) -> bool:
+	var chess_affected := true
+	var arraow_degree_interval = 360.0 / arrow_count
+	var arraow_degree := 0.0
+	for i in range(arrow_count):
+		var spell_projectile = _launch_projectile_to_degree(arraow_degree)
+		projectile_hit.connect(
+			func(obstacle, attacker):
+					var effect_instance = ChessEffect.new()
+					effect_instance.speed_modifier = -1
+					effect_instance.armor_modifier = -3
+					effect_instance.effect_name = "SpellFreezing"
+					effect_instance.effect_type = "Debuff"
+					effect_instance.effect_applier = "Human ArchMage Spell Freezing"
+					obstacle.effect_handler.add_to_effect_array(effect_instance)
+					obstacle.effect_handler.add_child(effect_instance)
+		)
+		arraow_degree += arraow_degree_interval
+
+	return chess_affected
 
 func human_mage_taunt(spell_duration: int) -> bool:
 	var chess_affected := true
