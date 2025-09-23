@@ -1,7 +1,7 @@
+res://script/projectile.gd
 res://scene/game.tscn
 res://asset/animation/elf/elfArcaneArcher_projectile.tres
 res://asset/shader/LightweightPixelPerfectOutline.gdshader
-res://asset/animation/human/humanArchMage.tres
 res://asset/animation/elf/elfArcaneArcher.tres
 res://asset/tileset/dungeon_tileset.tres
 res://asset/animation/demon/demonDemoness.tres
@@ -9,13 +9,10 @@ res://asset/animation/forestProtector/forestProtectorDryadEnchantress.tres
 res://asset/theme/toggle.tres
 res://asset/shader/SoftDropShadow.gdshader
 res://asset/shader/new_shader.gdshader
-res://script/damage_manager.gd
-res://script/effect_handler.gd
-res://script/obstacle.gd
+res://asset/animation/human/humanArcherMan.tres
+res://asset/animation/projectile_animation/ice.tres
+res://script/asset_path_manager.gd
 res://script/chess.gd
-res://scene/chess.tscn
-res://script/unit_grid.gd
+res://script/obstacle.gd
+res://asset/animation/spell_animation/FireBeam.tres
 res://script/game.gd
-res://script/projectile.gd
-res://asset/animation/human/humanSpearMan.tres
-res://scene/gallery.tscn

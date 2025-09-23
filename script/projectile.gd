@@ -17,6 +17,7 @@ var direction_degree: float:
 	set(value):
 		direction_degree = value
 		animated_sprite_2d.rotation = deg_to_rad(direction_degree)
+		direction = Vector2.from_angle(deg_to_rad(value))
 		
 var traveled_distance: float = 0.0
 var source_team: int = -1  # 发射队伍
@@ -36,10 +37,10 @@ var attacker: Obstacle = null:
 var projectile_animation: String:
 	set(value):
 		projectile_animation = value
-		if ResourceLoader.exists(AssetPathManagerSingleton.get_asset_path("effect_animation", ""):
-			animated_sprite_2d.sprite_frames = ResourceLoader.load(AssetPathManagerSingleton.get_asset_path("effect_animation", "")
+		if ResourceLoader.exists(AssetPathManagerSingleton.get_asset_path("projectile_animation", value)):
+			animated_sprite_2d.sprite_frames = ResourceLoader.load(AssetPathManagerSingleton.get_asset_path("projectile_animation", value))
 		else:
-			animated_sprite_2d.sprite_frames = ResourceLoader.load(AssetPathManagerSingleton.get_asset_path("effect_animation", "Default")
+			animated_sprite_2d.sprite_frames = ResourceLoader.load(AssetPathManagerSingleton.get_asset_path("projectile_animation", "Default"))
 
 
 var damage_finished := false

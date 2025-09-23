@@ -410,80 +410,80 @@ func _on_idle_timeout():
 		idle_timer.set_wait_time(rng.randf_range(1.0,5.0))
 
 
-# Launch projectile at target
-func _launch_projectile_to_target(target: Obstacle):
-	
-	# Calculate direction to target
-	var direction = (target_position - global_position).normalized()
-	
-	# Determine if we need to flip the projectile sprite
-	var is_flipped = direction.x < 0
-	
-	
-	projectile = projectile_scene.instantiate()
-	
-	if not projectile:
-		push_error("Projectile scene is not set!")
-		return
-		
-	# Create projectile instance
-	add_child(projectile)
-	
-	
-	# Set up projectile
-	projectile.global_position = global_position
-	projectile.direction = direction
-	projectile.source_team = team
-	projectile.initial_flip = is_flipped
-	projectile.attacker = self
-	
-	projectile_damage = ranged_damage
-
-	# Configure projectile properties
-	projectile.speed = projectile_speed
-	projectile.damage = projectile_damage
-	projectile.penetration = projectile_penetration
-	projectile.decline_ratio = decline_ratio
-	projectile.is_active = true
-	
-	return projectile
-
-# Launch projectile at target
-func _launch_projectile_to_degree(direction_degree: float):
-	
-	
-	# Determine if we need to flip the projectile sprite
-	var is_flipped = direction.x < 0
-	
-	
-	projectile = projectile_scene.instantiate()
-	
-	if not projectile:
-		push_error("Projectile scene is not set!")
-		return
-		
-	# Create projectile instance
-	add_child(projectile)
-	
-	
-	# Set up projectile
-	projectile.global_position = global_position
-	projectile.direction_degree = direction_degree
-	projectile.source_team = team
-	projectile.initial_flip = is_flipped
-	projectile.attacker = self
-	projectile.projectile_animation = ""
-	
-	projectile_damage = ranged_damage
-
-	# Configure projectile properties
-	projectile.speed = projectile_speed
-	projectile.damage = projectile_damage
-	projectile.penetration = projectile_penetration
-	projectile.decline_ratio = decline_ratio
-	projectile.is_active = true
-	
-	return projectile
+## Launch projectile at target
+#func _launch_projectile_to_target(target: Obstacle):
+	#
+	## Calculate direction to target
+	#var direction = (target.global_position - global_position).normalized()
+	#
+	## Determine if we need to flip the projectile sprite
+	#var is_flipped = direction.x < 0
+	#
+	#
+	#projectile = projectile_scene.instantiate()
+	#
+	#if not projectile:
+		#push_error("Projectile scene is not set!")
+		#return
+		#
+	## Create projectile instance
+	#add_child(projectile)
+	#
+	#
+	## Set up projectile
+	#projectile.global_position = global_position
+	#projectile.direction = direction
+	#projectile.source_team = team
+	#projectile.initial_flip = is_flipped
+	#projectile.attacker = self
+	#
+	#projectile_damage = ranged_damage
+#
+	## Configure projectile properties
+	#projectile.speed = projectile_speed
+	#projectile.damage = projectile_damage
+	#projectile.penetration = projectile_penetration
+	#projectile.decline_ratio = decline_ratio
+	#projectile.is_active = true
+	#
+	#return projectile
+#
+## Launch projectile at target
+#func _launch_projectile_to_degree(direction_degree: float):
+	#
+	#
+	## Determine if we need to flip the projectile sprite
+	#var is_flipped = direction.x < 0
+	#
+	#
+	#projectile = projectile_scene.instantiate()
+	#
+	#if not projectile:
+		#push_error("Projectile scene is not set!")
+		#return
+		#
+	## Create projectile instance
+	#add_child(projectile)
+	#
+	#
+	## Set up projectile
+	#projectile.global_position = global_position
+	#projectile.direction_degree = direction_degree
+	#projectile.source_team = team
+	#projectile.initial_flip = is_flipped
+	#projectile.attacker = self
+	#projectile.projectile_animation = ""
+	#
+	#projectile_damage = ranged_damage
+#
+	## Configure projectile properties
+	#projectile.speed = projectile_speed
+	#projectile.damage = projectile_damage
+	#projectile.penetration = projectile_penetration
+	#projectile.decline_ratio = decline_ratio
+	#projectile.is_active = true
+	#
+	#return projectile
 
 # Add damage handling method
 func take_damage(target:Obstacle, attacker: Obstacle, damage_value: float):
@@ -605,12 +605,12 @@ func effect_animation_display(effect_name: String, display_play_area: PlayArea, 
 		var frames = ResourceLoader.load(effect_animation_path)
 		for anim_name in frames.get_animation_names():
 			frames.set_animation_loop(anim_name, false)
-			frames.set_animation_speed(anim_name, 8.0)
+			frames.set_animation_speed(anim_name, 16.0)
 		effect_animation.sprite_frames = frames
 	else:
-		push_error("Animation resource not found: " + path)
-	effect_animation.global_position = display_play_area.get_global_from_tile(display_tile)
+		push_error("Animation resource not found: " + effect_animation_path)
 	add_child(effect_animation)
+	effect_animation.global_position = display_play_area.get_global_from_tile(display_tile)
 	effect_animation.z_index = 6
 	effect_animation.play("default")
 	await effect_animation.animation_finished

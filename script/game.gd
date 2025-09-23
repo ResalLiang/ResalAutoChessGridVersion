@@ -324,7 +324,7 @@ func new_round_prepare_end():
 	save_arena_team()
 
 	if DataManagerSingleton.difficulty == 1:
-		generate_enemy(min(player_max_hp_sum, current_round * 200, shop_handler.shop_level * 200))
+		generate_enemy(mid(player_max_hp_sum, current_round * 200, shop_handler.shop_level * 200))
 
 	elif DataManagerSingleton.difficulty == 2:
 		generate_enemy(max(player_max_hp_sum * 1.2, current_round * 200, shop_handler.shop_level * 200))
@@ -755,6 +755,8 @@ func chess_death_handle(obstacle: Obstacle):
 
 	arena.unit_grid.remove_unit(obstacle.get_current_tile(obstacle)[1])
 	obstacle.visible = false
+	if obstacle.is_active:
+		obstacle.action_finished.emit(obstacle)
 
 func control_shaker(control: Control):
 	var old_position = control.global_position
@@ -910,3 +912,9 @@ func check_chess_merge():
 	await get_tree().process_frame
 
 	return merge_result
+
+func mid(a: float, b: float, c: float) -> float:
+	var total_sum = a + b + c
+	var min_val = min(a, min(b, c)) # min() 只能比较两个数，所以需要嵌套
+	var max_val = max(a, max(b, c)) # max() 同理
+	return total_sum - min_val - max_val

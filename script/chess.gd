@@ -654,7 +654,7 @@ func _handle_attack():
 				
 				animated_sprite_2d.play("ranged_attack")
 				ranged_attack_started.emit(self)
-				var chess_projectile = _launch_projectile(chess_target)
+				var chess_projectile = _launch_projectile_to_target(chess_target)
 				projectile_lauched.emit(self)
 
 				# chess_projectile.projectile_vanished.connect(_on_animated_sprite_2d_animation_finished)
@@ -851,80 +851,80 @@ func _on_idle_timeout():
 		idle_timer.set_wait_time(rng.randf_range(1.0,5.0))
 
 
-# # Launch projectile at target
-# func _launch_projectile_to_target(target: Obstacle):
+# Launch projectile at target
+func _launch_projectile_to_target(target: Obstacle):
 	
-# 	# Calculate direction to target
-# 	var direction = (target_position - global_position).normalized()
+	# Calculate direction to target
+	var direction = (target.global_position - global_position).normalized()
 	
-# 	# Determine if we need to flip the projectile sprite
-# 	var is_flipped = direction.x < 0
+	# Determine if we need to flip the projectile sprite
+	var is_flipped = direction.x < 0
 	
 	
-# 	projectile = projectile_scene.instantiate()
+	projectile = projectile_scene.instantiate()
 	
-# 	if not projectile:
-# 		push_error("Projectile scene is not set!")
-# 		return
+	if not projectile:
+		push_error("Projectile scene is not set!")
+		return
 		
-# 	# Create projectile instance
-# 	add_child(projectile)
+	# Create projectile instance
+	add_child(projectile)
 	
 	
-# 	# Set up projectile
-# 	projectile.global_position = global_position
-# 	projectile.direction = direction
-# 	projectile.source_team = team
-# 	projectile.initial_flip = is_flipped
-# 	projectile.attacker = self
+	# Set up projectile
+	projectile.global_position = global_position
+	projectile.direction = direction
+	projectile.source_team = team
+	projectile.initial_flip = is_flipped
+	projectile.attacker = self
 	
-# 	projectile_damage = ranged_damage
+	projectile_damage = ranged_damage
 
-# 	# Configure projectile properties
-# 	projectile.speed = projectile_speed
-# 	projectile.damage = projectile_damage
-# 	projectile.penetration = projectile_penetration
-# 	projectile.decline_ratio = decline_ratio
-# 	projectile.is_active = true
+	# Configure projectile properties
+	projectile.speed = projectile_speed
+	projectile.damage = projectile_damage
+	projectile.penetration = projectile_penetration
+	projectile.decline_ratio = decline_ratio
+	projectile.is_active = true
 	
-# 	return projectile
+	return projectile
 
-# # Launch projectile at target
-# func _launch_projectile_to_degree(direction_degree: float):
+# Launch projectile at target
+func _launch_projectile_to_degree(direction_degree: float):
 	
 	
-# 	# Determine if we need to flip the projectile sprite
-# 	var is_flipped = direction.x < 0
+	# Determine if we need to flip the projectile sprite
+	var is_flipped = direction_degree > 90 and direction_degree < 270
 	
 	
-# 	projectile = projectile_scene.instantiate()
+	projectile = projectile_scene.instantiate()
 	
-# 	if not projectile:
-# 		push_error("Projectile scene is not set!")
-# 		return
+	if not projectile:
+		push_error("Projectile scene is not set!")
+		return
 		
-# 	# Create projectile instance
-# 	add_child(projectile)
+	# Create projectile instance
+	add_child(projectile)
 	
 	
-# 	# Set up projectile
-# 	projectile.global_position = global_position
-# 	projectile.direction_degree = direction_degree
-# 	projectile.source_team = team
-# 	projectile.initial_flip = is_flipped
-# 	projectile.attacker = self
-# 	projectile.projectile_animation = ""
+	# Set up projectile
+	projectile.global_position = global_position
+	projectile.direction_degree = direction_degree
+	projectile.source_team = team
+	projectile.initial_flip = is_flipped
+	projectile.attacker = self
+	projectile.projectile_animation = ""
+	
+	projectile_damage = ranged_damage
 
-# 	projectile_damage = ranged_damage
-
-# 	# Configure projectile properties
-# 	projectile.speed = projectile_speed
-# 	projectile.damage = projectile_damage
-# 	projectile.penetration = projectile_penetration
-# 	projectile.decline_ratio = decline_ratio
-# 	projectile.is_active = true
+	# Configure projectile properties
+	projectile.speed = projectile_speed
+	projectile.damage = projectile_damage
+	projectile.penetration = projectile_penetration
+	projectile.decline_ratio = decline_ratio
+	projectile.is_active = true
 	
-# 	return projectile
+	return projectile
 
 # Add damage handling method
 func take_damage(target:Obstacle, attacker: Obstacle, damage_value: float):
@@ -969,7 +969,7 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 	var cast_spell_result := false
 
 	if chess_name == "Mage" and faction == "human":
-		cast_spell_result = await sun_strike(15)
+		cast_spell_result = await sun_strike(999)
 	elif chess_name == "ArchMage" and faction == "human":
 		cast_spell_result = freezing_field(20)
 	elif chess_name == "Queen" and faction == "elf":
@@ -1185,18 +1185,19 @@ func sun_strike(strike_count: int) -> bool:
 	var arena_size = arena.unit_grid.size
 	var rand_x
 	var rand_y
-
-	while(strike_count > 0):
+	var damage_count:= 0
+	while(strike_count > 0 and damage_count >= 3):
 		
-		rand_x = randi_range(0, arena_size.x)
-		rand_y = randi_range(0, arena_size.y)
-		await effect_animation_display("FireBeam", arena, Vector2i(randx, rand_y))
+		rand_x = randi_range(0, arena_size.x - 1)
+		rand_y = randi_range(0, arena_size.y - 1)
+		await effect_animation_display("FireBeam", arena, Vector2i(rand_x, rand_y))
 
 		if DataManagerSingleton.check_obstacle_valid(arena.unit_grid.units[Vector2i(rand_x, rand_y)]):
 			var current_spell_target = arena.unit_grid.units[Vector2i(rand_x, rand_y)]
 			deal_damage.emit(self, current_spell_target, 50, "Magic_attack", [])
-
-		meteorite_count -= 1
+			damage_count += 1
+			
+		strike_count -= 1
 
 	return chess_affected
 
@@ -1206,11 +1207,14 @@ func freezing_field(arrow_count: int) -> bool:
 	var arraow_degree := 0.0
 	for i in range(arrow_count):
 		var spell_projectile = _launch_projectile_to_degree(arraow_degree)
-		projectile_hit.connect(
+		spell_projectile.projectile_animation = "Ice"
+		spell_projectile.projectile_hit.connect(
 			func(obstacle, attacker):
 					var effect_instance = ChessEffect.new()
 					effect_instance.speed_modifier = -1
+					effect_instance.speed_modifier_duration = 2
 					effect_instance.armor_modifier = -3
+					effect_instance.armor_modifier_duration = 2
 					effect_instance.effect_name = "SpellFreezing"
 					effect_instance.effect_type = "Debuff"
 					effect_instance.effect_applier = "Human ArchMage Spell Freezing"

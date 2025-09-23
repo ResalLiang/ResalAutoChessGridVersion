@@ -1,3 +1,5 @@
+res://asset/sprite/spell_effect/Elemental Effects/Ice VFX 1
+res://asset/animation/projectile_animation/
 res://asset/animation/spell_animation
 res://asset/sprite/spell_effect/Elemental Effects/Fire effect 03/Fire Beam
 res://asset/shader
@@ -18,7 +20,5 @@ res://asset/animation/human
 res://asset/font
 res://asset/cursor/cursors
 res://asset/sprite/MiniFolks/MinifolksHumans
-res://asset/sprite/MiniFolks/MinifolksUndead
-res://asset/sprite/SpinningCoin
 D:/LearningGodot/ResalAutoChess/script/hero_stats_raw
 D:/LearningGodot/ResalAutoChess/script
