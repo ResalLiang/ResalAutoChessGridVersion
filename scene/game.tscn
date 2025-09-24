@@ -1,4 +1,4 @@
-[gd_scene load_steps=91 format=4 uid="uid://cthbjvirwy2mg"]
+[gd_scene load_steps=92 format=4 uid="uid://cthbjvirwy2mg"]
 
 [ext_resource type="Script" uid="uid://c7rtc63knhqn2" path="res://script/game.gd" id="1_ll5lq"]
 [ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="2_dbls1"]
@@ -45,6 +45,7 @@
 [ext_resource type="Texture2D" uid="uid://yo6l1uo6dhds" path="res://asset/sprite/icon/arrow_dot.png" id="42_efr1a"]
 [ext_resource type="Script" uid="uid://lf2qschg5l5r" path="res://script/game_speed_controller.gd" id="44_x3x2e"]
 [ext_resource type="Script" uid="uid://csgrh2hl21j51" path="res://script/damage_manager.gd" id="45_c3n0e"]
+[ext_resource type="Theme" uid="uid://b4hwtdp2epofe" path="res://asset/theme/toggle.tres" id="45_c6ddg"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_x3x2e"]
 texture = ExtResource("6_qpk70")
@@ -7492,6 +7493,7 @@ offset_left = 137.0
 offset_top = 4.0
 offset_right = 245.0
 offset_bottom = 12.0
+scale = Vector2(1.1869464, 0.9991004)
 theme_override_colors/font_color = Color(1, 1, 0, 1)
 theme_override_fonts/font = ExtResource("9_81276")
 theme_override_font_sizes/font_size = 4
@@ -7692,7 +7694,7 @@ layout_mode = 3
 anchors_preset = 0
 offset_left = 7.0
 offset_top = 231.0
-offset_right = 111.0
+offset_right = 96.0
 offset_bottom = 287.0
 script = ExtResource("44_x3x2e")
 
@@ -7726,9 +7728,10 @@ theme_override_font_sizes/font_size = 4
 text = "fast"
 
 [node name="speed_slider" type="HSlider" parent="game_speed_controller/VBox"]
-z_index = 3
+z_index = 5
 custom_minimum_size = Vector2(64, 16)
 layout_mode = 2
+theme = ExtResource("45_c6ddg")
 
 [node name="speed_label" type="Label" parent="game_speed_controller/VBox"]
 z_index = 3

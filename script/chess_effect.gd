@@ -4,7 +4,7 @@ extends Node
 var effect_name := "Effect Name Placeholder"
 var effect_icon : Texture2D
 var effect_description : String
-var effect_type : String # Buff/Debuff/Passive
+var effect_type : String # Buff/Debuff/Passive/PermanentBuff/PermanentDebuff
 var effect_applier : String
 var effect_duration := 0
 
@@ -164,6 +164,8 @@ func _ready() -> void:
 	extra_func_called.connect(extra_func)
 
 func check_effect_timeout() -> bool:
+	if effect_type == "PermanentBuff" or effect_type == "PermanentDebuff":
+		return false
 	
 	if immunity_duration > 0:
 		return true

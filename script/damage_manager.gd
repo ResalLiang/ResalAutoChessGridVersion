@@ -26,7 +26,7 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 		damage_result *= 2
 		critical_damage = true
 
-	if not affix_array.has("ignore_armor"):
+	if not affix_array.has("ignore_armor") and damage_type != "Magic_attack":
 		damage_result -= target.armor
 		if damage_result < 0:
 			return

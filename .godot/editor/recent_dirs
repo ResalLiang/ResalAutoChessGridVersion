@@ -1,10 +1,11 @@
+res://asset/sprite/GandalfHardcore Pixel Art Game UI
+res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames
 res://asset/sprite/spell_effect/Elemental Effects/Fire effect 03/Fire Beam
 res://asset/sprite/spell_effect/Elemental Effects/Ice VFX 1
 res://asset/animation/projectile_animation/
 res://asset/animation/spell_animation
 res://asset/shader
 res://asset/theme
-res://asset/sprite/GandalfHardcore Pixel Art Game UI
 res://scene
 res://asset/sprite/icon
 res://asset/animation/dwarf
@@ -12,7 +13,6 @@ res://asset/sprite/MiniFolks/MinifolksDwarfs/Without Outline
 res://asset/animation/demon
 res://asset/sprite/GandalfHardcore Chests
 res://asset/sprite/GandalfHardcore Icons
-res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames
 res://script
 res://asset/sprite/MiniFolks/MinifolksHumans/Without Outline
 res://asset/animation/forestProtector

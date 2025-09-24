@@ -601,16 +601,20 @@ func get_current_tile(obstacle : Obstacle):
 func effect_animation_display(effect_name: String, display_play_area: PlayArea, display_tile: Vector2i):
 	var effect_animation = AnimatedSprite2D.new()
 	var effect_animation_path = AssetPathManagerSingleton.get_asset_path("effect_animation", effect_name)
+	var frame_offset = Vector2(0, 0)
 	if ResourceLoader.exists(effect_animation_path):
 		var frames = ResourceLoader.load(effect_animation_path)
 		for anim_name in frames.get_animation_names():
 			frames.set_animation_loop(anim_name, false)
 			frames.set_animation_speed(anim_name, 16.0)
 		effect_animation.sprite_frames = frames
+		var frame_texture = frames.get_frame_texture("default", 0)
+		frame_offset.x = -(frame_texture.region.size.x - 16) / 2.0 + 8
+		frame_offset.y = -(frame_texture.region.size.y - 16) * 1.0 + 8
 	else:
 		push_error("Animation resource not found: " + effect_animation_path)
 	add_child(effect_animation)
-	effect_animation.global_position = display_play_area.get_global_from_tile(display_tile)
+	effect_animation.global_position = display_play_area.get_global_from_tile(display_tile) + frame_offset
 	effect_animation.z_index = 6
 	effect_animation.play("default")
 	await effect_animation.animation_finished

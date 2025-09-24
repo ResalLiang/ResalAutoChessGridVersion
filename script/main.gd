@@ -66,7 +66,7 @@ func _transition_to_scene(scene_path: String, container: Control, if_transition:
 		VirtualCursorSingleton.set_cursor_type("loading")
 		transition_layer.show()
 		tween = create_tween()
-		tween.tween_property(transition_layer, "color", Color(0, 0, 0, 1), 0.5)
+		tween.tween_property(transition_layer, "color", Color(0, 0, 0, 1), 0.2)
 		await tween.finished
 	
 	# 清理当前场景
@@ -89,7 +89,7 @@ func _transition_to_scene(scene_path: String, container: Control, if_transition:
 	# 淡出过渡效果
 	if if_transition:
 		tween = create_tween()
-		tween.tween_property(transition_layer, "color", Color(0, 0, 0, 0), 0.5)
+		tween.tween_property(transition_layer, "color", Color(0, 0, 0, 0), 0.2)
 		await tween.finished
 		VirtualCursorSingleton.set_cursor_type("default")
 		transition_layer.hide()
@@ -99,7 +99,7 @@ func add_scene(scene_path: String, container: Control, if_transition: bool):
 	if if_transition:
 		transition_layer.show()
 		tween = create_tween()
-		tween.tween_property(transition_layer, "color", Color(0, 0, 0, 1), 0.5)
+		tween.tween_property(transition_layer, "color", Color(0, 0, 0, 1), 0.2)
 		await tween.finished
 		
 	# 加载新场景
@@ -116,6 +116,6 @@ func add_scene(scene_path: String, container: Control, if_transition: bool):
 	# 淡出过渡效果
 	if if_transition:
 		tween = create_tween()
-		tween.tween_property(transition_layer, "color", Color(0, 0, 0, 0), 0.5)
+		tween.tween_property(transition_layer, "color", Color(0, 0, 0, 0), 0.2)
 		await tween.finished
 		transition_layer.hide()

@@ -969,7 +969,7 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 	var cast_spell_result := false
 
 	if chess_name == "Mage" and faction == "human":
-		cast_spell_result = await sun_strike(999)
+		cast_spell_result = await sun_strike(3)
 	elif chess_name == "ArchMage" and faction == "human":
 		cast_spell_result = freezing_field(20)
 	elif chess_name == "Queen" and faction == "elf":
@@ -1186,18 +1186,62 @@ func sun_strike(strike_count: int) -> bool:
 	var rand_x
 	var rand_y
 	var damage_count:= 0
-	while(remain_strike_count > 0 and damage_count < 3):
-		
-		rand_x = randi_range(0, arena_size.x - 1)
-		rand_y = randi_range(0, arena_size.y - 1)
-		await effect_animation_display("FireBeam", arena, Vector2i(rand_x, rand_y))
+	var rand_f : float
+	#while(remain_strike_count > 0 and damage_count < 3):
+		#
+		#rand_x = randi_range(0, arena_size.x - 1)
+		#rand_y = randi_range(0, arena_size.y - 1)
+		#await effect_animation_display("FireBeam", arena, Vector2i(rand_x, rand_y))
+#
+		#if DataManagerSingleton.check_obstacle_valid(arena.unit_grid.units[Vector2i(rand_x, rand_y)]):
+			#var current_spell_target = arena.unit_grid.units[Vector2i(rand_x, rand_y)]
+			#deal_damage.emit(self, current_spell_target, 50, "Magic_attack", [])
+			#damage_count += 1
+			#
+		#strike_count -= 1
+	
+	var offset_possible = {
+		0.4 : Vector2i(0, 0),
+		0.5 : Vector2i(-1, 0),
+		0.6 : Vector2i(1, 0),
+		0.7 : Vector2i(0, -1),
+		0.8 : Vector2i(0, 1),
+		0.85 : Vector2i(-1, -1),
+		0.9 : Vector2i(-1, 1),
+		0.95 : Vector2i(1, -1),
+		1 : Vector2i(1, 1)
+	}
+	
+	var arena_units = arena.unit_grid.get_all_units()
+	for i in range(strike_count):
+		for obstacle_index in arena_units:
+			if obstacle_index.team == team:
+				continue
+			var current_tile = obstacle_index.get_current_tile(obstacle_index)[1]
+			rand_f = randf()
+			for offset_index in offset_possible.keys():
+				if rand_f <= offset_index:
+					current_tile = current_tile + offset_possible[offset_index]
+					break
+			await effect_animation_display("FireBeam", arena, current_tile)
+			if not arena.unit_grid.units.has(current_tile):
+				continue
+				
+			if DataManagerSingleton.check_obstacle_valid(arena.unit_grid.units[current_tile]):
+				var current_spell_target = arena.unit_grid.units[current_tile]
+				deal_damage.emit(self, current_spell_target, 20, "Magic_attack", [])
 
-		if DataManagerSingleton.check_obstacle_valid(arena.unit_grid.units[Vector2i(rand_x, rand_y)]):
-			var current_spell_target = arena.unit_grid.units[Vector2i(rand_x, rand_y)]
-			deal_damage.emit(self, current_spell_target, 50, "Magic_attack", [])
-			damage_count += 1
-			
-		strike_count -= 1
+		
+	#var current_strike
+	#for i in range(strike_count):
+		#var current_strike_count = randi_range(3, 5)
+		#for j in range(current_strike_count):
+			#rand_x = randi_range(0, arena_size.x - 1)
+			#rand_y = randi_range(0, arena_size.y - 1)			
+			#current_strike = await effect_animation_display("FireBeam", arena, Vector2i(rand_x, rand_y))
+			#if DataManagerSingleton.check_obstacle_valid(arena.unit_grid.units[Vector2i(rand_x, rand_y)]):
+				#var current_spell_target = arena.unit_grid.units[Vector2i(rand_x, rand_y)]
+				#deal_damage.emit(self, current_spell_target, 50, "Magic_attack", [])		
 
 	return chess_affected
 
@@ -1208,6 +1252,7 @@ func freezing_field(arrow_count: int) -> bool:
 	for i in range(arrow_count):
 		var spell_projectile = _launch_projectile_to_degree(arraow_degree)
 		spell_projectile.projectile_animation = "Ice"
+		spell_projectile.damage = 10
 		spell_projectile.projectile_hit.connect(
 			func(obstacle, attacker):
 					var effect_instance = ChessEffect.new()

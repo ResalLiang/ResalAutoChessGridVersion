@@ -525,17 +525,26 @@ func load_arena_team():
 	if saved_arena_team.size() != 0:
 		for tile_index in saved_arena_team.keys():
 			if saved_arena_team[tile_index]:
-
 				var character = summon_chess(saved_arena_team[tile_index][0], saved_arena_team[tile_index][1], saved_arena_team[tile_index][2], 1, arena, tile_index)
-		
+				if saved_arena_team[tile_index][3].size() <= 0:
+					continue
+				for effect_index in saved_arena_team[tile_index][3]:
+					character.effect_handler.add_to_effect_array(effect_index)
+				
 func save_arena_team():
 	saved_arena_team = {}
 	for chess_index in arena.unit_grid.units.keys():
 		if not is_instance_valid(arena.unit_grid.units[chess_index]):
 			arena.unit_grid.remove_unit(chess_index)
 		elif arena.unit_grid.units[chess_index] is Obstacle:
-			saved_arena_team[chess_index] = [arena.unit_grid.units[chess_index].faction, arena.unit_grid.units[chess_index].chess_name, arena.unit_grid.units[chess_index].chess_level]
-
+			var current_obstacle = arena.unit_grid.units[chess_index]
+			saved_arena_team[chess_index] = [current_obstacle.faction, current_obstacle.chess_name, current_obstacle.chess_level,[]]
+			if current_obstacle.effect_handler.effect_list.size() <= 0:
+				continue
+			for effect_index in current_obstacle.effect_handler.effect_list:
+				if effect_index.effect_type == "PermanentBuff" or effect_index.effect_type == "PermanentDebuff":
+					saved_arena_team[chess_index][3].append(effect_index)
+					
 # Generates random chess based on shop level and rarity weights
 '''func generate_random_chess(generate_level: int, specific_faction: String):'''
 func generate_random_chess(generate_level: int, specific_faction: String):
