@@ -8,6 +8,10 @@ enum DAMAGE_TYPE {DAMAGE_APPLIED, DAMAGE_TAKEN, HEAL_APPLIED, HEAL_TAKEN}
 var battle_data: Dictionary = {}
 var battle_meter_type := DAMAGE_TYPE.DAMAGE_APPLIED
 
+signal update_round_end_data
+
+func _ready() _void:
+	update_round_end_data.connect(DataManagerSingleton.battle_meter_data_update)
 
 func get_damage_data(obstacle: Obstacle, attacker: Obstacle, value: float):
 	var attacker_index = [attacker.faction, attacker.chess_name, attacker.chess_serial, attacker.team]
@@ -74,11 +78,7 @@ func round_end_data_update():
 	if battle_data.size() <= 0:
 		return
 
-	for data_index in battle_data.keys():
-		if data_index[3] != 1:
-			return
-			
-		DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", data_index[0], data_index[1], "max_damage"], battle_data[data_index][0])
-		DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", data_index[0], data_index[1], "max_damage_taken"], battle_data[data_index][1])
-		DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", data_index[0], data_index[1], "max_heal"], battle_data[data_index][2])
-		DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", data_index[0], data_index[1], "max_heal_taken"], battle_data[data_index][3])
+	# for data_index in battle_data.keys():
+	# 	if data_index[3] != 1:
+	# 		return
+	update_round_end_data.emit(battle_data)
