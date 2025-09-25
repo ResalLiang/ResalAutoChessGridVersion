@@ -189,6 +189,18 @@ func handle_player_lose_round():
 func handle_player_lose_game():
 	add_data_to_dict(in_game_data, ["total_lose_game"], 1)
 
+func handle_chess_bought(chess: Obstacle):
+	add_data_to_dict(in_game_data, ["chess_stat", chess.faction, chess.chess_name, "buy_count"], 1)
+
+func handle_chess_kill(attacker: Obstacle, target: Obstacle):
+	add_data_to_dict(in_game_data, ["chess_stat", attacker.faction, attacker.chess_name, "kill_count"], 1)
+
+func handle_chess_sold(chess: Obstacle):
+	add_data_to_dict(in_game_data, ["chess_stat", chess.faction, chess.chess_name, "sell_count"], 1)
+
+func handle_chess_refreshed(chess: Obstacle):
+	add_data_to_dict(in_game_data, ["chess_stat", chess.faction, chess.chess_name, "refresh_count"], 1)
+
 func handle_coin_spend(value: int, reason: String):
 	add_data_to_dict(in_game_data, ["total_coin_spend"], max(0, value))
 
@@ -363,3 +375,13 @@ func check_obstacle_valid(node):
 		return false
 
 	return true
+
+func battle_meter_data_update(battle_data):
+	for data_index in battle_data.keys():
+		if data_index[3] != 1:
+			continue
+
+		add_data_to_dict(in_game_data, ["chess_stat", data_index[0], data_index[1], "max_damage"], battle_data[data_index][0])
+		add_data_to_dict(in_game_data, ["chess_stat", data_index[0], data_index[1], "max_damage_taken"], battle_data[data_index][1])
+		add_data_to_dict(in_game_data, ["chess_stat", data_index[0], data_index[1], "max_heal"], battle_data[data_index][2])
+		add_data_to_dict(in_game_data, ["chess_stat", data_index[0], data_index[1], "max_heal_taken"], battle_data[data_index][3])
