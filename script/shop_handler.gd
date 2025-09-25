@@ -32,6 +32,7 @@ signal chess_sold
 signal coins_increased
 signal coins_decreased
 signal shop_upgraded
+signal chess_refreshed
 
 
 func _ready():
@@ -50,13 +51,14 @@ func _ready():
 	chess_bought.connect(
 		func(chess):
 			debug_handler.write_log("LOG", chess.chess_name + " is bought.")
-			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "buy_count"], 1)
 	)
+	chess_bought.connect(DataManagerSingleton.handle_chess_bought)
 	chess_sold.connect(
 		func(chess):
 			debug_handler.write_log("LOG", chess.chess_name + " is sold.")
 			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "sell_count"], 1)
 	)
+	chess_sold.connect(DataManagerSingleton.handle_chess_sold)
 	coins_increased.connect(
 		func(value, reason):
 			debug_handler.write_log("LOG", "Coins increase by " + str(value) + " because of " + reason + ".")
@@ -69,6 +71,7 @@ func _ready():
 		func(value):
 			debug_handler.write_log("LOG", "Shop upgrade to level: " + str(value) + ".")
 	)
+	chess_refreshed.connect(DataManagerSingleton.handle_chess_refreshed)
 
 	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player].has("debug_mode"):
 		base_income = 999 if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] else 10
@@ -98,7 +101,8 @@ func shop_refresh() -> void:
 	#for node in get_tree().get_nodes_in_group("obstacle_group"):
 	for chess_index in shop.unit_grid.get_all_units():
 		if chess_index is Chess:
-			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess_index.faction, chess_index.chess_name, "refresh_count"], 1)
+			# DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess_index.faction, chess_index.chess_name, "refresh_count"], 1)
+			chess_refreshed.emit(chess_index)
 			chess_index.queue_free()	
 
 	for i in range(shop_level + 2):
