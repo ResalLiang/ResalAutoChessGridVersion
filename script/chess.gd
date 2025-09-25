@@ -207,7 +207,7 @@ var astar_grid_region = Rect2i(0, 0, 16, 16)
 # signal heal_taken(obstacle: Obstaclet, healer: Obstacle, heal_value: floa) # for audio player and display
 # signal attack_evased(obstacle: Obstacle, attacker: Obstacle) # for audio player and display
 
-# signal is_died(obstacle: Obstacle) # for audio player and display
+# signal is_died(obstacle: Obstacle, attacker: Obstacle) # for audio player and display
 
 
 # ========================
@@ -241,6 +241,18 @@ func _ready():
 	damage_taken.connect(take_damage)
 
 	is_died.connect(_on_died)
+
+	spell_casted.connect(AudioManagerSingleton.play_sfx.bind("spell_casted"))
+	ranged_attack_started.connect(AudioManagerSingleton.play_sfx.bind("ranged_attack_started"))
+	melee_attack_started.connect(AudioManagerSingleton.play_sfx.bind("melee_attack_started"))
+	projectile_lauched.connect(AudioManagerSingleton.play_sfx.bind("projectile_lauched"))
+	damage_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("damage_taken"))
+	critical_damage_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("critical_damage_taken"))
+	heal_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("heal_taken"))
+	attack_evased.connect(AudioManagerSingleton.play_sfx.unbind(1).bind("attack_evased"))
+	is_died.connect(AudioManagerSingleton.play_sfx.unbind(1).bind("is_died"))
+
+
 	
 	# Initialize random number generator
 	rng.randomize()
@@ -561,6 +573,19 @@ func _handle_movement():
 
 				if astar_grid.is_point_solid(target_pos) or remain_step <= 0 or global_position.distance_to(chess_target.global_position) <= attack_range:
 					break
+
+				var previous_tile = get_current_tile(self)[1]
+				var neighbor_chess
+				for tile_offset_index in [Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 1), Vector2i(-1, 0), Vector2i(0, -1), Vector2i(1, -1)]:
+					if not DataManagerSingleton.check_obstacle_valid(arena.unit_grid.untis(previous_tile + tile_offset_index)):
+						continue
+					neighbor_chess = arena.unit_grid.untis(previous_tile + tile_offset_index)
+					if neighbor_chess.team == team:
+						continue
+					if not neighbor_chess.animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
+						continue
+					if position.distance_to(neighbor_chess.position) <= min(neighbor_chess.attack_range, ranged_attack_threshold) and target_pos.distance_to(neighbor_chess.position) > min(neighbor_chess.attack_range, ranged_attack_threshold):
+						await neighbor_chess.handle_free_strike(self)
 
 				await chess_mover.tween_move_chess(self, arena, target_pos)
 
@@ -930,26 +955,27 @@ func _launch_projectile_to_degree(direction_degree: float):
 func take_damage(target:Obstacle, attacker: Obstacle, damage_value: float):
 	#Placeholder for chess passive ability on take damage
 
-	hp -= damage_value
-	hp_bar.value = hp
+	target.hp -= damage_value
+	target.hp_bar.value = target.hp
 
-	if attacker != self:
+	if attacker != target:
 		attacker.mp += damage_value
 
-	if hp <= 0:
-		status = STATUS.DIE
-		animated_sprite_2d.stop()
-		animated_sprite_2d.play("die")
-		await animated_sprite_2d.animation_finished
-		visible = false
-		is_died.emit(self)
+	if target.hp <= 0:
+		target.status = STATUS.DIE
+		target.animated_sprite_2d.stop()
+		target.animated_sprite_2d.play("die")
+		await target.animated_sprite_2d.animation_finished
+		target.visible = false
+		target.is_died.emit(target, attacker)
+		attacker.kill_chess(attacker, target)
 				
 	else:
 		#Placeholder for chess passive ability on hit
-		status = STATUS.HIT
-		animated_sprite_2d.play("hit")
-		await animated_sprite_2d.animation_finished
-		status = STATUS.IDLE
+		target.status = STATUS.HIT
+		target.animated_sprite_2d.play("hit")
+		await target.animated_sprite_2d.animation_finished
+		target.status = STATUS.IDLE
 
 
 func take_heal(heal_value: float, healer: Obstacle):
@@ -1144,6 +1170,9 @@ func connect_to_data_manager():
 				DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "cast_spell_count"], 1)
 	)
 
+	is_died.connect(DataManagerSingleton.record_death_chess.unbind(1))
+	kill_chess.connet(DataManagerSingleton.handle_chess_kill)
+
 func get_current_tile(obstacle : Obstacle):
 	var i = chess_mover._get_play_area_for_position(obstacle.global_position)
 	var current_tile = chess_mover.play_areas[i].get_tile_from_global(obstacle.global_position)
@@ -1178,6 +1207,38 @@ func has_melee_target():
 # 	await effect_animation.animation_finished
 # 	effect_animation.queue_free()
 
+func handle_free_strike(target: Obstacle):
+	if status == STATUS.DIE:
+		await get_tree().process_frame
+		return
+
+	var previous_target = chess_target
+	chess_target = target
+
+	if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
+		status = STATUS.MELEE_ATTACK
+		melee_attack_animation.play("melee_attack")
+		melee_attack_started.emit(self)
+		await melee_attack_animation.animation_finished
+		
+		handle_special_effect(target, self)
+
+	elif animated_sprite_2d.sprite_frames.has_animation("attack"):
+		status = STATUS.MELEE_ATTACK
+		animated_sprite_2d.play("attack")
+		melee_attack_started.emit(self)
+		deal_damage.emit(self, target, damage, "melee_attack", [])	
+
+		handle_special_effect(target, self)
+
+	else:
+		# No required attack animation
+
+		await get_tree().process_frame
+
+	status = STATUS.IDLE
+	chess_target = previous_target
+	return
 
 func sun_strike(strike_count: int) -> bool:
 	var chess_affected := true
@@ -1256,10 +1317,12 @@ func freezing_field(arrow_count: int) -> bool:
 		spell_projectile.projectile_hit.connect(
 			func(obstacle, attacker):
 					var effect_instance = ChessEffect.new()
-					effect_instance.speed_modifier = -1
-					effect_instance.speed_modifier_duration = 2
-					effect_instance.armor_modifier = -3
-					effect_instance.armor_modifier_duration = 2
+					effect_instance.register_buff("speed_modifier", -1, 2)
+					# effect_instance.speed_modifier = -1
+					# effect_instance.speed_modifier_duration = 2
+					effect_instance.register_buff("armor_modifier", -3, 2)
+					# effect_instance.armor_modifier = -3
+					# effect_instance.armor_modifier_duration = 2
 					effect_instance.effect_name = "SpellFreezing"
 					effect_instance.effect_type = "Debuff"
 					effect_instance.effect_applier = "Human ArchMage Spell Freezing"
@@ -1274,7 +1337,8 @@ func human_mage_taunt(spell_duration: int) -> bool:
 	var chess_affected := true
 
 	var effect_instance = ChessEffect.new()
-	effect_instance.taunt_duration = spell_duration
+	effect_instance.register_buff("taunt", 0, spell_duration)
+	# effect_instance.taunt_duration = spell_duration
 	effect_instance.effect_name = "Taunt"
 	effect_instance.effect_type = "Buff"
 	effect_instance.effect_applier = "Human Mage Spell Taunt"
@@ -1309,8 +1373,9 @@ func human_archmage_heal(spell_duration: int, heal_value: float) -> bool:
 				if arena_unitgrid[affected_index] is Obstacle and arena_unitgrid[affected_index].team == team:
 
 					var effect_instance = ChessEffect.new()
-					effect_instance.continuous_hp_modifier = heal_value
-					effect_instance.continuous_hp_modifier_duration = spell_duration
+					effect_instance.register_buff("continuous_hp_modifier", heal_value, spell_duration)
+					# effect_instance.continuous_hp_modifier = heal_value
+					# effect_instance.continuous_hp_modifier_duration = spell_duration
 					effect_instance.effect_name = "Heal"
 					effect_instance.effect_type = "Buff"
 					effect_instance.effect_applier = "Human ArchMage Spell Heal"
@@ -1334,7 +1399,8 @@ func elf_queen_stun(spell_duration: int, damage_value: float) -> bool:
 			if arena_unitgrid[affected_index] is Obstacle and arena_unitgrid[affected_index].team != team:
 
 				var effect_instance = ChessEffect.new()
-				effect_instance.stunned_duration = spell_duration
+				effect_instance.register_buff("stunned", 0, spell_duration)
+				# effect_instance.stunned_duration = spell_duration
 				effect_instance.effect_name = "Stun"
 				effect_instance.effect_type = "Debuff"
 				effect_instance.effect_applier = "Elf Queen Spell Stun"
