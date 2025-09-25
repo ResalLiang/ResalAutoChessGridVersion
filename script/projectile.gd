@@ -3,7 +3,7 @@ extends Area2D
 @export var speed: float = 600.0
 @export var damage: float = 20.0
 @export var penetration: int = 1  # 穿透次数
-@export var max_distance: float = 300.0  # 最大飞行距离
+@export var max_distance: float = 1000.0  # 最大飞行距离
 @export var decline_ratio := 3.0
 
 var current_penetration
@@ -81,7 +81,7 @@ func _physics_process(delta):
 		traveled_distance += movement.length()
 		
 		# 超出最大距离或穿透次数耗尽时消失
-		if damage_finished and (traveled_distance > max_distance or current_penetration <= 0 or damage < 5):
+		if traveled_distance > max_distance or (damage_finished and (current_penetration <= 0 or damage < 5)):
 			projectile_vanished.emit()
 			queue_free()
 

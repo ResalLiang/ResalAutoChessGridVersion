@@ -103,40 +103,40 @@ func refresh_effects():
 
 	for effect_index in effect_list:
 
-		is_immunity = is_immunity or effect_index.buff_dict[is_immunity]
-		is_spell_immunity = is_spell_immunity or effect_index.buff_dict[is_spell_immunity]
-		is_critical_immunity = is_critical_immunity or effect_index.buff_dict[is_critical_immunity]
-		is_silenced = false if is_spell_immunity else is_silenced or effect_index.buff_dict[is_silenced]
-		is_disarmed = false if is_spell_immunity else is_disarmed or effect_index.buff_dict[is_disarmed]
-		is_stunned = false if is_spell_immunity else is_stunned or effect_index.buff_dict[is_stunned]
-		is_taunt = is_taunt or effect_index.buff_dict[is_taunt] 
-		is_stealth = is_stealth or effect_index.buff_dict[is_stealth]
-		is_parry = is_parry or effect_index.buff_dict[is_parry]
+		is_immunity = is_immunity or effect_index.buff_dict["is_immunity"]
+		is_spell_immunity = is_spell_immunity or effect_index.buff_dict["is_spell_immunity"]
+		is_critical_immunity = is_critical_immunity or effect_index.buff_dict["is_critical_immunity"]
+		is_silenced = false if is_spell_immunity else is_silenced or effect_index.buff_dict["is_silenced"]
+		is_disarmed = false if is_spell_immunity else is_disarmed or effect_index.buff_dict["is_disarmed"]
+		is_stunned = false if is_spell_immunity else is_stunned or effect_index.buff_dict["is_stunned"]
+		is_taunt = is_taunt or effect_index.buff_dict["is_taunt"] 
+		is_stealth = is_stealth or effect_index.buff_dict["is_stealth"]
+		is_parry = is_parry or effect_index.buff_dict["is_parry"]
 
-		speed_modifier = speed_modifier + (max(0, effect_index.buff_dict[speed_modifier]) if is_spell_immunity 
-			else effect_index.buff_dict[speed_modifier])
-		attack_rng_modifier = attack_rng_modifier + (max(0, effect_index.buff_dict[attack_rng_modifier]) if is_spell_immunity 
-			else effect_index.buff_dict[attack_rng_modifier])
-		attack_speed_modifier = attack_speed_modifier + (max(0, effect_index.buff_dict[attack_speed_modifier]) if is_spell_immunity 
-			else effect_index.buff_dict[attack_speed_modifier])
-		melee_attack_damage_modifier = melee_attack_damage_modifier + (max(0, effect_index.buff_dict[melee_attack_damage_modifier]) if is_spell_immunity 
-			else effect_index.buff_dict[melee_attack_damage_modifier])
-		ranged_attack_damage_modifier = ranged_attack_damage_modifier + (max(0, effect_index.buff_dict[ranged_attack_damage_modifier]) if is_spell_immunity 
-			else effect_index.buff_dict[ranged_attack_damage_modifier])
-		continuous_hp_modifier = continuous_hp_modifier + (max(0, effect_index.buff_dict[continuous_hp_modifier]) if is_immunity or is_spell_immunity 
-			else effect_index.buff_dict[continuous_hp_modifier])
-		continuous_mp_modifier = continuous_mp_modifier + (max(0, effect_index.buff_dict[continuous_mp_modifier]) if is_spell_immunity 
-			else effect_index.buff_dict[continuous_mp_modifier])
-		armor_modifier = armor_modifier + (max(0, effect_index.buff_dict[armor_modifier]) if is_spell_immunity 
-			else effect_index.buff_dict[armor_modifier])
-		max_mp_modifier = max_hp_modifier + (max(0, effect_index.buff_dict[max_mp_modifier]) if is_immunity or is_spell_immunity 
-			else effect_index.buff_dict[max_mp_modifier])
-		max_hp_modifier = max_hp_modifier + (max(0, effect_index.buff_dict[max_hp_modifier]) if is_immunity or is_spell_immunity 
-			else effect_index.buff_dict[max_hp_modifier])
-		critical_rate_modifier = critical_rate_modifier + (max(0, effect_index.buff_dict[critical_rate_modifier]) if is_spell_immunity 
-			else effect_index.buff_dict[critical_rate_modifier])
-		evasion_rate_modifier = evasion_rate_modifier + (max(0, effect_index.buff_dict[evasion_rate_modifier]) if is_spell_immunity 
-			else effect_index.buff_dict[evasion_rate_modifier])
+		speed_modifier = speed_modifier + (max(0, effect_index.buff_dict["speed_modifier"]) if is_spell_immunity 
+			else effect_index.buff_dict["speed_modifier"])
+		attack_rng_modifier = attack_rng_modifier + (max(0, effect_index.buff_dict["attack_rng_modifier"]) if is_spell_immunity 
+			else effect_index.buff_dict["attack_rng_modifier"])
+		attack_speed_modifier = attack_speed_modifier + (max(0, effect_index.buff_dict["attack_speed_modifier"]) if is_spell_immunity 
+			else effect_index.buff_dict["attack_speed_modifier"])
+		melee_attack_damage_modifier = melee_attack_damage_modifier + (max(0, effect_index.buff_dict["melee_attack_damage_modifier"]) if is_spell_immunity 
+			else effect_index.buff_dict["melee_attack_damage_modifier"])
+		ranged_attack_damage_modifier = ranged_attack_damage_modifier + (max(0, effect_index.buff_dict["ranged_attack_damage_modifier"]) if is_spell_immunity 
+			else effect_index.buff_dict["ranged_attack_damage_modifier"])
+		continuous_hp_modifier = continuous_hp_modifier + (max(0, effect_index.buff_dict["continuous_hp_modifier"]) if is_immunity or is_spell_immunity 
+			else effect_index.buff_dict["continuous_hp_modifier"])
+		continuous_mp_modifier = continuous_mp_modifier + (max(0, effect_index.buff_dict["continuous_mp_modifier"]) if is_spell_immunity 
+			else effect_index.buff_dict["continuous_mp_modifier"])
+		armor_modifier = armor_modifier + (max(0, effect_index.buff_dict["armor_modifier"]) if is_spell_immunity 
+			else effect_index.buff_dict["armor_modifier"])
+		max_mp_modifier = max_hp_modifier + (max(0, effect_index.buff_dict["max_mp_modifier"]) if is_immunity or is_spell_immunity 
+			else effect_index.buff_dict["max_mp_modifier"])
+		max_hp_modifier = max_hp_modifier + (max(0, effect_index.buff_dict["max_hp_modifier"]) if is_immunity or is_spell_immunity 
+			else effect_index.buff_dict["max_hp_modifier"])
+		critical_rate_modifier = critical_rate_modifier + (max(0, effect_index.buff_dict["critical_rate_modifier"]) if is_spell_immunity 
+			else effect_index.buff_dict["critical_rate_modifier"])
+		evasion_rate_modifier = evasion_rate_modifier + (max(0, effect_index.buff_dict["evasion_rate_modifier"]) if is_spell_immunity 
+			else effect_index.buff_dict["evasion_rate_modifier"])
 
 		effect_index.extra_func_called.emit(get_parent())
 

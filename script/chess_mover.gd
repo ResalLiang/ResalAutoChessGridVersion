@@ -103,6 +103,8 @@ func tween_move_chess(obstacle: Obstacle, play_area: PlayArea, chess_position: V
 	chess_moved.emit(obstacle, play_area, new_tile)
 	obstacle.reparent(play_area.unit_grid)
 	
+	await get_tree().process_frame
+	
 	return
 
 		

@@ -755,6 +755,10 @@ func chess_death_handle(obstacle: Obstacle):
 	obstacle.visible = false
 	if obstacle.is_active:
 		obstacle.action_finished.emit(obstacle)
+		
+	for team_index in team_dict.values():
+		if team_index.has(obstacle):
+			team_index.erase(obstacle)
 
 func control_shaker(control: Control):
 	var old_position = control.global_position

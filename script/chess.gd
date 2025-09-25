@@ -219,6 +219,9 @@ func _ready():
 		
 	drag_handler.dragging_enabled = dragging_enabled
 	
+	effect_handler = EffectHandler.new()
+	add_child(effect_handler)
+	
 
 	# Load animations
 	_load_animations()
@@ -513,7 +516,8 @@ func start_turn():
 
 	remain_attack_count = attack_speed
 
-	if not chess_target or not is_instance_valid(chess_target) or chess_target.status == STATUS.DIE:
+	#if not chess_target or not is_instance_valid(chess_target) or chess_target.status == STATUS.DIE:
+	if not DataManagerSingleton.check_obstacle_valid(chess_target):
 		target_lost.emit(self)
 		_handle_targeting()
 		
@@ -577,9 +581,11 @@ func _handle_movement():
 				var previous_tile = get_current_tile(self)[1]
 				var neighbor_chess
 				for tile_offset_index in [Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 1), Vector2i(-1, 0), Vector2i(0, -1), Vector2i(1, -1)]:
-					if not DataManagerSingleton.check_obstacle_valid(arena.unit_grid.untis(previous_tile + tile_offset_index)):
+					if not arena.is_tile_in_bounds(previous_tile + tile_offset_index):
 						continue
-					neighbor_chess = arena.unit_grid.untis(previous_tile + tile_offset_index)
+					if not DataManagerSingleton.check_obstacle_valid(arena.unit_grid.units[previous_tile + tile_offset_index]):
+						continue
+					neighbor_chess = arena.unit_grid.units[previous_tile + tile_offset_index]
 					if neighbor_chess.team == team:
 						continue
 					if not neighbor_chess.animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
@@ -605,7 +611,7 @@ func _handle_action():
 
 	arena.unit_grid.add_unit(get_current_tile(self)[1], self)
 
-	if status == STATUS.DIE:
+	if status == STATUS.DIE or not visible:
 		action_timer.set_wait_time(action_timer_wait_time)
 		action_timer.start()
 		return
@@ -647,7 +653,8 @@ func _handle_action():
 				action_timer.start()
 				return
 
-	if !chess_target or !is_instance_valid(chess_target) or chess_target.status == STATUS.DIE:
+	#if !chess_target or !is_instance_valid(chess_target) or chess_target.status == STATUS.DIE or not chess_target.visible:
+	if not DataManagerSingleton.check_obstacle_valid(chess_target):
 		target_lost.emit(self)
 		action_timer.start()
 		return
@@ -661,7 +668,8 @@ func _handle_attack():
 		action_timer.start()
 		return
 
-	if !chess_target or !is_instance_valid(chess_target) or chess_target.status == STATUS.DIE:
+	#if !chess_target or !is_instance_valid(chess_target) or chess_target.status == STATUS.DIE:
+	if not DataManagerSingleton.check_obstacle_valid(chess_target):
 		target_lost.emit(self)
 		action_timer.set_wait_time(action_timer_wait_time)
 		action_timer.start()
@@ -778,10 +786,10 @@ func _find_new_target(tgt) -> Obstacle:
 	# var all_chesses = get_tree().get_nodes_in_group("obstacle_group").filter(
 	var all_chesses = arena.unit_grid.get_all_units()
 	var enemy_chesses = all_chesses.filter(
-		func(chess): return chess != self and chess.team != team
+		func(chess): return chess != self and DataManagerSingleton.check_obstacle_valid(chess) and chess.team != team
 	)
 	var ally_chesses = all_chesses.filter(
-		func(chess): return chess != self and chess.team == team
+		func(chess): return chess != self and DataManagerSingleton.check_obstacle_valid(chess) and chess.team == team
 	)
 	
 	# Select target based on strategy
@@ -968,7 +976,7 @@ func take_damage(target:Obstacle, attacker: Obstacle, damage_value: float):
 		await target.animated_sprite_2d.animation_finished
 		target.visible = false
 		target.is_died.emit(target, attacker)
-		attacker.kill_chess(attacker, target)
+		attacker.kill_chess.emit(attacker, target)
 				
 	else:
 		#Placeholder for chess passive ability on hit
@@ -1171,7 +1179,7 @@ func connect_to_data_manager():
 	)
 
 	is_died.connect(DataManagerSingleton.record_death_chess.unbind(1))
-	kill_chess.connet(DataManagerSingleton.handle_chess_kill)
+	kill_chess.connect(DataManagerSingleton.handle_chess_kill)
 
 func get_current_tile(obstacle : Obstacle):
 	var i = chess_mover._get_play_area_for_position(obstacle.global_position)
@@ -1212,7 +1220,10 @@ func handle_free_strike(target: Obstacle):
 		await get_tree().process_frame
 		return
 
-	var previous_target = chess_target
+	var previous_target = null
+	if not chess_target or chess_target.is_queued_for_deletion():
+		previous_target	 = chess_target
+		
 	chess_target = target
 
 	if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
@@ -1317,6 +1328,7 @@ func freezing_field(arrow_count: int) -> bool:
 		spell_projectile.projectile_hit.connect(
 			func(obstacle, attacker):
 					var effect_instance = ChessEffect.new()
+					obstacle.effect_handler.add_child(effect_instance)
 					effect_instance.register_buff("speed_modifier", -1, 2)
 					# effect_instance.speed_modifier = -1
 					# effect_instance.speed_modifier_duration = 2
@@ -1327,7 +1339,6 @@ func freezing_field(arrow_count: int) -> bool:
 					effect_instance.effect_type = "Debuff"
 					effect_instance.effect_applier = "Human ArchMage Spell Freezing"
 					obstacle.effect_handler.add_to_effect_array(effect_instance)
-					obstacle.effect_handler.add_child(effect_instance)
 		)
 		arraow_degree += arraow_degree_interval
 

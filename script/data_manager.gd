@@ -83,6 +83,9 @@ func _ready() -> void:
 	
 	if not player_datas[current_player].has("debug_mode"):
 		player_datas[current_player]["debug_mode"] = false
+		
+	if not player_datas[current_player].has("player_upgrade") or player_datas[current_player]["player_upgrade"].keys().size() == 0:
+		player_datas[current_player]["player_upgrade"] = player_upgrade_template.duplicate()
 
 # func load_game_binary():
 # 	if FileAccess.file_exists("user://gamedata.dat"):
@@ -141,7 +144,7 @@ func load_game_json():
 	if player_datas.keys().has(current_player):
 		player_data = player_datas[current_player]
 
-	if not player_datas[current_player].has("player_upgrade"):
+	if not player_datas[current_player].has("player_upgrade") or player_datas[current_player]["player_upgrade"].keys().size() == 0:
 		player_datas[current_player]["player_upgrade"] = player_upgrade_template.duplicate()
 
 func load_chess_stats():
@@ -327,6 +330,17 @@ func merge_dictionaries(dict1: Dictionary, dict2: Dictionary) -> Dictionary:
 				_:
 					# For other types, replace with second dictionary's value
 					result[key] = value2
+		if (typeof(value1) == TYPE_INT and typeof(value2) == TYPE_FLOAT) or (typeof(value1) == TYPE_FLOAT and typeof(value2) == TYPE_INT):
+			# Handle numeric values based on key naming conventions
+			if key.begins_with("max"):
+				result[key] = max(value1, value2)
+			elif key.begins_with("min"):
+				result[key] = min(value1, value2)
+			elif key.ends_with("count"):
+				result[key] = value1 + value2
+			else:
+				# Default behavior: replace with second dictionary's value
+				result[key] = value2		
 		else:
 			# If types don't match, replace with second dictionary's value
 			result[key] = value2
@@ -372,6 +386,9 @@ func check_obstacle_valid(node):
 		return false
 
 	if node.status == node.STATUS.DIE:
+		return false
+		
+	if node.is_queued_for_deletion():
 		return false
 
 	return true

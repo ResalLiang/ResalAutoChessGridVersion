@@ -82,7 +82,7 @@ var armor := 0
 
 var chess_data: Dictionary  # Stores chess stats loaded from JSON
 
-var effect_handler = EffectHandler.new()
+var effect_handler
 
 @export var team: int      # 0 for player, 1~7 for AI enemy
 
@@ -184,6 +184,8 @@ func _ready():
 		
 	drag_handler.dragging_enabled = dragging_enabled
 	
+	effect_handler = EffectHandler.new()
+	add_child(effect_handler)
 
 	# Load animations
 	_load_animations()
@@ -215,7 +217,7 @@ func _ready():
 	is_died.connect(AudioManagerSingleton.play_sfx.unbind(1).bind("is_died"))
 
 	is_died.connect(DataManagerSingleton.record_death_chess.unbind(1))
-	kill_chess.connet(DataManagerSingleton.handle_chess_kill)
+	kill_chess.connect(DataManagerSingleton.handle_chess_kill)
 
 	
 	# Initialize random number generator
@@ -515,7 +517,7 @@ func take_damage(target:Obstacle, attacker: Obstacle, damage_value: float):
 		await target.animated_sprite_2d.animation_finished
 		target.visible = false
 		target.is_died.emit(target, attacker)
-		attacker.kill_chess(attacker, target)
+		attacker.kill_chess.emit(attacker, target)
 				
 	else:
 		#Placeholder for chess passive ability on hit

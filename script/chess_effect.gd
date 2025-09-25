@@ -13,7 +13,7 @@ var buff_dict: Dictionary
 
 signal extra_func_called
 
-func _ready() -> void:
+func _init() -> void:
 	for buff_type_index in buff_type_list:
 		if buff_type_index.contains("modifier"):
 			buff_dict[buff_type_index] = 0
@@ -32,6 +32,7 @@ func check_effect_timeout() -> bool:
 		return true
 
 	for buff_index in buff_dict.keys():
+		
 		if buff_index.contains("duration") and buff_dict[buff_index] > 0:
 			return true
 
@@ -50,11 +51,13 @@ func extra_func(chess: Chess):
 		chess.decline_ratio = min(chess.decline_ratio, 3 - 0.5 * int(effect_name.get_slice(" ", -1)))
 
 func register_buff(buff_type: String, buff_value: float, buff_duration: int):
-	if not buff_type in buff_type_list:
-		return
 
 	if buff_type == "duration_only":
 		effect_duration = buff_duration
+		
+	if not buff_type in buff_type_list:
+		return
+		
 	elif buff_type.contains("modifier") and buff_duration > 0 and buff_value != 0:
 		buff_dict[buff_type] = buff_value
 		buff_dict[buff_type + "duration"] = buff_duration

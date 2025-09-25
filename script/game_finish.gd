@@ -22,12 +22,6 @@ func _ready() -> void:
 	staggered_fly_in()
 	DataManagerSingleton.record_game(final_score, DataManagerSingleton.current_chess_array)
 	DataManagerSingleton.save_game_json()
-	
-#var won_rounds := 0
-#const max_won_rounds := 5
-#var lose_rounds := 0
-#const max_lose_rounds := 2
-
 
 func _on_restart_button_pressed() -> void:
 	to_game_scene.emit()

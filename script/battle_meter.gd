@@ -10,7 +10,7 @@ var battle_meter_type := DAMAGE_TYPE.DAMAGE_APPLIED
 
 signal update_round_end_data
 
-func _ready() _void:
+func _ready() -> void:
 	update_round_end_data.connect(DataManagerSingleton.battle_meter_data_update)
 
 func get_damage_data(obstacle: Obstacle, attacker: Obstacle, value: float):

@@ -18,7 +18,7 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 	if target.effect_handler.is_immunity or (damage_type == "Magic_attack" and target.effect_handler.is_spell_immunity):
 		return
 
-	if randf() <= target.evasion_rate and not affix_array.has("ignore_evasion"):
+	if target.get("evasion_rate") != null and randf() <= target.evasion_rate and not affix_array.has("ignore_evasion"):
 		target.attack_evased.emit(target, attacker)
 		return
 
