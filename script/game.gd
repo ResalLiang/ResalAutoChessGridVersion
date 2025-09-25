@@ -707,20 +707,9 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, chess
 	summoned_character.critical_damage_applied.connect(battle_value_display.bind("critical_damage_applied"))
 	summoned_character.heal_taken.connect(battle_value_display.bind("heal_taken"))
 	summoned_character.attack_evased.connect(battle_value_display.bind(0, "attack_evased"))
-	summoned_character.is_died.connect(battle_value_display.bind(0, "is_died"))
+	summoned_character.is_died.connect(battle_value_display.unbind(1).bind(0, "is_died"))
 
-	summoned_character.spell_casted.connect(AudioManagerSingleton.play_sfx.bind("spell_casted"))
-	summoned_character.ranged_attack_started.connect(AudioManagerSingleton.play_sfx.bind("ranged_attack_started"))
-	summoned_character.melee_attack_started.connect(AudioManagerSingleton.play_sfx.bind("melee_attack_started"))
-	summoned_character.projectile_lauched.connect(AudioManagerSingleton.play_sfx.bind("projectile_lauched"))
-	summoned_character.damage_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("damage_taken"))
-	summoned_character.critical_damage_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("critical_damage_taken"))
-	summoned_character.heal_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("heal_taken"))
-	summoned_character.attack_evased.connect(AudioManagerSingleton.play_sfx.unbind(1).bind("attack_evased"))
-	summoned_character.is_died.connect(AudioManagerSingleton.play_sfx.bind("is_died"))
-
-	summoned_character.is_died.connect(DataManagerSingleton.record_death_chess)
-	summoned_character.is_died.connect(chess_death_handle)
+	summoned_character.is_died.connect(chess_death_handle.unbind(1))
 
 	if team == 1 and summon_arena != shop:
 		team_dict[Team.TEAM1_FULL].append(summoned_character)
@@ -781,8 +770,6 @@ func control_shaker(control: Control):
 		shake_tween.tween_property(control, "global_position", old_position + Vector2(rand_x, rand_y), 0.05)
 		shake_tween.tween_property(control, "global_position", old_position, 0.1)
 		
-
-
 func _on_back_button_pressed() -> void:
 	to_menu_scene.emit()
 
