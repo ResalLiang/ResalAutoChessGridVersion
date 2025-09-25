@@ -175,10 +175,12 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 
 			for chess_index in friendly_faction_chess:
 				var effect_instance = ChessEffect.new()
-				effect_instance.evasion_rate_modifier = 0.1 * bonus_level
-				effect_instance.evasion_rate_modifier_duration = 999
-				effect_instance.critical_rate_modifier = 0.1 * bonus_level
-				effect_instance.critical_rate_modifier_duration = 999
+				effect_instance.register_buff("evasion_rate_modifier", 0.1 * bonus_level, 999)
+				# effect_instance.evasion_rate_modifier = 0.1 * bonus_level
+				# effect_instance.evasion_rate_modifier_duration = 999
+				effect_instance.register_buff("critical_rate_modifie", 0.1 * bonus_level, 999)
+				# effect_instance.critical_rate_modifier = 0.1 * bonus_level
+				# effect_instance.critical_rate_modifier_duration = 999
 				effect_instance.effect_name = "Swift - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Elf Faction Bonus"
@@ -192,7 +194,8 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 
 			for chess_index in friendly_chess:
 				var effect_instance = ChessEffect.new()
-				effect_instance.effect_duration = 999
+				effect_instance.register_buff("duration_only", 0, 999)
+				# effect_instance.effect_duration = 999
 				effect_instance.effect_name = "Wisdom - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Human Faction Bonus"
@@ -206,8 +209,9 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 
 			for chess_index in friendly_chess:
 				var effect_instance = ChessEffect.new()
-				effect_instance.armor_modifier = 5 * bonus_level
-				effect_instance.armor_modifier_duration = 999
+				effect_instance.register_buff("armor_modifier", 5 * bonus_level, 999)
+				# effect_instance.armor_modifier = 5 * bonus_level
+				# effect_instance.armor_modifier_duration = 999
 				effect_instance.effect_name = "Fortress - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Dwarf Faction Bonus"
@@ -221,7 +225,8 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 
 			for chess_index in friendly_faction_chess:
 				var effect_instance = ChessEffect.new()
-				effect_instance.immunity_duration = bonus_level
+				effect_instance.register_buff("immunity", 0, bonus_level)
+				# effect_instance.immunity_duration = bonus_level
 				effect_instance.effect_name = "HolyShield - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Holy Warrior Faction Bonus"
@@ -236,10 +241,12 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 
 			for chess_index in friendly_chess:
 				var effect_instance = ChessEffect.new()
-				effect_instance.continuous_hp_modifier = 20 * bonus_level
-				effect_instance.continuous_hp_modifier_duration = 999
-				effect_instance.max_hp_modifier = 30 * bonus_level
-				effect_instance.max_hp_modifier_duration = 999
+				effect_instance.register_buff("continuous_hp_modifier", 20 * bonus_level, 999)
+				# effect_instance.continuous_hp_modifier = 20 * bonus_level
+				# effect_instance.continuous_hp_modifier_duration = 999
+				effect_instance.register_buff("max_hp_modifier", 30 * bonus_level, 999)
+				# effect_instance.max_hp_modifier = 30 * bonus_level
+				# effect_instance.max_hp_modifier_duration = 999
 				effect_instance.effect_name = "Strong - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Forest Protector Faction Bonus"
@@ -253,9 +260,11 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 
 			for chess_index in enemy_chess:
 				var effect_instance = ChessEffect.new()
-				effect_instance.continuous_hp_modifier = -5 * bonus_level
-				effect_instance.continuous_hp_modifier_duration = bonus_level
-				effect_instance.silence_duration = bonus_level
+				effect_instance.register_buff("continuous_hp_modifier", -5 * bonus_level, bonus_level)
+				# effect_instance.continuous_hp_modifier = -5 * bonus_level
+				# effect_instance.continuous_hp_modifier_duration = bonus_level
+				effect_instance.register_buff("silenced", 0, bonus_level)
+				# effect_instance.silence_duration = bonus_level
 				effect_instance.effect_name = "Doom - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Demon Faction Bonus"
@@ -269,10 +278,12 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 
 			for chess_index in enemy_chess:
 				var effect_instance = ChessEffect.new()
-				effect_instance.armor_modifier = -5 * bonus_level
-				effect_instance.armor_modifier_duration = 999
-				effect_instance.speed_modifier = -2
-				effect_instance.speed_modifier_duration = bonus_level
+				effect_instance.register_buff("armor_modifier", -5 * bonus_level, 999)
+				# effect_instance.armor_modifier = -5 * bonus_level
+				# effect_instance.armor_modifier_duration = 999
+				effect_instance.register_buff("speed_modifier", -2, bonus_level)
+				# effect_instance.speed_modifier = -2
+				# effect_instance.speed_modifier_duration = bonus_level
 				effect_instance.effect_name = "Weak - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Undead Faction Bonus"
@@ -288,7 +299,8 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				if chess_index.role != "warrior":
 					continue
 				var effect_instance = ChessEffect.new()
-				effect_instance.effect_duration = 999
+				effect_instance.register_buff("duration_only", 0, 999)
+				# effect_instance.effect_duration = 999
 				effect_instance.effect_name = "WarriorSkill - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Warrior Role Bonus"
@@ -304,7 +316,8 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				if chess_index.role != "knight":
 					continue
 				var effect_instance = ChessEffect.new()
-				effect_instance.effect_duration = 999
+				effect_instance.register_buff("duration_only", 0, 999)
+				# effect_instance.effect_duration = 999
 				effect_instance.effect_name = "KnightSkill - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Knight Role Bonus"
@@ -320,7 +333,8 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				if chess_index.role != "pikeman":
 					continue
 				var effect_instance = ChessEffect.new()
-				effect_instance.effect_duration = 999
+				effect_instance.register_buff("duration_only", 0, 999)
+				# effect_instance.effect_duration = 999
 				effect_instance.effect_name = "PikemanSkill - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Pikeman Role Bonus"
@@ -336,7 +350,8 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				if chess_index.role != "speller":
 					continue
 				var effect_instance = ChessEffect.new()
-				effect_instance.effect_duration = 999
+				effect_instance.register_buff("duration_only", 0, 999)
+				# effect_instance.effect_duration = 999
 				effect_instance.effect_name = "SpellerSkill - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Speller Role Bonus"
@@ -352,7 +367,8 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				if chess_index.role != "ranger":
 					continue
 				var effect_instance = ChessEffect.new()
-				effect_instance.effect_duration = 999
+				effect_instance.register_buff("duration_only", 0, 999)
+				# effect_instance.effect_duration = 999
 				effect_instance.effect_name = "RangerSkill - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Ranger Role Bonus"
