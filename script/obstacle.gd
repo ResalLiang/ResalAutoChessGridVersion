@@ -170,8 +170,10 @@ signal critical_damage_taken(obstacle: Obstacle, attacker: Obstacle, damage_valu
 signal heal_taken(obstacle: Obstacle, healer: Obstacle, heal_value: float) # for audio player and display
 signal attack_evased(obstacle: Obstacle, attacker: Obstacle) # for audio player and display
 
-signal is_died(obstacle: Obstacle) # for audio player and display
+signal is_died(obstacle: Obstacle, attacker: Obstacle) # for audio player and display
 signal deal_damage(attacker: Obstacle, target: Obstacle, damage_value: float, damage_type: String, affix_array: Array[String])
+
+signal kill_chess(obstacle: Obstacle, target: Obstacle)
 
 # ========================
 # Initialization
@@ -204,6 +206,17 @@ func _ready():
 	damage_taken.connect(take_damage)
 
 	is_died.connect(_on_died)
+
+	spell_casted.connect(AudioManagerSingleton.play_sfx.bind("spell_casted"))
+	projectile_lauched.connect(AudioManagerSingleton.play_sfx.bind("projectile_lauched"))
+	damage_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("damage_taken"))
+	critical_damage_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("critical_damage_taken"))
+	heal_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("heal_taken"))
+	is_died.connect(AudioManagerSingleton.play_sfx.unbind(1).bind("is_died"))
+
+	is_died.connect(DataManagerSingleton.record_death_chess.unbind(1))
+	kill_chess.connet(DataManagerSingleton.handle_chess_kill)
+
 	
 	# Initialize random number generator
 	rng.randomize()
@@ -489,26 +502,27 @@ func _on_idle_timeout():
 func take_damage(target:Obstacle, attacker: Obstacle, damage_value: float):
 	#Placeholder for chess passive ability on take damage
 
-	hp -= damage_value
-	hp_bar.value = hp
+	target.hp -= damage_value
+	target.hp_bar.value = target.hp
 
 	if attacker != self:
 		attacker.mp += damage_value
 
-	if hp <= 0:
-		status = STATUS.DIE
-		animated_sprite_2d.stop()
-		animated_sprite_2d.play("die")
-		await animated_sprite_2d.animation_finished
-		visible = false
-		is_died.emit(self)
+	if target.hp <= 0:
+		target.status = STATUS.DIE
+		target.animated_sprite_2d.stop()
+		target.animated_sprite_2d.play("die")
+		await target.animated_sprite_2d.animation_finished
+		target.visible = false
+		target.is_died.emit(target, attacker)
+		attacker.kill_chess(attacker, target)
 				
 	else:
 		#Placeholder for chess passive ability on hit
-		status = STATUS.HIT
-		animated_sprite_2d.play("hit")
-		await animated_sprite_2d.animation_finished
-		status = STATUS.IDLE
+		target.status = STATUS.HIT
+		target.animated_sprite_2d.play("hit")
+		await target.animated_sprite_2d.animation_finished
+		target.status = STATUS.IDLE
 
 
 func take_heal(heal_value: float, healer: Obstacle):
@@ -524,15 +538,6 @@ func take_heal(heal_value: float, healer: Obstacle):
 
 func _apply_damage():
 	pass
-	# if damage_target and damage_value > 0:
-	# 	#Placeholder for chess passive ability on apply damage
-	# 	var applied_damage_value
-	# 	var damage_result = false
-
-
-	# 	applied_damage_value = damage_value
-	# 	if await damage_target.take_damage(applied_damage_value, self) and damage_target != self:
-	# 		critical_damage_applied.emit(self, damage_target, damage_target)	
 			
 
 func _apply_heal(heal_target: Obstacle, heal_value: float):
@@ -634,5 +639,5 @@ func dwarf_bomb_boom():
 	animated_sprite_2d.play("die")
 	await animated_sprite_2d.animation_finished
 	visible = false
-	is_died.emit(self)		
+	is_died.emit(self, self)		
 	action_finished.emit(self)
