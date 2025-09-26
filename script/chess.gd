@@ -331,7 +331,7 @@ func _process(delta: float) -> void:
 	hp_bar.visible = true #hp != max_hp
 		
 	# Update attack indicator line
-	if chess_target and line_visible:
+	if DataManagerSingleton.check_obstacle_valid(chess_target) and line_visible:
 		attack_target_line.points = [Vector2.ZERO, to_local(chess_target.global_position)]
 		attack_target_line.visible = true
 		
@@ -718,24 +718,41 @@ func _handle_attack():
 				damage = melee_damage
 
 			if current_distance_to_target >= ranged_attack_threshold:
-				chess_target = has_melee_target()
+				change_target_to(has_melee_target()) 
 
 
 			if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
+				
+				if false:
+					await chess_target.handle_free_strike(self)
+				
+				target_evased_attack = false
+				
 				status = STATUS.MELEE_ATTACK
 				melee_attack_animation.play("melee_attack")
 				melee_attack_started.emit(self)
 				await melee_attack_animation.animation_finished
 				
 				handle_special_effect(chess_target, self)
+				
+				if target_evased_attack:
+					await chess_target.handle_free_strike(self)
+					
 
 			elif animated_sprite_2d.sprite_frames.has_animation("attack"):
+				
+				if false:
+					await chess_target.handle_free_strike(self)
+					
 				status = STATUS.MELEE_ATTACK
 				animated_sprite_2d.play("attack")
 				melee_attack_started.emit(self)
 				deal_damage.emit(self, chess_target, damage, "melee_attack", [])	
 
 				handle_special_effect(chess_target, self)
+				
+				if target_evased_attack:
+					await chess_target.handle_free_strike(self)
 
 			else:
 				# No required attack animation
@@ -773,14 +790,15 @@ func _handle_action_timeout():
 func _handle_targeting():
 	# Clear invalid targets (dead or invalid instances)
 	attack_target_line.visible = false
-	chess_target = _find_new_target(chess_target_choice)
-	if chess_target:
-		chess_target.is_died.connect(handle_target_death)
+	change_target_to(_find_new_target(chess_target_choice))
+	#chess_target = _find_new_target(chess_target_choice)
+	#if chess_target:
+		#chess_target.is_died.connect(handle_target_death)
 	attack_target_line.visible = true
 	target_changed = true
 		
 # Find a new target based on selection strategy
-func _find_new_target(tgt) -> Obstacle:
+func _find_new_target(target_choice) -> Obstacle:
 	#Placeholder for chess passive ability on find target
 	var new_target
 	# var all_chesses = get_tree().get_nodes_in_group("obstacle_group").filter(
@@ -793,7 +811,7 @@ func _find_new_target(tgt) -> Obstacle:
 	)
 	
 	# Select target based on strategy
-	match tgt:
+	match target_choice:
 		TARGET_CHOICE.FAR:
 			if enemy_chesses.size() > 0:
 				enemy_chesses.sort_custom(func(a, b): return _compare_distance)
@@ -829,6 +847,25 @@ func _find_new_target(tgt) -> Obstacle:
 	else:
 		return null  # No valid target found
 
+func change_target_to(target: Obstacle):
+	if DataManagerSingleton.check_obstacle_valid(chess_target):
+		if chess_target.is_died.is_connected(handle_target_death):
+			chess_target.is_died.disconnect(handle_target_death)
+		if chess_target.attack_evased.is_connected(handle_target_evased_attack):
+			chess_target.attack_evased.disconnect(handle_target_evased_attack)
+		
+	if DataManagerSingleton.check_obstacle_valid(target):
+		chess_target = target
+		if chess_target.has_signal("is_died"):
+			chess_target.is_died.connect(handle_target_death)
+		if chess_target.has_signal("attack_evased"):
+			chess_target.attack_evased.connect(handle_target_evased_attack)
+	else:
+		chess_target = null
+	
+func handle_target_evased_attack(target: Obstacle, attacker: Obstacle):
+	target_evased_attack = true
+	
 func _compare_distance(a: Obstacle, b: Obstacle) -> bool:
 
 	# handling taunt
@@ -1027,7 +1064,7 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 func chess_apply_damage():
 	if status == STATUS.RANGED_ATTACK:
 		deal_damage.emit(self, chess_target, damage, "Ranged_attack", [])
-	elif status == STATUS.MELEE_ATTACK:
+	elif status == STATUS.MELEE_ATTACK or not is_active:
 		deal_damage.emit(self, chess_target, damage, "Melee_attack", [])
 
 func _apply_heal(heal_target: Obstacle = chess_spell_target, heal_value: float = damage):
@@ -1221,10 +1258,10 @@ func handle_free_strike(target: Obstacle):
 		return
 
 	var previous_target = null
-	if not chess_target or chess_target.is_queued_for_deletion():
+	if DataManagerSingleton.check_obstacle_valid(chess_target):
 		previous_target	 = chess_target
 		
-	chess_target = target
+	change_target_to(target) 
 
 	if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
 		status = STATUS.MELEE_ATTACK
@@ -1248,7 +1285,7 @@ func handle_free_strike(target: Obstacle):
 		await get_tree().process_frame
 
 	status = STATUS.IDLE
-	chess_target = previous_target
+	change_target_to(previous_target)
 	return
 
 func sun_strike(strike_count: int) -> bool:
@@ -1366,7 +1403,7 @@ func human_mage_taunt(spell_duration: int) -> bool:
 	for affected_index in affected_index_array:
 			if arena_unitgrid.has(affected_index) and is_instance_valid(arena_unitgrid[affected_index]):
 				if arena_unitgrid[affected_index] is Chess and arena_unitgrid[affected_index].team != team:
-					arena_unitgrid[affected_index].chess_target = self
+					arena_unitgrid[affected_index].change_target_to(self)
 					chess_affected = true
 	return chess_affected
 

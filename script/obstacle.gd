@@ -133,7 +133,7 @@ var projectile_damage: int = 15  # Projectile damage
 var projectile_penetration: int = 3  # Number of enemies projectile can penetrate
 var ranged_attack_threshold: float = 32.0  # Minimum distance for ranged attack
 var projectile
-
+var target_evased_attack := false
 
 var status := STATUS.IDLE         # Current character state
 
@@ -174,6 +174,7 @@ signal is_died(obstacle: Obstacle, attacker: Obstacle) # for audio player and di
 signal deal_damage(attacker: Obstacle, target: Obstacle, damage_value: float, damage_type: String, affix_array: Array[String])
 
 signal kill_chess(obstacle: Obstacle, target: Obstacle)
+
 
 # ========================
 # Initialization

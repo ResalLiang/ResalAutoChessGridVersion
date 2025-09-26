@@ -34,6 +34,7 @@ signal coins_decreased
 signal shop_upgraded
 signal chess_refreshed
 
+var freeze_dict : Dictionary
 
 func _ready():
 	shop_refreshed.connect(
@@ -77,12 +78,21 @@ func _ready():
 		base_income = 999 if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] else 10
 	else:
 		base_income = 10
+		
+	for y in shop.unit_grid.size.y:
+		for x in shop.unit_grid.size.x:
+			freeze_dict[Vector2i(x,y)] = false
 
 
 func shop_init():
 	remain_coins = 0 #game_start_coins
 	shop_level = 1
 	is_shop_frozen = false
+	
+	for y in shop.unit_grid.size.y:
+		for x in shop.unit_grid.size.x:
+			freeze_dict[Vector2i(x,y)] = false
+	
 	shop_refresh()
 
 func shop_manual_refresh() -> void:
@@ -99,15 +109,25 @@ func shop_refresh() -> void:
 	shop_unfreezed.emit()
 
 	#for node in get_tree().get_nodes_in_group("obstacle_group"):
-	for chess_index in shop.unit_grid.get_all_units():
-		if chess_index is Chess:
+	#for chess_index in shop.unit_grid.get_all_units():
+		#if chess_index is Chess:
+			## DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess_index.faction, chess_index.chess_name, "refresh_count"], 1)
+			#chess_refreshed.emit(chess_index)
+			#chess_index.queue_free()	
+			
+			
+	for tile_index in shop.unit_grid.units.keys():
+		if DataManagerSingleton.check_obstacle_valid(shop.unit_grid.units[tile_index]) and not freeze_dict[tile_index]:
+			var current_chess = shop.unit_grid.units[tile_index]
 			# DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess_index.faction, chess_index.chess_name, "refresh_count"], 1)
-			chess_refreshed.emit(chess_index)
-			chess_index.queue_free()	
+			chess_refreshed.emit(current_chess)
+			current_chess.free()	
 
 	for i in range(shop_level + 2):
 		var shop_col_index = i % shop.unit_grid.size.x
 		var shop_row_index = floor(i / shop.unit_grid.size.x)
+		if freeze_dict[Vector2i(shop_col_index, shop_row_index)]:
+			continue
 		# var rand_faction_index = randi_range(0, get_parent().chess_data.keys().size() - 2) # remove villager
 		# var rand_faction = get_parent().chess_data.keys()[rand_faction_index]
 
@@ -127,8 +147,23 @@ func shop_refresh() -> void:
 func shop_freeze() -> void:
 	if is_shop_frozen:
 		shop_unfreezed.emit()
+		clear_effect_animation()
+		for tile_index in shop.unit_grid.units.keys():
+			if freeze_dict[tile_index] == true and DataManagerSingleton.check_obstacle_valid(shop.unit_grid.units[tile_index]):
+				effect_animation_display("IceUnfreeze", shop, tile_index)
+				
+			freeze_dict[tile_index] = false
+				
 	else:
 		shop_freezed.emit()
+		clear_effect_animation()
+		for tile_index in shop.unit_grid.units.keys():
+			if freeze_dict[tile_index] == false and DataManagerSingleton.check_obstacle_valid(shop.unit_grid.units[tile_index]):
+				effect_animation_display("IceFreeze", shop, tile_index)
+				freeze_dict[tile_index] = true
+			else:
+				freeze_dict[tile_index] = false
+				
 	is_shop_frozen = not is_shop_frozen 
 
 func shop_upgrade() -> void:
@@ -190,3 +225,31 @@ func turn_start_income(current_round: int):
 		coins_increased.emit(turn_start_interest, "interest")
 	remain_coins += current_round - 1 + base_income + player_income_bonus
 	coins_increased.emit(current_round - 1 + base_income, "routine income")
+
+
+# Load appropriate animations for the chess
+func effect_animation_display(effect_name: String, display_play_area: PlayArea, display_tile: Vector2i):
+	var effect_animation = AnimatedSprite2D.new()
+	var effect_animation_path = AssetPathManagerSingleton.get_asset_path("effect_animation", effect_name)
+	var frame_offset = Vector2(0, 0)
+	if ResourceLoader.exists(effect_animation_path):
+		var frames = ResourceLoader.load(effect_animation_path)
+		for anim_name in frames.get_animation_names():
+			frames.set_animation_loop(anim_name, false)
+			frames.set_animation_speed(anim_name, 16.0)
+		effect_animation.sprite_frames = frames
+		var frame_texture = frames.get_frame_texture("default", 0)
+		frame_offset.x = -(frame_texture.region.size.x - 16) / 2.0 + 8
+		frame_offset.y = -(frame_texture.region.size.y - 16) * 1.0 + 8
+	else:
+		push_error("Animation resource not found: " + effect_animation_path)
+	add_child(effect_animation)
+	effect_animation.global_position = display_play_area.get_global_from_tile(display_tile) + frame_offset
+	effect_animation.z_index = 8
+	effect_animation.play("default")
+	await effect_animation.animation_finished
+
+func clear_effect_animation():
+	for node in get_children():
+		if node is AnimatedSprite2D:
+			node.queue_free()

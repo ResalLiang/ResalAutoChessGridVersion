@@ -32,6 +32,8 @@ var battle_result_path = {
 
 var effect_animation_path = {
 	"FireBeam" = "res://asset/animation/spell_animation/FireBeam.tres",
+	"IceFreeze" = "res://asset/animation/spell_animation/IceFreeze.tres",
+	"IceUnfreeze" = "res://asset/animation/spell_animation/IceUnfreeze.tres",
 	"Default" = "res://asset/animation/spell_animation/FireBeam.tres"
 }
 
