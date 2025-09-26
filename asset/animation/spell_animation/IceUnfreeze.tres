@@ -1,30 +1,37 @@
-[gd_resource type="SpriteFrames" load_steps=7 format=3 uid="uid://bt4y4lkutxg2a"]
+[gd_resource type="SpriteFrames" load_steps=8 format=3 uid="uid://cnitkkvp2a0t7"]
 
 [ext_resource type="Texture2D" uid="uid://knyom08ghqx2" path="res://asset/sprite/spell_effect/Elemental Effects/Ice Effect 02 (01 - 10)/Ice VFX 5/Ice VFX 5(48x32).png" id="1_t6u4n"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_js5q0"]
-atlas = ExtResource("1_t6u4n")
-region = Rect2(8, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_6c0f2"]
-atlas = ExtResource("1_t6u4n")
-region = Rect2(56, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_8pt4r"]
-atlas = ExtResource("1_t6u4n")
-region = Rect2(104, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_07dq7"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_vn78o"]
 atlas = ExtResource("1_t6u4n")
 region = Rect2(152, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_f0qec"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_js5q0"]
 atlas = ExtResource("1_t6u4n")
 region = Rect2(200, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6c0f2"]
+atlas = ExtResource("1_t6u4n")
+region = Rect2(248, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8pt4r"]
+atlas = ExtResource("1_t6u4n")
+region = Rect2(296, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_07dq7"]
+atlas = ExtResource("1_t6u4n")
+region = Rect2(344, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f0qec"]
+atlas = ExtResource("1_t6u4n")
+region = Rect2(392, 0, 32, 32)
 
 [resource]
 animations = [{
 "frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vn78o")
+}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_js5q0")
 }, {

@@ -294,8 +294,8 @@ func new_round_prepare_start():
 	
 	current_round_label.text = "Current round : " + str(current_round)
 	
-	if not shop_handler.is_shop_frozen:
-		shop_handler.shop_refresh()
+
+	shop_handler.shop_refresh()
 
 	game_turn_finished.emit()
 

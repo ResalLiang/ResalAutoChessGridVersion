@@ -20,7 +20,6 @@ var shop_upgrade_price := 3
 
 var remain_coins := 0
 var base_income := 10
-var is_shop_frozen := false
 
 var shop_level := 1
 
@@ -87,7 +86,6 @@ func _ready():
 func shop_init():
 	remain_coins = 0 #game_start_coins
 	shop_level = 1
-	is_shop_frozen = false
 	
 	for y in shop.unit_grid.size.y:
 		for x in shop.unit_grid.size.x:
@@ -104,24 +102,14 @@ func shop_manual_refresh() -> void:
 func shop_refresh() -> void:
 
 	shop_refreshed.emit()
-
-	is_shop_frozen = false
-	shop_unfreezed.emit()
-
-	#for node in get_tree().get_nodes_in_group("obstacle_group"):
-	#for chess_index in shop.unit_grid.get_all_units():
-		#if chess_index is Chess:
-			## DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess_index.faction, chess_index.chess_name, "refresh_count"], 1)
-			#chess_refreshed.emit(chess_index)
-			#chess_index.queue_free()	
-			
-			
+	
 	for tile_index in shop.unit_grid.units.keys():
 		if DataManagerSingleton.check_obstacle_valid(shop.unit_grid.units[tile_index]) and not freeze_dict[tile_index]:
 			var current_chess = shop.unit_grid.units[tile_index]
 			# DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess_index.faction, chess_index.chess_name, "refresh_count"], 1)
 			chess_refreshed.emit(current_chess)
-			current_chess.free()	
+			shop.unit_grid.remove_unit(tile_index)
+			current_chess.queue_free()	
 
 	for i in range(shop_level + 2):
 		var shop_col_index = i % shop.unit_grid.size.x
@@ -145,26 +133,29 @@ func shop_refresh() -> void:
 		var character = get_parent().summon_chess(debug_chess_faction[debug_index],debug_chess_name[debug_index], 1, 1, shop, Vector2i(shop_col_index, shop_row_index))
 
 func shop_freeze() -> void:
-	if is_shop_frozen:
-		shop_unfreezed.emit()
-		clear_effect_animation()
-		for tile_index in shop.unit_grid.units.keys():
-			if freeze_dict[tile_index] == true and DataManagerSingleton.check_obstacle_valid(shop.unit_grid.units[tile_index]):
-				effect_animation_display("IceUnfreeze", shop, tile_index)
-				
-			freeze_dict[tile_index] = false
-				
-	else:
+	var check_all_freeze := true
+	for tile_index in shop.unit_grid.units.keys():
+		if freeze_dict[tile_index] == false and DataManagerSingleton.check_obstacle_valid(shop.unit_grid.units[tile_index]):
+			check_all_freeze = false
+			break
+	
+	if not check_all_freeze:
 		shop_freezed.emit()
 		clear_effect_animation()
 		for tile_index in shop.unit_grid.units.keys():
-			if freeze_dict[tile_index] == false and DataManagerSingleton.check_obstacle_valid(shop.unit_grid.units[tile_index]):
+			if DataManagerSingleton.check_obstacle_valid(shop.unit_grid.units[tile_index]):
 				effect_animation_display("IceFreeze", shop, tile_index)
 				freeze_dict[tile_index] = true
 			else:
 				freeze_dict[tile_index] = false
-				
-	is_shop_frozen = not is_shop_frozen 
+	else:
+		shop_unfreezed.emit()
+		clear_effect_animation()
+		for tile_index in shop.unit_grid.units.keys():
+			if DataManagerSingleton.check_obstacle_valid(shop.unit_grid.units[tile_index]):
+				effect_animation_display("IceUnfreeze", shop, tile_index)
+			freeze_dict[tile_index] = false
+
 
 func shop_upgrade() -> void:
 	var current_upgrade_price = get_shop_upgrade_price()
