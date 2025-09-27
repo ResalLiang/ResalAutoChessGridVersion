@@ -247,6 +247,7 @@ func _ready():
 	center_point = Vector2(tile_size.x * 16 / 2, tile_size.y * 16 / 2)
 
 	shop_handler.shop_refresh()
+	shop_handler.buy_human_count = 0
 	current_round = 0
 	
 	start_new_game()
@@ -296,6 +297,7 @@ func new_round_prepare_start():
 	
 
 	shop_handler.shop_refresh()
+	shop_handler.buy_human_count = 0
 
 	game_turn_finished.emit()
 
@@ -583,19 +585,19 @@ func generate_random_chess(generate_level: int, specific_faction: String):
 	var total_weight_pool := 0
 	
 	# Pre-process all eligible chesses with calculated weights
-	for faction in DataManagerSingleton.get_chess_data():
+	for faction in DataManagerSingleton.get_chess_data().keys():
 		# Skip special faction
 		if DataManagerSingleton.get_chess_data().has(specific_faction) and faction != specific_faction and specific_faction != "all":
 			continue # Skip all not specific faction chess
 
-		if (specific_faction == "locked" and DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"][faction]) or faction == "villager":
+		if (specific_faction == "locked" and DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"][faction]) or (faction == "villager" and specific_faction != "villager"):
 			continue # Skip all locked chess and villager
 			
 		for chess_name in DataManagerSingleton.get_chess_data()[faction]:
 			var chess_attributes = DataManagerSingleton.get_chess_data()[faction][chess_name]
 			
 			# Validation checks
-			if chess_attributes["speed"] == 0 || chess_attributes["rarity"] != selected_rarity:
+			if (chess_attributes["speed"] == 0 and specific_faction != "villager") or chess_attributes["rarity"] != selected_rarity:
 				continue
 				
 			# Calculate dynamic weight with duplicate penalty
@@ -892,7 +894,12 @@ func check_chess_merge():
 
 							removed_chess.visible = false
 
-						var upgrade_chess = summon_chess(merged_chess_faction, merged_chess_name, merge_level + 1, 1, merged_play_area, merged_tile)
+						var upgrade_chess 
+						var merged_level := 2
+						if DataManagerSingleton.get_chess_data()[merged_chess_faction][merged_chess_name].has("Upgrade_Chess") and merged_chess_faction == "human":
+							merged_chess_name = DataManagerSingleton.get_chess_data()[merged_chess_faction][merged_chess_name]["Upgrade_Chess"]
+							merged_level = 1
+						upgrade_chess= summon_chess(merged_chess_faction, merged_chess_name, merged_level, 1, merged_play_area, merged_tile)
 
 						merge_count = 0
 						merge_result = upgrade_chess

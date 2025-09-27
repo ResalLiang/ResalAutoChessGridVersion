@@ -23,6 +23,8 @@ var base_income := 10
 
 var shop_level := 1
 
+var buy_human_count := 0
+
 signal shop_refreshed
 signal shop_freezed
 signal shop_unfreezed
@@ -129,6 +131,9 @@ func shop_refresh() -> void:
 
 		var shop_col_index = debug_index % shop.unit_grid.size.x
 		var shop_row_index = floor(debug_index / shop.unit_grid.size.x) + 1
+		
+		if freeze_dict[Vector2i(shop_col_index, shop_row_index)]:
+			continue
 
 		var character = get_parent().summon_chess(debug_chess_faction[debug_index],debug_chess_name[debug_index], 1, 1, shop, Vector2i(shop_col_index, shop_row_index))
 
@@ -152,7 +157,7 @@ func shop_freeze() -> void:
 		shop_unfreezed.emit()
 		clear_effect_animation()
 		for tile_index in shop.unit_grid.units.keys():
-			if DataManagerSingleton.check_obstacle_valid(shop.unit_grid.units[tile_index]):
+			if DataManagerSingleton.check_obstacle_valid(shop.unit_grid.units[tile_index]) and freeze_dict[tile_index] == true:
 				effect_animation_display("IceUnfreeze", shop, tile_index)
 			freeze_dict[tile_index] = false
 
@@ -178,16 +183,36 @@ func get_current_difficulty():
 func get_max_population():
 	return 999 if shop_level == 7 else shop_level + 2
 
-func can_pay_chess(chess: Chess) -> bool:
+func can_pay_chess(chess: Obstacle) -> bool:
 	if get_chess_buy_price(chess) > remain_coins:
 		return false
 	else:
 		return true
 
-func buy_chess(chess: Chess):
+func buy_chess(chess: Obstacle):
 	chess_bought.emit(chess)
 	remain_coins -= get_chess_buy_price(chess)
 	coins_decreased.emit(get_chess_buy_price(chess), "buyinging chess")
+	
+	if chess.faction == "human":
+		buy_human_count += 1
+		
+	var buy_human_spec	
+	
+	if get_parent().faction_bonus_manager.player_bonus_level_dict[1]["human"] > 0:
+		buy_human_spec = 4 - get_parent().faction_bonus_manager.player_bonus_level_dict[1]["human"]
+		
+	if get_parent().faction_bonus_manager.player_bonus_level_dict[1]["human"] > 0 and buy_human_count >= buy_human_spec:
+		var add_villager_tile := Vector2i(-1, -1)
+		for tile_index in shop.unit_grid.units.keys():
+			if not DataManagerSingleton.check_obstacle_valid(shop.unit_grid.units[tile_index]):
+				add_villager_tile = tile_index
+				break
+		
+		if add_villager_tile != Vector2i(-1, -1):
+			var rand_character_result = get_parent().generate_random_chess(shop_level, "villager")
+			var character = get_parent().summon_chess(rand_character_result[0], rand_character_result[1], 1, 1, shop, add_villager_tile)
+			buy_human_count = 0
 
 func sell_chess(chess: Chess):
 	chess_sold.emit(chess)
@@ -195,10 +220,10 @@ func sell_chess(chess: Chess):
 	coins_increased.emit(get_chess_buy_price(chess), "selling chess")
 	chess.queue_free()
 
-func get_chess_buy_price(chess: Chess):
+func get_chess_buy_price(chess: Obstacle):
 	return shop_buy_price
 
-func get_chess_sell_price(chess: Chess):
+func get_chess_sell_price(chess: Obstacle):
 	return shop_sell_price
 
 func turn_start_income(current_round: int):

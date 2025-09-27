@@ -497,6 +497,12 @@ func _load_chess_stats():
 		stats_loaded.emit(self, stats)
 	else:
 		push_error("Stats not found for %s/%s" % [faction, chess_name])
+		
+	if arena.get_parent().get_parent().faction_bonus_manager.player_bonus_level_dict[team]["elf"] > 1 and faction == "elf":
+		var current_elf_level = arena.get_parent().get_parent().faction_bonus_manager.player_bonus_level_dict[team]["elf"]
+		base_melee_damage = max(5, floor(base_melee_damage / (current_elf_level + 1)))
+		base_ranged_damage = max(5, floor(base_ranged_damage / (current_elf_level + 1)))
+		base_attack_speed = base_attack_speed + current_elf_level
 
 func start_turn():
 
@@ -735,7 +741,7 @@ func _handle_attack():
 				
 				handle_special_effect(chess_target, self)
 				
-				if target_evased_attack:
+				if target_evased_attack and chess_target.faction == "elf" and arena.get_parent().get_parent().faction_bonus_manager.player_bonus_level_dict[chess_target.team]["elf"] > 0:
 					await chess_target.handle_free_strike(self)
 					
 
@@ -751,7 +757,7 @@ func _handle_attack():
 
 				handle_special_effect(chess_target, self)
 				
-				if target_evased_attack:
+				if target_evased_attack and chess_target.faction == "elf" and arena.get_parent().get_parent().faction_bonus_manager.player_bonus_level_dict[chess_target.team]["elf"] > 0:
 					await chess_target.handle_free_strike(self)
 
 			else:

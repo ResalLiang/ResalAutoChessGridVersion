@@ -8,7 +8,13 @@ res://asset/animation/demon/demonDemoness.tres
 res://asset/animation/forestProtector/forestProtectorDryadEnchantress.tres
 res://asset/shader/SoftDropShadow.gdshader
 res://asset/shader/new_shader.gdshader
-res://script/game.gd
 res://script/shop_handler.gd
-res://asset/animation/spell_animation/IceUnfreeze.tres
-res://asset/animation/spell_animation/IceFreeze.tres
+res://scene/game.tscn
+res://script/tile_highlighter.gd
+res://script/chess_stats.json
+res://script/faction_bonus_manager.gd
+res://script/game.gd
+res://script/chess_information.gd
+res://scene/obstacle.tscn
+res://script/obstacle.gd
+res://script/chess.gd

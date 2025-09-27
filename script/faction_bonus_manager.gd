@@ -92,7 +92,7 @@ var player_bonus_level_dict_template : Dictionary = {
 		"speller" : 0
 	}
 }
-
+var player_bonus_level_dict : Dictionary
 
 func bonus_refresh() -> void:
 
@@ -100,7 +100,7 @@ func bonus_refresh() -> void:
 		node.queue_free()
 
 	var player_faction_count = player_faction_count_template.duplicate()
-	var player_bonus_level_dict = player_bonus_level_dict_template.duplicate()
+	player_bonus_level_dict = player_bonus_level_dict_template.duplicate()
 
 	for chess_index in arena.unit_grid.get_all_units(): #summary all uniqe chess
 
@@ -175,12 +175,13 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 
 			for chess_index in friendly_faction_chess:
 				var effect_instance = ChessEffect.new()
-				effect_instance.register_buff("evasion_rate_modifier", 0.1 * bonus_level, 999)
-				# effect_instance.evasion_rate_modifier = 0.1 * bonus_level
-				# effect_instance.evasion_rate_modifier_duration = 999
-				effect_instance.register_buff("critical_rate_modifie", 0.1 * bonus_level, 999)
+				#effect_instance.register_buff("evasion_rate_modifier", 0.1 * bonus_level, 999)
+				## effect_instance.evasion_rate_modifier = 0.1 * bonus_level
+				## effect_instance.evasion_rate_modifier_duration = 999
+				#effect_instance.register_buff("critical_rate_modifie", 0.1 * bonus_level, 999)
 				# effect_instance.critical_rate_modifier = 0.1 * bonus_level
 				# effect_instance.critical_rate_modifier_duration = 999
+				effect_instance.register_buff("duration_only", 0, 999)
 				effect_instance.effect_name = "Swift - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
 				effect_instance.effect_applier = "Elf Faction Bonus"

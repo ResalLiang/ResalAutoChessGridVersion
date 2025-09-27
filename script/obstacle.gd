@@ -199,7 +199,7 @@ func _ready():
 	
 	# Connect signals
 	idle_timer.timeout.connect(_on_idle_timeout)
-	move_timer.timeout.connect(_handle_action)
+	#move_timer.timeout.connect(_handle_action)
 	action_timer.timeout.connect(_handle_action_timeout)
 	
 	drag_handler.drag_started.connect(_handle_dragging_state)

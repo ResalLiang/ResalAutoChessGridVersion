@@ -1,4 +1,4 @@
-[gd_scene load_steps=92 format=4 uid="uid://cthbjvirwy2mg"]
+[gd_scene load_steps=94 format=4 uid="uid://cthbjvirwy2mg"]
 
 [ext_resource type="Script" uid="uid://c7rtc63knhqn2" path="res://script/game.gd" id="1_ll5lq"]
 [ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="2_dbls1"]
@@ -19,6 +19,7 @@
 [ext_resource type="Texture2D" uid="uid://da2ctgfaxxegu" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/64x64 button no frame.png" id="11_0pyxt"]
 [ext_resource type="Script" uid="uid://bnobjccy7mbl1" path="res://script/shop_handler.gd" id="11_ym5sv"]
 [ext_resource type="Texture2D" uid="uid://taccdysuiiqx" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/64x64 button.png" id="12_o16ra"]
+[ext_resource type="Texture2D" uid="uid://bux1pqccpqytm" path="res://asset/sprite/Slots-Frames/All/16x16_ui_slots_frames7.png" id="12_u414g"]
 [ext_resource type="Script" uid="uid://c741ay1j7xpf4" path="res://script/debug_handler.gd" id="13_5g16k"]
 [ext_resource type="Texture2D" uid="uid://cdtqc8myh23v4" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/64x64 frame.png" id="13_imfdu"]
 [ext_resource type="Texture2D" uid="uid://woe5v11hw2qp" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/128x32 paper.png" id="14_400sm"]
@@ -6357,9 +6358,101 @@ texture = ExtResource("6_qpk70")
 34:33/0 = 0
 35:33/0 = 0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3pnen"]
+texture = ExtResource("12_u414g")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+0:4/0 = 0
+1:4/0 = 0
+2:4/0 = 0
+3:4/0 = 0
+0:5/0 = 0
+1:5/0 = 0
+2:5/0 = 0
+3:5/0 = 0
+0:6/0 = 0
+1:6/0 = 0
+2:6/0 = 0
+3:6/0 = 0
+0:7/0 = 0
+1:7/0 = 0
+2:7/0 = 0
+3:7/0 = 0
+0:8/0 = 0
+1:8/0 = 0
+2:8/0 = 0
+3:8/0 = 0
+0:9/0 = 0
+1:9/0 = 0
+2:9/0 = 0
+3:9/0 = 0
+0:10/0 = 0
+1:10/0 = 0
+2:10/0 = 0
+3:10/0 = 0
+0:11/0 = 0
+1:11/0 = 0
+2:11/0 = 0
+3:11/0 = 0
+0:12/0 = 0
+1:12/0 = 0
+2:12/0 = 0
+3:12/0 = 0
+0:13/0 = 0
+1:13/0 = 0
+2:13/0 = 0
+3:13/0 = 0
+0:14/0 = 0
+1:14/0 = 0
+2:14/0 = 0
+3:14/0 = 0
+0:15/0 = 0
+1:15/0 = 0
+2:15/0 = 0
+3:15/0 = 0
+0:16/0 = 0
+1:16/0 = 0
+2:16/0 = 0
+3:16/0 = 0
+0:17/0 = 0
+1:17/0 = 0
+2:17/0 = 0
+3:17/0 = 0
+0:18/0 = 0
+1:18/0 = 0
+2:18/0 = 0
+3:18/0 = 0
+0:19/0 = 0
+1:19/0 = 0
+2:19/0 = 0
+3:19/0 = 0
+0:20/0 = 0
+1:20/0 = 0
+2:20/0 = 0
+3:20/0 = 0
+0:21/0 = 0
+1:21/0 = 0
+2:21/0 = 0
+3:21/0 = 0
+
 [sub_resource type="TileSet" id="TileSet_ll5lq"]
 sources/0 = SubResource("TileSetAtlasSource_qpk70")
 sources/1 = SubResource("TileSetAtlasSource_ll5lq")
+sources/2 = SubResource("TileSetAtlasSource_3pnen")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_b5wrk"]
 texture = ExtResource("9_d218c")
