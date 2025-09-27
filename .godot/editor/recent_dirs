@@ -1,7 +1,9 @@
+res://asset/sprite/spell_effect/Buff n Debuff VFX
+res://asset/sprite/spell_effect/Buff n Debuff VFX/Buff n Debuff P9 VFX 04
+res://asset/animation/spell_animation/
 res://asset/sprite/spell_effect/Elemental Effects/Ice Effect 02 (01 - 10)/Ice VFX 5
 res://asset/sprite/spell_effect/Elemental Effects/Ice Effect 02 (01 - 10)/Ice VFX 4
 res://asset/sprite/spell_effect/Elemental Effects/Ice VFX 2
-res://asset/animation/spell_animation/
 res://asset/sprite/GandalfHardcore Pixel Art Game UI
 res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames
 res://asset/sprite/spell_effect/Elemental Effects/Fire effect 03/Fire Beam
@@ -18,7 +20,5 @@ res://asset/animation/demon
 res://asset/sprite/GandalfHardcore Chests
 res://asset/sprite/GandalfHardcore Icons
 res://script
-res://asset/sprite/MiniFolks/MinifolksHumans/Without Outline
-res://asset/animation/forestProtector
 D:/LearningGodot/ResalAutoChess/script/hero_stats_raw
 D:/LearningGodot/ResalAutoChess/script

@@ -46,6 +46,8 @@ var projectile_animation: String:
 var damage_finished := false
 var die_animation
 
+var damage_type := "Ranged_attack"
+
 signal projectile_vanished
 signal projectile_hit
 
@@ -107,11 +109,11 @@ func _on_area_entered(area):
 						if indirect_obstacle.status == indirect_obstacle.STATUS.DIE or indirect_obstacle.visible == false:
 							continue
 						# await indirect_obstacle.take_damage(damage, attacker)
-						attacker.deal_damage.emit(attacker, indirect_obstacle, damage, "Ranged_attack", [])
+						attacker.deal_damage.emit(attacker, indirect_obstacle, damage, damage_type, [])
 				damage_finished = true
 					
 			# await obstacle.take_damage(damage, attacker)
-			attacker.deal_damage.emit(attacker, obstacle, damage, "Ranged_attack", [])
+			attacker.deal_damage.emit(attacker, obstacle, damage, damage_type, [])
 
 			damage_finished = true
 			current_penetration -= 1  # 减少穿透计数

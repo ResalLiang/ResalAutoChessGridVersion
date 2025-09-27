@@ -8,7 +8,7 @@ var effect_type : String # Buff/Debuff/Passive/PermanentBuff/PermanentDebuff
 var effect_applier : String
 var effect_duration := 0
 
-var buff_type_list = ["immunity", "spell_immunity", "critical_immunity", "taunt", "stealth", "silenced", "disarmed", "stunned", "parry", "speed_modifier", "attack_rng_modifier", "attack_speed_modifier", "melee_attack_damage_modifier", "ranged_attack_damage_modifier", "continuous_hp_modifier", "continuous_mp_modifier", "armor_modifier", "max_mp_modifier", "max_hp_modifier", "critical_rate_modifier", "evasion_rate_modifier"]
+var buff_type_list = ["immunity", "spell_immunity", "critical_immunity", "taunt", "stealth", "silenced", "disarmed", "stunned", "parry", "speed_modifier", "attack_rng_modifier", "attack_speed_modifier", "melee_attack_damage_modifier", "ranged_attack_damage_modifier", "continuous_hp_modifier", "continuous_mp_modifier", "armor_modifier", "max_mp_modifier", "max_hp_modifier", "critical_rate_modifier", "evasion_rate_modifier", "life_steal_rate_modifier"]
 var buff_dict: Dictionary
 
 signal extra_func_called

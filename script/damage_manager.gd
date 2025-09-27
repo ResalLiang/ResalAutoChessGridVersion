@@ -5,6 +5,7 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 
 	var damage_result = damage_value
 	var critical_damage := false
+	var life_steal_result := 0
 
 	if damage_result <= 0:
 		return
@@ -22,7 +23,7 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 		target.attack_evased.emit(target, attacker)
 		return
 
-	if not attacker.get("critical_rate") and (randf() <= attacker.critical_rate and damage_type != "Magic_attack" and not target.effect_handler.is_critical_immunity):
+	if attacker.get("critical_rate") != null and (randf() <= attacker.critical_rate and damage_type != "Magic_attack" and not target.effect_handler.is_critical_immunity):
 		damage_result *= 2
 		critical_damage = true
 
@@ -32,6 +33,8 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 			return
 			
 	damage_result = max(damage_result, 1)
+	if attacker is Chess:
+		life_steal_result = attacker.life_steal_rate * damage_result
 
 	if critical_damage:
 		attacker.critical_damage_applied.emit(attacker, target, damage_result)
@@ -39,3 +42,9 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 		attacker.damage_applied.emit(attacker, target, damage_result)
 
 	target.damage_taken.emit(target, attacker, damage_result)
+	
+	if life_steal_result > 0:
+		attacker.take_heal(life_steal_result, attacker)
+		
+	if attacker != target and damage_type != "Magic_attack" and attacker is Chess:
+		attacker.gain_mp(damage_result)		

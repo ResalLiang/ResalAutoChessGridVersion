@@ -25,6 +25,7 @@ var max_mp_modifier := 0
 var max_hp_modifier := 0
 var critical_rate_modifier := 0.0
 var evasion_rate_modifier := 0.0
+var life_steal_rate_modifier := 0.0
 
 signal effect_list_updated
 
@@ -97,6 +98,7 @@ func refresh_effects():
 	max_hp_modifier = 0
 	critical_rate_modifier = 0
 	evasion_rate_modifier = 0
+	life_steal_rate_modifier = 0
 
 	if effect_list.size() == 0:
 		return
@@ -137,6 +139,8 @@ func refresh_effects():
 			else effect_index.buff_dict["critical_rate_modifier"])
 		evasion_rate_modifier = evasion_rate_modifier + (max(0, effect_index.buff_dict["evasion_rate_modifier"]) if is_spell_immunity 
 			else effect_index.buff_dict["evasion_rate_modifier"])
+		life_steal_rate_modifier = life_steal_rate_modifier + (max(0, effect_index.buff_dict["life_steal_rate_modifier"]) if is_spell_immunity 
+			else effect_index.buff_dict["life_steal_rate_modifier"])
 
 		effect_index.extra_func_called.emit(get_parent())
 

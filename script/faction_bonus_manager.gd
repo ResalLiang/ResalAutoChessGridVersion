@@ -92,7 +92,7 @@ var player_bonus_level_dict_template : Dictionary = {
 		"speller" : 0
 	}
 }
-var player_bonus_level_dict : Dictionary
+var player_bonus_level_dict : Dictionary = {}
 
 func bonus_refresh() -> void:
 
@@ -388,3 +388,7 @@ func clean_chess_faction_bonus(chess: Obstacle) -> void:
 			chess.effect_handler.add_to_effect_array(effect_index)
 
 	chess.effect_handler.refresh_effects()
+
+
+func get_bonus_level(faction: String, team: int) -> int:
+	return player_bonus_level_dict[team][faction]

@@ -808,15 +808,15 @@ func battle_value_display(chess: Obstacle, chess2: Obstacle, display_value, sign
 	match signal_name:
 		"damage_applied":
 			label_settings.font_color = Color.YELLOW
-			battle_label.text = str(display_value)
+			battle_label.text = str(round(display_value))
 			old_position = chess2.global_position + Vector2(8, -8)
 		"critical_damage_applied":
 			label_settings.font_color = Color.RED
-			battle_label.text = "!" + str(display_value)
+			battle_label.text = "!" + str(round(display_value))
 			old_position = chess2.global_position + Vector2(8, -8)
 		"heal_taken":
 			label_settings.font_color = Color.GREEN
-			battle_label.text = str(display_value)
+			battle_label.text = str(round(display_value))
 			old_position = chess.global_position + Vector2(8, -8)
 		"attack_evased":
 			label_settings.font_color = Color.CYAN

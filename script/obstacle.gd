@@ -606,21 +606,56 @@ func get_current_tile(obstacle : Obstacle):
 
 
 # Load appropriate animations for the chess
-func effect_animation_display(effect_name: String, display_play_area: PlayArea, display_tile: Vector2i):
+func effect_animation_display(effect_name: String, display_play_area: PlayArea, display_tile: Vector2i, alignment_pivot: String):
+	if not ["Center", "LeftTop", "Left", "LeftBottom", "Bottom", "RightBottom", "Right", "RightTop", "Top"].has(alignment_pivot):
+		return
 	var effect_animation = AnimatedSprite2D.new()
 	var effect_animation_path = AssetPathManagerSingleton.get_asset_path("effect_animation", effect_name)
 	var frame_offset = Vector2(0, 0)
+	
 	if ResourceLoader.exists(effect_animation_path):
 		var frames = ResourceLoader.load(effect_animation_path)
 		for anim_name in frames.get_animation_names():
 			frames.set_animation_loop(anim_name, false)
 			frames.set_animation_speed(anim_name, 16.0)
 		effect_animation.sprite_frames = frames
+		effect_animation.centered = false
 		var frame_texture = frames.get_frame_texture("default", 0)
-		frame_offset.x = -(frame_texture.region.size.x - 16) / 2.0 + 8
-		frame_offset.y = -(frame_texture.region.size.y - 16) * 1.0 + 8
+		
+		match alignment_pivot:
+			"Center":
+				frame_offset.x = -frame_texture.region.size.x / 2.0
+				frame_offset.y = -frame_texture.region.size.y / 2.0
+			"LeftTop":
+				frame_offset.x = -8
+				frame_offset.y = -8
+			"Left":
+				frame_offset.x = -8
+				frame_offset.y = -frame_texture.region.size.y / 2.0				
+			"LeftBottom":
+				frame_offset.x = -8
+				frame_offset.y = -frame_texture.region.size.y + 8
+			"Bottom":
+				frame_offset.x = -frame_texture.region.size.x / 2.0				
+				frame_offset.y = -frame_texture.region.size.y + 8
+			"RightBottom":
+				frame_offset.x = -frame_texture.region.size.y + 8
+				frame_offset.y = -frame_texture.region.size.y + 8
+			"Right":
+				frame_offset.x = -frame_texture.region.size.y + 8
+				frame_offset.y = -frame_texture.region.size.y / 2.0				
+			"RightTop":
+				frame_offset.x = -frame_texture.region.size.y + 8
+				frame_offset.y = -8
+			"Top":
+				frame_offset.x = -frame_texture.region.size.x / 2.0				
+				frame_offset.y = -8
+			_:
+				frame_offset = Vector2(0, 0)
+		
 	else:
 		push_error("Animation resource not found: " + effect_animation_path)
+		
 	add_child(effect_animation)
 	effect_animation.global_position = display_play_area.get_global_from_tile(display_tile) + frame_offset
 	effect_animation.z_index = 6

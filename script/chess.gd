@@ -63,6 +63,7 @@ var base_attack_speed := 1 # Attack speed (attacks per turn)
 var base_attack_range := 20 # Attack range (pixels)
 var base_evasion_rate := 0.10
 var base_critical_rate := 0.10
+var base_life_steal_rate := 0.0
 #var base_armor := 0
 #
 #var hp: int = base_max_hp:
@@ -94,6 +95,7 @@ var attack_speed = base_attack_speed
 var attack_range = base_attack_range
 var evasion_rate := 0.10
 var critical_rate := 0.10
+var life_steal_rate := 0.0
 #var armor := 0
 var decline_ratio := 3.0
 var chess_rarity := "Common" #	"Common", "Uncommon", "Rare", "Epic", "Legendary"
@@ -171,6 +173,21 @@ var astar_grid_region = Rect2i(0, 0, 16, 16)
 #var ranged_attack_threshold: float = 32.0  # Minimum distance for ranged attack
 #var projectile
 
+var demon_bonus_level := 0
+var dwarf_bonus_level := 0
+var elf_bonus_level := 0
+var forestProtector_bonus_level := 0
+var holy_bonus_level := 0
+var human_bonus_level := 0
+var undead_bonus_level := 0
+var villager_bonus_level := 0
+var warrior_bonus_level := 0
+var knight_bonus_level := 0
+var ranger_bonus_level := 0
+var speller_bonus_level := 0
+var pikeman_bonus_level := 0
+
+var faction_bonus_manager
 
 #var status := STATUS.IDLE         # Current character state
 
@@ -216,6 +233,8 @@ var astar_grid_region = Rect2i(0, 0, 16, 16)
 func _ready():
 	
 	chess_mover = arena.get_parent().get_parent().chess_mover
+	
+	faction_bonus_manager = arena.get_parent().get_parent().faction_bonus_manager
 		
 	drag_handler.dragging_enabled = dragging_enabled
 	
@@ -497,12 +516,6 @@ func _load_chess_stats():
 		stats_loaded.emit(self, stats)
 	else:
 		push_error("Stats not found for %s/%s" % [faction, chess_name])
-		
-	if arena.get_parent().get_parent().faction_bonus_manager.player_bonus_level_dict[team]["elf"] > 1 and faction == "elf":
-		var current_elf_level = arena.get_parent().get_parent().faction_bonus_manager.player_bonus_level_dict[team]["elf"]
-		base_melee_damage = max(5, floor(base_melee_damage / (current_elf_level + 1)))
-		base_ranged_damage = max(5, floor(base_ranged_damage / (current_elf_level + 1)))
-		base_attack_speed = base_attack_speed + current_elf_level
 
 func start_turn():
 
@@ -517,6 +530,21 @@ func start_turn():
 
 	update_solid_map()
 	await get_tree().process_frame
+	
+	_load_chess_stats()
+	
+	if hp <= 0.33 * max_hp and faction_bonus_manager.get_bonus_level("dwarf", team) > 0 and faction == "dwarf":
+		var effect_instance = ChessEffect.new()
+		effect_instance.register_buff("melee_attack_damage_modifier", base_armor, 1)
+		effect_instance.register_buff("armor_modifier", -base_armor, 999)
+		effect_instance.register_buff("life_steal_rate_modifier", faction_bonus_manager.get_bonus_level("dwarf", team) * 0.3, 1)
+		# effect_instance.stunned_duration = spell_duration
+		effect_instance.effect_name = "Berserker"
+		effect_instance.effect_type = "Buff"
+		effect_instance.effect_applier = "Faction Bonus"
+		effect_handler.add_to_effect_array(effect_instance)
+		effect_handler.add_child(effect_instance)
+		await effect_animation_display("Berserker", arena, get_current_tile(self)[1], "Center")
 
 	update_effect()
 
@@ -624,6 +652,23 @@ func _handle_action():
 
 	move_timer.stop()
 	action_started.emit(self)
+	
+	for offset_index in [Vector2i(-1, -1), Vector2i(-1, 1), Vector2i(1, -1), Vector2i(1, 1)]:
+		if arena.is_tile_in_bounds(offset_index + get_current_tile(self)[1]) and DataManagerSingleton.check_obstacle_valid(arena.unit_grid.units[offset_index + get_current_tile(self)[1]]):
+			var neighbor_chess = arena.unit_grid.units[offset_index + get_current_tile(self)[1]]
+			if neighbor_chess.team == team and neighbor_chess.faction == "dwarf" and faction == "dwarf" and total_movement == 0 and faction_bonus_manager.get_bonus_level("dwarf", team) > 0:
+				var effect_instance = ChessEffect.new()
+				effect_instance.register_buff("armor_modifier", faction_bonus_manager.get_bonus_level("dwarf", team) * 2 , 1)
+				# effect_instance.stunned_duration = spell_duration
+				effect_instance.effect_name = "Fortress"
+				effect_instance.effect_type = "Buff"
+				effect_instance.effect_applier = "Faction Bonus"
+				effect_handler.add_to_effect_array(effect_instance)
+				effect_handler.add_child(effect_instance)
+				await effect_animation_display("Fortress", arena, get_current_tile(self)[1], "Center")
+				break
+				
+	# TODO wait add single effect update
 
 	var current_tile = get_current_tile(self)[1]
 		
@@ -741,7 +786,7 @@ func _handle_attack():
 				
 				handle_special_effect(chess_target, self)
 				
-				if target_evased_attack and chess_target.faction == "elf" and arena.get_parent().get_parent().faction_bonus_manager.player_bonus_level_dict[chess_target.team]["elf"] > 0:
+				if faction_bonus_manager.get_bonus_level("elf", team) > 1 and target_evased_attack and chess_target.faction == "elf" :
 					await chess_target.handle_free_strike(self)
 					
 
@@ -757,7 +802,7 @@ func _handle_attack():
 
 				handle_special_effect(chess_target, self)
 				
-				if target_evased_attack and chess_target.faction == "elf" and arena.get_parent().get_parent().faction_bonus_manager.player_bonus_level_dict[chess_target.team]["elf"] > 0:
+				if faction_bonus_manager.get_bonus_level("elf", team) > 1 and target_evased_attack and chess_target.faction == "elf" :
 					await chess_target.handle_free_strike(self)
 
 			else:
@@ -1009,9 +1054,6 @@ func take_damage(target:Obstacle, attacker: Obstacle, damage_value: float):
 	target.hp -= damage_value
 	target.hp_bar.value = target.hp
 
-	if attacker != target:
-		attacker.mp += damage_value
-
 	if target.hp <= 0:
 		target.status = STATUS.DIE
 		target.animated_sprite_2d.stop()
@@ -1040,6 +1082,10 @@ func take_heal(heal_value: float, healer: Obstacle):
 		healer.mp += heal_value
 		heal_taken.emit(self, healer, heal_value)
 
+func gain_mp(mp_value: float):
+	if mp_value <= 0:
+		return
+	mp += mp_value
 
 func _cast_spell(spell_tgt: Obstacle) -> bool:
 	#Placeholder for chess passive ability on cast spell
@@ -1130,8 +1176,7 @@ func update_solid_map():
 
 	for chess_index in arena.unit_grid.get_all_units():
 		astar_grid.set_point_solid(get_current_tile(chess_index)[1], true)
-	
-	var test1
+
 	
 func _handle_dragging_state(stating_position: Vector2, drag_action: String):
 	if !is_active:
@@ -1151,9 +1196,22 @@ func _handle_dragging_state(stating_position: Vector2, drag_action: String):
 func update_effect():
 	
 	effect_handler.turn_start_timeout_check()
-
+	
+	elf_bonus_level = faction_bonus_manager.get_bonus_level(faction, team)
+	
+	for effect_index in effect_handler.effect_list:
+		if effect_index.effect_applier == "Elf Faction Bonus":
+			elf_bonus_level = min(int(effect_index.effect_name.right(1)), elf_bonus_level)
+			break
+	
+	if  elf_bonus_level > 0 and faction == "elf":
+		base_melee_damage = max(5, floor(1.0 * base_melee_damage / (elf_bonus_level + 1)))
+		base_ranged_damage = max(5, floor(1.0 * base_ranged_damage / (elf_bonus_level + 1)))
+		base_attack_speed = base_attack_speed + elf_bonus_level
+	
 	critical_rate = base_critical_rate + effect_handler.critical_rate_modifier
 	evasion_rate = base_evasion_rate + effect_handler.evasion_rate_modifier
+	life_steal_rate = base_life_steal_rate + effect_handler.life_steal_rate_modifier
 
 	if effect_handler.continuous_hp_modifier >= 0:
 		_apply_heal(self, max(0, effect_handler.continuous_hp_modifier))
@@ -1172,8 +1230,8 @@ func update_effect():
 
 	max_hp = base_max_hp + effect_handler.max_hp_modifier
 	max_mp = base_max_mp + effect_handler.max_mp_modifier
-	
-	return
+
+		
 
 func handle_projectile_hit(chess:Obstacle, attacker:Obstacle):
 	#Placeholder for chess passive ability on projectile hit
@@ -1293,6 +1351,7 @@ func handle_free_strike(target: Obstacle):
 	status = STATUS.IDLE
 	change_target_to(previous_target)
 	return
+	
 
 func sun_strike(strike_count: int) -> bool:
 	var chess_affected := true
@@ -1338,7 +1397,7 @@ func sun_strike(strike_count: int) -> bool:
 				if rand_f <= offset_index:
 					current_tile = current_tile + offset_possible[offset_index]
 					break
-			await effect_animation_display("FireBeam", arena, current_tile)
+			await effect_animation_display("FireBeam", arena, current_tile, "Bottom")
 			if not arena.unit_grid.units.has(current_tile):
 				continue
 				
@@ -1368,6 +1427,7 @@ func freezing_field(arrow_count: int) -> bool:
 		var spell_projectile = _launch_projectile_to_degree(arraow_degree)
 		spell_projectile.projectile_animation = "Ice"
 		spell_projectile.damage = 10
+		spell_projectile.damage_type = "Magic_attack"
 		spell_projectile.projectile_hit.connect(
 			func(obstacle, attacker):
 					var effect_instance = ChessEffect.new()

@@ -1,3 +1,4 @@
+AnimatedSprite2D
 Node
 Label
 VBoxContainer
@@ -12,4 +13,3 @@ HSlider
 Control
 TileMap
 ColorRect
-TextureRect

@@ -18,3 +18,11 @@ res://script/chess_information.gd
 res://scene/obstacle.tscn
 res://script/obstacle.gd
 res://script/chess.gd
+res://script/damage_manager.gd
+res://script/chess_effect.gd
+res://script/effect_handler.gd
+res://script/projectile.gd
+res://asset/animation/spell_animation/Berserker.tres
+res://script/asset_path_manager.gd
+res://asset/animation/spell_animation/Fortress.tres
+res://asset/animation/elf/elfQueen.tres

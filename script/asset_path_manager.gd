@@ -34,6 +34,8 @@ var effect_animation_path = {
 	"FireBeam" = "res://asset/animation/spell_animation/FireBeam.tres",
 	"IceFreeze" = "res://asset/animation/spell_animation/IceFreeze.tres",
 	"IceUnfreeze" = "res://asset/animation/spell_animation/IceUnfreeze.tres",
+	"Berserker" = "res://asset/animation/spell_animation/Berserker.tres",
+	"Fortress" = "res://asset/animation/spell_animation/Fortress.tres",
 	"Default" = "res://asset/animation/spell_animation/FireBeam.tres"
 }
 
