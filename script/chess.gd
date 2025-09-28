@@ -95,7 +95,9 @@ var attack_speed = base_attack_speed
 var attack_range = base_attack_range
 var evasion_rate := 0.10
 var critical_rate := 0.10
+var critical_damage := 2.0
 var life_steal_rate := 0.0
+var reflect_damage := base_reflect_damage
 #var armor := 0
 var decline_ratio := 3.0
 var chess_rarity := "Common" #	"Common", "Uncommon", "Rare", "Epic", "Legendary"
@@ -249,7 +251,17 @@ func _ready():
 	if not _validate_node_references():
 		push_error("Chess node setup is invalid!")
 		return
-	
+		
+		
+	var effect_instance = ChessEffect.new()
+	effect_instance.register_buff("duration_only", 0, 999)
+	# effect_instance.stunned_duration = spell_duration
+	effect_instance.effect_name = "KillCount"
+	effect_instance.effect_type = "PermanentBuff"
+	effect_instance.effect_applier = "System"
+	effect_instance.effect_description = "Total kill: " + "0"
+	effect_handler.add_to_effect_array(effect_instance)
+	effect_handler.add_child(effect_instance)
 	
 	# Connect signals
 	idle_timer.timeout.connect(_on_idle_timeout)
@@ -273,7 +285,19 @@ func _ready():
 	heal_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("heal_taken"))
 	attack_evased.connect(AudioManagerSingleton.play_sfx.unbind(1).bind("attack_evased"))
 	is_died.connect(AudioManagerSingleton.play_sfx.unbind(1).bind("is_died"))
-
+	
+	
+	#TODO: load previous effect first or init first???
+	kill_chess.connect(
+		func(attacker, target):
+			if attacker == target:
+				return
+			for effect_index in effect_handler.effect_list:
+				if effect_index.effect_name == "KillCount":
+					var current_kill_count = int(effect_index.effect_description.rsplit(" ", false, 1)[-1])
+					effect_index.effect_description = "Total kill: " + str(current_kill_count + 1)
+		
+	)
 
 	
 	# Initialize random number generator
@@ -331,7 +355,8 @@ func _ready():
 	area_effect_handler.arena = arena
 
 	connect_to_data_manager()
-
+	
+	
 # ========================
 # Process Functions
 # ========================
@@ -532,19 +557,8 @@ func start_turn():
 	await get_tree().process_frame
 	
 	_load_chess_stats()
-	
-	if hp <= 0.33 * max_hp and faction_bonus_manager.get_bonus_level("dwarf", team) > 0 and faction == "dwarf":
-		var effect_instance = ChessEffect.new()
-		effect_instance.register_buff("melee_attack_damage_modifier", base_armor, 1)
-		effect_instance.register_buff("armor_modifier", -base_armor, 999)
-		effect_instance.register_buff("life_steal_rate_modifier", faction_bonus_manager.get_bonus_level("dwarf", team) * 0.3, 1)
-		# effect_instance.stunned_duration = spell_duration
-		effect_instance.effect_name = "Berserker"
-		effect_instance.effect_type = "Buff"
-		effect_instance.effect_applier = "Faction Bonus"
-		effect_handler.add_to_effect_array(effect_instance)
-		effect_handler.add_child(effect_instance)
-		await effect_animation_display("Berserker", arena, get_current_tile(self)[1], "Center")
+
+	dwarf_path2_bonus()
 
 	update_effect()
 
@@ -652,23 +666,9 @@ func _handle_action():
 
 	move_timer.stop()
 	action_started.emit(self)
-	
-	for offset_index in [Vector2i(-1, -1), Vector2i(-1, 1), Vector2i(1, -1), Vector2i(1, 1)]:
-		if arena.is_tile_in_bounds(offset_index + get_current_tile(self)[1]) and DataManagerSingleton.check_obstacle_valid(arena.unit_grid.units[offset_index + get_current_tile(self)[1]]):
-			var neighbor_chess = arena.unit_grid.units[offset_index + get_current_tile(self)[1]]
-			if neighbor_chess.team == team and neighbor_chess.faction == "dwarf" and faction == "dwarf" and total_movement == 0 and faction_bonus_manager.get_bonus_level("dwarf", team) > 0:
-				var effect_instance = ChessEffect.new()
-				effect_instance.register_buff("armor_modifier", faction_bonus_manager.get_bonus_level("dwarf", team) * 2 , 1)
-				# effect_instance.stunned_duration = spell_duration
-				effect_instance.effect_name = "Fortress"
-				effect_instance.effect_type = "Buff"
-				effect_instance.effect_applier = "Faction Bonus"
-				effect_handler.add_to_effect_array(effect_instance)
-				effect_handler.add_child(effect_instance)
-				await effect_animation_display("Fortress", arena, get_current_tile(self)[1], "Center")
-				break
-				
-	# TODO wait add single effect update
+
+	await dwarf_path1_bonus()
+	await elf_path1_bonus()
 
 	var current_tile = get_current_tile(self)[1]
 		
@@ -787,6 +787,8 @@ func _handle_attack():
 				handle_special_effect(chess_target, self)
 				
 				if faction_bonus_manager.get_bonus_level("elf", team) > 1 and target_evased_attack and chess_target.faction == "elf" :
+					await elf_path3_bonus()
+				elif randf() >= 0.9:
 					await chess_target.handle_free_strike(self)
 					
 
@@ -802,7 +804,9 @@ func _handle_attack():
 
 				handle_special_effect(chess_target, self)
 				
-				if faction_bonus_manager.get_bonus_level("elf", team) > 1 and target_evased_attack and chess_target.faction == "elf" :
+				if faction_bonus_manager.get_bonus_level("elf", chess_target.team) > 1 and chess_target.faction == "elf" :
+					await elf_path3_bonus()
+				elif randf() >= 0.9:
 					await chess_target.handle_free_strike(self)
 
 			else:
@@ -1197,21 +1201,11 @@ func update_effect():
 	
 	effect_handler.turn_start_timeout_check()
 	
-	elf_bonus_level = faction_bonus_manager.get_bonus_level(faction, team)
-	
-	for effect_index in effect_handler.effect_list:
-		if effect_index.effect_applier == "Elf Faction Bonus":
-			elf_bonus_level = min(int(effect_index.effect_name.right(1)), elf_bonus_level)
-			break
-	
-	if  elf_bonus_level > 0 and faction == "elf":
-		base_melee_damage = max(5, floor(1.0 * base_melee_damage / (elf_bonus_level + 1)))
-		base_ranged_damage = max(5, floor(1.0 * base_ranged_damage / (elf_bonus_level + 1)))
-		base_attack_speed = base_attack_speed + elf_bonus_level
-	
 	critical_rate = base_critical_rate + effect_handler.critical_rate_modifier
+	critical_damage = base_critical_damage + effect_handler.critical_damage_modifier
 	evasion_rate = base_evasion_rate + effect_handler.evasion_rate_modifier
 	life_steal_rate = base_life_steal_rate + effect_handler.life_steal_rate_modifier
+	reflect_damage = base_reflect_damage + effect_handler.reflect_damage_modifier
 
 	if effect_handler.continuous_hp_modifier >= 0:
 		_apply_heal(self, max(0, effect_handler.continuous_hp_modifier))
@@ -1352,6 +1346,65 @@ func handle_free_strike(target: Obstacle):
 	change_target_to(previous_target)
 	return
 	
+func elf_path1_bonus():
+	 var bonus_level = faction_bonus_manager.get_bonus_level("elf", team)
+	
+	if  bonus_level > 0 and faction == "elf":
+
+		var effect_instance = ChessEffect.new()
+		obstacle.effect_handler.add_child(effect_instance)
+		effect_instance.register_buff("melee_attack_damage_modifier", -1.0 * (base_melee_damage/(bonus_level + 1)), 999)
+		effect_instance.register_buff("ranged_attack_damage_modifier", -1.0 * (base_ranged_damage/(bonus_level + 1)), 999)
+		effect_instance.register_buff("attack_speed_modifier", bonus_level, 999)
+		effect_instance.effect_name = "Swift - Level " + str(bonus_level)
+		effect_instance.effect_type = "Faction Bonus"
+		effect_instance.effect_applier = "Elf path1 Faction Bonus"
+		obstacle.effect_handler.add_to_effect_array(effect_instance)
+		await effect_animation_display("Fortress", arena, get_current_tile(self)[1], "Center")
+		effect_handler.active_single_effect(effect_instance)
+
+func elf_path3_bonus():
+	 var bonus_level = faction_bonus_manager.get_bonus_level("elf", chess_target.team)
+
+	 if bonus_level == 2 and randf() >= 0.5 and target_evased_attack:
+	 	await chess_target.handle_free_strike(self)
+	 elif bonus_level == 3 and randf() >= 0.5:
+	 	await chess_target.handle_free_strike(self)
+
+
+func dwarf_path1_bonus():
+	 var bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
+
+	for offset_index in [Vector2i(-1, 0), Vector2i(1, 0), Vector2i(0, -1), Vector2i(0, 1)]:
+		if arena.is_tile_in_bounds(offset_index + get_current_tile(self)[1]) and DataManagerSingleton.check_obstacle_valid(arena.unit_grid.units[offset_index + get_current_tile(self)[1]]):
+			var neighbor_chess = arena.unit_grid.units[offset_index + get_current_tile(self)[1]]
+			if neighbor_chess.team == team and neighbor_chess.faction == "dwarf" and faction == "dwarf" and total_movement == 0 and bonus_level > 0:
+				var effect_instance = ChessEffect.new()
+				effect_instance.register_buff("armor_modifier", bonus_level * 2 , 1)
+				effect_instance.effect_name = "Fortress"
+				effect_instance.effect_type = "Faction Bonus"
+				effect_instance.effect_applier = "Dwarf path1 Faction Bonus"
+				effect_handler.add_to_effect_array(effect_instance)
+				effect_handler.add_child(effect_instance)
+				await effect_animation_display("Fortress", arena, get_current_tile(self)[1], "Center")
+				effect_handler.active_single_effect(effect_instance)
+				break
+
+func dwarf_path2_bonus():
+	 var bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
+	
+	if hp <= 0.33 * max_hp and bonus_level > 0 and faction == "dwarf":
+		var effect_instance = ChessEffect.new()
+		effect_instance.register_buff("melee_attack_damage_modifier", base_armor * (0.5 + 0.5 * bonus_level), 1)
+		effect_instance.register_buff("armor_modifier", -base_armor, 999)
+		effect_instance.register_buff("life_steal_rate_modifier", bonus_level * 0.3, 1)
+		# effect_instance.stunned_duration = spell_duration
+		effect_instance.effect_name = "Berserker"
+		effect_instance.effect_type = "Faction Bonus"
+		effect_instance.effect_applier = "Dwarf path2 Faction Bonus"
+		effect_handler.add_to_effect_array(effect_instance)
+		effect_handler.add_child(effect_instance)
+		await effect_animation_display("Berserker", arena, get_current_tile(self)[1], "Center")
 
 func sun_strike(strike_count: int) -> bool:
 	var chess_affected := true
@@ -1430,18 +1483,18 @@ func freezing_field(arrow_count: int) -> bool:
 		spell_projectile.damage_type = "Magic_attack"
 		spell_projectile.projectile_hit.connect(
 			func(obstacle, attacker):
-					var effect_instance = ChessEffect.new()
-					obstacle.effect_handler.add_child(effect_instance)
-					effect_instance.register_buff("speed_modifier", -1, 2)
-					# effect_instance.speed_modifier = -1
-					# effect_instance.speed_modifier_duration = 2
-					effect_instance.register_buff("armor_modifier", -3, 2)
-					# effect_instance.armor_modifier = -3
-					# effect_instance.armor_modifier_duration = 2
-					effect_instance.effect_name = "SpellFreezing"
-					effect_instance.effect_type = "Debuff"
-					effect_instance.effect_applier = "Human ArchMage Spell Freezing"
-					obstacle.effect_handler.add_to_effect_array(effect_instance)
+				var effect_instance = ChessEffect.new()
+				obstacle.effect_handler.add_child(effect_instance)
+				effect_instance.register_buff("speed_modifier", -1, 2)
+				# effect_instance.speed_modifier = -1
+				# effect_instance.speed_modifier_duration = 2
+				effect_instance.register_buff("armor_modifier", -3, 2)
+				# effect_instance.armor_modifier = -3
+				# effect_instance.armor_modifier_duration = 2
+				effect_instance.effect_name = "SpellFreezing"
+				effect_instance.effect_type = "Debuff"
+				effect_instance.effect_applier = "Human ArchMage Spell Freezing"
+				obstacle.effect_handler.add_to_effect_array(effect_instance)
 		)
 		arraow_degree += arraow_degree_interval
 

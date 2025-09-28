@@ -19,20 +19,26 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 	if target.effect_handler.is_immunity or (damage_type == "Magic_attack" and target.effect_handler.is_spell_immunity):
 		return
 
-	if target.get("evasion_rate") != null and randf() <= target.evasion_rate and not affix_array.has("ignore_evasion"):
-		target.attack_evased.emit(target, attacker)
-		return
+	if target is Chess:
+		if target.get("evasion_rate") != null and randf() <= target.evasion_rate and not affix_array.has("ignore_evasion"):
+			target.attack_evased.emit(target, attacker)
+			return
 
-	if attacker.get("critical_rate") != null and (randf() <= attacker.critical_rate and damage_type != "Magic_attack" and not target.effect_handler.is_critical_immunity):
-		damage_result *= 2
-		critical_damage = true
+	if attacker is Chess:
+		if attacker.get("critical_rate") != null and (randf() <= attacker.critical_rate and damage_type != "Magic_attack" and not target.effect_handler.is_critical_immunity):
+			damage_result *= attacker.critical_damage
+			critical_damage = true
 
 	if not affix_array.has("ignore_armor") and damage_type != "Magic_attack":
 		damage_result -= target.armor
 		if damage_result < 0:
 			return
 			
-	damage_result = max(damage_result, 1)
+	var elf_bonus_level = attacker.faction_bonus_manager.get_bonus_level("elf", attacker.team) if attacker is Chess else 0
+	var min_damage_value = elf_bonus_level if elf_bonus_level > 0 else 1
+
+	damage_result = max(damage_result, min_damage_value)
+
 	if attacker is Chess:
 		life_steal_result = attacker.life_steal_rate * damage_result
 
@@ -42,6 +48,9 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 		attacker.damage_applied.emit(attacker, target, damage_result)
 
 	target.damage_taken.emit(target, attacker, damage_result)
+
+	if target.reflect_damage > 0 and target is Chess:
+		attacker.damage_taken.emit(attacker, target, target.reflect_damage)
 	
 	if life_steal_result > 0:
 		attacker.take_heal(life_steal_result, attacker)

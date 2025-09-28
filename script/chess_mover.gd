@@ -120,10 +120,38 @@ func _on_chess_drag_started(starting_position: Vector2, status: String, obstacle
 		var tile := play_areas[i].get_tile_from_global(obstacle.global_position)
 		play_areas[i].unit_grid.remove_unit(tile)
 		chess_raised.emit(starting_position, obstacle)	
+			
+	arena.get_node("arena_bound").visible = false
+	bench.get_node("bench_bound").visible = false
+	shop.get_node("shop_bound").visible = false
+	
+	match i:
+		0:
+			arena.get_node("arena_bound").visible = true
+			bench.get_node("bench_bound").visible = true	
+			shop.get_node("shop_bound").visible = false		
+		1:
+			arena.get_node("arena_bound").visible = true
+			bench.get_node("bench_bound").visible = true	
+			shop.get_node("shop_bound").visible = false		
+		2:
+			if obstacle.faction == "villager":
+				bench.get_node("bench_bound").visible = true	
+				shop.get_node("shop_bound").visible = false	
+			else:
+				arena.get_node("arena_bound").visible = true
+				bench.get_node("bench_bound").visible = true	
+				shop.get_node("shop_bound").visible = false		
+				
 		
 		
 func _on_chess_drag_canceled(starting_position: Vector2, status: String, obstacle: Obstacle) -> void:
 	chess_dropped.emit(obstacle)
+	
+	arena.get_node("arena_bounds").visible = false
+	bench.get_node("bench_bounds").visible = false
+	shop.get_node("shop_bounds").visible = false
+	
 	if get_parent().is_game_turn_start:
 		_set_highlighters(false)
 		_reset_chess_to_starting_position(starting_position, obstacle)
@@ -138,6 +166,11 @@ func _on_chess_drag_canceled(starting_position: Vector2, status: String, obstacl
 func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obstacle) -> void:
 
 	chess_dropped.emit(obstacle)
+	
+	
+	arena.get_node("arena_bound").visible = false
+	bench.get_node("bench_bound").visible = false
+	shop.get_node("shop_bound").visible = false
 
 	if get_parent().is_game_turn_start:
 		_set_highlighters(false)
@@ -165,6 +198,10 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 	var old_tile := old_area.get_tile_from_global(starting_position)
 	var new_area := play_areas[drop_area_index]
 	var new_tile := new_area.get_hovered_tile()
+	
+	if drop_area_index == 0 and not new_area.is_tile_in_placeable_bounds(new_tile):
+		_reset_chess_to_starting_position(starting_position, obstacle)	
+		return	
 
 	if (old_area_index == 2 and drop_area_index == 0 and not get_parent().is_game_turn_start) or (old_area_index == 2 and drop_area_index == 1): # buy chesss
 

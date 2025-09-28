@@ -5,12 +5,18 @@ extends Node2D
 const chess_scene = preload("res://scene/chess.tscn")
 const obstacle_scene = preload("res://scene/obstacle.tscn")
 const chess_class = preload("res://script/chess.gd")
+const alternative_choice_scene = preload("res://scene/alternative_choice.tscn")
 
 @onready var arena: PlayArea = %arena
 @onready var bench: PlayArea = %bench
 @onready var shop: PlayArea = %shop
 @onready var arena_unit_grid: UnitGrid = $ArenaUnitGrid
 @onready var bench_unit_grid: UnitGrid = $BenchUnitGrid
+
+@onready var arena_bound: TileMapLayer = $tilemap/arena/arena_bound
+@onready var bench_bound: TileMapLayer = $tilemap/bench/bench_bound
+@onready var shop_bound: TileMapLayer = $tilemap/shop/shop_bound
+
 
 @onready var debug_handler: DebugHandler = %debug_handler
 @onready var chess_mover: ChessMover = %chess_mover
@@ -259,6 +265,10 @@ func _process(delta: float) -> void:
 
 func start_new_game() -> void:
 
+	arena_bound.visible = false
+	bench_bound.visible = false
+	shop_bound.visible = false
+	
 	DataManagerSingleton.load_game_json()
 	DataManagerSingleton.in_game_data = DataManagerSingleton.player_data_template.duplicate()
 
@@ -545,7 +555,7 @@ func save_arena_team():
 				continue
 			for effect_index in current_obstacle.effect_handler.effect_list:
 				if effect_index.effect_type == "PermanentBuff" or effect_index.effect_type == "PermanentDebuff":
-					saved_arena_team[chess_index][3].append(effect_index)
+					saved_arena_team[chess_index][3].append(effect_index.duplicate())
 					
 # Generates random chess based on shop level and rarity weights
 '''func generate_random_chess(generate_level: int, specific_faction: String):'''
@@ -749,6 +759,10 @@ func update_population(forced_update: bool):
 		label_settings.font_color = Color.GREEN
 	label_settings.font_size = 4
 	population_label.label_settings = label_settings
+	if current_population > max_population:
+		game_start_button.disabled = true
+	else:
+		game_start_button.disabled = false
 	faction_bonus_manager.bonus_refresh()
 
 func chess_death_handle(obstacle: Obstacle):
@@ -895,11 +909,25 @@ func check_chess_merge():
 							removed_chess.visible = false
 
 						var upgrade_chess 
-						var merged_level := 2
+						var merged_level = merge_level + 1
 						if DataManagerSingleton.get_chess_data()[merged_chess_faction][merged_chess_name].has("Upgrade_Chess") and merged_chess_faction == "human":
-							merged_chess_name = DataManagerSingleton.get_chess_data()[merged_chess_faction][merged_chess_name]["Upgrade_Chess"]
-							merged_level = 1
-						upgrade_chess= summon_chess(merged_chess_faction, merged_chess_name, merged_level, 1, merged_play_area, merged_tile)
+							
+							var alternative_choice = alternative_choice_scene.instantiate()
+							alternative_choice.get_node("button_container/Button1").text = "Upgrade"
+							alternative_choice.get_node("button_container/Button2").text = "Uplevel"
+							add_child(alternative_choice)
+							await alternative_choice.choice_made
+							alternative_choice.visible = false
+							if alternative_choice.get_meta("choice") == 1:
+								merged_chess_name = DataManagerSingleton.get_chess_data()[merged_chess_faction][merged_chess_name]["Upgrade_Chess"]
+								merged_level = merge_level
+							elif alternative_choice.get_meta("choice") == 2:
+								pass
+							upgrade_chess= summon_chess(merged_chess_faction, merged_chess_name, merged_level, 1, merged_play_area, merged_tile)
+							
+							alternative_choice.queue_free()
+						else:
+							upgrade_chess= summon_chess(merged_chess_faction, merged_chess_name, merged_level, 1, merged_play_area, merged_tile)
 
 						merge_count = 0
 						merge_result = upgrade_chess

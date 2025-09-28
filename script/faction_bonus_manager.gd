@@ -94,6 +94,9 @@ var player_bonus_level_dict_template : Dictionary = {
 }
 var player_bonus_level_dict : Dictionary = {}
 
+func _ready() -> void:
+	player_bonus_level_dict = player_bonus_level_dict_template.duplicate()
+
 func bonus_refresh() -> void:
 
 	for node in faction_container.get_children():
@@ -175,17 +178,35 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 
 			for chess_index in friendly_faction_chess:
 				var effect_instance = ChessEffect.new()
-				#effect_instance.register_buff("evasion_rate_modifier", 0.1 * bonus_level, 999)
-				## effect_instance.evasion_rate_modifier = 0.1 * bonus_level
-				## effect_instance.evasion_rate_modifier_duration = 999
-				#effect_instance.register_buff("critical_rate_modifie", 0.1 * bonus_level, 999)
-				# effect_instance.critical_rate_modifier = 0.1 * bonus_level
-				# effect_instance.critical_rate_modifier_duration = 999
-				effect_instance.register_buff("duration_only", 0, 999)
-				effect_instance.effect_name = "Swift - Level " + str(bonus_level)
+				var critical_damage_bonus 
+				var critical_rate_bonus 
+				match bonus_level:
+					1:
+						critical_damage_bonus = 0
+						critical_rate_bonus = 0.1
+					2:
+						critical_damage_bonus = 1.0
+						critical_rate_bonus = 0.2
+					3:
+						critical_damage_bonus = 2.5
+						critical_rate_bonus = 0.2
+
+				effect_instance.register_buff("critical_rate_modifier", critical_damage_bonus, 999)
+				effect_instance.register_buff("critical_damage_modifier", critical_rate_bonus, 999)
+				effect_instance.effect_name = "Precise - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
-				effect_instance.effect_applier = "Elf Faction Bonus"
-				effect_instance.effect_description = "Friendly faction chesses gain evasion and critical rate boost."
+				effect_instance.effect_applier = "Elf path2 Faction Bonus"
+				effect_instance.effect_description = "Friendly elf chesses gain critical rate and critical damage boost."
+				chess_index.effect_handler.add_to_effect_array(effect_instance)
+				chess_index.effect_handler.add_child(effect_instance)
+
+
+				var effect_instance = ChessEffect.new()
+				effect_instance.register_buff("evasion_rate_modifier", bonus_level * 0.1, 999)
+				effect_instance.effect_name = "Gentle - Level " + str(bonus_level)
+				effect_instance.effect_type = "Faction Bonus"
+				effect_instance.effect_applier = "Elf path3 Faction Bonus"
+				effect_instance.effect_description = "Friendly elf chesses gain critical rate boost."
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
 
@@ -384,7 +405,7 @@ func clean_chess_faction_bonus(chess: Obstacle) -> void:
 
 	chess.effect_handler.effect_list = []
 	for effect_index in chess_effect_list:
-		if not effect_index.effect_applier == "Faction Bonus":
+		if not effect_index.effect_applier.contains("Faction Bonus"):
 			chess.effect_handler.add_to_effect_array(effect_index)
 
 	chess.effect_handler.refresh_effects()

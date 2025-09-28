@@ -181,7 +181,8 @@ func get_current_difficulty():
 	return shop_level * 200
 
 func get_max_population():
-	return 999 if shop_level == 7 else shop_level + 2
+	var max_population = 999 if shop_level == 7 else (shop_level + 2 + get_parent().faction_bonus_manager.get_bonus_level("human", 1))
+	return max_population
 
 func can_pay_chess(chess: Obstacle) -> bool:
 	if get_chess_buy_price(chess) > remain_coins:

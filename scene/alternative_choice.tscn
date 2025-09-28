@@ -1,0 +1,47 @@
+[gd_scene load_steps=4 format=4 uid="uid://eaa0usuqt6y0"]
+
+[ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="1_o2ogx"]
+[ext_resource type="Script" uid="uid://bh3lrdhrgmbga" path="res://script/alternative_choice.gd" id="1_oxf70"]
+[ext_resource type="FontFile" uid="uid://bfd8lxmo20ddl" path="res://asset/font/Everyday_Tiny_Bold.ttf" id="2_oxf70"]
+
+[node name="AlternativeChoice" type="Node2D"]
+z_index = 500
+script = ExtResource("1_oxf70")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAJAAgAAAAiABAAAAAKAAgAAAAhABEAAAALAAgAAAAhABAAAAAJAAcAAAAgABAAAAAJAAkAAAAgABAAAAAJAAoAAAAhAA8AAAAJAAsAAAAiABAAAAAKAAcAAAAhAA8AAAAKAAkAAAAiABAAAAAKAAoAAAAhAA8AAAAKAAsAAAAgABAAAAALAAcAAAAgABAAAAALAAkAAAAhABAAAAALAAoAAAAhABEAAAALAAsAAAAiABAAAAAMAAcAAAAiABAAAAAMAAgAAAAgABAAAAAMAAkAAAAhAA8AAAAMAAoAAAAhABEAAAAMAAsAAAAiABAAAAANAAcAAAAgABAAAAANAAgAAAAhABAAAAANAAkAAAAgABAAAAANAAoAAAAhABEAAAANAAsAAAAhAA8AAAAOAAcAAAAhABAAAAAOAAgAAAAiABAAAAAOAAkAAAAhABEAAAAOAAoAAAAgABAAAAAOAAsAAAAhABAAAAAPAAcAAAAgABAAAAAPAAgAAAAgABAAAAAPAAkAAAAhABEAAAAPAAoAAAAhAA8AAAAPAAsAAAAiABAAAAAQAAcAAAAiABAAAAAQAAgAAAAiABAAAAAQAAkAAAAhAA8AAAAQAAoAAAAhAA8AAAAQAAsAAAAhAA8AAAARAAcAAAAgABAAAAARAAgAAAAhABAAAAARAAkAAAAhABAAAAARAAoAAAAhABAAAAARAAsAAAAhAA8AAAASAAcAAAAgABAAAAASAAgAAAAiABAAAAASAAkAAAAhABAAAAASAAoAAAAhABEAAAASAAsAAAAhAA8AAAATAAcAAAAiABAAAAATAAgAAAAgABAAAAATAAkAAAAhABEAAAATAAoAAAAhABAAAAATAAsAAAAhABEAAAAUAAcAAAAiABAAAAAUAAgAAAAgABAAAAAUAAkAAAAhABEAAAAUAAoAAAAhAA8AAAAUAAsAAAAgABAAAAAVAAcAAAAhAA8AAAAVAAgAAAAgABAAAAAVAAkAAAAhAA8AAAAVAAoAAAAgABAAAAAVAAsAAAAgABAAAAAWAAcAAAAhABEAAAAWAAgAAAAhABEAAAAWAAkAAAAiABAAAAAWAAoAAAAhAA8AAAAWAAsAAAAhABAAAAAXAAcAAAAiABAAAAAXAAgAAAAhABEAAAAXAAkAAAAhAA8AAAAXAAoAAAAhABAAAAAXAAsAAAAhABAAAAAYAAcAAAAhAA8AAAAYAAgAAAAgABAAAAAYAAkAAAAiABAAAAAYAAoAAAAiABAAAAAYAAsAAAAhABAAAAA=")
+tile_set = ExtResource("1_o2ogx")
+
+[node name="button_container" type="HBoxContainer" parent="."]
+offset_left = 184.0
+offset_top = 159.0
+offset_right = 361.0
+offset_bottom = 183.0
+
+[node name="Button1" type="Button" parent="button_container"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_oxf70")
+theme_override_font_sizes/font_size = 8
+text = "Upgrade"
+
+[node name="Button2" type="Button" parent="button_container"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_oxf70")
+theme_override_font_sizes/font_size = 8
+text = "Uplevel"
+
+[node name="Label" type="Label" parent="."]
+offset_left = 173.0
+offset_top = 120.0
+offset_right = 370.0
+offset_bottom = 159.0
+theme_override_fonts/font = ExtResource("2_oxf70")
+theme_override_font_sizes/font_size = 12
+text = "Choose"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="pressed" from="button_container/Button1" to="." method="_on_button_1_pressed"]
+[connection signal="pressed" from="button_container/Button2" to="." method="_on_button_2_pressed"]
