@@ -201,7 +201,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				chess_index.effect_handler.add_child(effect_instance)
 
 
-				var effect_instance = ChessEffect.new()
+				effect_instance = ChessEffect.new()
 				effect_instance.register_buff("evasion_rate_modifier", bonus_level * 0.1, 999)
 				effect_instance.effect_name = "Gentle - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"

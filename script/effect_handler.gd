@@ -99,7 +99,7 @@ func refresh_effects():
 	max_mp_modifier = 0
 	max_hp_modifier = 0
 	critical_rate_modifier = 0
-	critical_rate_damage_modifier = 0
+	critical_damage_modifier = 0
 	evasion_rate_modifier = 0
 	life_steal_rate_modifier = 0
 	reflect_damage_modifier = 0
@@ -151,8 +151,8 @@ func active_single_effect(chess_effect: ChessEffect):
 		else chess_effect.buff_dict["max_hp_modifier"])
 	critical_rate_modifier = critical_rate_modifier + (max(0, chess_effect.buff_dict["critical_rate_modifier"]) if is_spell_immunity 
 		else chess_effect.buff_dict["critical_rate_modifier"])
-	critical_damage_modifier = critical_rate_damage_modifier + (max(0, chess_effect.buff_dict["critical_rate_damage_modifier"]) if is_spell_immunity 
-		else chess_effect.buff_dict["critical_rate_damage_modifier"])
+	critical_damage_modifier = critical_damage_modifier + (max(0, chess_effect.buff_dict["critical_damage_modifier"]) if is_spell_immunity 
+		else chess_effect.buff_dict["critical_damage_modifier"])
 	evasion_rate_modifier = evasion_rate_modifier + (max(0, chess_effect.buff_dict["evasion_rate_modifier"]) if is_spell_immunity 
 		else chess_effect.buff_dict["evasion_rate_modifier"])
 	life_steal_rate_modifier = life_steal_rate_modifier + (max(0, chess_effect.buff_dict["life_steal_rate_modifier"]) if is_spell_immunity 

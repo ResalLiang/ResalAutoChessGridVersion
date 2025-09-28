@@ -63,7 +63,9 @@ var base_attack_speed := 1 # Attack speed (attacks per turn)
 var base_attack_range := 20 # Attack range (pixels)
 var base_evasion_rate := 0.10
 var base_critical_rate := 0.10
+var base_critical_damage := 2.0
 var base_life_steal_rate := 0.0
+var base_reflect_damage := 0.0
 #var base_armor := 0
 #
 #var hp: int = base_max_hp:
@@ -1347,33 +1349,33 @@ func handle_free_strike(target: Obstacle):
 	return
 	
 func elf_path1_bonus():
-	 var bonus_level = faction_bonus_manager.get_bonus_level("elf", team)
-	
+	var bonus_level = faction_bonus_manager.get_bonus_level("elf", team)
+
 	if  bonus_level > 0 and faction == "elf":
 
 		var effect_instance = ChessEffect.new()
-		obstacle.effect_handler.add_child(effect_instance)
+		effect_handler.add_child(effect_instance)
 		effect_instance.register_buff("melee_attack_damage_modifier", -1.0 * (base_melee_damage/(bonus_level + 1)), 999)
 		effect_instance.register_buff("ranged_attack_damage_modifier", -1.0 * (base_ranged_damage/(bonus_level + 1)), 999)
 		effect_instance.register_buff("attack_speed_modifier", bonus_level, 999)
 		effect_instance.effect_name = "Swift - Level " + str(bonus_level)
 		effect_instance.effect_type = "Faction Bonus"
 		effect_instance.effect_applier = "Elf path1 Faction Bonus"
-		obstacle.effect_handler.add_to_effect_array(effect_instance)
+		effect_handler.add_to_effect_array(effect_instance)
 		await effect_animation_display("Fortress", arena, get_current_tile(self)[1], "Center")
 		effect_handler.active_single_effect(effect_instance)
 
 func elf_path3_bonus():
-	 var bonus_level = faction_bonus_manager.get_bonus_level("elf", chess_target.team)
+	var bonus_level = faction_bonus_manager.get_bonus_level("elf", chess_target.team)
 
-	 if bonus_level == 2 and randf() >= 0.5 and target_evased_attack:
-	 	await chess_target.handle_free_strike(self)
-	 elif bonus_level == 3 and randf() >= 0.5:
-	 	await chess_target.handle_free_strike(self)
+	if bonus_level == 2 and randf() >= 0.5 and target_evased_attack:
+		await chess_target.handle_free_strike(self)
+	elif bonus_level == 3 and randf() >= 0.5:
+		await chess_target.handle_free_strike(self)
 
 
 func dwarf_path1_bonus():
-	 var bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
+	var bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
 
 	for offset_index in [Vector2i(-1, 0), Vector2i(1, 0), Vector2i(0, -1), Vector2i(0, 1)]:
 		if arena.is_tile_in_bounds(offset_index + get_current_tile(self)[1]) and DataManagerSingleton.check_obstacle_valid(arena.unit_grid.units[offset_index + get_current_tile(self)[1]]):
@@ -1391,8 +1393,8 @@ func dwarf_path1_bonus():
 				break
 
 func dwarf_path2_bonus():
-	 var bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
-	
+	var bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
+
 	if hp <= 0.33 * max_hp and bonus_level > 0 and faction == "dwarf":
 		var effect_instance = ChessEffect.new()
 		effect_instance.register_buff("melee_attack_damage_modifier", base_armor * (0.5 + 0.5 * bonus_level), 1)
