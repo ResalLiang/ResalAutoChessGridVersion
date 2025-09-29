@@ -119,6 +119,51 @@ const RARITY_WEIGHTS = {
 	}
 }
 
+const RARITY_WEIGHTS_UPDATE = {
+	1: {
+		"Common": 100,
+		"Uncommon": 100,
+		"Rare": 100,
+		"Epic": 100,
+		"Legendary": 100
+	},
+	2: {
+		"Common": 80,
+		"Uncommon": 100,
+		"Rare": 100,
+		"Epic": 100,
+		"Legendary": 100
+	},
+	3: {
+		"Common": 60,
+		"Uncommon": 85,
+		"Rare": 100,
+		"Epic": 100,
+		"Legendary": 100
+	},
+	4: {
+		"Common": 45,
+		"Uncommon": 75,
+		"Rare": 100,
+		"Epic": 100,
+		"Legendary": 100
+	},
+	5: {
+		"Common": 35,
+		"Uncommon": 65,
+		"Rare": 90,
+		"Epic": 100,
+		"Legendary": 100
+	},
+	6: {
+		"Common": 30,
+		"Uncommon": 60,
+		"Rare": 85,
+		"Epic": 95,
+		"Legendary": 100
+	}
+}
+
 const RARITY_COUNTS = {
 	"Common": 50,
 	"Uncommon": 40,
@@ -637,6 +682,79 @@ func generate_random_chess(generate_level: int, specific_faction: String):
 	
 	# Should never reach here if candidates exist
 	return ["human", "ShieldMan"]
+'''func generate_random_chess(generate_level: int, specific_faction: String):'''
+func generate_random_chess_update(generate_level: int, specific_faction: String):
+	# --- Existing Chesses Tracking ---
+	# Common: inf; Uncomon: 30; Rare: 20, Epic: 10: Legendary: 10
+	# Count existing chess instances (faction+name pairs)
+
+	if not (DataManagerSingleton.get_chess_data().keys() + ["all", "locked"]).has(specific_faction):
+		return ["human", "ShieldMan"]
+
+	if [1, 2, 3, 4, 5, 6].has(generate_level):
+		return ["human", "ShieldMan"]
+
+	var existing_chess_counts := {}
+	for chess_index in (arena.unit_grid.get_all_units() + bench.unit_grid.get_all_units()):
+		if chess_index is Chess:
+			var composite_key = "%s_%s" % [chess_index.faction, chess_index.chess_name]
+			existing_chess_counts[composite_key] = existing_chess_counts.get(composite_key, 0) + power(3, chess_index.chess_level - 1)
+
+	var chess_count_dict = {
+		"Uncomon" : 30,
+		"Rare" : 20,
+		"Epic" : 10,
+		"Legendary" : 10
+	}
+
+	var common_chess_pool : Array = []
+	var other_chess_pool : Array = []
+	var forbidden_faction_pool : Array = []
+	match specific_faction:
+		"all":
+			forbidden_faction_pool.append("villager")
+		"locked":
+			for faction_index in DataManagerSingleton.get_chess_data().keys():
+				if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"][faction]:
+					forbidden_faction_pool.append(faction_index)
+			forbidden_faction_pool.append("villager")
+		_:
+			for faction_index in DataManagerSingleton.get_chess_data().keys():
+				if faction_index != specific_faction:
+					forbidden_faction_pool.append(faction_index)
+
+	for faction_index in DataManagerSingleton.get_chess_data().keys():
+		if forbidden_faction_pool.has(faction_index):
+			continue
+
+		for chess_index in DataManagerSingleton.get_chess_data()[faction_index].keys():
+			var current_chess = DataManagerSingleton.get_chess_data()[faction_index][chess_index]
+			if current_chess["speed"] == 0 and faction_index != "villager":
+				continue
+
+			var composite_key = "%s_%s" % [faction_index, chess_index]
+			if current_chess["rarity"] == "Common":
+				common_chess_pool.append(composite_key)
+			else:
+				var pool_count = max(0, chess_count_dict[current_chess["rarity"]] - existing_chess_counts[composite_key])
+				for i in range(pool_count):
+					other_chess_pool.append(composite_key)
+
+	common_chess_pool.shuffle()
+	other_chess_pool.shuffle()
+
+	var current_rarity_weight = RARITY_WEIGHTS_UPDATE[generate_level]
+	var current_rarity
+
+	var rand_for_rarity = randi_range(0, 99)
+	for rarity_index in current_rarity_weight.keys():
+		if rand_for_rarity <= current_rarity_weight[rarity_index]:
+			current_rarity = rarity_index
+			break
+	if current_rarity == "Common":
+		return [common_chess_pool.front().split("_", true, 1)[0], common_chess_pool.front().split("_", true, 1)[1]]
+	else:
+		return [other_chess_pool.front().split("_", true, 1)[0], other_chess_pool.front().split("_", true, 1)[1]]
 
 
 func chess_appearance(play_area: PlayArea):
