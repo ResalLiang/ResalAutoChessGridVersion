@@ -257,11 +257,12 @@ func _ready():
 		
 	var effect_instance = ChessEffect.new()
 	effect_instance.register_buff("duration_only", 0, 999)
-	# effect_instance.stunned_duration = spell_duration
 	effect_instance.effect_name = "KillCount"
 	effect_instance.effect_type = "PermanentBuff"
 	effect_instance.effect_applier = "System"
-	effect_instance.effect_description = "Total kill: " + "0"
+	if effect_instance.get_meta("kill_count") == null:
+		effect_instance.set_meta("kill_count", 0)
+	effect_instance.effect_description = "Total kill: " + str(effect_instance.get_meta("kill_count"))
 	effect_handler.add_to_effect_array(effect_instance)
 	effect_handler.add_child(effect_instance)
 	
@@ -296,9 +297,10 @@ func _ready():
 				return
 			for effect_index in effect_handler.effect_list:
 				if effect_index.effect_name == "KillCount":
-					var current_kill_count = int(effect_index.effect_description.rsplit(" ", false, 1)[-1])
-					effect_index.effect_description = "Total kill: " + str(current_kill_count + 1)
-		
+					var current_kill_count = int(effect_index.get_meta("kill_count"))
+					effect_index.set_meta("kill_count", current_kill_count + 1)
+					effect_index.effect_description = "Total kill: " + str(effect_index.get_meta("kill_count"))
+					break		
 	)
 
 	
@@ -535,6 +537,20 @@ func _load_chess_stats():
 			base_ranged_damage = stats["ranged_attack_damage"]
 			decline_ratio = stats["decline_ratio"]
 			projectile_penetration = stats["projectile_penetration"]
+
+
+		match chess_level:
+			1:
+				pass
+			2:
+				base_max_hp *= 1.2
+				base_melee_damage *= 1.2
+				base_ranged_damage *= 1.2
+			3:
+				base_speed += 1
+				base_max_hp *= 1.5
+				base_melee_damage *= 1.5
+				base_ranged_damage *= 1.5
 			
 		if stats.has("skill_name"):
 			skill_name = stats["skill_name"]
@@ -562,6 +578,8 @@ func start_turn():
 
 	dwarf_path2_bonus()
 
+	dwarf_path3_bonus()
+
 	update_effect()
 
 	remain_attack_count = attack_speed
@@ -586,6 +604,11 @@ func _handle_movement():
 		return
 
 	var current_tile = get_current_tile(self)[1]
+
+	if faction_bonus_manager.get_bonus_level("dwarf", team) > 0:
+		astar_grid.diagonal_mode = 0
+	else:
+		astar_grid.diagonal_mode = 2
 
 	move_started.emit(self, current_tile)
 	#if current_play_area == play_areas.playarea_arena:
@@ -616,11 +639,6 @@ func _handle_movement():
 		else:
 			var move_steps = min(speed, move_path.size() - 1)
 
-			# if position_tween:
-			# 	position_tween.kill() # Abort the previous animation.
-			# position_tween = create_tween()
-			# position_tween.connect("finished", _on_move_completed)
-
 			remain_step = move_steps
 			for current_step in range(move_steps):
 				var target_pos = move_path[current_step + 1] + grid_offset
@@ -631,22 +649,30 @@ func _handle_movement():
 				var previous_tile = get_current_tile(self)[1]
 				var neighbor_chess
 				for tile_offset_index in [Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 1), Vector2i(-1, 0), Vector2i(0, -1), Vector2i(1, -1)]:
+
 					if not arena.is_tile_in_bounds(previous_tile + tile_offset_index):
 						continue
-					if not DataManagerSingleton.check_obstacle_valid(arena.unit_grid.units[previous_tile + tile_offset_index]):
+
+					if not DataManagerSingleton.check_chess_valid(arena.unit_grid.units[previous_tile + tile_offset_index]):
 						continue
+
 					neighbor_chess = arena.unit_grid.units[previous_tile + tile_offset_index]
+
 					if neighbor_chess.team == team:
 						continue
+
 					if not neighbor_chess.animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
 						continue
+
 					if position.distance_to(neighbor_chess.position) <= min(neighbor_chess.attack_range, ranged_attack_threshold) and target_pos.distance_to(neighbor_chess.position) > min(neighbor_chess.attack_range, ranged_attack_threshold):
-						await neighbor_chess.handle_free_strike(self)
+						await neighbor_chess.handle_free_strike(self) #leave attack range free strike
+
+					if neighbor_chess.role == "pikeman" and faction_bonus_manager.get_bonus_level("pikeman", neighbor_chess.team) > 0:
+						if position.distance_to(neighbor_chess.position) > min(neighbor_chess.attack_range, ranged_attack_threshold) and target_pos.distance_to(neighbor_chess.position) <= min(neighbor_chess.attack_range, ranged_attack_threshold):
+							await neighbor_chess.handle_free_strike(self) #enter attack range free strike
 
 				await chess_mover.tween_move_chess(self, arena, target_pos)
 
-				# position_tween.tween_property(self, "_position", target_pos, 0.1)
-				# tween_moving.emit(self, _position, target_pos)
 				remain_step -= 1
 				total_movement += 1
 
@@ -728,6 +754,8 @@ func _handle_attack():
 		action_timer.start()
 		return
 
+	warrior_bonus()
+
 	#Placeholder for chess passive ability on attack
 	var current_distance_to_target = global_position.distance_to(chess_target.global_position)
 	remain_attack_count -= 1
@@ -757,18 +785,14 @@ func _handle_attack():
 				ranged_attack_animation.play("ranged_attack")
 				ranged_attack_started.emit(self)
 				deal_damage.emit(self, chess_target, damage, "Ranged_attack", [])
-				handle_special_effect(chess_target, self)
+				if not target_evased_attack:
+					await handle_special_effect(chess_target, self)
 
 		elif current_distance_to_target < ranged_attack_threshold or (has_melee_target() is Obstacle and current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack")):
 			
-			if role == "knight" and total_movement >=5:
-				var knight_level := 0
-				for effect_index in effect_handler.effect_list:
-					if effect_index.effect_name.get_slice(" ", 0) == "KnightSkill":
-						knight_level = max(knight_level, int(effect_index.effect_name.get_slice(" ", -1)))
-				damage = melee_damage * (1 + 0.15 * knight_level)
-			else:
-				damage = melee_damage
+			knight_bonus()
+
+			damage = melee_damage
 
 			if current_distance_to_target >= ranged_attack_threshold:
 				change_target_to(has_melee_target()) 
@@ -786,7 +810,8 @@ func _handle_attack():
 				melee_attack_started.emit(self)
 				await melee_attack_animation.animation_finished
 				
-				handle_special_effect(chess_target, self)
+				if not target_evased_attack:
+					await handle_special_effect(chess_target, self)
 				
 				if faction_bonus_manager.get_bonus_level("elf", team) > 1 and target_evased_attack and chess_target.faction == "elf" :
 					await elf_path3_bonus()
@@ -804,7 +829,8 @@ func _handle_attack():
 				melee_attack_started.emit(self)
 				deal_damage.emit(self, chess_target, damage, "melee_attack", [])	
 
-				handle_special_effect(chess_target, self)
+				if not target_evased_attack:
+					await handle_special_effect(chess_target, self)
 				
 				if faction_bonus_manager.get_bonus_level("elf", chess_target.team) > 1 and chess_target.faction == "elf" :
 					await elf_path3_bonus()
@@ -830,6 +856,7 @@ func _handle_attack():
 		action_timer.start()
 
 	if remain_attack_count > 0:
+		await get_tree().create_timer(0.2).timeout
 		await _handle_attack()
 	else:
 		status = STATUS.IDLE
@@ -848,11 +875,7 @@ func _handle_targeting():
 	# Clear invalid targets (dead or invalid instances)
 	attack_target_line.visible = false
 	change_target_to(_find_new_target(chess_target_choice))
-	#chess_target = _find_new_target(chess_target_choice)
-	#if chess_target:
-		#chess_target.is_died.connect(handle_target_death)
 	attack_target_line.visible = true
-	target_changed = true
 		
 # Find a new target based on selection strategy
 func _find_new_target(target_choice) -> Obstacle:
@@ -872,12 +895,12 @@ func _find_new_target(target_choice) -> Obstacle:
 		TARGET_CHOICE.FAR:
 			if enemy_chesses.size() > 0:
 				enemy_chesses.sort_custom(func(a, b): return _compare_distance)
-				new_target = enemy_chesses.back()  # Farthest enemy
+				new_target = enemy_chesses.front()  # Farthest enemy
 		
 		TARGET_CHOICE.CLOSE:
 			if enemy_chesses.size() > 0:
 				enemy_chesses.sort_custom(func(a, b): return _compare_distance)
-				new_target = enemy_chesses.front() # Closest enemy
+				new_target = enemy_chesses.back() # Closest enemy
 		
 		TARGET_CHOICE.STRONG:
 			if enemy_chesses.size() > 0:
@@ -911,6 +934,9 @@ func change_target_to(target: Obstacle):
 		if chess_target.attack_evased.is_connected(handle_target_evased_attack):
 			chess_target.attack_evased.disconnect(handle_target_evased_attack)
 		
+	if chess_target != target and not is_active:
+		target_changed = true
+
 	if DataManagerSingleton.check_obstacle_valid(target):
 		chess_target = target
 		if chess_target.has_signal("is_died"):
@@ -926,15 +952,15 @@ func handle_target_evased_attack(target: Obstacle, attacker: Obstacle):
 func _compare_distance(a: Obstacle, b: Obstacle) -> bool:
 
 	# handling taunt
-	if (a.buffer_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range) and (not b.buffer_handler.is_taunt or b.global_position.distance_to(global_position) > taunt_range):
+	if (a.effect_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range) and (not b.effect_handler.is_taunt or b.global_position.distance_to(global_position) > taunt_range):
 		return true
-	if (not a.buffer_handler.is_taunt or a.global_position.distance_to(global_position) > taunt_range) and (b.buffer_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range):
+	if (not a.effect_handler.is_taunt or a.global_position.distance_to(global_position) > taunt_range) and (b.effect_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range):
 		return false
 		
 	# handling stealth chess
-	if a.buffer_handler.is_stealth and not b.buffer_handler.is_stealth:
+	if a.effect_handler.is_stealth and not b.effect_handler.is_stealth:
 		return false
-	if not a.buffer_handler.is_stealth and b.buffer_handler.is_stealth:
+	if not a.effect_handler.is_stealth and b.effect_handler.is_stealth:
 		return true
 	
 	return a.global_position.distance_to(global_position) > b.global_position.distance_to(global_position)
@@ -942,15 +968,15 @@ func _compare_distance(a: Obstacle, b: Obstacle) -> bool:
 func _compare_hp(a: Obstacle, b: Obstacle) -> bool:
 
 	# handling taunt
-	if (a.buffer_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range) and (not b.buffer_handler.is_taunt or b.global_position.distance_to(global_position) > taunt_range):
+	if (a.effect_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range) and (not b.effect_handler.is_taunt or b.global_position.distance_to(global_position) > taunt_range):
 		return true
-	if (not a.buffer_handler.is_taunt or a.global_position.distance_to(global_position) > taunt_range) and (b.buffer_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range):
+	if (not a.effect_handler.is_taunt or a.global_position.distance_to(global_position) > taunt_range) and (b.effect_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range):
 		return false
 		
 	# handling stealth chess
-	if a.buffer_handler.is_stealth and not b.buffer_handler.is_stealth:
+	if a.effect_handler.is_stealth and not b.effect_handler.is_stealth:
 		return false
-	if not a.buffer_handler.is_stealth and b.buffer_handler.is_stealth:
+	if not a.effect_handler.is_stealth and b.effect_handler.is_stealth:
 		return true
 	
 	return a.max_hp > b.max_hp
@@ -958,15 +984,15 @@ func _compare_hp(a: Obstacle, b: Obstacle) -> bool:
 func _compare_damage(a: Obstacle, b: Obstacle) -> bool:
 
 	# handling taunt
-	if (a.buffer_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range) and (not b.buffer_handler.is_taunt or b.global_position.distance_to(global_position) > taunt_range):
+	if (a.effect_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range) and (not b.effect_handler.is_taunt or b.global_position.distance_to(global_position) > taunt_range):
 		return true
-	if (not a.buffer_handler.is_taunt or a.global_position.distance_to(global_position) > taunt_range) and (b.buffer_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range):
+	if (not a.effect_handler.is_taunt or a.global_position.distance_to(global_position) > taunt_range) and (b.effect_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range):
 		return false
 		
 	# handling stealth chess
-	if a.buffer_handler.is_stealth and not b.buffer_handler.is_stealth:
+	if a.effect_handler.is_stealth and not b.effect_handler.is_stealth:
 		return false
-	if not a.buffer_handler.is_stealth and b.buffer_handler.is_stealth:
+	if not a.effect_handler.is_stealth and b.effect_handler.is_stealth:
 		return true
 	
 	return a.damage > b.damage
@@ -1101,10 +1127,12 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 		cast_spell_result = await sun_strike(3)
 	elif chess_name == "ArchMage" and faction == "human":
 		cast_spell_result = freezing_field(20)
-	elif chess_name == "Queen" and faction == "elf":
-		cast_spell_result = elf_queen_stun(2, 5)
 	elif chess_name == "Mage" and faction == "elf":
-		cast_spell_result = elf_mage_damage(spell_tgt, 0.2, 10, 80)
+		cast_spell_result = await sun_strike(3)
+		# cast_spell_result = elf_mage_damage(spell_tgt, 0.2, 10, 80)
+	elif chess_name == "Queen" and faction == "elf":
+		cast_spell_result = freezing_field(20)
+		# cast_spell_result = elf_queen_stun(2, 5)
 	elif chess_name == "Necromancer" and faction == "undead":
 		cast_spell_result = await undead_necromancer_summon("Skeleton", 3)
 	elif chess_name == "Demolitionist" and faction == "dwarf":
@@ -1120,6 +1148,9 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 
 
 func chess_apply_damage():
+	if not is_active:
+		deal_damage.emit(self, chess_target, damage, "Free_strike", [])
+
 	if status == STATUS.RANGED_ATTACK:
 		deal_damage.emit(self, chess_target, damage, "Ranged_attack", [])
 	elif status == STATUS.MELEE_ATTACK or not is_active:
@@ -1253,7 +1284,39 @@ func handle_spell_target_death():
 
 func handle_special_effect(target: Obstacle, attacker: Obstacle):
 	#Placeholder for chess passive ability on special attack effect
-	pass
+	if attacker.chess_name == "KingMan" and attacker.faction == "human" and attacker.is_active:
+		for tile_offset_index in[Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 1), Vector2i(-1, 0), Vector2i(0, -1), Vector2i(1, -1)]:
+			var current_tile = get_current_tile(attacker)[1]
+			if arena.unit_grid.is_tile_in_bounds(current_tile + tile_offset_index) and not arena.unit_grid.is_tile_occupied(current_tile + tile_offset_index):					
+				var game_root_scene = arena.get_parent().get_parent()
+				var summoned_character = game_root_scene.summon_chess(target.faction, target.chess_name, 1, team, arena, current_tile + tile_offset_index)
+
+				summoned_character.is_phantom = true
+
+				if summoned_character.animated_sprite_2d.sprite_frames.has_animation("rise") :
+					summoned_character.animated_sprite_2d.play("rise")
+					await summoned_character.animated_sprite_2d.animation_finished
+				else:
+					summoned_character.animated_sprite_2d.play_backwards("die")
+					await summoned_character.animated_sprite_2d.animation_finished
+				break
+	elif attacker.chess_name == "PrinceMan" and attacker.faction == "human" and attacker.is_active:
+		for tile_offset_index in[Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 1), Vector2i(-1, 0), Vector2i(0, -1), Vector2i(1, -1)]:
+			var current_tile = get_current_tile(attacker)[1]
+			if arena.unit_grid.is_tile_in_bounds(current_tile + tile_offset_index) and not arena.unit_grid.is_tile_occupied(current_tile + tile_offset_index):					
+				var game_root_scene = arena.get_parent().get_parent()
+				var summoned_character = game_root_scene.summon_chess(target.faction, attacker.chess_name, 1, team, arena, current_tile + tile_offset_index)
+
+				summoned_character.is_phantom = true
+				
+				if summoned_character.animated_sprite_2d.sprite_frames.has_animation("rise") :
+					summoned_character.animated_sprite_2d.play("rise")
+					await summoned_character.animated_sprite_2d.animation_finished
+				else:
+					summoned_character.animated_sprite_2d.play_backwards("die")
+					await summoned_character.animated_sprite_2d.animation_finished
+				break
+
 
 func connect_to_data_manager():
 	# DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["XX"], value)
@@ -1323,26 +1386,32 @@ func handle_free_strike(target: Obstacle):
 		
 	change_target_to(target) 
 
-	if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
-		status = STATUS.MELEE_ATTACK
-		melee_attack_animation.play("melee_attack")
-		melee_attack_started.emit(self)
-		await melee_attack_animation.animation_finished
-		
-		handle_special_effect(target, self)
+	var free_strike_count := 1
 
-	elif animated_sprite_2d.sprite_frames.has_animation("attack"):
-		status = STATUS.MELEE_ATTACK
-		animated_sprite_2d.play("attack")
-		melee_attack_started.emit(self)
-		deal_damage.emit(self, target, damage, "melee_attack", [])	
+	for i in range(free_strike_count):
 
-		handle_special_effect(target, self)
+		if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
+			status = STATUS.MELEE_ATTACK
+			melee_attack_animation.play("melee_attack")
+			melee_attack_started.emit(self)
+			await melee_attack_animation.animation_finished
+			
+			await handle_special_effect(target, self)
 
-	else:
-		# No required attack animation
+		elif animated_sprite_2d.sprite_frames.has_animation("attack"):
+			status = STATUS.MELEE_ATTACK
+			animated_sprite_2d.play("attack")
+			melee_attack_started.emit(self)
+			deal_damage.emit(self, target, damage, "Melee_attack", [])	
 
-		await get_tree().process_frame
+			await handle_special_effect(target, self)
+
+		else:
+			# No required attack animation
+
+			await get_tree().process_frame
+
+		await get_tree().create_timer(0.2).timeout
 
 	status = STATUS.IDLE
 	change_target_to(previous_target)
@@ -1376,37 +1445,113 @@ func elf_path3_bonus():
 
 func dwarf_path1_bonus():
 	var bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
+	var b2b_ally_dwarf := false
+
+	if not (faction == "dwarf" and bonus_level > 0):
+		return
 
 	for offset_index in [Vector2i(-1, 0), Vector2i(1, 0), Vector2i(0, -1), Vector2i(0, 1)]:
-		if arena.is_tile_in_bounds(offset_index + get_current_tile(self)[1]) and DataManagerSingleton.check_obstacle_valid(arena.unit_grid.units[offset_index + get_current_tile(self)[1]]):
+		if arena.is_tile_in_bounds(offset_index + get_current_tile(self)[1]) and DataManagerSingleton.check_chess_valid(arena.unit_grid.units[offset_index + get_current_tile(self)[1]]):
 			var neighbor_chess = arena.unit_grid.units[offset_index + get_current_tile(self)[1]]
-			if neighbor_chess.team == team and neighbor_chess.faction == "dwarf" and faction == "dwarf" and total_movement == 0 and bonus_level > 0:
-				var effect_instance = ChessEffect.new()
-				effect_instance.register_buff("armor_modifier", bonus_level * 2 , 1)
-				effect_instance.effect_name = "Fortress"
-				effect_instance.effect_type = "Faction Bonus"
-				effect_instance.effect_applier = "Dwarf path1 Faction Bonus"
-				effect_handler.add_to_effect_array(effect_instance)
-				effect_handler.add_child(effect_instance)
-				await effect_animation_display("Fortress", arena, get_current_tile(self)[1], "Center")
-				effect_handler.active_single_effect(effect_instance)
+			if neighbor_chess.team == team and neighbor_chess.faction == "dwarf":
+				b2b_ally_dwarf = true
 				break
+	var armor_bonus = 0
+	armor_bonus += (2 * bonus_level)
+
+	if b2b_ally_dwarf:
+		armor_bonus += 2
+
+	if total_movement == 0:
+		armor_bonus += 2
+
+	var effect_instance = ChessEffect.new()
+	effect_instance.register_buff("armor_modifier", armor_bonus , 1)
+	effect_instance.register_buff("refelect_damage_modifier", (bonus_level * 5 if bonus_level > 1 else 0) , 1)
+	effect_instance.effect_name = "Fortress - Level " + str(bonus_level)
+	effect_instance.effect_type = "Faction Bonus"
+	effect_instance.effect_applier = "Dwarf path1 Faction Bonus"
+	effect_instance.effect_description = "Dwarves gain armor bonus, relect damage and extra armor bonus when base to base with another ally dwarf."
+	effect_handler.add_to_effect_array(effect_instance)
+	effect_handler.add_child(effect_instance)
+	await effect_animation_display("Fortress", arena, get_current_tile(self)[1], "Center")
+	effect_handler.active_single_effect(effect_instance)
 
 func dwarf_path2_bonus():
 	var bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
 
-	if hp <= 0.33 * max_hp and bonus_level > 0 and faction == "dwarf":
+	if not (faction == "dwarf" and bonus_level > 0):
+		return
+
+	var damage_bonus = 0
+	var armor_bonus = 0
+	var life_steal_bonus = 0
+
+	damage_bonus += (bonus_level + 2)
+
+	if hp <= 0.33 * max_hp:
+		match bonus_level:
+			2:
+				damage_bonus += (armor * 0.5)
+				armor_bonus = -(armor * 0.5)
+				life_steal_bonus = 0.5
+			3:
+				damage_bonus += armor
+				armor_bonus = -armor
+				life_steal_bonus = 1.0
+
+	var effect_instance = ChessEffect.new()
+	effect_instance.register_buff("melee_attack_damage_modifier", damage_bonus, 1)
+	effect_instance.register_buff("armor_modifier", armor_bonus, 999)
+	effect_instance.register_buff("life_steal_rate_modifier", life_steal_bonus, 1)
+	# effect_instance.stunned_duration = spell_duration
+	effect_instance.effect_name = "Berserker - Level " + str(bonus_level)
+	effect_instance.effect_type = "Faction Bonus"
+	effect_instance.effect_applier = "Dwarf path2 Faction Bonus"
+	effect_handler.add_to_effect_array(effect_instance)
+	effect_handler.add_child(effect_instance)
+	await effect_animation_display("Berserker", arena, get_current_tile(self)[1], "Center")
+
+func dwarf_path3_bonus():
+	var bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
+
+	if bonus_level > 0 and faction == "dwarf":
 		var effect_instance = ChessEffect.new()
-		effect_instance.register_buff("melee_attack_damage_modifier", base_armor * (0.5 + 0.5 * bonus_level), 1)
-		effect_instance.register_buff("armor_modifier", -base_armor, 999)
-		effect_instance.register_buff("life_steal_rate_modifier", bonus_level * 0.3, 1)
+		effect_instance.register_buff("speed_modifier", bonus_level, 1)
 		# effect_instance.stunned_duration = spell_duration
-		effect_instance.effect_name = "Berserker"
+		effect_instance.effect_name = "March - Level " + str(bonus_level)
 		effect_instance.effect_type = "Faction Bonus"
-		effect_instance.effect_applier = "Dwarf path2 Faction Bonus"
+		effect_instance.effect_applier = "Dwarf path3 Faction Bonus"
 		effect_handler.add_to_effect_array(effect_instance)
 		effect_handler.add_child(effect_instance)
 		await effect_animation_display("Berserker", arena, get_current_tile(self)[1], "Center")
+
+func warrior_bonus():
+	var bonus_level = faction_bonus_manager.get_bonus_level("warrior", team)
+	
+	if bonus_level <= 0 or role != "warrior":
+		return
+
+	if target_changed:
+		set_meta("warrior_damage_bonus") = 0
+		return
+
+	if get_meta("warrior_damage_bonus") == null:
+		set_meta("warrior_damage_bonus") = 0
+	else:
+		set_meta("warrior_damage_bonus") += bonus_level
+
+	melee_damage += get_meta("warrior_damage_bonus")
+
+
+func knight_bonus():
+	var bonus_level = faction_bonus_manager.get_bonus_level("knight", team)
+	
+	if bonus_level <= 0 or role != "knight":
+		return
+
+	if total_movement >=5:
+		melee_damage *= (1 + 0.15 * knight_level)
 
 func sun_strike(strike_count: int) -> bool:
 	var chess_affected := true
@@ -1429,17 +1574,41 @@ func sun_strike(strike_count: int) -> bool:
 			#
 		#strike_count -= 1
 	
-	var offset_possible = {
-		0.4 : Vector2i(0, 0),
-		0.5 : Vector2i(-1, 0),
-		0.6 : Vector2i(1, 0),
-		0.7 : Vector2i(0, -1),
-		0.8 : Vector2i(0, 1),
-		0.85 : Vector2i(-1, -1),
-		0.9 : Vector2i(-1, 1),
-		0.95 : Vector2i(1, -1),
-		1 : Vector2i(1, 1)
-	}
+	var offset_possible : Dictionary
+
+	match chess_level:
+		1:
+			offset_possible = 	{
+				0.4 : Vector2i(0, 0),
+				0.5 : Vector2i(-1, 0),
+				0.6 : Vector2i(1, 0),
+				0.7 : Vector2i(0, -1),
+				0.8 : Vector2i(0, 1),
+				0.85 : Vector2i(-1, -1),
+				0.9 : Vector2i(-1, 1),
+				0.95 : Vector2i(1, -1),
+				1 : Vector2i(1, 1)
+				}
+		2:
+			offset_possible = 	{
+				0.5 : Vector2i(0, 0),
+				0.575 : Vector2i(-1, 0),
+				0.65 : Vector2i(1, 0),
+				0.725 : Vector2i(0, -1),
+				0.8 : Vector2i(0, 1),
+				0.85 : Vector2i(-1, -1),
+				0.9 : Vector2i(-1, 1),
+				0.95 : Vector2i(1, -1),
+				1 : Vector2i(1, 1)
+				}
+		3:
+			offset_possible = 	{
+				0.6 : Vector2i(0, 0),
+				0.7 : Vector2i(-1, 0),
+				0.8 : Vector2i(1, 0),
+				0.9 : Vector2i(0, -1),
+				1.0 : Vector2i(0, 1)
+				}
 	
 	var arena_units = arena.unit_grid.get_all_units()
 	for i in range(strike_count):
@@ -1458,7 +1627,7 @@ func sun_strike(strike_count: int) -> bool:
 				
 			if DataManagerSingleton.check_obstacle_valid(arena.unit_grid.units[current_tile]):
 				var current_spell_target = arena.unit_grid.units[current_tile]
-				deal_damage.emit(self, current_spell_target, 20, "Magic_attack", [])
+				deal_damage.emit(self, current_spell_target, 15 + 5 * chess_level, "Magic_attack", [])
 
 		
 	#var current_strike
@@ -1481,7 +1650,7 @@ func freezing_field(arrow_count: int) -> bool:
 	for i in range(arrow_count):
 		var spell_projectile = _launch_projectile_to_degree(arraow_degree)
 		spell_projectile.projectile_animation = "Ice"
-		spell_projectile.damage = 10
+		spell_projectile.damage = 5 + 5 * chess_level
 		spell_projectile.damage_type = "Magic_attack"
 		spell_projectile.projectile_hit.connect(
 			func(obstacle, attacker):
