@@ -211,35 +211,37 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				chess_index.effect_handler.add_child(effect_instance)
 
 		"human":
-			if friendly_chess.size() <= 0:
-				return
+			pass
+			# if friendly_chess.size() <= 0:
+			# 	return
 
-			for chess_index in friendly_chess:
-				var effect_instance = ChessEffect.new()
-				effect_instance.register_buff("duration_only", 0, 999)
-				# effect_instance.effect_duration = 999
-				effect_instance.effect_name = "Wisdom - Level " + str(bonus_level)
-				effect_instance.effect_type = "Faction Bonus"
-				effect_instance.effect_applier = "Human Faction Bonus"
-				effect_instance.effect_description = "Every 2 times buy human chess, shop will add a villager chess."
-				chess_index.effect_handler.add_to_effect_array(effect_instance)
-				chess_index.effect_handler.add_child(effect_instance)
+			# for chess_index in friendly_chess:
+			# 	var effect_instance = ChessEffect.new()
+			# 	effect_instance.register_buff("duration_only", 0, 999)
+			# 	# effect_instance.effect_duration = 999
+			# 	effect_instance.effect_name = "Wisdom - Level " + str(bonus_level)
+			# 	effect_instance.effect_type = "Faction Bonus"
+			# 	effect_instance.effect_applier = "Human Faction Bonus"
+			# 	effect_instance.effect_description = "Every 2 times buy human chess, shop will add a villager chess."
+			# 	chess_index.effect_handler.add_to_effect_array(effect_instance)
+			# 	chess_index.effect_handler.add_child(effect_instance)
 
 		"dwarf":
-			if friendly_chess.size() <= 0:
-				return
+			pass
+			# if friendly_chess.size() <= 0:
+			# 	return
 
-			for chess_index in friendly_chess:
-				var effect_instance = ChessEffect.new()
-				effect_instance.register_buff("armor_modifier", 5 * bonus_level, 999)
-				# effect_instance.armor_modifier = 5 * bonus_level
-				# effect_instance.armor_modifier_duration = 999
-				effect_instance.effect_name = "Fortress - Level " + str(bonus_level)
-				effect_instance.effect_type = "Faction Bonus"
-				effect_instance.effect_applier = "Dwarf Faction Bonus"
-				effect_instance.effect_description = "Friendly chesses continuously gain armor boost."
-				chess_index.effect_handler.add_to_effect_array(effect_instance)
-				chess_index.effect_handler.add_child(effect_instance)
+			# for chess_index in friendly_chess:
+			# 	var effect_instance = ChessEffect.new()
+			# 	effect_instance.register_buff("armor_modifier", 5 * bonus_level, 999)
+			# 	# effect_instance.armor_modifier = 5 * bonus_level
+			# 	# effect_instance.armor_modifier_duration = 999
+			# 	effect_instance.effect_name = "Fortress - Level " + str(bonus_level)
+			# 	effect_instance.effect_type = "Faction Bonus"
+			# 	effect_instance.effect_applier = "Dwarf Faction Bonus"
+			# 	effect_instance.effect_description = "Friendly chesses continuously gain armor boost."
+			# 	chess_index.effect_handler.add_to_effect_array(effect_instance)
+			# 	chess_index.effect_handler.add_child(effect_instance)
 
 		"holy":
 			if friendly_faction_chess.size() <= 0:
