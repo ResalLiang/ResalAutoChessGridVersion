@@ -134,7 +134,7 @@ func load_game_json():
 	file.close()
 	
 	# 解析JSON
-	player_datas = JSON.parse_string(json_text)
+	player_datas = convert_numbers_to_int(JSON.parse_string(json_text))
 	
 	if player_datas == null:
 		push_error("JSON parsing failed for savegame.json")
@@ -146,6 +146,19 @@ func load_game_json():
 
 	if not player_datas[current_player].has("player_upgrade") or player_datas[current_player]["player_upgrade"].keys().size() == 0:
 		player_datas[current_player]["player_upgrade"] = player_upgrade_template.duplicate()
+
+func convert_numbers_to_int(data):
+	if typeof(data) == TYPE_DICTIONARY:
+		for key in data:
+			data[key] = convert_numbers_to_int(data[key])
+	elif typeof(data) == TYPE_ARRAY:
+		for i in range(data.size()):
+			data[i] = convert_numbers_to_int(data[i])
+	elif typeof(data) == TYPE_FLOAT:
+		# 如果浮点数实际上是整数
+		if data == int(data):
+			return int(data)
+	return data
 
 func load_chess_stats():
 	var file = FileAccess.open("res://script/chess_stats.json", FileAccess.READ)
@@ -330,17 +343,17 @@ func merge_dictionaries(dict1: Dictionary, dict2: Dictionary) -> Dictionary:
 				_:
 					# For other types, replace with second dictionary's value
 					result[key] = value2
-		if (typeof(value1) == TYPE_INT and typeof(value2) == TYPE_FLOAT) or (typeof(value1) == TYPE_FLOAT and typeof(value2) == TYPE_INT):
-			# Handle numeric values based on key naming conventions
-			if key.begins_with("max"):
-				result[key] = max(value1, value2)
-			elif key.begins_with("min"):
-				result[key] = min(value1, value2)
-			elif key.ends_with("count"):
-				result[key] = value1 + value2
-			else:
-				# Default behavior: replace with second dictionary's value
-				result[key] = value2		
+		# if (typeof(value1) == TYPE_INT and typeof(value2) == TYPE_FLOAT) or (typeof(value1) == TYPE_FLOAT and typeof(value2) == TYPE_INT):
+		# 	# Handle numeric values based on key naming conventions
+		# 	if key.begins_with("max"):
+		# 		result[key] = max(value1, value2)
+		# 	elif key.begins_with("min"):
+		# 		result[key] = min(value1, value2)
+		# 	elif key.ends_with("count"):
+		# 		result[key] = value1 + value2
+		# 	else:
+		# 		# Default behavior: replace with second dictionary's value
+		# 		result[key] = value2		
 		else:
 			# If types don't match, replace with second dictionary's value
 			result[key] = value2
@@ -380,6 +393,27 @@ func check_obstacle_valid(node):
 		return false
 
 	if not node is Obstacle:
+		return false
+
+	if node.visible == false:
+		return false
+
+	if node.status == node.STATUS.DIE:
+		return false
+		
+	if node.is_queued_for_deletion():
+		return false
+
+	return true
+
+func check_chess_valid(node):
+	if not is_instance_valid(node):
+		return false
+
+	if not node:
+		return false
+
+	if not node is Chess:
 		return false
 
 	if node.visible == false:
