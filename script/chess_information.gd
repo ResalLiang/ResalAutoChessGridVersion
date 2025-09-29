@@ -49,12 +49,21 @@ func show_chess_information(starting_position: Vector2, status: String, obstacle
 	visible = true
 	chess_name.text = "Chess Name = " + obstacle.chess_name
 	chess_faction.text = "Faction = " + obstacle.faction
-	max_hp.text = "HP = " + str(round(obstacle.hp)) + " / " + str(round(obstacle.max_hp))
-	armor.text = "Armor = " + str(round(obstacle.armor))
-	speed.text = "Speed = " + ("0" if obstacle.get("speed") == null else str(round(obstacle.speed)))
-	damage.text = "Damage = " + ("0/0" if obstacle.get("melee_damage") == null else str(round(obstacle.melee_damage)) + " / " + str(round(obstacle.ranged_damage)))
-	attack_range.text = "Attack Range = " + ("0" if obstacle.get("attack_range") == null else str(round(obstacle.attack_range)))
-	attack_speed.text = "Attack Speed = " + ("0" if obstacle.get("attack_speed") == null else str(round(obstacle.attack_speed)))
+	if obstacle.is_active:
+		max_hp.text = "HP = " + str(round(obstacle.hp)) + " / " + str(round(obstacle.max_hp))
+		armor.text = "Armor = " + str(round(obstacle.armor))
+		speed.text = "Speed = " + ("0" if obstacle.get("speed") == null else str(round(obstacle.speed)))
+		damage.text = "Damage = " + ("0/0" if obstacle.get("melee_damage") == null else str(round(obstacle.melee_damage)) + " / " + str(round(obstacle.ranged_damage)))
+		attack_range.text = "Attack Range = " + ("0" if obstacle.get("attack_range") == null else str(round(obstacle.attack_range)))
+		attack_speed.text = "Attack Speed = " + ("0" if obstacle.get("attack_speed") == null else str(round(obstacle.attack_speed)))
+	else:
+		max_hp.text = "HP = " + str(round(obstacle.base_hp)) + " / " + str(round(obstacle.base_max_hp))
+		armor.text = "Armor = " + str(round(obstacle.base_armor))
+		speed.text = "Speed = " + ("0" if obstacle.get("base_speed") == null else str(round(obstacle.base_speed)))
+		damage.text = "Damage = " + ("0/0" if obstacle.get("base_melee_damage") == null else str(round(obstacle.base_melee_damage)) + " / " + str(round(obstacle.base_ranged_damage)))
+		attack_range.text = "Attack Range = " + ("0" if obstacle.get("base_attack_range") == null else str(round(obstacle.base_attack_range)))
+		attack_speed.text = "Attack Speed = " + ("0" if obstacle.get("base_attack_speed") == null else str(round(obstacle.base_attack_speed)))
+
 	spell.text = "Spell = " + obstacle.skill_name
 	animation_faction = obstacle.faction
 	animation_chess_name = obstacle.chess_name
@@ -65,6 +74,8 @@ func show_chess_information(starting_position: Vector2, status: String, obstacle
 		return
 
 	for effect_index in chess_effect_list:
+		# if effect_index.effect_name = "KillCount":
+		# 	continue
 		var effect_icon = effect_icon_scene.instantiate()
 		effect_icon.effect_name = effect_index.effect_name
 		effect_icon.tooltip_text = effect_index.effect_name + " by " + effect_index.effect_applier + " :\n" + effect_index.effect_description
