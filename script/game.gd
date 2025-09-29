@@ -541,7 +541,7 @@ func load_arena_team():
 				if saved_arena_team[tile_index][3].size() <= 0:
 					continue
 				for effect_index in saved_arena_team[tile_index][3]:
-					character.effect_handler.add_to_effect_array(effect_index)
+					character.effect_handler.add_to_effect_array(effect_index.duplicate())
 				
 func save_arena_team():
 	saved_arena_team = {}
@@ -871,9 +871,7 @@ func check_chess_merge():
 	for merge_level in [1, 2]:
 		var merge_checked := []
 		for node in arena.unit_grid.get_children() + bench.unit_grid.get_children():
-			if not is_instance_valid(node) or not node is Chess or node.status == node.STATUS.DIE or merge_checked.has([node.faction, node.chess_name]) or node.chess_level != merge_level:
-				continue
-			if node.visible == false:
+			if not DataManagerSingleton.check_chess_valid(node) or merge_checked.has([node.faction, node.chess_name]) or node.chess_level != merge_level:
 				continue
 			if node.team != 1:
 				continue
@@ -882,15 +880,20 @@ func check_chess_merge():
 			var wait_merge := []
 
 			for other_node in arena.unit_grid.get_children() + bench.unit_grid.get_children():
-				if not is_instance_valid(other_node) or not other_node is Chess or other_node.status == other_node.STATUS.DIE or merge_checked.has([other_node.faction, other_node.chess_name]) or other_node.chess_level != merge_level:
-					continue
-				if other_node.visible == false:
+				if not DataManagerSingleton.check_chess_valid(other_node) or merge_checked.has([other_node.faction, other_node.chess_name]) or other_node.chess_level != merge_level:
 					continue
 				if other_node.team != 1:
 					continue
 
 				if node.faction == other_node.faction and node.chess_name == other_node.chess_name:
-					merge_count += 1
+					var extra_merge_count = 0
+					if node.effect_handler.effect_list.size() > 0:
+						for effect_index in node.effect_handler.effect_list:
+							if effect_index.effect_name == "KillCount":
+								extra_merge_count = 1 if effect_index.get_meta("kill_count") >= 5 else 0
+								break
+
+					merge_count += (1 + extra_merge_count)
 					wait_merge.append(other_node)
 					if merge_count >= 3:
 						var merged_chess_faction = other_node.faction
