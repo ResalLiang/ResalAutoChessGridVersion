@@ -194,16 +194,18 @@ func buy_chess(chess: Obstacle):
 	chess_bought.emit(chess)
 	remain_coins -= get_chess_buy_price(chess)
 	coins_decreased.emit(get_chess_buy_price(chess), "buyinging chess")
+
+	var human_bonus_level = get_parent().faction_bonus_manager.get_bonus_level("human", 1)
+
+	if human_bonus_level <= 0:
+		return
 	
 	if chess.faction == "human":
 		buy_human_count += 1
 		
-	var buy_human_spec	
-	
-	if get_parent().faction_bonus_manager.player_bonus_level_dict[1]["human"] > 0:
-		buy_human_spec = 4 - get_parent().faction_bonus_manager.player_bonus_level_dict[1]["human"]
+	var buy_human_spec = 4 - human_bonus_level
 		
-	if get_parent().faction_bonus_manager.player_bonus_level_dict[1]["human"] > 0 and buy_human_count >= buy_human_spec:
+	if buy_human_count >= buy_human_spec:
 		var add_villager_tile := Vector2i(-1, -1)
 		for tile_index in shop.unit_grid.units.keys():
 			if not DataManagerSingleton.check_obstacle_valid(shop.unit_grid.units[tile_index]):
@@ -211,7 +213,7 @@ func buy_chess(chess: Obstacle):
 				break
 		
 		if add_villager_tile != Vector2i(-1, -1):
-			var rand_character_result = get_parent().generate_random_chess(shop_level, "villager")
+			var rand_character_result = get_parent().generate_random_chess(human_bonus_level * 2, "villager")
 			var character = get_parent().summon_chess(rand_character_result[0], rand_character_result[1], 1, 1, shop, add_villager_tile)
 			buy_human_count = 0
 
