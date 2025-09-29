@@ -153,7 +153,7 @@
 			"max_mana": 0,
 			"armor": 0,
 			"rarity": "Legendary",
-			"target_priority": "CLOSE"
+			"target_priority": "STRONG"
 		}
 	},
 	"dwarf": {
