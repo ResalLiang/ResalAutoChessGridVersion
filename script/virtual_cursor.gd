@@ -58,6 +58,7 @@ func setup_cursor_system():
 	if cursor_sprite:
 		cursor_sprite.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 		cursor_sprite.stretch_mode = TextureRect.STRETCH_KEEP
+		cursor_sprite.centered = false
 		cursor_sprite.show()
 	else:
 		push_error("cursor_sprite is null in setup_cursor_system")

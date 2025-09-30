@@ -31,7 +31,7 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 			damage_result *= attacker.critical_damage
 			critical_damage = true
 		elif speller_bonus_level > 0 and attacker is Chess and attacker.role == "speller" and damage_type == "Magic_attack":
-			if rand_f() <= speller_bonus_level * 0.1:
+			if randf() <= speller_bonus_level * 0.1:
 				damage_result *= attacker.critical_damage
 				critical_damage = true				
 
@@ -69,7 +69,7 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 
 	target.damage_taken.emit(target, attacker, damage_result)
 
-	if target.reflect_damage > 0 and target is Chess:
+	if (target.reflect_damage > 0 and target is Chess) or target.faction == "villager":
 		attacker.damage_taken.emit(attacker, target, target.reflect_damage)
 	
 	if life_steal_result > 0:

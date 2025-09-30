@@ -46,9 +46,31 @@ func get_all_units() -> Array[Obstacle]:
 	refresh_units()
 	var unit_arry: Array[Obstacle] = []
 	for chess_index in units.values():
-		if is_instance_valid(chess_index) and chess_index is Obstacle and chess_index.status != chess_index.STATUS.DIE:
+		if DataManagerSingleton.check_obstacle_valid(chess_index):
 			unit_arry.append(chess_index)
 	return unit_arry
+
+func get_all_unit_by_name(faction: String, chess_name: String, team: int) -> Array[Obstacle]:
+
+	if not DataManagerSingleton.get_chess_data().keys().has(faction):
+		return []
+
+	if not DataManagerSingleton.get_chess_data()[faction].keys().has(chess_name):
+		return []
+
+	if not [1, 2].has(team):
+		return []
+
+	refresh_units()
+	var unit_arry: Array[Obstacle] = []
+
+	return get_all_units().filter(
+		func(obstacle):
+			var result := false
+			if DataManagerSingleton.check_obstacle_valid(chess_index) and chess_index.faction == faction and chess_index.chess_name == chess_name:
+				result = true
+			return result
+	)
 
 func has_valid_chess(tile: Vector2i) -> bool:
 	# if tile.x >= 0 and tile.x < size.x and tile.y >= 0 and tile.y < size.y:

@@ -57,7 +57,7 @@ func show_chess_information(starting_position: Vector2, status: String, obstacle
 		attack_range.text = "Attack Range = " + ("0" if obstacle.get("attack_range") == null else str(round(obstacle.attack_range)))
 		attack_speed.text = "Attack Speed = " + ("0" if obstacle.get("attack_speed") == null else str(round(obstacle.attack_speed)))
 	else:
-		max_hp.text = "HP = " + str(round(obstacle.base_hp)) + " / " + str(round(obstacle.base_max_hp))
+		max_hp.text = "HP = " + str(round(obstacle.hp)) + " / " + str(round(obstacle.base_max_hp))
 		armor.text = "Armor = " + str(round(obstacle.base_armor))
 		speed.text = "Speed = " + ("0" if obstacle.get("base_speed") == null else str(round(obstacle.base_speed)))
 		damage.text = "Damage = " + ("0/0" if obstacle.get("base_melee_damage") == null else str(round(obstacle.base_melee_damage)) + " / " + str(round(obstacle.base_ranged_damage)))

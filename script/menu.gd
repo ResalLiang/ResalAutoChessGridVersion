@@ -17,6 +17,8 @@ signal to_upgrade_scene
 func _ready() -> void:
 	current_player.text = DataManagerSingleton.current_player
 	version.text = DataManagerSingleton.version
+	setting_button.disabled = true
+	statistics_button.disabled = true
 
 func _on_start_button_pressed() -> void:
 	to_game_scene.emit()

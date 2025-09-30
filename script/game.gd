@@ -178,6 +178,7 @@ var save_datas : Dictionary
 
 var current_population := 0
 var max_population := 3
+var population_record : Array = []
 
 signal round_finished
 signal chess_appearance_finished
@@ -808,7 +809,7 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, chess
 		return null
 
 	var summoned_character
-	if DataManagerSingleton.get_chess_data()[summon_chess_faction][summon_chess_name]["speed"] == 0:
+	if DataManagerSingleton.get_chess_data()[summon_chess_faction][summon_chess_name]["speed"] == 0 and summon_chess_faction != "villager":
 		summoned_character = obstacle_scene.instantiate()
 	else:
 		summoned_character = chess_scene.instantiate()
@@ -851,20 +852,19 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, chess
 	return summoned_character
 
 func update_population(forced_update: bool):
+
+	population_record = []
+
 	if is_game_turn_start and not forced_update:
 		return
 
 	arena.unit_grid.refresh_units()
 		
 	current_population = 0
-	var current_chess_array = []
-	# for node in get_tree().get_nodes_in_group("chess_group"):
-	# 	if is_instance_valid(node) and node is Chess and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
-	# 		current_population += 1
 	for chess_index in arena.unit_grid.get_all_units():
-		if is_instance_valid(chess_index) and chess_index is Chess and chess_index.team == 1 and not current_chess_array.has(chess_index):
+		if DataManagerSingleton.check_chess_valid(chess_index) and chess_index.team == 1 and not population_record.has(chess_index):
 			current_population += 1
-			current_chess_array.append(chess_index)
+			population_record.append(chess_index)
 			
 	max_population = shop_handler.get_max_population()
 	population_label.text = "Population = " + str(current_population)	+ "/" + str(max_population)

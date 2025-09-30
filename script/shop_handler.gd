@@ -15,7 +15,7 @@ const obstacle_scene = preload("res://scene/obstacle.tscn")
 
 var shop_buy_price := 3
 var shop_sell_price := 1
-var shop_refresh_price := 3
+var shop_refresh_price := 1
 var shop_upgrade_price := 3
 
 var remain_coins := 0

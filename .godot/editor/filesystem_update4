@@ -7,5 +7,7 @@ res://asset/theme/toggle.tres
 res://asset/shader/SoftDropShadow.gdshader
 res://asset/shader/new_shader.gdshader
 res://script/chess.gd
-res://script/faction_bonus_manager.gd
-res://script/effect_handler.gd
+res://script/damage_manager.gd
+res://script/game.gd
+res://script/chess_information.gd
+res://script/projectile.gd

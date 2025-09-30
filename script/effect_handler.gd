@@ -120,7 +120,13 @@ func refresh_effects():
 
 func effect_clean():
 
-	effect_list = []
+	var new_effect_list := []
+	if effect_list.size() != 0:
+		for effect_index in effect_list:
+			if effect_index.effect_applier.contains("Faction Bonus"):
+				new_effect_list.append(effect_index.duplicate())
+				
+	effect_list = new_effect_list
 
 	refresh_effects()
 
