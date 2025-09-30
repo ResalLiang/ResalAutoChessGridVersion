@@ -48,6 +48,8 @@ func _process(_delta):
 	else:
 		Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 		
+	#Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		
 	apply_hotspot_offset()
 
 func setup_cursor_system():
@@ -58,7 +60,6 @@ func setup_cursor_system():
 	if cursor_sprite:
 		cursor_sprite.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 		cursor_sprite.stretch_mode = TextureRect.STRETCH_KEEP
-		cursor_sprite.centered = false
 		cursor_sprite.show()
 	else:
 		push_error("cursor_sprite is null in setup_cursor_system")
@@ -77,7 +78,7 @@ func load_cursor_textures():
 	
 	# Define hotspot offsets for each cursor type
 	hotspot_offsets = {
-		"default": Vector2(0, 0),
+		"default": Vector2(3, 3),
 		"pointer": Vector2(2, 0),
 		"grab": Vector2(8, 8),
 		"grabbing": Vector2(8, 8),

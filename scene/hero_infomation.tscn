@@ -59,6 +59,7 @@ text = "Attack Range: "
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_wkp60")
 theme_override_font_sizes/font_size = 4
+text = "Attack Speed:"
 
 [node name="spell" type="Label" parent="VBoxContainer"]
 layout_mode = 2

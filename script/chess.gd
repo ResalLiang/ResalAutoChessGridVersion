@@ -425,7 +425,10 @@ func _process(delta: float) -> void:
 				new_material.set_shader_parameter("outline_color", Color(1, 1, 1, 1))
 			else:
 				new_material.set_shader_parameter("outline_color", Color(1, 1, 1, 0.33))
-
+	
+	if is_phantom:
+		new_material.set_shader_parameter("monochrome_color", Color(0.18, 0.765, 1.0, 1.0))
+		new_material.set_shader_parameter("use_monochrome", true)
 
 	#if current_play_area == play_areas.playarea_shop:
 	if shop.unit_grid.get_all_units().has(self):
@@ -627,23 +630,26 @@ func _handle_movement():
 		astar_grid.diagonal_mode = 2
 
 	move_started.emit(self, current_tile)
+	
+	
+	if global_position.distance_to(chess_target.global_position) <= attack_range or effect_handler.is_stunned:
+		move_finished.emit(self, current_tile)
+		move_timer.set_wait_time(move_timer_wait_time)			
+		move_timer.start()
+		return
+		
 	#if current_play_area == play_areas.playarea_arena:
 	if arena.unit_grid.get_all_units().has(self):
 		arena.unit_grid.remove_unit(current_tile)
 
 	var pegasus_rider_movement_result := false
-	if faction == "elf" and chess_name = "PegasusRider":
+	if faction == "elf" and chess_name == "PegasusRider":
 		pegasus_rider_movement_result = await pegasus_rider_movement()
 		
 	if not pegasus_rider_movement_result:
 
 		animated_sprite_2d.play("move")
 
-		if global_position.distance_to(chess_target.global_position) <= attack_range or effect_handler.is_stunned:
-			move_finished.emit(self, current_tile)
-			move_timer.set_wait_time(move_timer_wait_time)			
-			move_timer.start()
-			return
 
 		astar_grid.set_point_solid(current_tile, false)
 		astar_grid.set_point_solid(get_current_tile(chess_target)[1], false)
@@ -674,8 +680,8 @@ func _handle_movement():
 		remain_step = move_steps
 		for current_step in range(move_steps):
 			var target_pos = move_path[current_step + 1] + grid_offset
-			var target_tile = arena.get_global_from_tile(target_pos)
-			if arena.is_tile_occupied(target_tile) or astar_grid.is_point_solid(target_pos) or remain_step <= 0 or global_position.distance_to(chess_target.global_position) <= attack_range:
+			var target_tile = arena.get_tile_from_global(target_pos + get_parent().global_position)
+			if arena.unit_grid.is_tile_occupied(target_tile) or astar_grid.is_point_solid(target_pos) or remain_step <= 0 or global_position.distance_to(chess_target.global_position) <= attack_range:
 				break
 
 			var previous_tile = get_current_tile(self)[1]
@@ -704,7 +710,13 @@ func _handle_movement():
 					if position.distance_to(neighbor_chess.position) > min(neighbor_chess.attack_range, ranged_attack_threshold) and target_pos.distance_to(neighbor_chess.position) <= min(neighbor_chess.attack_range, ranged_attack_threshold):
 						await neighbor_chess.handle_free_strike(self) #enter attack range free strike
 
-			await chess_mover.tween_move_chess(self, arena, target_pos)
+			if DataManagerSingleton.check_obstacle_valid(self):
+				await chess_mover.tween_move_chess(self, arena, target_pos)
+			else:
+				move_finished.emit(self,get_current_tile(self)[1])
+				move_timer.set_wait_time(move_timer_wait_time)
+				move_timer.start()
+				return
 
 			remain_step -= 1
 			total_movement += 1
@@ -814,6 +826,7 @@ func _handle_attack():
 				chess_projectile.projectile_hit.emit(handle_special_effect)
 
 				await chess_projectile.projectile_vanished
+				
 
 			else:
 
@@ -822,6 +835,10 @@ func _handle_attack():
 				deal_damage.emit(self, chess_target, damage, "Ranged_attack", [])
 				if not target_evased_attack:
 					await handle_special_effect(chess_target, self)
+					
+				animated_sprite_2d.set_animation("idle")
+				
+				
 
 		elif current_distance_to_target < ranged_attack_threshold or (has_melee_target() is Obstacle and current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack")):
 			
@@ -894,6 +911,8 @@ func _handle_attack():
 		await get_tree().create_timer(0.2).timeout
 		await _handle_attack()
 	else:
+		
+		animated_sprite_2d.set_animation("idle")
 		status = STATUS.IDLE
 		action_timer.set_wait_time(action_timer_wait_time)
 		action_timer.start()
@@ -1118,7 +1137,7 @@ func _launch_projectile_to_degree(direction_degree: float):
 func take_damage(target:Obstacle, attacker: Obstacle, damage_value: float):
 	#Placeholder for chess passive ability on take damage
 
-	if (-1.0 if flip_h else 1.0) * (attacker.postion - target.postion).x > 0 and target.faction == "human" and target.chess_name == "ShieldMan":
+	if (-1.0 if animated_sprite_2d.flip_h else 1.0) * (attacker.position - target.position).x > 0 and target.faction == "human" and target.chess_name == "ShieldMan":
 		if randf() <= target.chess_level * 0.1:
 			target.animated_sprite_2d.play("block")
 			target.animated_sprite_2d.set_animation("idle")
@@ -1259,11 +1278,11 @@ func _on_died():
 				current_dwarf_death_count = king_index.get_meta("dwarf_death_count", 0)
 				var effect_instance = ChessEffect.new()
 				king_index.effect_handler.add_child(effect_instance)
-				king_index.effect_instance.register_buff("melee_attack_damage_modifier", current_dwarf_death_count * (2 + king_index.chess_level), 999)
-				king_index.effect_instance.register_buff("armor_modifier",  current_dwarf_death_count * (4 + king_index.chess_level), 999)
-				king_index.effect_instance.effect_name = "Avatar"
-				king_index.effect_instance.effect_type = "Buff"
-				king_index.effect_instance.effect_applier = "Dwarf KingMan Passive Effect"
+				effect_instance.register_buff("melee_attack_damage_modifier", current_dwarf_death_count * (2 + king_index.chess_level), 999)
+				effect_instance.register_buff("armor_modifier",  current_dwarf_death_count * (4 + king_index.chess_level), 999)
+				effect_instance.effect_name = "Avatar"
+				effect_instance.effect_type = "Buff"
+				effect_instance.effect_applier = "Dwarf KingMan Passive Effect"
 				king_index.effect_handler.add_to_effect_array(effect_instance)
 				await king_index.effect_animation_display("Fortress", arena, get_current_tile(king_index)[1], "Center")
 				king_index.effect_handler.refresh_effects()	
@@ -1285,7 +1304,8 @@ func update_solid_map():
 	# 		astar_grid.set_point_solid(node.position_id, true)
 
 	for chess_index in arena.unit_grid.get_all_units():
-		astar_grid.set_point_solid(get_current_tile(chess_index)[1], true)
+		if DataManagerSingleton.check_obstacle_valid(chess_index):
+			astar_grid.set_point_solid(get_current_tile(chess_index)[1], true)
 
 	
 func _handle_dragging_state(stating_position: Vector2, drag_action: String):
@@ -1365,9 +1385,11 @@ func handle_special_effect(target: Obstacle, attacker: Obstacle):
 		var attempt_summon_count := 0
 		var current_summon_count := 0
 		while current_summon_count < attacker.chess_level and attempt_summon_count < max_attempt_summon_count:
-			var tile_offset_index = [Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 1), Vector2i(-1, 0), Vector2i(0, -1), Vector2i(1, -1)].shuffle().front():
+			var tile_offset_array = [Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 1), Vector2i(-1, 0), Vector2i(0, -1), Vector2i(1, -1)]
+			tile_offset_array.shuffle()
+			var tile_offset_index = tile_offset_array.front()
 			var current_tile = get_current_tile(attacker)[1]
-			if arena.unit_grid.is_tile_in_bounds(current_tile + tile_offset_index) and not arena.unit_grid.is_tile_occupied(current_tile + tile_offset_index):					
+			if arena.is_tile_in_bounds(current_tile + tile_offset_index) and not arena.unit_grid.is_tile_occupied(current_tile + tile_offset_index):					
 				var game_root_scene = arena.get_parent().get_parent()
 				var summoned_character = game_root_scene.summon_chess(attacker.faction, attacker.chess_name, 1, team, arena, current_tile + tile_offset_index)
 
@@ -1389,9 +1411,11 @@ func handle_special_effect(target: Obstacle, attacker: Obstacle):
 		var attempt_summon_count := 0
 		var current_summon_count := 0
 		while current_summon_count < attacker.chess_level and attempt_summon_count < max_attempt_summon_count:
-			var tile_offset_index = [Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 1), Vector2i(-1, 0), Vector2i(0, -1), Vector2i(1, -1)].shuffle().front():
+			var tile_offset_array = [Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 1), Vector2i(-1, 0), Vector2i(0, -1), Vector2i(1, -1)]
+			tile_offset_array.shuffle()
+			var tile_offset_index = tile_offset_array.front()
 			var current_tile = get_current_tile(attacker)[1]
-			if arena.unit_grid.is_tile_in_bounds(current_tile + tile_offset_index) and not arena.unit_grid.is_tile_occupied(current_tile + tile_offset_index):					
+			if arena.is_tile_in_bounds(current_tile + tile_offset_index) and not arena.unit_grid.is_tile_occupied(current_tile + tile_offset_index):					
 				var game_root_scene = arena.get_parent().get_parent()
 				var summoned_character = game_root_scene.summon_chess(target.faction, target.chess_name, 1, team, arena, current_tile + tile_offset_index)
 
@@ -1410,10 +1434,10 @@ func handle_special_effect(target: Obstacle, attacker: Obstacle):
 	elif attacker.chess_name == "Hunter" and attacker.faction == "dwarf":
 		var effect_instance = ChessEffect.new()
 		target.effect_handler.add_child(effect_instance)
-		target.effect_instance.register_buff("duration_only", 0, attacker.chess_level)
-		target.effect_instance.effect_name = "HunterMark"
-		target.effect_instance.effect_type = "Debuff"
-		target.effect_instance.effect_applier = "Dward Hunter Mark"
+		effect_instance.register_buff("duration_only", 0, attacker.chess_level)
+		effect_instance.effect_name = "HunterMark"
+		effect_instance.effect_type = "Debuff"
+		effect_instance.effect_applier = "Dward Hunter Mark"
 		target.effect_handler.add_to_effect_array(effect_instance)
 		await target.effect_animation_display("HunterMark", arena, get_current_tile(target)[1], "Center")
 		#target.effect_handler.refresh_effects()
@@ -1659,20 +1683,21 @@ func knight_bonus():
 		return
 
 	if total_movement >=5:
-		melee_damage *= (1 + 0.15 * knight_level)
+		melee_damage *= (1 + 0.15 * bonus_level)
 
 func pegasus_rider_movement():
 	var fly_result := false
 	animated_sprite_2d.play("fly")
 	for x_index in [-1, 0, 1]:
-		for y_index in range[-1, 0, 1]:
+		for y_index in [-1, 0, 1]:
 			var current_tile = Vector2i(x_index, y_index) + get_current_tile(chess_target)[1]
+			var chess_target_tile = chess_target.get_current_tile(chess_target)[1]
 			if arena.is_tile_in_bounds(current_tile) and not arena.unit_grid.is_tile_occupied(current_tile) and max((current_tile - chess_target_tile).x, (current_tile - chess_target_tile).y) <= speed:
-				var target_pos = arena.get_global_from_tile(current_tile)
+				var target_pos = arena.get_global_from_tile(current_tile) - get_parent().global_position
 				await chess_mover.tween_move_chess(self, arena, target_pos)
 				fly_result = true
 				total_movement = max((current_tile - chess_target_tile).x, (current_tile - chess_target_tile).y)
-				break
+				return fly_result
 	return fly_result
 
 func sun_strike(strike_count: int) -> bool:

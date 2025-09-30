@@ -83,11 +83,17 @@ func _ready():
 	for y in shop.unit_grid.size.y:
 		for x in shop.unit_grid.size.x:
 			freeze_dict[Vector2i(x,y)] = false
+			
+	if DataManagerSingleton.player_data["debug_mode"]:
+		shop_level = 7
 
 
 func shop_init():
 	remain_coins = 0 #game_start_coins
-	shop_level = 1
+	if DataManagerSingleton.player_data["debug_mode"]:
+		shop_level = 7
+	else:
+		shop_level = 1
 	
 	for y in shop.unit_grid.size.y:
 		for x in shop.unit_grid.size.x:
@@ -113,7 +119,7 @@ func shop_refresh() -> void:
 			shop.unit_grid.remove_unit(tile_index)
 			current_chess.queue_free()	
 
-	for i in range(shop_level + 2):
+	for i in range(min(8, shop_level + 2)):
 		var shop_col_index = i % shop.unit_grid.size.x
 		var shop_row_index = floor(i / shop.unit_grid.size.x)
 		if freeze_dict[Vector2i(shop_col_index, shop_row_index)]:
@@ -124,18 +130,18 @@ func shop_refresh() -> void:
 		var rand_character_result = get_parent().generate_random_chess(shop_level, "all")
 		var character = get_parent().summon_chess(rand_character_result[0], rand_character_result[1], 1, 1, shop, Vector2i(shop_col_index, shop_row_index))
 
-		
-	var debug_chess_faction = ["human", "human", "human", "elf", "elf", "dwarf", "dwarf"]
-	var debug_chess_name = ["CrossBowMan", "Mage", "ArchMage", "Queen", "Mage", "Demolitionist", "Grenadier"]
-	for debug_index in range(debug_chess_faction.size()):
+	if DataManagerSingleton.player_data["debug_mode"]:
+		var debug_chess_faction = ["human", "human", "human", "elf", "elf", "dwarf", "dwarf", "elf"]
+		var debug_chess_name = ["CrossBowMan", "Mage", "ArchMage", "Queen", "Mage", "Demolitionist", "Grenadier", "PegasusRider"]
+		for debug_index in range(debug_chess_faction.size()):
 
-		var shop_col_index = debug_index % shop.unit_grid.size.x
-		var shop_row_index = floor(debug_index / shop.unit_grid.size.x) + 1
-		
-		if freeze_dict[Vector2i(shop_col_index, shop_row_index)]:
-			continue
+			var shop_col_index = debug_index % shop.unit_grid.size.x
+			var shop_row_index = floor(debug_index / shop.unit_grid.size.x) + 1
+			
+			if freeze_dict[Vector2i(shop_col_index, shop_row_index)]:
+				continue
 
-		var character = get_parent().summon_chess(debug_chess_faction[debug_index],debug_chess_name[debug_index], 1, 1, shop, Vector2i(shop_col_index, shop_row_index))
+			var character = get_parent().summon_chess(debug_chess_faction[debug_index],debug_chess_name[debug_index], 1, 1, shop, Vector2i(shop_col_index, shop_row_index))
 
 func shop_freeze() -> void:
 	var check_all_freeze := true

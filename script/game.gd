@@ -36,6 +36,7 @@ const alternative_choice_scene = preload("res://scene/alternative_choice.tscn")
 @onready var shop_freeze_button: Button = $shop_freeze_button
 @onready var shop_upgrade_button: Button = $shop_upgrade_button
 @onready var back_button: Button = $back_button
+@onready var debug_label: Label = $debug_label
 
 @onready var chess_order_hp_high: Button = $chess_order_control/chess_order_hp_high
 @onready var chess_order_hp_low: Button = $chess_order_control/chess_order_hp_low
@@ -307,7 +308,11 @@ func _ready():
 	last_turn_label.text = '-'
 
 func _process(delta: float) -> void:
-	pass
+	
+	var current_playarea_index = get_current_tile(get_global_mouse_position())[0]
+	var current_tile = get_current_tile(get_global_mouse_position())[1]
+		
+	debug_label.text = current_playarea_index.name + " / " + str(current_tile)
 
 func start_new_game() -> void:
 
@@ -1074,3 +1079,8 @@ func mid(a: float, b: float, c: float) -> float:
 	var min_val = min(a, min(b, c)) # min() 只能比较两个数，所以需要嵌套
 	var max_val = max(a, max(b, c)) # max() 同理
 	return total_sum - min_val - max_val
+	
+func get_current_tile(current_position: Vector2):
+	var i = chess_mover._get_play_area_for_position(current_position)
+	var current_tile = chess_mover.play_areas[i].get_tile_from_global(current_position)
+	return [chess_mover.play_areas[i], current_tile]

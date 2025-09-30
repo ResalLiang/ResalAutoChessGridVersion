@@ -69,7 +69,7 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 
 	target.damage_taken.emit(target, attacker, damage_result)
 
-	if (target.reflect_damage > 0 and target is Chess) or target.faction == "villager":
+	if target.reflect_damage > 0 and target is Chess:
 		attacker.damage_taken.emit(attacker, target, target.reflect_damage)
 	
 	if life_steal_result > 0:

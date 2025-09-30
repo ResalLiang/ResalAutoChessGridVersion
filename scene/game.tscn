@@ -7641,6 +7641,18 @@ theme_override_font_sizes/font_size = 4
 text = "WON"
 metadata/_edit_use_anchors_ = true
 
+[node name="debug_label" type="Label" parent="."]
+z_index = 1
+offset_left = 66.0
+offset_top = 26.0
+offset_right = 174.0
+offset_bottom = 34.0
+theme_override_colors/font_color = Color(1, 1, 0, 1)
+theme_override_fonts/font = ExtResource("9_81276")
+theme_override_font_sizes/font_size = 4
+text = "WON"
+metadata/_edit_use_anchors_ = true
+
 [node name="shop_handler" type="Node2D" parent="."]
 unique_name_in_owner = true
 script = ExtResource("11_ym5sv")
@@ -7765,10 +7777,9 @@ offset_right = 571.0
 offset_bottom = 147.0
 metadata/_edit_use_anchors_ = true
 
-[node name="chess_mover" type="Node2D" parent="." node_paths=PackedStringArray("play_areas")]
+[node name="chess_mover" type="Node2D" parent="."]
 unique_name_in_owner = true
 script = ExtResource("15_ve786")
-play_areas = [NodePath("../tilemap/arena"), NodePath("../tilemap/bench"), NodePath("../tilemap/shop")]
 
 [node name="chess_information" parent="." instance=ExtResource("8_ve786")]
 z_index = 2

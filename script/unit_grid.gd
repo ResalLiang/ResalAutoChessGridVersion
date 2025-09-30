@@ -67,7 +67,7 @@ func get_all_unit_by_name(faction: String, chess_name: String, team: int) -> Arr
 	return get_all_units().filter(
 		func(obstacle):
 			var result := false
-			if DataManagerSingleton.check_obstacle_valid(chess_index) and chess_index.faction == faction and chess_index.chess_name == chess_name:
+			if DataManagerSingleton.check_obstacle_valid(obstacle) and obstacle.faction == faction and obstacle.chess_name == chess_name:
 				result = true
 			return result
 	)

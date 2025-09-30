@@ -87,6 +87,7 @@ func tween_move_chess(obstacle: Obstacle, play_area: PlayArea, chess_position: V
 	if move_tween:
 		move_tween.kill()
 	move_tween = create_tween()
+	move_tween.set_trans(Tween.TRANS_LINEAR)
 	move_tween.tween_property(obstacle, "global_position", new_global_position, 0.25)
 	await move_tween.finished
 
