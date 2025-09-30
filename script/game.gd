@@ -698,7 +698,7 @@ func generate_random_chess_update(generate_level: int, specific_faction: String)
 	for chess_index in (arena.unit_grid.get_all_units() + bench.unit_grid.get_all_units()):
 		if chess_index is Chess:
 			var composite_key = "%s_%s" % [chess_index.faction, chess_index.chess_name]
-			existing_chess_counts[composite_key] = existing_chess_counts.get(composite_key, 0) + power(3, chess_index.chess_level - 1)
+			existing_chess_counts[composite_key] = existing_chess_counts.get(composite_key, 0) + pow(3, chess_index.chess_level - 1)
 
 	var chess_count_dict = {
 		"Uncomon" : 30,
@@ -715,7 +715,7 @@ func generate_random_chess_update(generate_level: int, specific_faction: String)
 			forbidden_faction_pool.append("villager")
 		"locked":
 			for faction_index in DataManagerSingleton.get_chess_data().keys():
-				if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"][faction]:
+				if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"][faction_index]:
 					forbidden_faction_pool.append(faction_index)
 			forbidden_faction_pool.append("villager")
 		_:

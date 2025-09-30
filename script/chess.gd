@@ -704,7 +704,7 @@ func _handle_action():
 	#Placeholder for chess passive ability on action start
 	var cast_spell_result := false
 
-	if mp >= max_mp and animated_sprite_2d.sprite_frames.has_animation("spell") and (not effect_handler.is_silenced and not effect_handler.is_stunned):
+	if mp >= max_mp and animated_sprite_2d.sprite_frames.has_animation("spell") and (not effect_handler.is_silenced and not effect_handler.is_stunned) and not is_phantom:
 
 		chess_spell_target = _find_new_target(chess_spell_target_choice)
 
@@ -1284,10 +1284,13 @@ func handle_spell_target_death():
 
 func handle_special_effect(target: Obstacle, attacker: Obstacle):
 	#Placeholder for chess passive ability on special attack effect
+	if is_phantom:
+		return
+		
 	if attacker.chess_name == "KingMan" and attacker.faction == "human" and attacker.is_active:
 		for tile_offset_index in[Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 1), Vector2i(-1, 0), Vector2i(0, -1), Vector2i(1, -1)]:
 			var current_tile = get_current_tile(attacker)[1]
-			if arena.unit_grid.is_tile_in_bounds(current_tile + tile_offset_index) and not arena.unit_grid.is_tile_occupied(current_tile + tile_offset_index):					
+			if arena.is_tile_in_bounds(current_tile + tile_offset_index) and not arena.unit_grid.is_tile_occupied(current_tile + tile_offset_index):					
 				var game_root_scene = arena.get_parent().get_parent()
 				var summoned_character = game_root_scene.summon_chess(target.faction, target.chess_name, 1, team, arena, current_tile + tile_offset_index)
 
@@ -1303,9 +1306,9 @@ func handle_special_effect(target: Obstacle, attacker: Obstacle):
 	elif attacker.chess_name == "PrinceMan" and attacker.faction == "human" and attacker.is_active:
 		for tile_offset_index in[Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 1), Vector2i(-1, 0), Vector2i(0, -1), Vector2i(1, -1)]:
 			var current_tile = get_current_tile(attacker)[1]
-			if arena.unit_grid.is_tile_in_bounds(current_tile + tile_offset_index) and not arena.unit_grid.is_tile_occupied(current_tile + tile_offset_index):					
+			if arena.is_tile_in_bounds(current_tile + tile_offset_index) and not arena.unit_grid.is_tile_occupied(current_tile + tile_offset_index):					
 				var game_root_scene = arena.get_parent().get_parent()
-				var summoned_character = game_root_scene.summon_chess(target.faction, attacker.chess_name, 1, team, arena, current_tile + tile_offset_index)
+				var summoned_character = game_root_scene.summon_chess(attacker.faction, attacker.chess_name, 1, team, arena, current_tile + tile_offset_index)
 
 				summoned_character.is_phantom = true
 				
@@ -1395,8 +1398,8 @@ func handle_free_strike(target: Obstacle):
 			melee_attack_animation.play("melee_attack")
 			melee_attack_started.emit(self)
 			await melee_attack_animation.animation_finished
-			
-			await handle_special_effect(target, self)
+			if DataManagerSingleton.check_obstacle_valid(target):
+				await handle_special_effect(target, self)
 
 		elif animated_sprite_2d.sprite_frames.has_animation("attack"):
 			status = STATUS.MELEE_ATTACK
@@ -1404,7 +1407,8 @@ func handle_free_strike(target: Obstacle):
 			melee_attack_started.emit(self)
 			deal_damage.emit(self, target, damage, "Melee_attack", [])	
 
-			await handle_special_effect(target, self)
+			if DataManagerSingleton.check_obstacle_valid(target):
+				await handle_special_effect(target, self)
 
 		else:
 			# No required attack animation
@@ -1533,13 +1537,15 @@ func warrior_bonus():
 		return
 
 	if target_changed:
-		set_meta("warrior_damage_bonus") = 0
+		set_meta("warrior_damage_bonus", 0)
 		return
 
 	if get_meta("warrior_damage_bonus") == null:
-		set_meta("warrior_damage_bonus") = 0
+		set_meta("warrior_damage_bonus", 0)
 	else:
-		set_meta("warrior_damage_bonus") += bonus_level
+		var current_warrior_damage_bonus = get_meta("warrior_damage_bonus", 0)
+		current_warrior_damage_bonus += bonus_level
+		set_meta("warrior_damage_bonus", current_warrior_damage_bonus)
 
 	melee_damage += get_meta("warrior_damage_bonus")
 
@@ -1551,7 +1557,7 @@ func knight_bonus():
 		return
 
 	if total_movement >=5:
-		melee_damage *= (1 + 0.15 * knight_level)
+		melee_damage *= (1 + 0.15 * bonus_level)
 
 func sun_strike(strike_count: int) -> bool:
 	var chess_affected := true
