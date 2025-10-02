@@ -19,3 +19,14 @@ res://script/chess_information.gd
 res://scene/game.tscn
 res://script/game_speed_controller.gd
 res://script/data_manager.gd
+res://addons/AS2P/InspectorConvertor.gd
+res://addons/AS2P/plugin.gd
+res://scene/tips_label.tscn
+res://script/asset_path_manager.gd
+res://scene/chess.tscn
+res://script/chess.gd
+res://script/tetris.gd
+res://scene/tetris.tscn
+res://script/gallery.gd
+res://scene/main.tscn
+res://script/main.gd

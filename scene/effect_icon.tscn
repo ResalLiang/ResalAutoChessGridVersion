@@ -3,12 +3,20 @@
 [ext_resource type="Script" uid="uid://dqkuswiuyemm4" path="res://script/effect_icon.gd" id="1_43ygc"]
 [ext_resource type="Texture2D" uid="uid://c2f4hhbuv2cw8" path="res://asset/sprite/icon/wisdom.png" id="2_mxe04"]
 
-[node name="effect_icon" type="VBoxContainer"]
+[node name="effect_icon" type="Control"]
 z_index = 20
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 16.0
+offset_bottom = 16.0
+mouse_filter = 1
 script = ExtResource("1_43ygc")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 z_index = 25
 custom_minimum_size = Vector2(16, 16)
-layout_mode = 2
+layout_mode = 0
+offset_right = 16.0
+offset_bottom = 16.0
 texture = ExtResource("2_mxe04")

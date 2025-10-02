@@ -1322,7 +1322,8 @@ func _on_died():
 				effect_instance.register_buff("armor_modifier",  current_dwarf_death_count * (4 + king_index.chess_level), 999)
 				effect_instance.effect_name = "Avatar"
 				effect_instance.effect_type = "Buff"
-				effect_instance.effect_applier = "Dwarf KingMan Passive Effect"
+				effect_instance.effect_description = "Gains damage and armor when allied Dwarves die."
+				effect_instance.effect_applier = "Dwarf King Passive Effect"
 				king_index.effect_handler.add_to_effect_array(effect_instance)
 				await king_index.effect_animation_display("DwarfKingPassive", arena, get_current_tile(king_index)[1], "RightTop")
 				king_index.effect_handler.refresh_effects()	
@@ -1477,7 +1478,8 @@ func handle_special_effect(target: Obstacle, attacker: Obstacle):
 		effect_instance.register_buff("duration_only", 0, attacker.chess_level)
 		effect_instance.effect_name = "HunterMark"
 		effect_instance.effect_type = "Debuff"
-		effect_instance.effect_applier = "Dward Hunter Mark"
+		effect_instance.effect_applier = attacker.chess_name
+		effect_instance.effect_description = "Hunter's Mark increases move speed by 1/2/3 towards marked targets."
 		target.effect_handler.add_to_effect_array(effect_instance)
 		await target.effect_animation_display("DwarfHunterMark", arena, get_current_tile(target)[1], "Center")
 		#target.effect_handler.refresh_effects()
@@ -1489,7 +1491,8 @@ func handle_special_effect(target: Obstacle, attacker: Obstacle):
 			effect_instance.register_buff("stunned_duration", 0, 1)
 			effect_instance.effect_name = "ShieldBreakerKnock"
 			effect_instance.effect_type = "Debuff"
-			effect_instance.effect_applier = "Dwarf ShieldBreaker"
+			effect_instance.effect_applier = attacker.chess_name
+			effect_instance.effect_description = "Cannot move, attck or cast spell while stunned."
 			target.effect_handler.add_to_effect_array(effect_instance)
 			await target.effect_animation_display("ShieldBreakerKnock", arena, get_current_tile(target)[1], "RightTop")
 			#target.effect_handler.refresh_effects()			
@@ -1612,6 +1615,7 @@ func elf_path1_bonus():
 		effect_instance.effect_name = "Swift - Level " + str(bonus_level)
 		effect_instance.effect_type = "Faction Bonus"
 		effect_instance.effect_applier = "Elf path1 Faction Bonus"
+		effect_instance.effect_description = "Elf allies gain attack speed bonus, and attack damage decreased."
 		effect_handler.add_to_effect_array(effect_instance)
 		await effect_animation_display("ElfSwift", arena, get_current_tile(self)[1], "RightTop")
 		effect_handler.refresh_effects()
@@ -1692,6 +1696,7 @@ func dwarf_path2_bonus():
 	effect_instance.effect_name = "Berserker - Level " + str(bonus_level)
 	effect_instance.effect_type = "Faction Bonus"
 	effect_instance.effect_applier = "Dwarf path2 Faction Bonus"
+	effect_instance.effect_description = "Dwarf will give up armor and gain attack damage."
 	effect_handler.add_to_effect_array(effect_instance)
 	effect_handler.add_child(effect_instance)
 	await effect_animation_display("DwarfBerserker", arena, get_current_tile(self)[1], "RightTop")
@@ -1706,6 +1711,7 @@ func dwarf_path3_bonus():
 		effect_instance.effect_name = "March - Level " + str(bonus_level)
 		effect_instance.effect_type = "Faction Bonus"
 		effect_instance.effect_applier = "Dwarf path3 Faction Bonus"
+		effect_instance.effect_description = "Dwarf allied gain speed bonus at first turn."
 		effect_handler.add_to_effect_array(effect_instance)
 		effect_handler.add_child(effect_instance)
 		await effect_animation_display("DwarfMarch", arena, get_current_tile(self)[1], "RightTop")
@@ -1866,6 +1872,7 @@ func freezing_field(arrow_count: int) -> bool:
 				effect_instance.effect_name = "SpellFreezing"
 				effect_instance.effect_type = "Debuff"
 				effect_instance.effect_applier = "Human ArchMage Spell Freezing"
+				effect_instance.effect_description = "Chess hit speed and armor will reduced."
 				obstacle.effect_handler.add_to_effect_array(effect_instance)
 		)
 		arraow_degree += arraow_degree_interval
@@ -1909,6 +1916,7 @@ func human_mage_taunt(spell_duration: int) -> bool:
 	effect_instance.effect_name = "Taunt"
 	effect_instance.effect_type = "Buff"
 	effect_instance.effect_applier = "Human Mage Spell Taunt"
+	effect_instance.effect_description = "Taunt chess will be set as target before other chesses."
 	effect_handler.add_to_effect_array(effect_instance)
 	effect_handler.add_child(effect_instance)
 
@@ -1945,7 +1953,8 @@ func human_archmage_heal(spell_duration: int, heal_value: float) -> bool:
 					# effect_instance.continuous_hp_modifier_duration = spell_duration
 					effect_instance.effect_name = "Heal"
 					effect_instance.effect_type = "Buff"
-					effect_instance.effect_applier = "Human ArchMage Spell Heal"
+					effect_instance.effect_applier = chess_name
+					effect_instance.effect_description = "Continuously heal."
 					arena_unitgrid[affected_index].effect_handler.add_to_effect_array(effect_instance)
 					arena_unitgrid[affected_index].effect_handler.add_child(effect_instance)
 
@@ -1970,7 +1979,8 @@ func elf_queen_stun(spell_duration: int, damage_value: float) -> bool:
 				# effect_instance.stunned_duration = spell_duration
 				effect_instance.effect_name = "Stun"
 				effect_instance.effect_type = "Debuff"
-				effect_instance.effect_applier = "Elf Queen Spell Stun"
+				effect_instance.effect_applier = chess_name
+				effect_instance.effect_description = "Cannot move, attck or cast spell while stunned."
 				arena_unitgrid[affected_index].effect_handler.add_to_effect_array(effect_instance)
 				arena_unitgrid[affected_index].effect_handler.add_child(effect_instance)
 

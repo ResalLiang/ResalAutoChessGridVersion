@@ -3,6 +3,8 @@ extends VBoxContainer
 
 const effect_icon_scene = preload("res://scene/effect_icon.tscn")
 
+@onready var v_box_container: VBoxContainer = $VBoxContainer
+
 @onready var chess_name: Label = $VBoxContainer/chess_name
 @onready var chess_faction: Label = $VBoxContainer/chess_faction
 @onready var max_hp: Label = $VBoxContainer/max_hp
@@ -21,16 +23,46 @@ var animation_chess_name := "SwordMan"
 var record_chess: Obstacle
 var showed_chess: Obstacle
 
+var game_root_scene
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	
+	game_root_scene = get_parent()
 	visible = false
-	max_hp.tooltip_text = "Health points. Unit dies when reaching 0."
-	armor.tooltip_text = "Reduces damage taken by this amount."
-	speed.tooltip_text = "Movement range per turn (tiles)."
-	damage.tooltip_text = "Damage dealt per attack(melee/ranged)."
-	attack_range.tooltip_text = "Attack distance (tiles)."
-	attack_speed.tooltip_text = "Attacks per turn."
-	spell.tooltip_text = "Special ability (requires full MP)."
+	#chess_name.text = "Chess Name = " + showed_chess.chess_name
+	#chess_faction.text = "Faction = " + showed_chess.faction
+	
+	max_hp.set_meta("tips", "Health points. Unit dies when reaching 0.")
+	armor.set_meta("tips", "Reduces damage taken by this amount.")
+	speed.set_meta("tips", "Movement range per turn (tiles).")
+	damage.set_meta("tips", "Damage dealt per attack(melee/ranged).")
+	attack_range.set_meta("tips", "Attack distance (tiles).")
+	attack_speed.set_meta("tips", "Attacks per turn.")
+	spell.set_meta("tips", "Special ability (requires full MP).")
+	
+	
+	for node in v_box_container.get_children():
+		if not node is Label:
+			continue
+			
+		# Connect mouse entered signal
+		node.mouse_entered.connect(
+			func():
+				game_root_scene.tips_label.global_position = get_global_mouse_position() + Vector2(-140, -8)
+				game_root_scene.tips_label.text = node.get_meta("tips", "")
+				if game_root_scene.tips_label.text != "":
+					game_root_scene.tips_label.visible = true
+				else:
+					game_root_scene.tips_label.visible = false
+		)
+		
+		# Connect mouse exited signal
+		node.mouse_exited.connect(
+			func():
+				game_root_scene.tips_label.visible = false
+		)
+
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -93,16 +125,36 @@ func refresh_chess_information():
 
 	if showed_chess.effect_handler:
 		var chess_effect_list = showed_chess.effect_handler.effect_list.duplicate()
-		if chess_effect_list.size() == 0:
+		if chess_effect_list.size() == 0 or is_instance_valid(chess_effect_list):
 			return
 
 		for effect_index in chess_effect_list:
-			# if effect_index.effect_name = "KillCount":
-			# 	continue
+			
 			var effect_icon = effect_icon_scene.instantiate()
 			effect_icon.effect_name = effect_index.effect_name
 			effect_icon.tooltip_text = effect_index.effect_name + " by " + effect_index.effect_applier + " :\n" + effect_index.effect_description
 			icon_container.add_child(effect_icon)
+			
+			# Connect mouse entered signal
+			effect_icon.mouse_entered.connect(
+				func():
+					if not effect_icon.get_global_rect().has_point(get_global_mouse_position()):
+						return
+					game_root_scene.tips_label.global_position = get_global_mouse_position() + Vector2(-140, -24)
+					game_root_scene.tips_label.text = effect_index.effect_name + " by " + effect_index.effect_applier + " :\n" + effect_index.effect_description
+					#game_root_scene.tips_label.text = "123"
+					if game_root_scene.tips_label.text != "":
+						game_root_scene.tips_label.visible = true
+					else:
+						game_root_scene.tips_label.visible = false
+			)
+			
+			# Connect mouse exited signal
+			effect_icon.mouse_exited.connect(
+				func():
+					if not effect_icon.get_global_rect().has_point(get_global_mouse_position()):
+						game_root_scene.tips_label.visible = false
+			)
 				
 func _on_chess_drag_canceled(starting_position: Vector2, status: String, obstacle: Obstacle) -> void:
 	visible = false

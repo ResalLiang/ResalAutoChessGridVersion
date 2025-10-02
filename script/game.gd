@@ -39,6 +39,7 @@ const alternative_choice_scene = preload("res://scene/alternative_choice.tscn")
 
 @onready var back_button: Button = $back_button
 @onready var debug_label: Label = $debug_label
+@onready var tips_label: Label = $tips_label
 
 @onready var chess_order_hp_high: Button = $chess_order_control/chess_order_hp_high
 @onready var chess_order_hp_low: Button = $chess_order_control/chess_order_hp_low
@@ -302,7 +303,8 @@ func _ready():
 	center_point = Vector2(tile_size.x * 16 / 2, tile_size.y * 16 / 2)
 	
 	debug_label.visible = DataManagerSingleton.player_data["debug_mode"]
-
+	tips_label.visible = false
+	
 	shop_handler.shop_refresh()
 	shop_handler.buy_human_count = 0
 	current_round = 0

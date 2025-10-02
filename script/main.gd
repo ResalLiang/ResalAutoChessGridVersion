@@ -60,6 +60,13 @@ func show_gallery():
 	AudioManagerSingleton.play_music("menu")
 	await _transition_to_scene("res://scene/gallery.tscn", main_container, true)
 	current_scene.to_menu_scene.connect(show_main_menu)
+	current_scene.to_mini_game_scene.connect(show_mini_game)
+	
+func show_mini_game():
+	AudioManagerSingleton.play_music("menu")
+	await _transition_to_scene("res://scene/tetris.tscn", main_container, true)
+	current_scene.to_menu_scene.connect(show_main_menu)
+	
 
 # 场景切换核心方法 - 这是自定义方法
 func _transition_to_scene(scene_path: String, container: Control, if_transition: bool):

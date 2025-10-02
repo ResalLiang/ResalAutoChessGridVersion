@@ -1,0 +1,34 @@
+[gd_scene load_steps=3 format=3 uid="uid://cls0i55v2i3bo"]
+
+[ext_resource type="FontFile" uid="uid://bfd8lxmo20ddl" path="res://asset/font/Everyday_Tiny_Bold.ttf" id="1_d7w4q"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yjo7v"]
+content_margin_left = 1.0
+content_margin_top = 1.0
+content_margin_right = 1.0
+content_margin_bottom = 1.0
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 1)
+expand_margin_left = 1.0
+expand_margin_top = 1.0
+expand_margin_right = 1.0
+expand_margin_bottom = 1.0
+
+[node name="tips_label" type="VBoxContainer"]
+z_index = 800
+custom_minimum_size = Vector2(64, 16)
+offset_right = 64.0
+offset_bottom = 23.0
+
+[node name="Label" type="Label" parent="."]
+z_index = 800
+custom_minimum_size = Vector2(64, 24)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_d7w4q")
+theme_override_font_sizes/font_size = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_yjo7v")
+text = "123"

@@ -120,10 +120,24 @@ animation = &"die"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 z_index = 20
-offset_left = 444.0
-offset_top = 211.0
-offset_right = 548.0
-offset_bottom = 295.0
+offset_left = 452.0
+offset_top = 185.0
+offset_right = 556.0
+offset_bottom = 313.0
+
+[node name="mini_game_button" type="Button" parent="VBoxContainer"]
+z_index = 25
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_l8qdg")
+theme_override_font_sizes/font_size = 8
+text = "Mini Game"
+
+[node name="reset_button2" type="Button" parent="VBoxContainer"]
+z_index = 25
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.23921569, 0.39215687, 1)
+theme_override_fonts/font = ExtResource("3_l8qdg")
+text = "Reset"
 
 [node name="back_button" type="Button" parent="VBoxContainer"]
 z_index = 25
@@ -131,12 +145,6 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("3_l8qdg")
 text = "Back"
 
-[node name="reset_button" type="Button" parent="VBoxContainer"]
-z_index = 25
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.23921569, 0.39215687, 1)
-theme_override_fonts/font = ExtResource("3_l8qdg")
-text = "Reset"
-
+[connection signal="pressed" from="VBoxContainer/mini_game_button" to="." method="_on_mini_game_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/reset_button2" to="." method="_on_reset_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/back_button" to="." method="_on_back_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/reset_button" to="." method="_on_reset_button_pressed"]

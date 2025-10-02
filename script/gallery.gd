@@ -23,6 +23,7 @@ class_name gallery
 @onready var reset_button: Button = $reset_button
 
 signal to_menu_scene
+signal to_mini_game_scene
 
 func _ready() -> void:
 	
@@ -210,3 +211,7 @@ func _on_back_button_pressed() -> void:
 func _on_reset_button_pressed() -> void:
 	DataManagerSingleton.clean_player_data(DataManagerSingleton.current_player)
 	refresh_gallery()
+
+
+func _on_mini_game_button_pressed() -> void:
+	to_mini_game_scene.emit()

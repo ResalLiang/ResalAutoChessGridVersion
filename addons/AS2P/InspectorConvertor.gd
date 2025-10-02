@@ -102,4 +102,3 @@ class CustomEditorInspectorCategory extends Control:
 
 		var color := get_theme_color(&"font_color", &"Tree")
 		draw_string(font, Vector2(ofs, font.get_ascent(font_size) + (get_size().y - font.get_height(font_size)) / 2).floor(), title, HORIZONTAL_ALIGNMENT_LEFT, get_size().x, font_size, color);
-

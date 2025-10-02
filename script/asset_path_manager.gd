@@ -1,14 +1,39 @@
 extends Node
 class_name AssetPathManager
 
+#var effect_icon_path = {
+	#"Swift" = "res://asset/sprite/icon/swift.png",
+	#"Wisdom" = "res://asset/sprite/icon/wisdom.png",
+	#"Fortress" = "res://asset/sprite/icon/fortress.png",
+	#"HolyShield" = "res://asset/sprite/icon/holy_shield.png",
+	#"Strong" = "res://asset/sprite/icon/strong.png",
+	#"Doom" = "res://asset/sprite/icon/doom.png",
+	#"Weak" = "res://asset/sprite/icon/weak.png",
+	#"Default" = "res://asset/sprite/icon/wisdom.png"
+#}
+
 var effect_icon_path = {
-	"Swift" = "res://asset/sprite/icon/swift.png",
-	"Wisdom" = "res://asset/sprite/icon/wisdom.png",
-	"Fortress" = "res://asset/sprite/icon/fortress.png",
-	"HolyShield" = "res://asset/sprite/icon/holy_shield.png",
-	"Strong" = "res://asset/sprite/icon/strong.png",
-	"Doom" = "res://asset/sprite/icon/doom.png",
-	"Weak" = "res://asset/sprite/icon/weak.png",
+	"KillCount" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon11.png",
+	"Avatar" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon78.png",
+	"HunterMark" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon51.png",
+	"ShieldBreakerKnock" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon96.png",
+	"SpellFreezing" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon77.png",
+	"Taunt" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon4.png",
+	"Heal" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon2.png",
+	"Stun" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon96.png",
+	"Precise" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon23.png",
+	"Gentle" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon92.png",
+	"Wisdom" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon85.png",
+	"Fortress" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon29.png",
+	"HolyShield" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon33.png",
+	"Strong" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon7.png",
+	"Doom" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon66.png",
+	"Weak" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon57.png",
+	"WarriorSkill" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon79.png",
+	"KnightSkill" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon97.png",
+	"PikemanSkill" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon83.png",
+	"SpellerSkill" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon87.png",
+	"RangerSkill" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon52.png",
 	"Default" = "res://asset/sprite/icon/wisdom.png"
 }
 

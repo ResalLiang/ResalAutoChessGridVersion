@@ -1,4 +1,4 @@
-[gd_scene load_steps=94 format=4 uid="uid://cthbjvirwy2mg"]
+[gd_scene load_steps=95 format=4 uid="uid://cthbjvirwy2mg"]
 
 [ext_resource type="Script" uid="uid://c7rtc63knhqn2" path="res://script/game.gd" id="1_ll5lq"]
 [ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="2_dbls1"]
@@ -7404,6 +7404,17 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u414g"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+expand_margin_left = 1.0
+expand_margin_top = 1.0
+expand_margin_right = 1.0
+expand_margin_bottom = 1.0
+
 [node name="Game" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_ll5lq")
@@ -7659,6 +7670,20 @@ theme_override_colors/font_color = Color(1, 1, 0, 1)
 theme_override_fonts/font = ExtResource("9_81276")
 theme_override_font_sizes/font_size = 4
 text = "WON"
+metadata/_edit_use_anchors_ = true
+
+[node name="tips_label" type="Label" parent="."]
+z_index = 500
+offset_left = 304.0
+offset_top = 209.0
+offset_right = 432.0
+offset_bottom = 233.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("9_81276")
+theme_override_font_sizes/font_size = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_u414g")
+text = "WON"
+autowrap_mode = 3
 metadata/_edit_use_anchors_ = true
 
 [node name="shop_handler" type="Node2D" parent="."]
