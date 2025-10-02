@@ -1,11 +1,11 @@
+TileMapLayer
+ColorRect
 Button
 Label
 Panel
 Node2D
-TileMapLayer
 Control
 VBoxContainer
-ColorRect
 HBoxContainer
 AcceptDialog
 AnimatedSprite2D
