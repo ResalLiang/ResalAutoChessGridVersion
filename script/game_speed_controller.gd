@@ -22,7 +22,7 @@ class_name GameSpeedController
 func _ready():
 	# 设置滑条范围
 	speed_slider.min_value = 0.1
-	speed_slider.max_value = 3.0
+	speed_slider.max_value = 5.0
 	speed_slider.step = 0.1
 	speed_slider.value = 1.0
 	

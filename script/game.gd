@@ -30,11 +30,13 @@ const alternative_choice_scene = preload("res://scene/alternative_choice.tscn")
 @onready var current_round_label: Label = $current_round_label
 @onready var last_turn_label: Label = $last_turn_label
 
-@onready var game_start_button: Button = $game_start_button
-@onready var game_restart_button: Button = $game_restart_button
-@onready var shop_refresh_button: Button = $shop_refresh_button
-@onready var shop_freeze_button: Button = $shop_freeze_button
-@onready var shop_upgrade_button: Button = $shop_upgrade_button
+@onready var game_start_button: Button = $game_button_container/game_start_button
+@onready var game_restart_button: Button = $game_button_container/game_restart_button
+@onready var shop_refresh_button: Button = $game_button_container/shop_refresh_button
+@onready var shop_freeze_button: Button = $game_button_container/shop_freeze_button
+@onready var shop_upgrade_button: Button = $game_button_container/shop_upgrade_button
+
+
 @onready var back_button: Button = $back_button
 @onready var debug_label: Label = $debug_label
 
@@ -298,6 +300,8 @@ func _ready():
 	#arena.bounds = Rect2i(0, 0, 6, 12)
 
 	center_point = Vector2(tile_size.x * 16 / 2, tile_size.y * 16 / 2)
+	
+	debug_label.visible = DataManagerSingleton.player_data["debug_mode"]
 
 	shop_handler.shop_refresh()
 	shop_handler.buy_human_count = 0
@@ -313,7 +317,22 @@ func _process(delta: float) -> void:
 	var current_tile = get_current_tile(get_global_mouse_position())[1]
 		
 	debug_label.text = current_playarea_index.name + " / " + str(current_tile)
+	
+	if current_playarea_index.is_tile_in_bounds(current_tile) and DataManagerSingleton.check_obstacle_valid(current_playarea_index.unit_grid.units[current_tile]):
+		var mouse_position_obstacle = current_playarea_index.unit_grid.units[current_tile]
+		debug_label.text += "\n" + mouse_position_obstacle.faction + " / " +  mouse_position_obstacle.chess_name
 
+func _input(event: InputEvent) -> void:
+	# Handle drag cancellation
+	if event.is_action_pressed("refresh"):
+		shop_handler.shop_manual_refresh()
+	elif event.is_action_pressed("freeze"):
+		shop_handler.shop_freeze()
+	elif event.is_action_pressed("start"):
+		new_round_prepare_end()
+	elif event.is_action_pressed("upgrade"):
+		shop_handler.shop_upgrade()
+		
 func start_new_game() -> void:
 
 	arena_bound.visible = false
@@ -354,7 +373,7 @@ func new_round_prepare_start():
 	
 	current_round += 1
 	
-	current_round_label.text = "Current round : " + str(current_round)
+	current_round_label.text = "Current round : " + str(current_round) + " | (" + str(DataManagerSingleton.won_rounds) + " / " + str(DataManagerSingleton.lose_rounds) +")"
 	
 
 	shop_handler.shop_refresh()
@@ -419,7 +438,11 @@ func start_new_round():
 				
 	# update_population(true)
 			
-	if team1_alive_cnt == 0:
+			
+	if team1_alive_cnt == 0 and team2_alive_cnt == 0:
+		round_finished.emit("draw")
+		return
+	elif team1_alive_cnt == 0:
 		round_finished.emit("team2")
 		return
 	elif team2_alive_cnt == 0:
@@ -461,7 +484,6 @@ func process_character_turn(chess: Obstacle):
 	await active_chess.action_finished
 	
 	handle_character_action_finished()
-	# 连接信号等待行动完成
 
 func handle_character_action_finished():
 	if active_chess:
@@ -479,7 +501,7 @@ func handle_character_action_finished():
 
 	for team_index in team_dict.keys():
 		for chess_index in team_dict[team_index]:
-			if is_instance_valid(chess_index) and chess_index is Obstacle and chess_index.status != chess_index.STATUS.DIE:
+			if DataManagerSingleton.check_obstacle_valid(chess_index):
 				new_team_dict[team_index].append(chess_index)
 			else:
 				chess_index.queue_free()
@@ -495,6 +517,15 @@ func handle_character_action_finished():
 		
 	elif team_dict[Team.TEAM2].size() != 0 or team_dict[Team.TEAM1].size() != 0:
 		start_chess_turn(current_team)
+		
+	elif team_dict[Team.TEAM2_FULL].size() == 0 and team_dict[Team.TEAM1_FULL].size() == 0:
+		round_finished.emit("draw")
+		
+	elif team_dict[Team.TEAM1_FULL].size() == 0:
+		round_finished.emit("team2")
+		
+	elif team_dict[Team.TEAM2_FULL].size() == 0:
+		round_finished.emit("team1")
 
 	else:
 		start_new_round()
@@ -513,18 +544,19 @@ func handle_round_finished(msg):
 		last_turn_label.text = 'LOSE'
 		player_lose_round.emit()
 		add_round_finish_scene.emit('LOSE')
+	elif msg == "draw":
+		print("Round %d over,draw..." % current_round)
+		last_turn_label.text = 'DRAW'
+		add_round_finish_scene.emit('DRAW')
 
-	print("You have won %d rounds, and lose %d rounds." % [DataManagerSingleton.won_rounds, DataManagerSingleton.lose_rounds])
 
 	battle_meter.round_end_data_update() #update to ingame data
 
 	if DataManagerSingleton.won_rounds >= DataManagerSingleton.max_won_rounds:
-		print("You won the game!")
 		player_won_game.emit()
 		handle_game_end()
 		return
 	elif DataManagerSingleton.lose_rounds >= DataManagerSingleton.max_lose_rounds:
-		print("You lose the game... Try later.")
 		player_lose_game.emit()
 		handle_game_end()
 		return
@@ -679,7 +711,7 @@ func generate_random_chess(generate_level: int, specific_faction: String):
 	# --- Weighted Random Selection ---
 	if candidate_chesses.size() == 0:
 		push_warning("No eligible chesses found for rarity: %s" % selected_rarity)
-		return ["human", "ShieldMan"]  # Fallback
+		return ["human", "SwordMan"]  # Fallback
 	
 	var random_chess_point := randi_range(0, total_weight_pool - 1)
 	for chess in candidate_chesses:
@@ -687,7 +719,7 @@ func generate_random_chess(generate_level: int, specific_faction: String):
 			return [chess["faction"], chess["name"]]
 	
 	# Should never reach here if candidates exist
-	return ["human", "ShieldMan"]
+	return ["human", "SwordMan"]
 '''func generate_random_chess(generate_level: int, specific_faction: String):'''
 func generate_random_chess_update(generate_level: int, specific_faction: String):
 	# --- Existing Chesses Tracking ---
@@ -695,10 +727,10 @@ func generate_random_chess_update(generate_level: int, specific_faction: String)
 	# Count existing chess instances (faction+name pairs)
 
 	if not (DataManagerSingleton.get_chess_data().keys() + ["all", "locked"]).has(specific_faction):
-		return ["human", "ShieldMan"]
+		return ["human", "SwordMan"]
 
-	if [1, 2, 3, 4, 5, 6].has(generate_level):
-		return ["human", "ShieldMan"]
+	if not [1, 2, 3, 4, 5, 6].has(generate_level):
+		return ["human", "SwordMan"]
 
 	var existing_chess_counts := {}
 	for chess_index in (arena.unit_grid.get_all_units() + bench.unit_grid.get_all_units()):
@@ -707,7 +739,7 @@ func generate_random_chess_update(generate_level: int, specific_faction: String)
 			existing_chess_counts[composite_key] = existing_chess_counts.get(composite_key, 0) + pow(3, chess_index.chess_level - 1)
 
 	var chess_count_dict = {
-		"Uncomon" : 30,
+		"Uncommon" : 30,
 		"Rare" : 20,
 		"Epic" : 10,
 		"Legendary" : 10
@@ -742,14 +774,14 @@ func generate_random_chess_update(generate_level: int, specific_faction: String)
 			if current_chess["rarity"] == "Common":
 				common_chess_pool.append(composite_key)
 			else:
-				var pool_count = max(0, chess_count_dict[current_chess["rarity"]] - existing_chess_counts[composite_key])
+				var pool_count = max(0, chess_count_dict[current_chess["rarity"]] - (existing_chess_counts[composite_key] if existing_chess_counts.keys().has(composite_key) else 0))
 				for i in range(pool_count):
 					other_chess_pool.append(composite_key)
 
 	common_chess_pool.shuffle()
 	other_chess_pool.shuffle()
 
-	var current_rarity_weight = RARITY_WEIGHTS_UPDATE[generate_level]
+	var current_rarity_weight = RARITY_WEIGHTS_UPDATE[min(generate_level, 6)]
 	var current_rarity
 
 	var rand_for_rarity = randi_range(0, 99)
@@ -922,7 +954,7 @@ func battle_value_display(chess: Obstacle, chess2: Obstacle, display_value, sign
 		return
 
 	var battle_label = Label.new()
-	battle_label.z_index = 6
+	battle_label.z_index = 25
 	arena.add_child(battle_label)
 
 	# Create a new theme
@@ -1036,7 +1068,7 @@ func check_chess_merge():
 
 						var upgrade_chess 
 						var merged_level = merge_level + 1
-						if DataManagerSingleton.get_chess_data()[merged_chess_faction][merged_chess_name].has("Upgrade_Chess") and merged_chess_faction == "human":
+						if DataManagerSingleton.get_chess_data()[merged_chess_faction][merged_chess_name].has("upgrade_chess") and merged_chess_faction == "human":
 							
 							var alternative_choice = alternative_choice_scene.instantiate()
 							alternative_choice.get_node("button_container/Button1").text = "Upgrade"
@@ -1045,7 +1077,7 @@ func check_chess_merge():
 							await alternative_choice.choice_made
 							alternative_choice.visible = false
 							if alternative_choice.get_meta("choice") == 1:
-								merged_chess_name = DataManagerSingleton.get_chess_data()[merged_chess_faction][merged_chess_name]["Upgrade_Chess"]
+								merged_chess_name = DataManagerSingleton.get_chess_data()[merged_chess_faction][merged_chess_name]["upgrade_chess"]
 								merged_level = merge_level
 							elif alternative_choice.get_meta("choice") == 2:
 								pass

@@ -1,7 +1,14 @@
-res://scene
-res://asset/sprite/spell_effect/Buff n Debuff VFX
-res://asset/sprite/spell_effect/Buff n Debuff VFX/Buff n Debuff P9 VFX 04
+res://asset/sprite/spell_effect/Buff n Debuff VFX/Buff n Debuff P9 VFX 13
 res://asset/animation/spell_animation/
+res://asset/sprite/spell_effect/Buff n Debuff VFX/Buff n Debuff P9 VFX 02
+res://asset/sprite/spell_effect/Buff n Debuff VFX/Buff n Debuff P9 VFX 08
+res://asset/sprite/spell_effect/Buff n Debuff VFX/Buff n Debuff P9 VFX 01
+res://asset/sprite/spell_effect/Buff n Debuff VFX/Buff n Debuff P9 VFX 12
+res://asset/sprite/spell_effect/Buff n Debuff VFX
+res://asset/sprite/spell_effect/Buff n Debuff VFX/Buff n Debuff P9 VFX 05
+res://asset/sprite/spell_effect/Buff n Debuff VFX/Buff n Debuff P9 VFX 04
+res://asset/sprite/MiniFolks/MinifolksHumans/Without Outline
+res://scene
 res://asset/sprite/spell_effect/Elemental Effects/Ice Effect 02 (01 - 10)/Ice VFX 5
 res://asset/sprite/spell_effect/Elemental Effects/Ice Effect 02 (01 - 10)/Ice VFX 4
 res://asset/sprite/spell_effect/Elemental Effects/Ice VFX 2
@@ -13,12 +20,5 @@ res://asset/animation/projectile_animation/
 res://asset/animation/spell_animation
 res://asset/shader
 res://asset/theme
-res://asset/sprite/icon
-res://asset/animation/dwarf
-res://asset/sprite/MiniFolks/MinifolksDwarfs/Without Outline
-res://asset/animation/demon
-res://asset/sprite/GandalfHardcore Chests
-res://asset/sprite/GandalfHardcore Icons
-res://script
 D:/LearningGodot/ResalAutoChess/script/hero_stats_raw
 D:/LearningGodot/ResalAutoChess/script

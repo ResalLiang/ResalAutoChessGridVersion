@@ -1,9 +1,46 @@
-[gd_resource type="Theme" load_steps=8 format=3 uid="uid://b4hwtdp2epofe"]
+[gd_resource type="Theme" load_steps=19 format=3 uid="uid://b4hwtdp2epofe"]
 
+[ext_resource type="Texture2D" uid="uid://c2yqxkafgsoer" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/Large Sprite Sheet.png" id="1_35cog"]
 [ext_resource type="Texture2D" uid="uid://bo1r34gjsrw3s" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/Toggle buttons 2.png" id="1_lvm42"]
 [ext_resource type="Texture2D" uid="uid://cng2vmftlts7b" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames/16x16 Slider3.png" id="2_e6xdq"]
 [ext_resource type="Texture2D" uid="uid://djfe61twa6igr" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames/16x16 Slider2.png" id="3_35cog"]
 [ext_resource type="Texture2D" uid="uid://7lrhhv8iuls0" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/16x64 Slider Bar.png" id="4_putat"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_35cog"]
+atlas = ExtResource("1_35cog")
+region = Rect2(192, 96, 65, 16)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_putat"]
+texture = SubResource("AtlasTexture_35cog")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tr6lp"]
+atlas = ExtResource("1_35cog")
+region = Rect2(64, 96, 64, 16)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2yn78"]
+texture = SubResource("AtlasTexture_tr6lp")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2yn78"]
+atlas = ExtResource("1_35cog")
+region = Rect2(64, 96, 64, 16)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_gqu7c"]
+texture = SubResource("AtlasTexture_2yn78")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_putat"]
+atlas = ExtResource("1_35cog")
+region = Rect2(0, 96, 64, 16)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_xue3d"]
+texture = SubResource("AtlasTexture_putat")
+region_rect = Rect2(0, 0, 64, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xue3d"]
+atlas = ExtResource("1_35cog")
+region = Rect2(128, 96, 64, 16)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tr6lp"]
+texture = SubResource("AtlasTexture_xue3d")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cqei2"]
 atlas = ExtResource("1_lvm42")
@@ -17,6 +54,11 @@ region = Rect2(32, 0, 32, 16)
 texture = ExtResource("4_putat")
 
 [resource]
+Button/styles/disabled = SubResource("StyleBoxTexture_putat")
+Button/styles/focus = SubResource("StyleBoxTexture_2yn78")
+Button/styles/hover = SubResource("StyleBoxTexture_gqu7c")
+Button/styles/normal = SubResource("StyleBoxTexture_xue3d")
+Button/styles/pressed = SubResource("StyleBoxTexture_tr6lp")
 CheckButton/icons/checked = SubResource("AtlasTexture_cqei2")
 CheckButton/icons/unchecked = SubResource("AtlasTexture_wkefk")
 HSlider/icons/grabber = ExtResource("2_e6xdq")

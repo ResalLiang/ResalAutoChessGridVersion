@@ -97,7 +97,7 @@ func _on_area_entered(area):
 				damage_finished = false
 				die_animation = AnimatedSprite2D.new()
 				obstacle.add_child(die_animation)
-				die_animation.z_index = 6
+				die_animation.z_index = 60
 				die_animation.global_position = obstacle.global_position
 				die_animation.sprite_frames = animated_sprite_2d.sprite_frames.duplicate()
 				die_animation.play("die")

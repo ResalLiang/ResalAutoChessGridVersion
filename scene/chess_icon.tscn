@@ -3,15 +3,18 @@
 [ext_resource type="SpriteFrames" uid="uid://byrnfbbr04whc" path="res://asset/animation/forestProtector/forestProtectorDryadEnchantress.tres" id="1_h805m"]
 
 [node name="chess_icon" type="Control"]
+z_index = 25
 layout_mode = 3
 anchors_preset = 0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = 25
 position = Vector2(16, 16)
 sprite_frames = ExtResource("1_h805m")
 animation = &"die"
 
 [node name="Container" type="Container" parent="."]
+z_index = 25
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0

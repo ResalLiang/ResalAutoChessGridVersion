@@ -40,8 +40,10 @@ func show_round_finish(result: String):
 	add_scene("res://scene/round_finish.tscn", main_container, false)
 	if result == "WON":
 		added_scene.label.text = "You Won This Round!"
-	else:
+	elif result == "LOSE":
 		added_scene.label.text = "You Lose This Round..."
+	elif result == "DRAW":
+		added_scene.label.text = "Just Draw This Round..."
 
 func show_player_upgrade():
 	AudioManagerSingleton.play_music("menu")

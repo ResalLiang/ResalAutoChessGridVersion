@@ -16,7 +16,10 @@ const effect_icon_scene = preload("res://scene/effect_icon.tscn")
 @onready var icon_container: HBoxContainer = $icon_container
 
 var animation_faction := "human"
-var animation_chess_name := "ShieldMan"
+var animation_chess_name := "SwordMan"
+
+var record_chess: Obstacle
+var showed_chess: Obstacle
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -32,7 +35,9 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	
+	if DataManagerSingleton.check_obstacle_valid(showed_chess):
+		refresh_chess_information()
 
 func setup_chess(obstacle: Obstacle) -> void:
 	obstacle.drag_handler.drag_started.connect(show_chess_information.bind(obstacle))
@@ -43,45 +48,62 @@ func setup_chess(obstacle: Obstacle) -> void:
 		
 func show_chess_information(starting_position: Vector2, status: String, obstacle: Obstacle) -> void:
 
+	showed_chess = obstacle
+	
+	refresh_chess_information()
+
+		
+	animation_faction = showed_chess.faction
+	animation_chess_name = showed_chess.chess_name
+	_load_animations()
+
+func refresh_chess_information():	
+	if showed_chess == null:
+		visible = false
+		return
+	
 	for node in icon_container.get_children():
 		node.queue_free()
 
 	visible = true
-	chess_name.text = "Chess Name = " + obstacle.chess_name
-	chess_faction.text = "Faction = " + obstacle.faction
-	if obstacle.is_active:
-		max_hp.text = "HP = " + str(round(obstacle.hp)) + " / " + str(round(obstacle.max_hp))
-		armor.text = "Armor = " + str(round(obstacle.armor))
-		speed.text = "Speed = " + ("0" if obstacle.get("speed") == null else str(round(obstacle.speed)))
-		damage.text = "Damage = " + ("0/0" if obstacle.get("melee_damage") == null else str(round(obstacle.melee_damage)) + " / " + str(round(obstacle.ranged_damage)))
-		attack_range.text = "Attack Range = " + ("0" if obstacle.get("attack_range") == null else str(round(obstacle.attack_range)))
-		attack_speed.text = "Attack Speed = " + ("0" if obstacle.get("attack_speed") == null else str(round(obstacle.attack_speed)))
+	chess_name.text = "Chess Name = " + showed_chess.chess_name
+	chess_faction.text = "Faction = " + showed_chess.faction
+	if showed_chess.is_active:
+		max_hp.text = "HP = " + str(round(showed_chess.hp)) + " / " + str(round(showed_chess.max_hp))
+		armor.text = "Armor = " + str(round(showed_chess.armor))
+		speed.text = "Speed = " + ("0" if showed_chess.get("speed") == null else str(round(showed_chess.speed)))
+		damage.text = "Damage = " + ("0/0" if showed_chess.get("melee_damage") == null else str(round(showed_chess.melee_damage)) + " / " + str(round(showed_chess.ranged_damage)))
+		attack_range.text = "Attack Range = " + ("0" if showed_chess.get("attack_range") == null else str(round(showed_chess.attack_range)))
+		attack_speed.text = "Attack Speed = " + ("0" if showed_chess.get("attack_speed") == null else str(round(showed_chess.attack_speed)))
 	else:
-		max_hp.text = "HP = " + str(round(obstacle.hp)) + " / " + str(round(obstacle.base_max_hp))
-		armor.text = "Armor = " + str(round(obstacle.base_armor))
-		speed.text = "Speed = " + ("0" if obstacle.get("base_speed") == null else str(round(obstacle.base_speed)))
-		damage.text = "Damage = " + ("0/0" if obstacle.get("base_melee_damage") == null else str(round(obstacle.base_melee_damage)) + " / " + str(round(obstacle.base_ranged_damage)))
-		attack_range.text = "Attack Range = " + ("0" if obstacle.get("base_attack_range") == null else str(round(obstacle.base_attack_range)))
-		attack_speed.text = "Attack Speed = " + ("0" if obstacle.get("base_attack_speed") == null else str(round(obstacle.base_attack_speed)))
+		max_hp.text = "HP = " + str(round(showed_chess.hp)) + " / " + str(round(showed_chess.base_max_hp))
+		armor.text = "Armor = " + str(round(showed_chess.base_armor))
+		speed.text = "Speed = " + ("0" if showed_chess.get("base_speed") == null else str(round(showed_chess.base_speed)))
+		damage.text = "Damage = " + ("0/0" if showed_chess.get("base_melee_damage") == null else str(round(showed_chess.base_melee_damage)) + " / " + str(round(showed_chess.base_ranged_damage)))
+		attack_range.text = "Attack Range = " + ("0" if showed_chess.get("base_attack_range") == null else str(round(showed_chess.base_attack_range)))
+		attack_speed.text = "Attack Speed = " + ("0" if showed_chess.get("base_attack_speed") == null else str(round(showed_chess.base_attack_speed)))
+	
+	if showed_chess.base_max_mp == 0 and showed_chess is Chess and showed_chess.passive_ability != "":
+		spell.text = "Passive ability : " + showed_chess.passive_ability
+	elif showed_chess is Chess and showed_chess.base_max_mp > 0:
+		spell.text = "Spell : " + showed_chess.skill_name
+		spell.visible = true
+	else:
+		spell.visible = false
 
-	spell.text = "Spell = " + obstacle.skill_name
-	animation_faction = obstacle.faction
-	animation_chess_name = obstacle.chess_name
-	_load_animations()
+	if showed_chess.effect_handler:
+		var chess_effect_list = showed_chess.effect_handler.effect_list.duplicate()
+		if chess_effect_list.size() == 0:
+			return
 
-	var chess_effect_list = obstacle.effect_handler.effect_list
-	if chess_effect_list.size() == 0:
-		return
-
-	for effect_index in chess_effect_list:
-		# if effect_index.effect_name = "KillCount":
-		# 	continue
-		var effect_icon = effect_icon_scene.instantiate()
-		effect_icon.effect_name = effect_index.effect_name
-		effect_icon.tooltip_text = effect_index.effect_name + " by " + effect_index.effect_applier + " :\n" + effect_index.effect_description
-		icon_container.add_child(effect_icon)
-
-		
+		for effect_index in chess_effect_list:
+			# if effect_index.effect_name = "KillCount":
+			# 	continue
+			var effect_icon = effect_icon_scene.instantiate()
+			effect_icon.effect_name = effect_index.effect_name
+			effect_icon.tooltip_text = effect_index.effect_name + " by " + effect_index.effect_applier + " :\n" + effect_index.effect_description
+			icon_container.add_child(effect_icon)
+				
 func _on_chess_drag_canceled(starting_position: Vector2, status: String, obstacle: Obstacle) -> void:
 	visible = false
 	

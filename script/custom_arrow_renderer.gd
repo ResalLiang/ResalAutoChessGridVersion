@@ -25,7 +25,7 @@ var animation_progress: float = 0.0
 var is_animating: bool = true
 
 func _ready():
-	z_index = 999
+	z_index = 550
 	mouse_filter = MouseFilter.MOUSE_FILTER_IGNORE
 
 func _process(delta: float) -> void:

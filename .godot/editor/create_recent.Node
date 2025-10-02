@@ -1,3 +1,4 @@
+VBoxContainer
 Label
 Button
 HBoxContainer
@@ -5,7 +6,6 @@ TileMapLayer
 AcceptDialog
 AnimatedSprite2D
 Node
-VBoxContainer
 TextureButton
 AudioStreamPlayer
 CheckButton

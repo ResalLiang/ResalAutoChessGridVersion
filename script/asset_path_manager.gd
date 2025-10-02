@@ -34,8 +34,12 @@ var effect_animation_path = {
 	"FireBeam" = "res://asset/animation/spell_animation/FireBeam.tres",
 	"IceFreeze" = "res://asset/animation/spell_animation/IceFreeze.tres",
 	"IceUnfreeze" = "res://asset/animation/spell_animation/IceUnfreeze.tres",
-	"Berserker" = "res://asset/animation/spell_animation/Berserker.tres",
-	"Fortress" = "res://asset/animation/spell_animation/Fortress.tres",
+	"DwarfBerserker" = "res://asset/animation/spell_animation/DwarfBerserker.tres",
+	"DwarfFortress" = "res://asset/animation/spell_animation/DwarfFortress.tres",
+	"DwarfHunterMark" = "res://asset/animation/spell_animation/DwarfHunterMark.tres",
+	"DwarfKingPassive" = "res://asset/animation/spell_animation/DwarfKingPassive.tres",
+	"DwarfMarch" = "res://asset/animation/spell_animation/DwarfMarch.tres",
+	"ElfSwift" = "res://asset/animation/spell_animation/ElfSwift.tres",
 	"Default" = "res://asset/animation/spell_animation/FireBeam.tres"
 }
 

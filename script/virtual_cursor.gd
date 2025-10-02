@@ -35,6 +35,7 @@ func _ready():
 	
 	# 设置显示属性
 	z_index = 999
+	cursor_sprite.z_index = 999
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 func _process(_delta):

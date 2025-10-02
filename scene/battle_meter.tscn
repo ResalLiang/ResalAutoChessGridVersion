@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://clbdihywm3w1j" path="res://script/battle_meter.gd" id="1_2mymq"]
 
 [node name="battle_meter" type="VBoxContainer"]
+z_index = 20
 offset_right = 167.0
 offset_bottom = 68.0
 script = ExtResource("1_2mymq")

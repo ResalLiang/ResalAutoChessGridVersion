@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cmj65pa4j3u1u" path="res://script/chess.gd" id="1_q0pof"]
 [ext_resource type="Shader" uid="uid://d3tyrfwlw2c1g" path="res://asset/shader/LightweightPixelPerfectOutline.gdshader" id="2_8icae"]
-[ext_resource type="SpriteFrames" uid="uid://b7mr84awj2n53" path="res://asset/animation/elf/elfArcaneArcher.tres" id="3_yludp"]
+[ext_resource type="SpriteFrames" uid="uid://cp300rynpsj4v" path="res://asset/animation/human/humanSwordMan.tres" id="3_yludp"]
 [ext_resource type="Script" uid="uid://pmtyv1bl3nog" path="res://script/drag_handler.gd" id="4_ddkfs"]
 [ext_resource type="Script" uid="uid://c101twvdkyo0l" path="res://script/area_effect_handler.gd" id="7_8osrc"]
 [ext_resource type="FontFile" uid="uid://bfd8lxmo20ddl" path="res://asset/font/Everyday_Tiny_Bold.ttf" id="7_yludp"]
@@ -500,24 +500,25 @@ border_width_bottom = 1
 border_color = Color(0.301961, 0.101961, 0.0117647, 0.498039)
 
 [node name="Chess" type="Node2D"]
-z_index = 1
+z_index = 50
 y_sort_enabled = true
 script = ExtResource("1_q0pof")
 line_visible = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-z_index = 3
+z_index = 50
 y_sort_enabled = true
 material = SubResource("ShaderMaterial_dbi3s")
 position = Vector2(0, -11)
 sprite_frames = ExtResource("3_yludp")
-animation = &"idle"
+animation = &"move"
 
 [node name="Area2D" type="Area2D" parent="."]
+z_index = 50
 position = Vector2(0, -13)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-z_index = 5
+z_index = 50
 position = Vector2(0, 10.5)
 shape = SubResource("RectangleShape2D_10qbj")
 
@@ -531,9 +532,11 @@ wait_time = 0.5
 
 [node name="attack_target_line" type="Line2D" parent="."]
 visible = false
+z_index = 50
 
 [node name="spell_target_line" type="Line2D" parent="."]
 visible = false
+z_index = 50
 
 [node name="drag_handler" type="Node2D" parent="."]
 script = ExtResource("4_ddkfs")
@@ -559,6 +562,7 @@ libraries = {
 }
 
 [node name="hp_bar" type="ProgressBar" parent="."]
+z_index = 51
 offset_left = -8.0
 offset_top = -20.0
 offset_right = 8.0
@@ -567,8 +571,10 @@ theme_override_styles/background = SubResource("StyleBoxFlat_jr182")
 theme_override_styles/fill = SubResource("StyleBoxFlat_mccdw")
 value = 50.0
 show_percentage = false
+metadata/_edit_use_anchors_ = true
 
 [node name="mp_bar" type="ProgressBar" parent="."]
+z_index = 51
 offset_left = -8.0
 offset_top = -15.0
 offset_right = 8.0
@@ -577,15 +583,17 @@ theme_override_styles/background = SubResource("StyleBoxFlat_dbi3s")
 theme_override_styles/fill = SubResource("StyleBoxFlat_heiwi")
 value = 50.0
 show_percentage = false
+metadata/_edit_use_anchors_ = true
 
 [node name="area_effect_handler" type="Node2D" parent="."]
+z_index = 50
 script = ExtResource("7_8osrc")
 
 [node name="effect_handler" type="Node" parent="."]
 script = ExtResource("8_feolq")
 
 [node name="level_label" type="Label" parent="."]
-z_index = 6
+z_index = 50
 offset_left = 8.0
 offset_top = -16.0
 offset_right = 14.0
@@ -596,6 +604,7 @@ theme_override_font_sizes/font_size = 4
 text = "I"
 horizontal_alignment = 1
 vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
 
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
 [connection signal="timeout" from="idle_timer" to="." method="_on_idle_timeout"]

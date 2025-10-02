@@ -151,13 +151,13 @@ if __name__ == "__main__":
         print("❌ 转换失败，请检查错误信息。")
 
 # 如果你想要自定义文件路径，可以取消下面的注释
-# if __name__ == "__main__":
-#     import sys
-#     
-#     if len(sys.argv) != 3:
-#         print("使用方法: python script.py <输入CSV文件> <输出JSON文件>")
-#         print("例如: python script.py data.csv output.json")
-#     else:
-#         csv_file = sys.argv[1]
-#         json_file = sys.argv[2]
-#         csv_to_json(csv_file, json_file)
+if __name__ == "__main__":
+    import sys
+    
+    if len(sys.argv) != 3:
+        print("使用方法: python script.py <输入CSV文件> <输出JSON文件>")
+        print("例如: python script.py data.csv output.json")
+    else:
+        csv_file = sys.argv[1]
+        json_file = sys.argv[2]
+        csv_to_json(csv_file, json_file)

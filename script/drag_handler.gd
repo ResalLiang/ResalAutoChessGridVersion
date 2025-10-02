@@ -14,7 +14,7 @@ var offset := Vector2.ZERO      # Drag offset from mouse position
 
 @export var dragging_enabled := true
 
-const CHARACT_Z_INDEX = 5  # Default rendering layer
+const CHARACT_Z_INDEX = 50  # Default rendering layer
 
 # ========================
 # Signal Definitions
@@ -72,7 +72,7 @@ func _start_dragging():
 	dragging = true
 	starting_position = dragging_item.global_position
 	add_to_group("dragging")
-	dragging_item.z_index = 996  # Bring to front during drag
+	dragging_item.z_index = 500  # Bring to front during drag
 	offset = dragging_item.global_position - get_global_mouse_position()
 	drag_started.emit(starting_position, "started")
 

@@ -42,3 +42,5 @@ func _update_texture():
 
 func _ready() -> void:
 	_update_texture()  # 确保在节点准备好后更新纹理
+	z_index = 20
+	texture_rect.z_index = 25

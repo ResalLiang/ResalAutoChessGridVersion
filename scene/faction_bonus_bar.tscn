@@ -9,13 +9,14 @@ texture = ExtResource("2_8yi03")
 axis_stretch_horizontal = 1
 
 [node name="faction_bonus_bar" type="HBoxContainer"]
+z_index = 25
 custom_minimum_size = Vector2(0, 8)
 offset_right = 121.0
 offset_bottom = 12.0
 script = ExtResource("1_8yi03")
 
 [node name="bonus_bar" type="ProgressBar" parent="."]
-z_index = 2
+z_index = 25
 custom_minimum_size = Vector2(96, 8)
 layout_mode = 2
 size_flags_vertical = 4
@@ -29,6 +30,7 @@ value = 2.0
 show_percentage = false
 
 [node name="Label" type="Label" parent="."]
+z_index = 25
 custom_minimum_size = Vector2(32, 8)
 layout_mode = 2
 size_flags_horizontal = 3

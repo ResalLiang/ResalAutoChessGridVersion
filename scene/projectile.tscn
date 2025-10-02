@@ -7,15 +7,17 @@
 size = Vector2(8, 1.25)
 
 [node name="Area2D" type="Area2D"]
+z_index = 55
 script = ExtResource("1_u6xv6")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-z_index = 4
+z_index = 55
 sprite_frames = ExtResource("1_v1jrq")
 autoplay = "default"
 frame_progress = 0.501969
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+z_index = 55
 position = Vector2(1, 0.5)
 shape = SubResource("RectangleShape2D_53ky5")
 

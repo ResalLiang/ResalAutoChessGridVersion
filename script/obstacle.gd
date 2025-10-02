@@ -34,7 +34,7 @@ const chess_scene = preload("res://scene/chess.tscn")
 @export_enum("human", "dwarf", "elf", "forestProtector", "holy", "demon", "undead", "villager") var faction := "human"
 
 # Chess name with property observer
-@export var chess_name := "ShieldMan"
+@export var chess_name := "SwordMan"
 	#set(value):
 		#chess_name = value
 		## Load animation resource in editor mode
@@ -658,7 +658,7 @@ func effect_animation_display(effect_name: String, display_play_area: PlayArea, 
 		
 	add_child(effect_animation)
 	effect_animation.global_position = display_play_area.get_global_from_tile(display_tile) + frame_offset
-	effect_animation.z_index = 6
+	effect_animation.z_index = 60
 	effect_animation.play("default")
 	await effect_animation.animation_finished
 	effect_animation.queue_free()

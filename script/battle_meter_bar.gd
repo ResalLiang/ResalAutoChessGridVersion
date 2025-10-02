@@ -34,7 +34,7 @@ extends HBoxContainer
 		_update_chess_texture()
 
 # Chess name property with real-time texture update
-@export var sprite_name := "ShieldMan":
+@export var sprite_name := "SwordMan":
 	set(value):
 		sprite_name = value
 		_update_chess_texture()

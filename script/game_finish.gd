@@ -149,7 +149,7 @@ func staggered_fly_in():
 	# 依次播放动画
 	for i in range(labels.size()):
 		var label = labels[i]
-		var delay = i * 0.2
+		var delay = i * 0.1
 		var final_pos = original_positions[i]
 		
 		await get_tree().create_timer(delay).timeout
@@ -159,7 +159,7 @@ func staggered_fly_in():
 		tween.set_ease(Tween.EASE_OUT)
 		tween.set_trans(Tween.TRANS_BACK)
 		
-		tween.tween_property(label, "global_position", final_pos, 0.6)
+		tween.tween_property(label, "global_position", final_pos, 0.4)
 		tween.tween_property(label, "modulate:a", 1.0, 0.4)
 		
 		# 动画完成后，将Label放回Container

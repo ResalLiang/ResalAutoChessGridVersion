@@ -11,7 +11,6 @@ extends Node
 
 @export var play_areas: Array[PlayArea]
 
-
 signal chess_moved(obstacle: Obstacle, play_area: PlayArea, tile: Vector2i)
 signal chess_raised(chess_position: Vector2, obstacle: Obstacle)
 signal chess_dropped(obstacle: Obstacle)

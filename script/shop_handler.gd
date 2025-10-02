@@ -127,7 +127,7 @@ func shop_refresh() -> void:
 		# var rand_faction_index = randi_range(0, get_parent().chess_data.keys().size() - 2) # remove villager
 		# var rand_faction = get_parent().chess_data.keys()[rand_faction_index]
 
-		var rand_character_result = get_parent().generate_random_chess(shop_level, "all")
+		var rand_character_result = get_parent().generate_random_chess_update(min(6, shop_level), "all")
 		var character = get_parent().summon_chess(rand_character_result[0], rand_character_result[1], 1, 1, shop, Vector2i(shop_col_index, shop_row_index))
 
 	if DataManagerSingleton.player_data["debug_mode"]:
@@ -233,7 +233,10 @@ func get_chess_buy_price(chess: Obstacle):
 	return shop_buy_price
 
 func get_chess_sell_price(chess: Obstacle):
-	return shop_sell_price
+	if chess is Chess:
+		return chess.chess_level
+	else:
+		return 1
 
 func turn_start_income(current_round: int):
 	var play_interest_bonus := 0
@@ -270,7 +273,7 @@ func effect_animation_display(effect_name: String, display_play_area: PlayArea, 
 		push_error("Animation resource not found: " + effect_animation_path)
 	add_child(effect_animation)
 	effect_animation.global_position = display_play_area.get_global_from_tile(display_tile) + frame_offset
-	effect_animation.z_index = 8
+	effect_animation.z_index = 60
 	effect_animation.play("default")
 	await effect_animation.animation_finished
 

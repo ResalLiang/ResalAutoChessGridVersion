@@ -24,6 +24,7 @@ border_width_bottom = 1
 border_color = Color(0.8, 0.8, 0.8, 0)
 
 [node name="battle_meter_bar" type="HBoxContainer"]
+z_index = 25
 offset_right = 128.0
 offset_bottom = 8.0
 size_flags_horizontal = 0
@@ -31,7 +32,7 @@ script = ExtResource("1_tslr8")
 damage_value = 50
 
 [node name="TextureRect" type="TextureRect" parent="."]
-z_index = 2
+z_index = 26
 custom_minimum_size = Vector2(8, 8)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -40,7 +41,7 @@ texture = SubResource("AtlasTexture_1nahk")
 expand_mode = 1
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
-z_index = 2
+z_index = 26
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
@@ -53,7 +54,7 @@ value = 50.0
 show_percentage = false
 
 [node name="Label" type="Label" parent="."]
-z_index = 2
+z_index = 26
 layout_mode = 2
 size_flags_horizontal = 8
 theme_override_fonts/font = ExtResource("2_ma13r")

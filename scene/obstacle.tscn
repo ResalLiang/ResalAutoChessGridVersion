@@ -12,6 +12,8 @@ shader = ExtResource("2_8t6iu")
 shader_parameter/outline_color = Color(1, 1, 1, 1)
 shader_parameter/blink_color = Color(1, 1, 1, 1)
 shader_parameter/blink_time_scale = 0.0
+shader_parameter/use_monochrome = false
+shader_parameter/monochrome_color = Color(1, 1, 1, 1)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_10qbj"]
 size = Vector2(10, 12)
@@ -39,23 +41,25 @@ border_width_bottom = 1
 border_color = Color(0.301961, 0.101961, 0.0117647, 0.498039)
 
 [node name="Obstacle" type="Node2D"]
-z_index = 1
+z_index = 50
 y_sort_enabled = true
 script = ExtResource("1_yvl1e")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-z_index = 3
+z_index = 50
 y_sort_enabled = true
 material = SubResource("ShaderMaterial_dbi3s")
 position = Vector2(0, -11)
 sprite_frames = ExtResource("3_aaiw8")
-animation = &"block"
+animation = &"die"
 autoplay = "idle"
 
 [node name="Area2D" type="Area2D" parent="."]
+z_index = 50
 position = Vector2(0, -13)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+z_index = 50
 position = Vector2(0, 11)
 shape = SubResource("RectangleShape2D_10qbj")
 
@@ -67,11 +71,14 @@ wait_time = 0.5
 
 [node name="attack_target_line" type="Line2D" parent="."]
 visible = false
+z_index = 50
 
 [node name="spell_target_line" type="Line2D" parent="."]
 visible = false
+z_index = 50
 
 [node name="drag_handler" type="Node2D" parent="."]
+z_index = 50
 script = ExtResource("4_xtxa8")
 
 [node name="drag_timer" type="Timer" parent="drag_handler"]
@@ -79,6 +86,7 @@ script = ExtResource("4_xtxa8")
 [node name="drop_timer" type="Timer" parent="drag_handler"]
 
 [node name="hp_bar" type="ProgressBar" parent="."]
+z_index = 50
 offset_left = -8.0
 offset_top = -20.0
 offset_right = 8.0
@@ -87,8 +95,10 @@ theme_override_styles/background = SubResource("StyleBoxFlat_jr182")
 theme_override_styles/fill = SubResource("StyleBoxFlat_mccdw")
 value = 50.0
 show_percentage = false
+metadata/_edit_use_anchors_ = true
 
 [node name="mp_bar" type="ProgressBar" parent="."]
+z_index = 51
 offset_left = -8.0
 offset_top = -15.0
 offset_right = 8.0
@@ -97,8 +107,10 @@ theme_override_styles/background = SubResource("StyleBoxFlat_dbi3s")
 theme_override_styles/fill = SubResource("StyleBoxFlat_heiwi")
 value = 50.0
 show_percentage = false
+metadata/_edit_use_anchors_ = true
 
 [node name="area_effect_handler" type="Node2D" parent="."]
+z_index = 50
 script = ExtResource("5_p4gmh")
 
 [node name="effect_handler" type="Node" parent="."]

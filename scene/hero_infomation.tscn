@@ -5,70 +5,102 @@
 [ext_resource type="PackedScene" uid="uid://mjt8gly10q2q" path="res://scene/effect_icon.tscn" id="3_f1mac"]
 
 [node name="chess_information" type="VBoxContainer"]
+z_index = 20
+custom_minimum_size = Vector2(100, 0)
 offset_right = 101.0
 offset_bottom = 108.0
 script = ExtResource("1_f1mac")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
+z_index = 20
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="chess_name" type="Label" parent="VBoxContainer"]
+z_index = 25
+custom_minimum_size = Vector2(100, 8)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_wkp60")
 theme_override_font_sizes/font_size = 4
 text = "Hero Name: "
+autowrap_mode = 3
 
 [node name="chess_faction" type="Label" parent="VBoxContainer"]
+z_index = 25
+custom_minimum_size = Vector2(100, 8)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_wkp60")
 theme_override_font_sizes/font_size = 4
 text = "Hero Faction: "
+autowrap_mode = 3
 
 [node name="max_hp" type="Label" parent="VBoxContainer"]
+z_index = 25
+custom_minimum_size = Vector2(100, 8)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_wkp60")
 theme_override_font_sizes/font_size = 4
 text = "Max HP:"
+autowrap_mode = 3
 
 [node name="armor" type="Label" parent="VBoxContainer"]
+z_index = 25
+custom_minimum_size = Vector2(100, 8)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_wkp60")
 theme_override_font_sizes/font_size = 4
 text = "Armor:"
+autowrap_mode = 3
 
 [node name="speed" type="Label" parent="VBoxContainer"]
+z_index = 25
+custom_minimum_size = Vector2(100, 8)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_wkp60")
 theme_override_font_sizes/font_size = 4
 text = "Speed: "
+autowrap_mode = 3
 
 [node name="damage" type="Label" parent="VBoxContainer"]
+z_index = 25
+custom_minimum_size = Vector2(100, 8)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_wkp60")
 theme_override_font_sizes/font_size = 4
 text = "Damage: "
+autowrap_mode = 3
 
 [node name="attack_range" type="Label" parent="VBoxContainer"]
+z_index = 25
+custom_minimum_size = Vector2(100, 8)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_wkp60")
 theme_override_font_sizes/font_size = 4
 text = "Attack Range: "
+autowrap_mode = 3
 
 [node name="attack_speed" type="Label" parent="VBoxContainer"]
+z_index = 25
+custom_minimum_size = Vector2(100, 8)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_wkp60")
 theme_override_font_sizes/font_size = 4
 text = "Attack Speed:"
+autowrap_mode = 3
 
 [node name="spell" type="Label" parent="VBoxContainer"]
+z_index = 25
+custom_minimum_size = Vector2(100, 8)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_wkp60")
 theme_override_font_sizes/font_size = 4
 text = "Spell: "
+autowrap_mode = 3
 
 [node name="icon_container" type="HBoxContainer" parent="."]
-custom_minimum_size = Vector2(128, 16)
+z_index = 20
+custom_minimum_size = Vector2(100, 16)
 layout_mode = 2
 
 [node name="effect_icon" parent="icon_container" instance=ExtResource("3_f1mac")]
@@ -81,6 +113,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = 25
 position = Vector2(65, 29)
 
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
