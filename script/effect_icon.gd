@@ -14,7 +14,7 @@ var effect_name: String:
 		
 var effect_description: String:
 	set(value):
-		pass
+		effect_description = value
 
 func _update_texture():
 	if not texture_rect:

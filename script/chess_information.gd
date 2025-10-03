@@ -14,7 +14,8 @@ const effect_icon_scene = preload("res://scene/effect_icon.tscn")
 @onready var attack_range: Label = $VBoxContainer/attack_range
 @onready var attack_speed: Label = $VBoxContainer/attack_speed
 @onready var spell: Label = $VBoxContainer/spell
-@onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
+@onready var animated_sprite_2d: AnimatedSprite2D = $Node2D/AnimatedSprite2D
+
 @onready var icon_container: HBoxContainer = $icon_container
 
 var animation_faction := "human"

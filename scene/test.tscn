@@ -1,0 +1,39 @@
+[gd_scene load_steps=4 format=3 uid="uid://cbdwm2t4ym4bl"]
+
+[ext_resource type="Texture2D" uid="uid://o7bv1lkk3ett" path="res://asset/sprite/01_TravelBookLite/UI_TravelBook_BookCover01a.png" id="1_fghjm"]
+[ext_resource type="Texture2D" uid="uid://c2kpaebeiwqf3" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250421barB-Sheet.png" id="2_bp0px"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_5u11y"]
+texture = ExtResource("2_bp0px")
+texture_margin_right = 95.0
+texture_margin_bottom = 15.0
+
+[node name="test" type="Node2D"]
+
+[node name="NinePatchRect" type="NinePatchRect" parent="."]
+offset_right = 227.0
+offset_bottom = 256.0
+texture = ExtResource("1_fghjm")
+patch_margin_left = 16
+patch_margin_top = 16
+patch_margin_right = 16
+patch_margin_bottom = 16
+
+[node name="NinePatchRect2" type="NinePatchRect" parent="."]
+offset_left = -109.0
+offset_top = 61.0
+offset_right = 93.0
+offset_bottom = 208.0
+texture = ExtResource("1_fghjm")
+patch_margin_left = 16
+patch_margin_top = 16
+patch_margin_right = 16
+patch_margin_bottom = 16
+
+[node name="HSlider" type="HSlider" parent="."]
+custom_minimum_size = Vector2(95, 15)
+offset_left = 235.0
+offset_top = 21.0
+offset_right = 330.0
+offset_bottom = 37.0
+theme_override_styles/slider = SubResource("StyleBoxTexture_5u11y")

@@ -30,3 +30,13 @@ res://scene/tetris.tscn
 res://script/gallery.gd
 res://scene/main.tscn
 res://script/main.gd
+res://scene/faction_bonus_bar.tscn
+res://script/faction_bonus_bar.gd
+res://script/faction_bonus_manager.gd
+res://script/tile_highlighter.gd
+res://scene/round_finish.tscn
+res://scene/test.tscn
+res://asset/animation/elf/elfQueen.tres
+res://script/round_finish.gd
+res://scene/game_finish.tscn
+res://asset/animation/elf/elfMage.tres

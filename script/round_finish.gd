@@ -37,16 +37,22 @@ func set_round_result():
 		
 	for health_index in range(DataManagerSingleton.max_lose_rounds - DataManagerSingleton.lose_rounds):
 		var remain_health_icon = TextureRect.new()
+		remain_health_icon.set_stretch_mode(2)
+		#remain_health_icon.scale = Vector2(4, 4)
 		remain_health_icon.texture = remain_health_pic
 		heart.add_child(remain_health_icon)
 		
 	for health_index in range(DataManagerSingleton.lose_rounds):
 		var lose_health_icon = TextureRect.new()
+		#lose_health_icon.scale = Vector2(4, 4)
+		lose_health_icon.set_stretch_mode(2)
 		lose_health_icon.texture = lose_health_pic
 		heart.add_child(lose_health_icon)
 		
 	for trophy_index in range(DataManagerSingleton.won_rounds):
 		var trophy_icon = TextureRect.new()
+		#trophy_icon.scale = Vector2(4, 4)
+		trophy_icon.set_stretch_mode(2)
 		trophy_icon.texture = trophy_pic
 		trophy.add_child(trophy_icon)
 

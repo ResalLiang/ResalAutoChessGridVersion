@@ -170,7 +170,7 @@ func draw_next_piece():
 	var tile_coords = COLORS_TILE[color]
 	
 	for cell in SHAPES[next_piece_type]:
-		var preview_pos = cell + Vector2i(2, 2)  # Adjust position for preview
+		var preview_pos = cell + Vector2i(0, 0)  # Adjust position for preview
 		next_piece_tilemap.set_cell(preview_pos, 0, tile_coords)
 
 func check_collision(position, shape):

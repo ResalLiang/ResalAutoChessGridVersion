@@ -1,52 +1,331 @@
-[gd_scene load_steps=4 format=4 uid="uid://ersaky105n5a"]
+[gd_scene load_steps=20 format=4 uid="uid://ersaky105n5a"]
 
 [ext_resource type="Script" uid="uid://d1b3gv5nd6tps" path="res://script/game_finish.gd" id="1_3mysd"]
 [ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="1_hb8o5"]
 [ext_resource type="FontFile" uid="uid://bfd8lxmo20ddl" path="res://asset/font/Everyday_Tiny_Bold.ttf" id="3_7qkl5"]
+[ext_resource type="Texture2D" uid="uid://oyxlko4xp23c" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425helpButton-Sheet.png" id="4_r0o5f"]
+[ext_resource type="Texture2D" uid="uid://chvlj0aa3r1oi" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425exitButton-Sheet.png" id="5_rua3f"]
+[ext_resource type="Texture2D" uid="uid://cxo06hnpen10p" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250420manaSoul9SlicesA-Sheet.png" id="6_ri1ec"]
+[ext_resource type="Texture2D" uid="uid://bkbce0vqdxf12" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250420manaSoulHeaderA-Sheet.png" id="7_a4nst"]
+[ext_resource type="Texture2D" uid="uid://dp783qu7ogqqf" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250420manaSoul9SlicesE-Sheet.png" id="8_c3x7o"]
+[ext_resource type="Texture2D" uid="uid://cdt7cpglibtql" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250420manaSoul9SlicesB-Sheet.png" id="9_8jbpt"]
+[ext_resource type="Texture2D" uid="uid://c13x2xqwox3y7" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250420manaSoulHeaderB-Sheet.png" id="10_sjxou"]
+[ext_resource type="Texture2D" uid="uid://bwo5qhdhmep6" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250423emptyFrame-Sheet.png" id="11_jxopw"]
+[ext_resource type="Texture2D" uid="uid://dv07qmjw718h4" path="res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240713dragonMapFrame.png" id="12_ri1ec"]
+[ext_resource type="SpriteFrames" uid="uid://8olk54k41qnm" path="res://asset/animation/elf/elfMage.tres" id="13_a4nst"]
+[ext_resource type="Texture2D" uid="uid://3kme76uf4dtb" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250421verticalCursorA-Sheet.png" id="14_a4nst"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0pg3y"]
+atlas = ExtResource("4_r0o5f")
+region = Rect2(0, 0, 30, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dcynb"]
+atlas = ExtResource("5_rua3f")
+region = Rect2(0, 0, 30, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qhml8"]
+atlas = ExtResource("8_c3x7o")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2v6bs"]
+atlas = ExtResource("11_jxopw")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c3x7o"]
+atlas = ExtResource("14_a4nst")
+region = Rect2(0, 0, 18, 40)
 
 [node name="game_finish" type="Node2D"]
 script = ExtResource("1_3mysd")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
+visible = false
 z_index = 9
 tile_map_data = PackedByteArray("AAADAAMAAAAYAAwAAAADAAQAAAAXAAoAAAADAAUAAAAXAAsAAAADAAYAAAAXAAsAAAADAAcAAAAYAAwAAAADAAgAAAAWAAoAAAADAAkAAAAXAAoAAAADAAoAAAAYAAwAAAADAAsAAAAXAAwAAAADAAwAAAAWAAsAAAADAA0AAAAWAAoAAAADAA4AAAAWAAwAAAADAA8AAAAWAAwAAAADABAAAAAYAAwAAAAEAAMAAAAXAAwAAAAEAAQAAAAWAAoAAAAEAAUAAAAYAAoAAAAEAAYAAAAXAAwAAAAEAAcAAAAXAAwAAAAEAAgAAAAYAAwAAAAEAAkAAAAWAAoAAAAEAAoAAAAYAAsAAAAEAAsAAAAWAAsAAAAEAAwAAAAWAAoAAAAEAA0AAAAYAAoAAAAEAA4AAAAWAAoAAAAEAA8AAAAXAAoAAAAEABAAAAAYAAoAAAAFAAMAAAAWAAsAAAAFAAQAAAAXAAwAAAAFAAUAAAAYAAsAAAAFAAYAAAAWAAwAAAAFAAcAAAAYAAwAAAAFAAgAAAAXAAwAAAAFAAkAAAAYAAwAAAAFAAoAAAAWAAsAAAAFAAsAAAAWAAoAAAAFAAwAAAAWAAwAAAAFAA0AAAAXAAwAAAAFAA4AAAAWAAwAAAAFAA8AAAAWAAwAAAAFABAAAAAYAAoAAAAGAAMAAAAYAAwAAAAGAAQAAAAYAAoAAAAGAAUAAAAXAAwAAAAGAAYAAAAWAAoAAAAGAAcAAAAWAAoAAAAGAAgAAAAYAAoAAAAGAAkAAAAXAAoAAAAGAAoAAAAYAAwAAAAGAAsAAAAWAAoAAAAGAAwAAAAXAAwAAAAGAA0AAAAXAAwAAAAGAA4AAAAYAAsAAAAGAA8AAAAWAAsAAAAGABAAAAAYAAoAAAAHAAMAAAAYAAoAAAAHAAQAAAAXAAwAAAAHAAUAAAAWAAwAAAAHAAYAAAAYAAoAAAAHAAcAAAAWAAsAAAAHAAgAAAAXAAoAAAAHAAkAAAAXAAsAAAAHAAoAAAAWAAoAAAAHAAsAAAAWAAsAAAAHAAwAAAAYAAoAAAAHAA0AAAAXAAoAAAAHAA4AAAAYAAwAAAAHAA8AAAAXAAwAAAAHABAAAAAYAAoAAAAIAAMAAAAWAAsAAAAIAAQAAAAXAAwAAAAIAAUAAAAWAAoAAAAIAAYAAAAYAAwAAAAIAAcAAAAYAAsAAAAIAAgAAAAYAAsAAAAIAAkAAAAWAAoAAAAIAAoAAAAXAAwAAAAIAAsAAAAYAAwAAAAIAAwAAAAYAAsAAAAIAA0AAAAXAAsAAAAIAA4AAAAYAAoAAAAIAA8AAAAWAAsAAAAIABAAAAAYAAwAAAAJAAMAAAAYAAoAAAAJAAQAAAAWAAoAAAAJAAUAAAAWAAwAAAAJAAYAAAAXAAwAAAAJAAcAAAAYAAsAAAAJAAgAAAAWAAwAAAAJAAkAAAAXAAsAAAAJAAoAAAAXAAoAAAAJAAsAAAAYAAsAAAAJAAwAAAAWAAsAAAAJAA0AAAAXAAsAAAAJAA4AAAAXAAoAAAAJAA8AAAAWAAwAAAAJABAAAAAYAAwAAAAKAAMAAAAWAAwAAAAKAAQAAAAYAAwAAAAKAAUAAAAXAAwAAAAKAAYAAAAXAAsAAAAKAAcAAAAWAAsAAAAKAAgAAAAXAAsAAAAKAAkAAAAWAAwAAAAKAAoAAAAYAAwAAAAKAAsAAAAWAAwAAAAKAAwAAAAYAAwAAAAKAA0AAAAWAAsAAAAKAA4AAAAYAAoAAAAKAA8AAAAWAAwAAAAKABAAAAAXAAoAAAALAAMAAAAYAAoAAAALAAQAAAAXAAwAAAALAAUAAAAWAAwAAAALAAYAAAAXAAoAAAALAAcAAAAWAAoAAAALAAgAAAAWAAwAAAALAAkAAAAXAAwAAAALAAoAAAAXAAsAAAALAAsAAAAXAAsAAAALAAwAAAAWAAsAAAALAA0AAAAYAAoAAAALAA4AAAAYAAsAAAALAA8AAAAWAAwAAAALABAAAAAYAAoAAAAMAAMAAAAWAAsAAAAMAAQAAAAWAAsAAAAMAAUAAAAWAAsAAAAMAAYAAAAXAAwAAAAMAAcAAAAYAAwAAAAMAAgAAAAXAAsAAAAMAAkAAAAYAAsAAAAMAAoAAAAXAAoAAAAMAAsAAAAWAAoAAAAMAAwAAAAWAAwAAAAMAA0AAAAYAAwAAAAMAA4AAAAWAAsAAAAMAA8AAAAYAAsAAAAMABAAAAAXAAwAAAANAAMAAAAWAAoAAAANAAQAAAAYAAsAAAANAAUAAAAXAAwAAAANAAYAAAAWAAoAAAANAAcAAAAXAAwAAAANAAgAAAAWAAoAAAANAAkAAAAWAAoAAAANAAoAAAAXAAsAAAANAAsAAAAYAAsAAAANAAwAAAAWAAsAAAANAA0AAAAXAAsAAAANAA4AAAAXAAsAAAANAA8AAAAWAAsAAAANABAAAAAWAAoAAAAOAAMAAAAYAAsAAAAOAAQAAAAWAAoAAAAOAAUAAAAWAAwAAAAOAAYAAAAYAAwAAAAOAAcAAAAYAAoAAAAOAAgAAAAXAAsAAAAOAAkAAAAXAAwAAAAOAAoAAAAXAAwAAAAOAAsAAAAXAAsAAAAOAAwAAAAXAAwAAAAOAA0AAAAWAAsAAAAOAA4AAAAWAAwAAAAOAA8AAAAXAAsAAAAOABAAAAAXAAwAAAAPAAMAAAAYAAwAAAAPAAQAAAAXAAwAAAAPAAUAAAAWAAwAAAAPAAYAAAAXAAwAAAAPAAcAAAAYAAoAAAAPAAgAAAAWAAwAAAAPAAkAAAAWAAwAAAAPAAoAAAAXAAoAAAAPAAsAAAAWAAwAAAAPAAwAAAAXAAoAAAAPAA0AAAAXAAwAAAAPAA4AAAAWAAsAAAAPAA8AAAAWAAoAAAAPABAAAAAXAAoAAAAQAAMAAAAWAAsAAAAQAAQAAAAXAAwAAAAQAAUAAAAWAAwAAAAQAAYAAAAXAAoAAAAQAAcAAAAXAAsAAAAQAAgAAAAWAAwAAAAQAAkAAAAYAAsAAAAQAAoAAAAWAAwAAAAQAAsAAAAWAAwAAAAQAAwAAAAWAAoAAAAQAA0AAAAWAAsAAAAQAA4AAAAWAAwAAAAQAA8AAAAYAAwAAAAQABAAAAAWAAoAAAARAAMAAAAYAAoAAAARAAQAAAAWAAsAAAARAAUAAAAWAAoAAAARAAYAAAAYAAsAAAARAAcAAAAXAAoAAAARAAgAAAAYAAsAAAARAAkAAAAYAAsAAAARAAoAAAAYAAoAAAARAAsAAAAWAAoAAAARAAwAAAAXAAwAAAARAA0AAAAYAAsAAAARAA4AAAAWAAsAAAARAA8AAAAYAAwAAAARABAAAAAWAAoAAAASAAMAAAAXAAsAAAASAAQAAAAYAAoAAAASAAUAAAAWAAwAAAASAAYAAAAYAAwAAAASAAcAAAAYAAwAAAASAAgAAAAXAAoAAAASAAkAAAAYAAsAAAASAAoAAAAYAAwAAAASAAsAAAAYAAwAAAASAAwAAAAYAAsAAAASAA0AAAAYAAsAAAASAA4AAAAXAAwAAAASAA8AAAAYAAoAAAASABAAAAAYAAoAAAATAAMAAAAXAAoAAAATAAQAAAAYAAsAAAATAAUAAAAXAAsAAAATAAYAAAAWAAsAAAATAAcAAAAWAAsAAAATAAgAAAAYAAoAAAATAAkAAAAXAAwAAAATAAoAAAAXAAwAAAATAAsAAAAYAAsAAAATAAwAAAAWAAsAAAATAA0AAAAYAAsAAAATAA4AAAAWAAoAAAATAA8AAAAWAAsAAAATABAAAAAWAAoAAAAUAAMAAAAXAAoAAAAUAAQAAAAXAAoAAAAUAAUAAAAYAAwAAAAUAAYAAAAWAAsAAAAUAAcAAAAWAAoAAAAUAAgAAAAXAAwAAAAUAAkAAAAXAAwAAAAUAAoAAAAYAAwAAAAUAAsAAAAWAAsAAAAUAAwAAAAYAAwAAAAUAA0AAAAXAAoAAAAUAA4AAAAYAAsAAAAUAA8AAAAXAAwAAAAUABAAAAAYAAoAAAAVAAMAAAAWAAoAAAAVAAQAAAAXAAwAAAAVAAUAAAAYAAwAAAAVAAYAAAAYAAwAAAAVAAcAAAAYAAsAAAAVAAgAAAAYAAsAAAAVAAkAAAAYAAwAAAAVAAoAAAAXAAsAAAAVAAsAAAAYAAsAAAAVAAwAAAAYAAsAAAAVAA0AAAAXAAsAAAAVAA4AAAAXAAsAAAAVAA8AAAAYAAwAAAAVABAAAAAXAAoAAAAWAAMAAAAYAAoAAAAWAAQAAAAXAAsAAAAWAAUAAAAXAAsAAAAWAAYAAAAYAAoAAAAWAAcAAAAWAAoAAAAWAAgAAAAYAAsAAAAWAAkAAAAYAAoAAAAWAAoAAAAXAAwAAAAWAAsAAAAXAAoAAAAWAAwAAAAYAAwAAAAWAA0AAAAXAAsAAAAWAA4AAAAXAAsAAAAWAA8AAAAYAAoAAAAWABAAAAAXAAoAAAAXAAMAAAAXAAwAAAAXAAQAAAAYAAoAAAAXAAUAAAAXAAwAAAAXAAYAAAAWAAoAAAAXAAcAAAAXAAsAAAAXAAgAAAAWAAoAAAAXAAkAAAAXAAsAAAAXAAoAAAAWAAoAAAAXAAsAAAAXAAwAAAAXAAwAAAAYAAsAAAAXAA0AAAAXAAsAAAAXAA4AAAAYAAwAAAAXAA8AAAAWAAsAAAAXABAAAAAWAAwAAAAYAAMAAAAWAAsAAAAYAAQAAAAYAAsAAAAYAAUAAAAYAAoAAAAYAAYAAAAYAAoAAAAYAAcAAAAXAAwAAAAYAAgAAAAWAAsAAAAYAAkAAAAYAAoAAAAYAAoAAAAWAAsAAAAYAAsAAAAWAAwAAAAYAAwAAAAYAAwAAAAYAA0AAAAYAAwAAAAYAA4AAAAWAAwAAAAYAA8AAAAYAAoAAAAYABAAAAAWAAwAAAAZAAMAAAAWAAsAAAAZAAQAAAAYAAsAAAAZAAUAAAAWAAsAAAAZAAYAAAAXAAsAAAAZAAcAAAAYAAoAAAAZAAgAAAAXAAwAAAAZAAkAAAAWAAwAAAAZAAoAAAAWAAsAAAAZAAsAAAAYAAoAAAAZAAwAAAAWAAwAAAAZAA0AAAAXAAwAAAAZAA4AAAAYAAwAAAAZAA8AAAAWAAoAAAAZABAAAAAXAAwAAAAaAAMAAAAWAAsAAAAaAAQAAAAYAAsAAAAaAAUAAAAYAAwAAAAaAAYAAAAWAAsAAAAaAAcAAAAXAAoAAAAaAAgAAAAWAAoAAAAaAAkAAAAWAAsAAAAaAAoAAAAYAAoAAAAaAAsAAAAYAAsAAAAaAAwAAAAYAAoAAAAaAA0AAAAYAAoAAAAaAA4AAAAWAAsAAAAaAA8AAAAWAAsAAAAaABAAAAAXAAoAAAAbAAMAAAAWAAoAAAAbAAQAAAAWAAoAAAAbAAUAAAAWAAsAAAAbAAYAAAAYAAwAAAAbAAcAAAAYAAoAAAAbAAgAAAAYAAoAAAAbAAkAAAAYAAsAAAAbAAoAAAAXAAsAAAAbAAsAAAAWAAoAAAAbAAwAAAAYAAoAAAAbAA0AAAAWAAoAAAAbAA4AAAAYAAoAAAAbAA8AAAAYAAoAAAAbABAAAAAYAAsAAAAcAAMAAAAWAAwAAAAcAAQAAAAYAAwAAAAcAAUAAAAYAAoAAAAcAAYAAAAXAAoAAAAcAAcAAAAYAAoAAAAcAAgAAAAYAAwAAAAcAAkAAAAWAAwAAAAcAAoAAAAXAAoAAAAcAAsAAAAWAAsAAAAcAAwAAAAWAAoAAAAcAA0AAAAYAAoAAAAcAA4AAAAXAAwAAAAcAA8AAAAWAAoAAAAcABAAAAAXAAwAAAAdAAMAAAAWAAwAAAAdAAQAAAAXAAoAAAAdAAUAAAAWAAoAAAAdAAYAAAAXAAwAAAAdAAcAAAAYAAsAAAAdAAgAAAAYAAsAAAAdAAkAAAAWAAoAAAAdAAoAAAAXAAwAAAAdAAsAAAAWAAsAAAAdAAwAAAAWAAsAAAAdAA0AAAAYAAsAAAAdAA4AAAAXAAsAAAAdAA8AAAAWAAoAAAAdABAAAAAYAAwAAAAeAAMAAAAXAAsAAAAeAAQAAAAWAAwAAAAeAAUAAAAXAAsAAAAeAAYAAAAXAAwAAAAeAAcAAAAWAAwAAAAeAAgAAAAXAAoAAAAeAAkAAAAWAAwAAAAeAAoAAAAXAAoAAAAeAAsAAAAXAAwAAAAeAAwAAAAWAAsAAAAeAA0AAAAXAAsAAAAeAA4AAAAXAAsAAAAeAA8AAAAYAAsAAAAeABAAAAAYAAwAAAAfAAMAAAAWAAsAAAAfAAQAAAAYAAwAAAAfAAUAAAAWAAwAAAAfAAYAAAAXAAsAAAAfAAcAAAAWAAsAAAAfAAgAAAAWAAsAAAAfAAkAAAAWAAsAAAAfAAoAAAAXAAsAAAAfAAsAAAAXAAsAAAAfAAwAAAAWAAsAAAAfAA0AAAAWAAoAAAAfAA4AAAAXAAwAAAAfAA8AAAAYAAsAAAAfABAAAAAWAAoAAAAgAAMAAAAXAAsAAAAgAAQAAAAYAAoAAAAgAAUAAAAWAAsAAAAgAAYAAAAWAAsAAAAgAAcAAAAWAAwAAAAgAAgAAAAXAAoAAAAgAAkAAAAXAAsAAAAgAAoAAAAWAAsAAAAgAAsAAAAYAAoAAAAgAAwAAAAWAAsAAAAgAA0AAAAXAAoAAAAgAA4AAAAYAAwAAAAgAA8AAAAXAAsAAAAgABAAAAAXAAsAAAAhAAMAAAAWAAoAAAAhAAQAAAAYAAwAAAAhAAUAAAAWAAwAAAAhAAYAAAAYAAwAAAAhAAcAAAAWAAwAAAAhAAgAAAAWAAoAAAAhAAkAAAAWAAsAAAAhAAoAAAAWAAsAAAAhAAsAAAAXAAoAAAAhAAwAAAAXAAoAAAAhAA0AAAAWAAwAAAAhAA4AAAAWAAoAAAAhAA8AAAAWAAsAAAAhABAAAAAWAAoAAAA=")
 tile_set = ExtResource("1_hb8o5")
 
 [node name="Label" type="Label" parent="."]
 z_index = 25
-offset_left = 137.0
-offset_top = 69.0
-offset_right = 457.0
-offset_bottom = 101.0
+offset_left = 263.0
+offset_top = 113.0
+offset_right = 583.0
+offset_bottom = 129.0
+theme_override_colors/font_color = Color(1, 1, 0, 1)
+theme_override_colors/font_outline_color = Color(0.003880049, 0.003880047, 1.1280645e-09, 1)
+theme_override_constants/outline_size = 1
 theme_override_fonts/font = ExtResource("3_7qkl5")
+theme_override_font_sizes/font_size = 8
 text = "You Won the game!"
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="."]
+z_index = 25
+offset_left = 79.0
+offset_top = 61.0
+offset_right = 399.0
+offset_bottom = 93.0
+theme_override_colors/font_color = Color(0.94509804, 0.58431375, 0.039215688, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8901961)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("3_7qkl5")
+theme_override_font_sizes/font_size = 12
+text = "Game result"
+vertical_alignment = 1
 
 [node name="restart_button" type="Button" parent="."]
 z_index = 25
-offset_left = 266.0
-offset_top = 218.0
-offset_right = 338.0
-offset_bottom = 242.0
+offset_left = 484.0
+offset_top = 245.0
+offset_right = 522.0
+offset_bottom = 285.0
 theme_override_fonts/font = ExtResource("3_7qkl5")
 theme_override_font_sizes/font_size = 8
-text = "Restart"
+theme_override_icons/icon = SubResource("AtlasTexture_0pg3y")
+flat = true
 
 [node name="back_button" type="Button" parent="."]
 z_index = 25
-offset_left = 241.0
+offset_left = 450.0
 offset_top = 245.0
-offset_right = 365.0
-offset_bottom = 269.0
+offset_right = 488.0
+offset_bottom = 285.0
 theme_override_fonts/font = ExtResource("3_7qkl5")
 theme_override_font_sizes/font_size = 8
-text = "Back to Menu"
+theme_override_icons/icon = SubResource("AtlasTexture_dcynb")
+flat = true
 
 [node name="container" type="VBoxContainer" parent="."]
 z_index = 20
-offset_left = 130.0
-offset_top = 99.0
-offset_right = 473.0
+offset_left = 84.0
+offset_top = 108.0
+offset_right = 204.0
+offset_bottom = 249.0
+
+[node name="NinePatchRect" type="NinePatchRect" parent="."]
+offset_left = 48.0
+offset_top = 48.0
+offset_right = 544.0
+offset_bottom = 272.0
+texture = ExtResource("6_ri1ec")
+patch_margin_left = 29
+patch_margin_top = 18
+patch_margin_right = 29
+patch_margin_bottom = 14
+
+[node name="NinePatchRect2" type="NinePatchRect" parent="."]
+offset_left = 47.0
+offset_top = 61.0
+offset_right = 545.0
+offset_bottom = 93.0
+texture = ExtResource("7_a4nst")
+patch_margin_left = 34
+patch_margin_top = 13
+patch_margin_right = 32
+patch_margin_bottom = 13
+
+[node name="NinePatchRect3" type="NinePatchRect" parent="."]
+offset_left = 67.0
+offset_top = 97.0
+offset_right = 227.0
+offset_bottom = 257.0
+texture = SubResource("AtlasTexture_qhml8")
+patch_margin_left = 34
+patch_margin_top = 13
+patch_margin_right = 32
+patch_margin_bottom = 13
+
+[node name="NinePatchRect4" type="NinePatchRect" parent="."]
+offset_left = 240.0
+offset_top = 98.0
+offset_right = 520.0
+offset_bottom = 258.0
+texture = ExtResource("9_8jbpt")
+patch_margin_left = 34
+patch_margin_top = 30
+patch_margin_right = 32
+patch_margin_bottom = 30
+
+[node name="NinePatchRect5" type="NinePatchRect" parent="."]
+offset_left = 229.0
+offset_top = 111.0
+offset_right = 533.0
+offset_bottom = 134.0
+texture = ExtResource("10_sjxou")
+patch_margin_left = 32
+patch_margin_top = 11
+patch_margin_right = 32
+patch_margin_bottom = 12
+
+[node name="Node2D" type="Node2D" parent="."]
+
+[node name="TextureRect" type="TextureRect" parent="Node2D"]
+offset_left = 281.0
+offset_top = 135.0
+offset_right = 321.0
+offset_bottom = 175.0
+texture = SubResource("AtlasTexture_2v6bs")
+stretch_mode = 2
+
+[node name="TextureRect2" type="TextureRect" parent="Node2D"]
+offset_left = 313.0
+offset_top = 136.0
+offset_right = 353.0
+offset_bottom = 176.0
+texture = SubResource("AtlasTexture_2v6bs")
+stretch_mode = 2
+
+[node name="TextureRect3" type="TextureRect" parent="Node2D"]
+offset_left = 345.0
+offset_top = 137.0
+offset_right = 385.0
+offset_bottom = 177.0
+texture = SubResource("AtlasTexture_2v6bs")
+stretch_mode = 2
+
+[node name="TextureRect4" type="TextureRect" parent="Node2D"]
+offset_left = 377.0
+offset_top = 138.0
+offset_right = 417.0
+offset_bottom = 178.0
+texture = SubResource("AtlasTexture_2v6bs")
+stretch_mode = 2
+
+[node name="TextureRect5" type="TextureRect" parent="Node2D"]
+offset_left = 409.0
+offset_top = 139.0
+offset_right = 449.0
+offset_bottom = 179.0
+texture = SubResource("AtlasTexture_2v6bs")
+stretch_mode = 2
+
+[node name="TextureRect6" type="TextureRect" parent="Node2D"]
+offset_left = 298.0
+offset_top = 154.0
+offset_right = 338.0
+offset_bottom = 194.0
+texture = SubResource("AtlasTexture_2v6bs")
+stretch_mode = 2
+
+[node name="TextureRect7" type="TextureRect" parent="Node2D"]
+offset_left = 330.0
+offset_top = 155.0
+offset_right = 370.0
+offset_bottom = 195.0
+texture = SubResource("AtlasTexture_2v6bs")
+stretch_mode = 2
+
+[node name="TextureRect8" type="TextureRect" parent="Node2D"]
+offset_left = 362.0
+offset_top = 156.0
+offset_right = 402.0
+offset_bottom = 196.0
+texture = SubResource("AtlasTexture_2v6bs")
+stretch_mode = 2
+
+[node name="TextureRect9" type="TextureRect" parent="Node2D"]
+offset_left = 394.0
+offset_top = 157.0
+offset_right = 434.0
+offset_bottom = 197.0
+texture = SubResource("AtlasTexture_2v6bs")
+stretch_mode = 2
+
+[node name="TextureRect10" type="TextureRect" parent="Node2D"]
+offset_left = 282.0
+offset_top = 172.0
+offset_right = 322.0
 offset_bottom = 212.0
+texture = SubResource("AtlasTexture_2v6bs")
+stretch_mode = 2
+
+[node name="TextureRect11" type="TextureRect" parent="Node2D"]
+offset_left = 315.0
+offset_top = 173.0
+offset_right = 355.0
+offset_bottom = 213.0
+texture = SubResource("AtlasTexture_2v6bs")
+stretch_mode = 2
+
+[node name="TextureRect12" type="TextureRect" parent="Node2D"]
+offset_left = 347.0
+offset_top = 174.0
+offset_right = 387.0
+offset_bottom = 214.0
+texture = SubResource("AtlasTexture_2v6bs")
+stretch_mode = 2
+
+[node name="TextureRect13" type="TextureRect" parent="Node2D"]
+offset_left = 379.0
+offset_top = 175.0
+offset_right = 419.0
+offset_bottom = 215.0
+texture = SubResource("AtlasTexture_2v6bs")
+stretch_mode = 2
+
+[node name="TextureRect14" type="TextureRect" parent="Node2D"]
+offset_left = 411.0
+offset_top = 176.0
+offset_right = 451.0
+offset_bottom = 216.0
+texture = SubResource("AtlasTexture_2v6bs")
+stretch_mode = 2
+
+[node name="TextureRect15" type="TextureRect" parent="Node2D"]
+offset_left = 299.0
+offset_top = 191.0
+offset_right = 339.0
+offset_bottom = 231.0
+texture = SubResource("AtlasTexture_2v6bs")
+stretch_mode = 2
+
+[node name="TextureRect16" type="TextureRect" parent="Node2D"]
+offset_left = 332.0
+offset_top = 192.0
+offset_right = 372.0
+offset_bottom = 232.0
+texture = SubResource("AtlasTexture_2v6bs")
+stretch_mode = 2
+
+[node name="TextureRect17" type="TextureRect" parent="Node2D"]
+offset_left = 364.0
+offset_top = 193.0
+offset_right = 404.0
+offset_bottom = 233.0
+texture = SubResource("AtlasTexture_2v6bs")
+stretch_mode = 2
+
+[node name="TextureRect18" type="TextureRect" parent="Node2D"]
+offset_left = 396.0
+offset_top = 194.0
+offset_right = 436.0
+offset_bottom = 234.0
+texture = SubResource("AtlasTexture_2v6bs")
+stretch_mode = 2
+
+[node name="TextureRect19" type="TextureRect" parent="Node2D"]
+offset_left = 444.0
+offset_top = 131.0
+offset_right = 512.0
+offset_bottom = 203.0
+texture = ExtResource("12_ri1ec")
+stretch_mode = 2
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Node2D/TextureRect19"]
+position = Vector2(31, 13)
+scale = Vector2(3, 3)
+sprite_frames = ExtResource("13_a4nst")
+animation = &"die"
+
+[node name="TextureRect" type="TextureRect" parent="Node2D/TextureRect19"]
+layout_mode = 0
+offset_left = -202.0
+offset_top = 50.0
+offset_right = -184.0
+offset_bottom = 90.0
+rotation = 0.57595867
+scale = Vector2(2, 2)
+texture = SubResource("AtlasTexture_c3x7o")
+stretch_mode = 2
 
 [connection signal="pressed" from="restart_button" to="." method="_on_restart_button_pressed"]
 [connection signal="pressed" from="back_button" to="." method="_on_back_button_pressed"]

@@ -120,8 +120,8 @@ func shop_refresh() -> void:
 			current_chess.queue_free()	
 
 	for i in range(min(8, shop_level + 2)):
-		var shop_col_index = i % shop.unit_grid.size.x
-		var shop_row_index = floor(i / shop.unit_grid.size.x)
+		var shop_col_index = i % min(2, shop.unit_grid.size.x)
+		var shop_row_index = floor(i / min(2, shop.unit_grid.size.x))
 		if freeze_dict[Vector2i(shop_col_index, shop_row_index)]:
 			continue
 		# var rand_faction_index = randi_range(0, get_parent().chess_data.keys().size() - 2) # remove villager
@@ -135,8 +135,8 @@ func shop_refresh() -> void:
 		var debug_chess_name = ["CrossBowMan", "Mage", "ArchMage", "Queen", "Mage", "Demolitionist", "Grenadier", "PegasusRider"]
 		for debug_index in range(debug_chess_faction.size()):
 
-			var shop_col_index = debug_index % shop.unit_grid.size.x
-			var shop_row_index = floor(debug_index / shop.unit_grid.size.x) + 1
+			var shop_col_index = debug_index % min(2, shop.unit_grid.size.x) + 2
+			var shop_row_index = floor(debug_index / min(2, shop.unit_grid.size.x))
 			
 			if freeze_dict[Vector2i(shop_col_index, shop_row_index)]:
 				continue

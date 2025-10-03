@@ -5,7 +5,10 @@ const faction_bonus_bar_scene = preload("res://scene/faction_bonus_bar.tscn")
 @onready var arena: PlayArea = %arena
 @onready var bench: PlayArea = %bench
 
-@onready var faction_container : VBoxContainer = $faction_container
+@onready var faction_container : HBoxContainer = $faction_container
+@onready var v_box_container_1: VBoxContainer = $faction_container/VBoxContainer1
+@onready var v_box_container_2: VBoxContainer = $faction_container/VBoxContainer2
+@onready var v_box_container_3: VBoxContainer = $faction_container/VBoxContainer3
 
 
 # bonus_level_list for storing each level need chess count
@@ -100,7 +103,8 @@ func _ready() -> void:
 func bonus_refresh() -> void:
 
 	for node in faction_container.get_children():
-		node.queue_free()
+		for effect_node in node.get_children():
+			effect_node.queue_free()
 
 	var player_faction_count = player_faction_count_template.duplicate()
 	player_bonus_level_dict = player_bonus_level_dict_template.duplicate()
@@ -118,6 +122,7 @@ func bonus_refresh() -> void:
 		if not player_faction_count[chess_index.team][chess_index.role].has(chess_index.chess_name):
 			player_faction_count[chess_index.team][chess_index.role].append(chess_index.chess_name)
 
+	var bonus_count := 0
 	for player_index in player_faction_count.keys(): # summary each team, each faction uniqe chess count and bonus level 
 		for faction_index in bonus_level_list.keys():
 			var bonus_level = 0
@@ -126,26 +131,42 @@ func bonus_refresh() -> void:
 					bonus_level += 1
 			player_bonus_level_dict[player_index][faction_index] = min(bonus_level, 3)
 			if player_index == 1 and player_bonus_level_dict[player_index][faction_index] > 0:
-				add_bonus_bar_to_container(faction_index, player_bonus_level_dict[player_index][faction_index])
-
-
+				add_bonus_bar_to_container(faction_index, player_bonus_level_dict[player_index][faction_index], bonus_count)
+				bonus_count += 1
+				
 	for player_index in player_faction_count.keys(): #[1, 2]
 		for faction_index in player_bonus_level_dict[player_index].keys():	#apply bonus to each player/faction 
 			var curren_bonus_level = player_bonus_level_dict[player_index][faction_index]
 			if curren_bonus_level > 0:
 				apply_faction_bonus(faction_index, curren_bonus_level, player_index)
 
-func add_bonus_bar_to_container(faction: String, level: int):
+func add_bonus_bar_to_container(faction: String, level: int, bonus_count: int):
 
-	var faction_fill_texture = load(AssetPathManagerSingleton.get_asset_path("faction_bar", faction))
 
-	var faction_bonus_bar = faction_bonus_bar_scene.instantiate()
-	var style_box_texture = StyleBoxTexture.new()
-	style_box_texture.texture = faction_fill_texture
-	faction_bonus_bar.add_theme_stylebox_override("fill", style_box_texture)
-	faction_container.add_child(faction_bonus_bar)
-	faction_bonus_bar.bonus_bar.value = level
-	faction_bonus_bar.bonus_bar.max_value = bonus_level_list[faction].size()
+	var faction_bonus_bar = faction_bonus_bar_scene.instantiate().duplicate()
+	
+	if bonus_count < 4:
+		v_box_container_1.add_child(faction_bonus_bar)
+	elif bonus_count < 8:
+		v_box_container_2.add_child(faction_bonus_bar)
+	elif bonus_count < 12:
+		v_box_container_3.add_child(faction_bonus_bar)
+	var bar_color : Color
+	match faction:
+		"elf":
+			faction_bonus_bar.bar_color = Color.GREEN
+			faction_bonus_bar.frame_color = "Silver"
+		"human":
+			faction_bonus_bar.bar_color = Color.BLUE
+			faction_bonus_bar.frame_color = "Iron"
+		"dwarf":
+			faction_bonus_bar.bar_color = Color.RED
+			faction_bonus_bar.frame_color = "Copper"
+		_:
+			faction_bonus_bar.bar_color = Color.RED
+			faction_bonus_bar.frame_color = "Iron"
+			
+	faction_bonus_bar.bar_value = bonus_level_list[faction][level - 1]
 	faction_bonus_bar.label.text = faction
 	
 

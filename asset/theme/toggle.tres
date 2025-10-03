@@ -1,10 +1,10 @@
-[gd_resource type="Theme" load_steps=19 format=3 uid="uid://b4hwtdp2epofe"]
+[gd_resource type="Theme" load_steps=26 format=3 uid="uid://b4hwtdp2epofe"]
 
 [ext_resource type="Texture2D" uid="uid://c2yqxkafgsoer" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/Large Sprite Sheet.png" id="1_35cog"]
 [ext_resource type="Texture2D" uid="uid://bo1r34gjsrw3s" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/Toggle buttons 2.png" id="1_lvm42"]
-[ext_resource type="Texture2D" uid="uid://cng2vmftlts7b" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames/16x16 Slider3.png" id="2_e6xdq"]
-[ext_resource type="Texture2D" uid="uid://djfe61twa6igr" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames/16x16 Slider2.png" id="3_35cog"]
-[ext_resource type="Texture2D" uid="uid://7lrhhv8iuls0" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/16x64 Slider Bar.png" id="4_putat"]
+[ext_resource type="Texture2D" uid="uid://boe8te8px3eyb" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250420manaTabD-Sheet.png" id="2_35cog"]
+[ext_resource type="Texture2D" uid="uid://djk2o62ljbqmp" path="res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240711dragonHorizontalCursorA-Sheet.png" id="4_35cog"]
+[ext_resource type="Texture2D" uid="uid://bhp6xekxwdjms" path="res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240709dragonBarA.png" id="5_putat"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_35cog"]
 atlas = ExtResource("1_35cog")
@@ -28,12 +28,14 @@ region = Rect2(64, 96, 64, 16)
 texture = SubResource("AtlasTexture_2yn78")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_putat"]
-atlas = ExtResource("1_35cog")
-region = Rect2(0, 96, 64, 16)
+atlas = ExtResource("2_35cog")
+region = Rect2(12, 1, 78, 30)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_xue3d"]
 texture = SubResource("AtlasTexture_putat")
-region_rect = Rect2(0, 0, 64, 16)
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+region_rect = Rect2(0, 0, 96, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xue3d"]
 atlas = ExtResource("1_35cog")
@@ -50,8 +52,37 @@ region = Rect2(64, 0, 32, 16)
 atlas = ExtResource("1_lvm42")
 region = Rect2(32, 0, 32, 16)
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_e6xdq"]
-texture = ExtResource("4_putat")
+[sub_resource type="AtlasTexture" id="AtlasTexture_gqu7c"]
+atlas = ExtResource("4_35cog")
+region = Rect2(2, 3, 21, 21)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5arj6"]
+atlas = ExtResource("4_35cog")
+region = Rect2(2, 3, 21, 21)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_og7ec"]
+atlas = ExtResource("4_35cog")
+region = Rect2(2, 3, 21, 21)
+
+[sub_resource type="Gradient" id="Gradient_35cog"]
+offsets = PackedFloat32Array(0.99135804, 0.9975309, 1)
+colors = PackedColorArray(0.9764706, 0.83137256, 0.18039216, 1, 0.14567901, 0.14567901, 0.14567901, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_putat"]
+gradient = SubResource("Gradient_35cog")
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_35cog"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_putat"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_5arj6"]
+texture = ExtResource("5_putat")
+texture_margin_left = 7.0
+texture_margin_top = 4.0
+texture_margin_right = 8.0
+texture_margin_bottom = 5.0
+expand_margin_top = 1.0
+expand_margin_bottom = 2.0
 
 [resource]
 Button/styles/disabled = SubResource("StyleBoxTexture_putat")
@@ -61,6 +92,10 @@ Button/styles/normal = SubResource("StyleBoxTexture_xue3d")
 Button/styles/pressed = SubResource("StyleBoxTexture_tr6lp")
 CheckButton/icons/checked = SubResource("AtlasTexture_cqei2")
 CheckButton/icons/unchecked = SubResource("AtlasTexture_wkefk")
-HSlider/icons/grabber = ExtResource("2_e6xdq")
-HSlider/icons/grabber_highlight = ExtResource("3_35cog")
-HSlider/styles/slider = SubResource("StyleBoxTexture_e6xdq")
+HSlider/icons/grabber = SubResource("AtlasTexture_gqu7c")
+HSlider/icons/grabber_disabled = SubResource("AtlasTexture_5arj6")
+HSlider/icons/grabber_highlight = SubResource("AtlasTexture_og7ec")
+HSlider/icons/tick = SubResource("GradientTexture1D_putat")
+HSlider/styles/grabber_area = SubResource("StyleBoxEmpty_35cog")
+HSlider/styles/grabber_area_highlight = SubResource("StyleBoxEmpty_putat")
+HSlider/styles/slider = SubResource("StyleBoxTexture_5arj6")

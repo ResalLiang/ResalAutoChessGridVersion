@@ -49,10 +49,10 @@ var faction_bar_path = {
 }
 
 var battle_result_path = {
-	"remain_health" = "res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames/16x16 Slider1.png",
-	"lose_health" = "res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames/16x16 Slider4.png",
-	"winning_trophy" = "res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames/16x16 Slider2.png",
-	"Dafault" = "res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames/16x16 Slider1.png"
+	"remain_health" = "res://asset/sprite/Retro Inventory/Scaled 3x/Hearts_Red_1.png",
+	"lose_health" = "res://asset/sprite/Retro Inventory/Scaled 3x/Hearts_Red_5.png",
+	"winning_trophy" = "res://asset/sprite/Retro Inventory/Scaled 3x/Hearts_Blue_1.png",
+	"Dafault" = "res://asset/sprite/Retro Inventory/Scaled 3x/Hearts_Red_1.png"
 }
 
 var effect_animation_path = {

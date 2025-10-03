@@ -13,9 +13,10 @@ const alternative_choice_scene = preload("res://scene/alternative_choice.tscn")
 @onready var arena_unit_grid: UnitGrid = $ArenaUnitGrid
 @onready var bench_unit_grid: UnitGrid = $BenchUnitGrid
 
-@onready var arena_bound: TileMapLayer = $tilemap/arena/arena_bound
-@onready var bench_bound: TileMapLayer = $tilemap/bench/bench_bound
-@onready var shop_bound: TileMapLayer = $tilemap/shop/shop_bound
+@onready var arena_bound: NinePatchRect = $tilemap/arena/arena_bound
+@onready var bench_bound: NinePatchRect = $tilemap/bench/bench_bound
+@onready var shop_bound: NinePatchRect = $tilemap/shop/shop_bound
+
 
 
 @onready var debug_handler: DebugHandler = %debug_handler
@@ -49,10 +50,11 @@ const alternative_choice_scene = preload("res://scene/alternative_choice.tscn")
 @onready var battle_meter: BattleMeter = $battle_meter
 @onready var chess_information: ChessInformation = $chess_information
 @onready var arrow: CustomArrowRenderer = $arrow
+@onready var game_speed_controller: GameSpeedController = $game_speed_controller
 
 
 enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
-enum ChessActiveOrder { HIGH_HP, LOW_HP, NEAR_CENTER, FAR_CENTER }
+enum ChessActiveOrder { HIGH_HP, LOW_HP, NEAR_CENTER, FAR_CENTER, BUY_SEQ, RE_BUY_SEQ }
 var current_team: Team
 var active_chess
 var team_chars
@@ -65,7 +67,7 @@ var team_dict: Dictionary = {
 
 var chess_serial := 1000
 
-var current_chess_active_order := ChessActiveOrder.HIGH_HP
+var current_chess_active_order := ChessActiveOrder.BUY_SEQ
 var center_point: Vector2
 var board_width:= 216
 var board_height:= 216
@@ -254,20 +256,20 @@ func _ready():
 
 	shop_handler.coins_increased.connect(
 		func(value, reason):
-			remain_coins_label.text = "Remaining Coins = " + str(shop_handler.remain_coins)
+			remain_coins_label.text = "Remaining Coins : " + str(shop_handler.remain_coins)
 			if shop_handler.remain_coins >= shop_handler.shop_upgrade_price:
 				shop_refresh_button.disabled = false
 	)
 	shop_handler.coins_decreased.connect(DataManagerSingleton.handle_coin_spend)
 	shop_handler.coins_decreased.connect(
 		func(value, reason):
-			remain_coins_label.text = "Remaining Coins = " + str(shop_handler.remain_coins)
+			remain_coins_label.text = "Remaining Coins : " + str(shop_handler.remain_coins)
 			if shop_handler.remain_coins < shop_handler.shop_upgrade_price:
 				shop_refresh_button.disabled = true
 	)
 	shop_handler.shop_upgraded.connect(
 		func(value):
-			current_shop_level.text = "Current Shop Level is : " + str(shop_handler.shop_level)
+			current_shop_level.text = "Shop Level : " + str(shop_handler.shop_level)
 			update_population(true)
 	)
 	chess_appearance_finished.connect(
@@ -371,7 +373,7 @@ func start_new_game() -> void:
 
 func new_round_prepare_start():
 	# start shopping
-	current_shop_level.text = "Current Shop Level is : " + str(shop_handler.shop_level)
+	current_shop_level.text = "Shop Level : " + str(shop_handler.shop_level)
 	
 	current_round += 1
 	
@@ -587,6 +589,10 @@ func sort_characters(team: Team, mode: ChessActiveOrder) -> Array:
 		ChessActiveOrder.FAR_CENTER:
 			chesses_team.sort_custom(func(a, b): 
 				return a.position.distance_to(center_point) > b.position.distance_to(center_point))
+		ChessActiveOrder.BUY_SEQ:
+			chesses_team.sort_custom(func(a, b): return a.chess_serial < b.chess_serial)
+		ChessActiveOrder.RE_BUY_SEQ:
+			chesses_team.sort_custom(func(a, b): return a.chess_serial > b.chess_serial)
 	return chesses_team
 	
 func generate_enemy(difficulty : int) -> void:
@@ -948,6 +954,7 @@ func control_shaker(control: Control):
 		shake_tween.tween_property(control, "global_position", old_position, 0.1)
 		
 func _on_back_button_pressed() -> void:
+	game_speed_controller._set_preset_speed(1.0)
 	to_menu_scene.emit()
 
 func battle_value_display(chess: Obstacle, chess2: Obstacle, display_value, signal_name: String):
