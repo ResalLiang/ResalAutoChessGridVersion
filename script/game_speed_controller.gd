@@ -30,7 +30,7 @@ func _ready():
 	speed_slider.value_changed.connect(_on_speed_slider_changed)
 	slow_button.pressed.connect(func(): _set_preset_speed(0.5))
 	normal_button.pressed.connect(func(): _set_preset_speed(1.0))
-	fast_button.pressed.connect(func(): _set_preset_speed(2.0))
+	fast_button.pressed.connect(func(): _set_preset_speed(5.0))
 	
 	_update_speed_label(1.0)
 

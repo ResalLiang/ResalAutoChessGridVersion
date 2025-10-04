@@ -2,6 +2,10 @@ extends Node2D
 class_name GameFinish
 
 @onready var container: VBoxContainer = $container
+@onready var animated_sprite_2d: AnimatedSprite2D = $Node2D/TextureRect19/AnimatedSprite2D
+@onready var restart_button: Button = $restart_button
+@onready var back_button: Button = $back_button
+@onready var label: Label = $Label
 
 const score_label_scene = preload("res://scene/score_label.tscn")
 
@@ -9,7 +13,6 @@ signal to_menu_scene
 signal to_game_scene
 
 var final_score := 0
-@onready var label: Label = $Label
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -18,15 +21,28 @@ func _ready() -> void:
 	else:
 		label.text = "You Lose the Game..."
 	calculate_final_score()
-	await get_tree().process_frame
-	staggered_fly_in()
 	DataManagerSingleton.record_game(final_score, DataManagerSingleton.current_chess_array)
 	DataManagerSingleton.save_game_json()
+	
+	restart_button.pressed.connect(_on_restart_button_pressed)
+	back_button.pressed.connect(_on_back_button_pressed)
+	
+	#debug_button_state(restart_button)
+	#debug_button_state(back_button)
+	#
+	#setup_debug_signals(restart_button)
+	#setup_debug_signals(back_button)
+	
+	
+	await get_tree().process_frame
+	await staggered_fly_in()
 
 func _on_restart_button_pressed() -> void:
+	#print("🎉 按钮点击成功！")
 	to_game_scene.emit()
 
 func _on_back_button_pressed() -> void:
+	#print("🎉 按钮点击成功！")
 	to_menu_scene.emit()
 
 func calculate_final_score():
@@ -86,40 +102,6 @@ func calculate_final_score():
 	score_label.text = "Total Score" + " : " + str(final_score)
 	container.add_child(score_label)
 
-
-#func staggered_fly_in():
-	#var labels = []
-	#
-	## 收集容器中的所有Label
-	#for child in container.get_children():
-		#if child is Label:
-			#labels.append(child)
-	#
-	## 设置所有Label的初始位置
-	#for label in labels:
-		#label.visible = true
-		#label.position.x = get_viewport().get_visible_rect().size.x + 200
-		#label.modulate.a = 0.0
-		#label.z_index = 6
-	#
-	## 依次播放动画
-	#for i in range(labels.size()):
-		#var label = labels[i]
-		#var delay = i * 0.2  # 每个延迟0.2秒
-		#
-		#await get_tree().create_timer(delay).timeout
-		#
-		#var tween = create_tween()
-		#tween.set_parallel(true)
-		#tween.set_ease(Tween.EASE_OUT)
-		#tween.set_trans(Tween.TRANS_BACK)
-		#
-		## 获取最终位置（由容器布局决定）
-		#var final_pos = Vector2.ZERO  # 相对于容器的位置
-		#
-		#tween.tween_property(label, "position.x", final_pos.x, 0.6)
-		#tween.tween_property(label, "modulate.a", 1.0, 0.4)
-
 func staggered_fly_in():
 	var labels = []
 	var original_parents = []
@@ -167,3 +149,70 @@ func staggered_fly_in():
 		remove_child(label)
 		container.add_child(label)
 		label.modulate.a = 1.0  # 确保完全可见
+
+func load_animation():
+	var mvp_chess = DataManagerSingleton.mvp_chess
+	if mvp_chess is String:
+		animated_sprite_2d.visible = false
+	else:
+		animated_sprite_2d.visible = true
+		var showed_chess_faction = mvp_chess[0][0]
+		var showed_chess_name = mvp_chess[0][1]
+		var path = "res://asset/animation/%s/%s%s.tres" % [showed_chess_faction, showed_chess_faction, showed_chess_name]
+		if ResourceLoader.exists(path):
+			var frames = ResourceLoader.load(path)
+			for anim_name in frames.get_animation_names():
+				frames.set_animation_loop(anim_name, false)
+				frames.set_animation_speed(anim_name, 8.0)
+			animated_sprite_2d.sprite_frames = frames
+			animated_sprite_2d.play("idle")
+		else:
+			push_error("Animation resource not found: " + path)
+			
+
+func _on_animated_sprite_2d_animation_finished() -> void:
+	var rand_anim_index = randi_range(0, animated_sprite_2d.sprite_frames.get_animation_names().size() - 1)
+	var rand_anim_name = animated_sprite_2d.sprite_frames.get_animation_names()[rand_anim_index]
+	animated_sprite_2d.play(rand_anim_name)
+
+
+func debug_button_state(debug_button: Button):
+	print("=== 按钮调试信息 ===")
+	print("节点路径: ", debug_button.get_path())
+	print("禁用: ", debug_button.disabled)
+	print("可见: ", debug_button.visible)
+	print("在场景树: ", debug_button.is_inside_tree())
+	print("鼠标过滤: ", debug_button.mouse_filter)
+	print("尺寸: ", debug_button.size)
+	
+	# 检查信号连接
+	if debug_button.is_connected("pressed", _on_Button_pressed):
+		print("✅ pressed信号已连接")
+	else:
+		print("❌ pressed信号未连接")
+	print("==================")
+
+func setup_debug_signals(debug_button: Button):
+	# 连接所有有用的调试信号
+	if not debug_button.is_connected("pressed", _on_Debug_pressed):
+		debug_button.connect("pressed", _on_Debug_pressed)
+	
+	if not debug_button.is_connected("button_down", _on_Debug_button_down):
+		debug_button.connect("button_down", _on_Debug_button_down)
+	
+	if not debug_button.is_connected("mouse_entered", _on_Debug_mouse_entered):
+		debug_button.connect("mouse_entered", _on_Debug_mouse_entered)
+
+func _on_Debug_pressed():
+	print("🎉 按钮点击成功！")
+
+func _on_Debug_button_down():
+	print("⬇️ 按钮按下")
+
+func _on_Debug_mouse_entered():
+	print("🐭 鼠标悬停在按钮上")
+
+# 这是你实际要执行的方法
+func _on_Button_pressed():
+	print("🎯 主业务逻辑执行")
+	# 你的实际代码在这里

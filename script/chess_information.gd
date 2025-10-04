@@ -3,20 +3,25 @@ extends VBoxContainer
 
 const effect_icon_scene = preload("res://scene/effect_icon.tscn")
 
-@onready var v_box_container: VBoxContainer = $VBoxContainer
+@onready var chess_stats: VBoxContainer = $chess_stats
 
-@onready var chess_name: Label = $VBoxContainer/chess_name
-@onready var chess_faction: Label = $VBoxContainer/chess_faction
-@onready var max_hp: Label = $VBoxContainer/max_hp
-@onready var armor: Label = $VBoxContainer/armor
-@onready var speed: Label = $VBoxContainer/speed
-@onready var damage: Label = $VBoxContainer/damage
-@onready var attack_range: Label = $VBoxContainer/attack_range
-@onready var attack_speed: Label = $VBoxContainer/attack_speed
-@onready var spell: Label = $VBoxContainer/spell
-@onready var animated_sprite_2d: AnimatedSprite2D = $Node2D/AnimatedSprite2D
+@onready var chess_name: Label = $chess_stats/chess_name
+@onready var chess_faction: Label = $chess_stats/chess_faction
+@onready var max_hp: Label = $chess_stats/max_hp
+@onready var armor: Label = $chess_stats/armor
+@onready var speed: Label = $chess_stats/speed
+@onready var damage: Label = $chess_stats/damage
+@onready var attack_range: Label = $chess_stats/attack_range
+@onready var attack_speed: Label = $chess_stats/attack_speed
+@onready var spell: Label = $chess_stats/spell
+
+@onready var animated_sprite_2d: AnimatedSprite2D = $icons/AnimatedSprite2D
 
 @onready var icon_container: HBoxContainer = $icon_container
+
+@onready var kill_count_container: VBoxContainer = $icons/kill_count_container
+@onready var kill_icon: TextureRect = $icons/kill_count_container/kill_icon
+@onready var kill_icon_template: TextureRect = $icons/kill_icon_template
 
 var animation_faction := "human"
 var animation_chess_name := "SwordMan"
@@ -43,7 +48,7 @@ func _ready() -> void:
 	spell.set_meta("tips", "Special ability (requires full MP).")
 	
 	
-	for node in v_box_container.get_children():
+	for node in chess_stats.get_children():
 		if not node is Label:
 			continue
 			
@@ -123,6 +128,27 @@ func refresh_chess_information():
 		spell.visible = true
 	else:
 		spell.visible = false
+	
+	var kill_count = showed_chess.total_kill_count
+	if kill_count == kill_count_container.get_children().size():
+		pass
+	else:
+		for node in kill_count_container.get_children():
+			node.queue_free()
+		
+		if showed_chess is Chess:			
+			
+			if kill_count <= 0:
+				kill_count_container.visible = false
+			else:
+				kill_count_container.visible = true
+				for i in range(min(5,kill_count)):
+					var new_kill_icon = kill_icon_template.duplicate()
+					new_kill_icon.visible = true
+					new_kill_icon.reparent(kill_count_container)
+							
+		else:
+			kill_count_container.visible = false
 
 	if showed_chess.effect_handler:
 		var chess_effect_list = showed_chess.effect_handler.effect_list.duplicate()

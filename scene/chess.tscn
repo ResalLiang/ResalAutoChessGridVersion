@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://d28hb81gv3e5x"]
+[gd_scene load_steps=34 format=3 uid="uid://d28hb81gv3e5x"]
 
 [ext_resource type="Script" uid="uid://cmj65pa4j3u1u" path="res://script/chess.gd" id="1_q0pof"]
 [ext_resource type="Shader" uid="uid://d3tyrfwlw2c1g" path="res://asset/shader/LightweightPixelPerfectOutline.gdshader" id="2_8icae"]
@@ -18,6 +18,8 @@ shader_parameter/monochrome_color = Color(1, 1, 1, 1)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_10qbj"]
 size = Vector2(16, 15)
+
+[sub_resource type="Theme" id="Theme_yludp"]
 
 [sub_resource type="Animation" id="Animation_dbi3s"]
 length = 0.75
@@ -521,6 +523,17 @@ position = Vector2(0, -13)
 z_index = 50
 position = Vector2(0, 10.5)
 shape = SubResource("RectangleShape2D_10qbj")
+
+[node name="ColorRect" type="ReferenceRect" parent="Area2D"]
+offset_left = -8.0
+offset_top = 3.0
+offset_right = 8.0
+offset_bottom = 19.0
+mouse_filter = 2
+theme = SubResource("Theme_yludp")
+border_color = Color(1, 0.9854644, 0.98295325, 1)
+border_width = 0.5
+editor_only = false
 
 [node name="idle_timer" type="Timer" parent="."]
 wait_time = 2.0

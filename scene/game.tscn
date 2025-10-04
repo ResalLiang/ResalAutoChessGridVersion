@@ -1,4 +1,4 @@
-[gd_scene load_steps=133 format=4 uid="uid://cthbjvirwy2mg"]
+[gd_scene load_steps=131 format=4 uid="uid://cthbjvirwy2mg"]
 
 [ext_resource type="Script" uid="uid://c7rtc63knhqn2" path="res://script/game.gd" id="1_ll5lq"]
 [ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="2_dbls1"]
@@ -16,7 +16,6 @@
 [ext_resource type="FontFile" uid="uid://d3b2vvdpmh8cc" path="res://asset/font/Everyday_Tiny_Original.ttf" id="9_81276"]
 [ext_resource type="Texture2D" uid="uid://bwj55n52t01ii" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/16x16 Slider Button.png" id="9_d218c"]
 [ext_resource type="Texture2D" uid="uid://wegw08lsn4ug" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/16x16 Slider Buttons.png" id="10_54mdx"]
-[ext_resource type="Texture2D" uid="uid://crj21hmdkcij7" path="res://asset/sprite/SpinningCoin/Spinning Coin.png" id="10_yq8tf"]
 [ext_resource type="Texture2D" uid="uid://da2ctgfaxxegu" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/64x64 button no frame.png" id="11_0pyxt"]
 [ext_resource type="Script" uid="uid://bnobjccy7mbl1" path="res://script/shop_handler.gd" id="11_ym5sv"]
 [ext_resource type="Texture2D" uid="uid://taccdysuiiqx" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/64x64 button.png" id="12_o16ra"]
@@ -61,10 +60,12 @@
 [ext_resource type="Texture2D" uid="uid://bp0gtvd3sgrhh" path="res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240707dragonHeaderB.png" id="43_fyii8"]
 [ext_resource type="PackedScene" uid="uid://d2yhcwylpopef" path="res://scene/battle_meter_bar.tscn" id="44_oqkxr"]
 [ext_resource type="Script" uid="uid://lf2qschg5l5r" path="res://script/game_speed_controller.gd" id="44_x3x2e"]
+[ext_resource type="Shader" uid="uid://d3tyrfwlw2c1g" path="res://asset/shader/LightweightPixelPerfectOutline.gdshader" id="45_58qvq"]
 [ext_resource type="Script" uid="uid://csgrh2hl21j51" path="res://script/damage_manager.gd" id="45_c3n0e"]
 [ext_resource type="Theme" uid="uid://b4hwtdp2epofe" path="res://asset/theme/toggle.tres" id="45_c6ddg"]
 [ext_resource type="Texture2D" uid="uid://oyxlko4xp23c" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425helpButton-Sheet.png" id="47_3kcd2"]
 [ext_resource type="Texture2D" uid="uid://ckoscmg1tkcf4" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425lessButton-Sheet.png" id="47_gs7ni"]
+[ext_resource type="Theme" uid="uid://dqa4pio1y4yi4" path="res://asset/customize_button.tres" id="47_ri40t"]
 [ext_resource type="PackedScene" uid="uid://0tel3twsixb3" path="res://scene/faction_bonus_bar.tscn" id="48_pueyi"]
 [ext_resource type="Texture2D" uid="uid://db6majxnbxnot" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425closeButton-Sheet.png" id="48_saluk"]
 [ext_resource type="Texture2D" uid="uid://bwc2s8y8drnq" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425moreButton-Sheet.png" id="49_sybv5"]
@@ -7378,21 +7379,32 @@ region = Rect2(0, 0, 18, 40)
 atlas = ExtResource("38_h1f1y")
 region = Rect2(68, 0, 33, 36)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_8bryy"]
-atlas = ExtResource("39_tq4ud")
-region = Rect2(6, 0, 28, 22)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_l2xpq"]
 atlas = ExtResource("41_pueyi")
 region = Rect2(0, 0, 96, 22)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_pueyi"]
-atlas = ExtResource("39_tq4ud")
-region = Rect2(45, 0, 33, 0)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_3kcd2"]
 atlas = ExtResource("42_hfg0d")
 region = Rect2(128, 46, 59, 17)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_58qvq"]
+atlas = ExtResource("43_fyii8")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8bryy"]
+atlas = ExtResource("39_tq4ud")
+region = Rect2(6, 0, 28, 22)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ri40t"]
+shader = ExtResource("45_58qvq")
+shader_parameter/outline_color = Color(1, 1, 1, 0)
+shader_parameter/blink_color = Color(1, 1, 1, 1)
+shader_parameter/blink_time_scale = 0.0
+shader_parameter/use_monochrome = false
+shader_parameter/monochrome_color = Color(1, 1, 1, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pueyi"]
+atlas = ExtResource("39_tq4ud")
+region = Rect2(45, 0, 33, 0)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hfg0d"]
 atlas = ExtResource("39_tq4ud")
@@ -7402,75 +7414,44 @@ region = Rect2(79, 0, 36, 22)
 atlas = ExtResource("39_tq4ud")
 region = Rect2(123, 3, 26.429993, 19)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_58qvq"]
-atlas = ExtResource("43_fyii8")
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_k2cbn"]
 atlas = ExtResource("47_3kcd2")
 region = Rect2(0, 0, 30, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ym5sv"]
-atlas = ExtResource("10_yq8tf")
-region = Rect2(0, 0, 16, 16)
+[sub_resource type="AtlasTexture" id="AtlasTexture_eycuj"]
+atlas = ExtResource("4_imfdu")
+region = Rect2(288, 320, 8, 8)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_sng2h"]
-atlas = ExtResource("10_yq8tf")
-region = Rect2(16, 0, 16, 16)
+[sub_resource type="AtlasTexture" id="AtlasTexture_ntqlo"]
+atlas = ExtResource("4_imfdu")
+region = Rect2(296, 320, 8, 8)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_5g16k"]
-atlas = ExtResource("10_yq8tf")
-region = Rect2(32, 0, 16, 16)
+[sub_resource type="AtlasTexture" id="AtlasTexture_ckp4v"]
+atlas = ExtResource("4_imfdu")
+region = Rect2(304, 320, 8, 8)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_81276"]
-atlas = ExtResource("10_yq8tf")
-region = Rect2(48, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ve786"]
-atlas = ExtResource("10_yq8tf")
-region = Rect2(64, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_0lu6w"]
-atlas = ExtResource("10_yq8tf")
-region = Rect2(80, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_i6gbm"]
-atlas = ExtResource("10_yq8tf")
-region = Rect2(96, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ux4dc"]
-atlas = ExtResource("10_yq8tf")
-region = Rect2(112, 0, 16, 16)
+[sub_resource type="AtlasTexture" id="AtlasTexture_anyr7"]
+atlas = ExtResource("4_imfdu")
+region = Rect2(312, 320, 8, 8)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_jrd6n"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ym5sv")
+"texture": SubResource("AtlasTexture_eycuj")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_sng2h")
+"texture": SubResource("AtlasTexture_ntqlo")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_5g16k")
+"texture": SubResource("AtlasTexture_ckp4v")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_81276")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ve786")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_0lu6w")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_i6gbm")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ux4dc")
+"texture": SubResource("AtlasTexture_anyr7")
 }],
 "loop": true,
 "name": &"default",
-"speed": 5.0
+"speed": 8.0
 }]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u414g"]
@@ -7778,18 +7759,6 @@ offset_bottom = 211.0
 texture = SubResource("AtlasTexture_tq4ud")
 stretch_mode = 2
 
-[node name="TextureRect3" type="NinePatchRect" parent="tilemap/ui"]
-offset_left = 21.0
-offset_top = 33.0
-offset_right = 88.0
-offset_bottom = 57.0
-texture = SubResource("AtlasTexture_8bryy")
-region_rect = Rect2(0, 0, 28, 22)
-patch_margin_left = 10
-patch_margin_top = 8
-patch_margin_right = 13
-patch_margin_bottom = 5
-
 [node name="TextureRect7" type="NinePatchRect" parent="tilemap/ui"]
 offset_left = 146.0
 offset_top = 19.0
@@ -7802,18 +7771,6 @@ patch_margin_top = 10
 patch_margin_right = 32
 patch_margin_bottom = 11
 
-[node name="TextureRect4" type="NinePatchRect" parent="tilemap/ui"]
-offset_left = 21.0
-offset_top = 56.0
-offset_right = 114.0
-offset_bottom = 79.0
-texture = SubResource("AtlasTexture_pueyi")
-region_rect = Rect2(0, 0, 33, 22)
-patch_margin_left = 12
-patch_margin_top = 8
-patch_margin_right = 19
-patch_margin_bottom = 5
-
 [node name="TextureRect8" type="TextureRect" parent="tilemap/ui"]
 offset_left = 237.0
 offset_top = 94.0
@@ -7821,29 +7778,6 @@ offset_right = 330.0
 offset_bottom = 117.0
 texture = SubResource("AtlasTexture_3kcd2")
 stretch_mode = 2
-
-[node name="TextureRect5" type="NinePatchRect" parent="tilemap/ui"]
-offset_left = 21.0
-offset_top = 77.0
-offset_right = 104.0
-offset_bottom = 102.0
-texture = SubResource("AtlasTexture_hfg0d")
-patch_margin_left = 16
-patch_margin_top = 8
-patch_margin_right = 14
-patch_margin_bottom = 5
-
-[node name="TextureRect6" type="NinePatchRect" parent="tilemap/ui"]
-offset_left = 21.0
-offset_top = 103.0
-offset_right = 92.0
-offset_bottom = 124.0
-texture = SubResource("AtlasTexture_fyii8")
-region_rect = Rect2(0, 0, 26, 19)
-patch_margin_left = 8
-patch_margin_top = 5
-patch_margin_right = 13
-patch_margin_bottom = 5
 
 [node name="TextureRect9" type="TextureRect" parent="tilemap/ui"]
 offset_left = 12.0
@@ -7867,7 +7801,7 @@ text = "Faction Bonus"
 
 [node name="decoration" type="TileMapLayer" parent="tilemap"]
 z_index = 10
-tile_map_data = PackedByteArray("AAARAAYABAASAAEAAAAYAAEABAAGAA8AAAAYAAUABAAJAAQAAAASAAMABAAHAAkAAAARAA8ABAALAAsAAAAAABAAAwADABEAAAADAA8AAwANAAEAAAADABEAAwALAA4AAAACABEAAwARAAAAAAAEAAkAAwANAAgAAAABAAgAAwAIAAoAAAABAAEAAwAQABMAAAAjAAYAAwAIAAQAAAANAAwAAwATAA0AAAAOAA4AAwABAAwAAAAPABAAAwAFAAwAAAATABAAAwAKAAsAAAAVAAsAAwABAAQAAAARAAkAAwADAAAAAAANAAkAAwAGAAQAAAARAAQAAwACAAQAAAAKAAIAAwARAAwAAAAJAAQAAwAGAAYAAAAPAAMAAwARAAEAAAAPAAIAAwADAAIAAAAMAAMAAwADAAQAAAAdAAoAAwAGABMAAAAgAAoAAwARABMAAAAWAAMAAwARABMAAAAAAAoAAwAHAAMAAAADAAsAAwANAA4AAAAEABEAAwAGABEAAAACABAAAwADAAkAAAAIABEAAwAHAAYAAAAIAAgAAwAGAAEAAAAPAA4AAwAAAA0AAAANABAAAwAQAAkAAAATAAsAAwAIAA0AAAA=")
+tile_map_data = PackedByteArray("AAARAAYABAASAAEAAAAYAAEABAAGAA8AAAAYAAUAAQANABYAAAASAAMABAAHAAkAAAARAA8ABAALAAsAAAAAABAAAwADABEAAAADAA8AAwANAAEAAAADABEAAwALAA4AAAACABEAAwARAAAAAAAEAAkAAwANAAgAAAABAAgAAwAIAAoAAAABAAEAAwAQABMAAAAjAAYAAwAIAAQAAAANAAwAAwATAA0AAAAOAA4AAwABAAwAAAAPABAAAwAFAAwAAAATABAAAwAKAAsAAAAVAAsAAwABAAQAAAARAAkAAwADAAAAAAANAAkAAwAGAAQAAAARAAQAAwACAAQAAAAKAAIAAwARAAwAAAAJAAQAAwAGAAYAAAAPAAMAAwARAAEAAAAPAAIAAwADAAIAAAAMAAMAAwADAAQAAAAdAAoAAwAGABMAAAAgAAoAAwARABMAAAAWAAMAAwARABMAAAAAAAoAAwAHAAMAAAADAAsAAwANAA4AAAAEABEAAwAGABEAAAACABAAAwADAAkAAAAIABEAAwAHAAYAAAAIAAgAAwAGAAEAAAAPAA4AAwAAAA0AAAANABAAAwAQAAkAAAATAAsAAwAIAA0AAAAJAAYAAQATABMAAAAXAAYAAQAUABoAAAAIAAwAAQAHAAYAAAAWAAUAAQANABYAAAAWAAYAAQANABcAAAAYAAYAAQANABcAAAA=")
 tile_set = ExtResource("2_dbls1")
 metadata/_edit_lock_ = true
 
@@ -7876,57 +7810,118 @@ z_index = 20
 
 [node name="game_start_button" type="Button" parent="game_button_container"]
 z_index = 25
+z_as_relative = false
 custom_minimum_size = Vector2(39.04, 19.83)
-offset_left = 16.0
-offset_top = 36.0
-offset_right = 83.0
-offset_bottom = 55.83
+offset_left = 23.0
+offset_top = 35.0
+offset_right = 90.0
+offset_bottom = 54.83
+theme = ExtResource("47_ri40t")
 theme_override_colors/font_color = Color(18.892157, 18.892157, 0, 1)
 theme_override_fonts/font = ExtResource("9_81276")
 theme_override_font_sizes/font_size = 4
 text = "Game start (A)"
 flat = true
-metadata/_edit_use_anchors_ = true
+
+[node name="TextureRect3" type="NinePatchRect" parent="game_button_container/game_start_button"]
+z_index = 20
+z_as_relative = false
+layout_mode = 0
+offset_top = -4.0
+offset_right = 80.0
+offset_bottom = 20.0
+texture = SubResource("AtlasTexture_8bryy")
+region_rect = Rect2(0, 0, 28, 22)
+patch_margin_left = 10
+patch_margin_top = 8
+patch_margin_right = 13
+patch_margin_bottom = 5
 
 [node name="shop_refresh_button" type="Button" parent="game_button_container"]
 z_index = 25
+z_as_relative = false
 custom_minimum_size = Vector2(39.04, 19.83)
-offset_left = 25.0
+offset_left = 23.0
 offset_top = 60.0
-offset_right = 92.0
+offset_right = 108.0
 offset_bottom = 79.83
+theme = ExtResource("47_ri40t")
 theme_override_colors/font_color = Color(1.6063639e-06, 0.34935874, 2.8878452e-07, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 0)
 theme_override_fonts/font = ExtResource("9_81276")
 theme_override_font_sizes/font_size = 4
-text = "Shop refresh (R)"
+text = "Shop refresh (D)"
 flat = true
-metadata/_edit_use_anchors_ = true
+
+[node name="TextureRect4" type="NinePatchRect" parent="game_button_container/shop_refresh_button"]
+z_index = 20
+z_as_relative = false
+material = SubResource("ShaderMaterial_ri40t")
+layout_mode = 0
+offset_top = -4.0
+offset_right = 93.0
+offset_bottom = 19.0
+texture = SubResource("AtlasTexture_pueyi")
+region_rect = Rect2(0, 0, 33, 22)
+patch_margin_left = 12
+patch_margin_top = 8
+patch_margin_right = 19
+patch_margin_bottom = 5
 
 [node name="shop_freeze_button" type="Button" parent="game_button_container"]
 z_index = 25
+z_as_relative = false
 custom_minimum_size = Vector2(39.04, 19.83)
-offset_left = 27.0
-offset_top = 82.0
-offset_right = 94.0
-offset_bottom = 101.83
+offset_left = 23.0
+offset_top = 83.0
+offset_right = 111.0
+offset_bottom = 102.83
+theme = ExtResource("47_ri40t")
 theme_override_fonts/font = ExtResource("9_81276")
 theme_override_font_sizes/font_size = 4
 text = "Shop freeze (F)"
 flat = true
-metadata/_edit_use_anchors_ = true
+
+[node name="TextureRect5" type="NinePatchRect" parent="game_button_container/shop_freeze_button"]
+z_index = 20
+z_as_relative = false
+layout_mode = 0
+offset_top = -5.0
+offset_right = 83.0
+offset_bottom = 20.0
+texture = SubResource("AtlasTexture_hfg0d")
+patch_margin_left = 16
+patch_margin_top = 8
+patch_margin_right = 14
+patch_margin_bottom = 5
 
 [node name="shop_upgrade_button" type="Button" parent="game_button_container"]
 z_index = 25
+z_as_relative = false
 custom_minimum_size = Vector2(39.04, 19.83)
-offset_left = 20.0
-offset_top = 104.0
-offset_right = 87.0
-offset_bottom = 123.83
+offset_left = 23.0
+offset_top = 105.0
+offset_right = 90.0
+offset_bottom = 124.83
+theme = ExtResource("47_ri40t")
 theme_override_fonts/font = ExtResource("9_81276")
 theme_override_font_sizes/font_size = 4
 text = "Shop upgrade (S)"
 flat = true
-metadata/_edit_use_anchors_ = true
+
+[node name="TextureRect6" type="NinePatchRect" parent="game_button_container/shop_upgrade_button"]
+z_index = 20
+z_as_relative = false
+layout_mode = 0
+offset_top = -1.0
+offset_right = 71.0
+offset_bottom = 20.0
+texture = SubResource("AtlasTexture_fyii8")
+region_rect = Rect2(0, 0, 26, 19)
+patch_margin_left = 8
+patch_margin_top = 5
+patch_margin_right = 13
+patch_margin_bottom = 5
 
 [node name="game_restart_button" type="Button" parent="game_button_container"]
 z_index = 25
@@ -7935,6 +7930,7 @@ offset_left = 32.0
 offset_top = 280.0
 offset_right = 71.04
 offset_bottom = 320.0
+theme = ExtResource("47_ri40t")
 theme_override_colors/font_color = Color(0.8745098, 0, 0.07058824, 1)
 theme_override_fonts/font = ExtResource("9_81276")
 theme_override_font_sizes/font_size = 4
@@ -7950,13 +7946,12 @@ offset_bottom = 14.0
 theme_override_colors/font_color = Color(4.6046605, 5.171312, 0.25034758, 1)
 theme_override_fonts/font = ExtResource("38_8ssax")
 theme_override_font_sizes/font_size = 4
-text = "Remaining Coins    = "
+text = "Remaining Coins     = "
 metadata/_edit_use_anchors_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="remain_coins_label"]
-visible = false
 z_index = 25
-position = Vector2(119, 9)
+position = Vector2(73, 3)
 sprite_frames = SubResource("SpriteFrames_jrd6n")
 autoplay = "default"
 frame_progress = 0.347104
@@ -8189,6 +8184,7 @@ offset_right = 38.0
 offset_bottom = 320.0
 size_flags_horizontal = 4
 size_flags_vertical = 0
+theme = ExtResource("47_ri40t")
 theme_override_fonts/font = ExtResource("9_81276")
 theme_override_font_sizes/font_size = 4
 theme_override_icons/icon = SubResource("AtlasTexture_ri40t")
@@ -8241,9 +8237,10 @@ layout_mode = 2
 visible = false
 layout_mode = 2
 
-[node name="chess_mover" type="Node2D" parent="."]
+[node name="chess_mover" type="Node2D" parent="." node_paths=PackedStringArray("play_areas")]
 unique_name_in_owner = true
 script = ExtResource("15_ve786")
+play_areas = [NodePath("../tilemap/arena"), NodePath("../tilemap/bench"), NodePath("../tilemap/shop")]
 
 [node name="chess_information" parent="." instance=ExtResource("8_ve786")]
 offset_left = 427.0
@@ -8283,19 +8280,21 @@ z_index = 25
 position = Vector2(0, -35)
 
 [node name="slow_button" type="Button" parent="game_speed_controller/VBox/preset_buttons"]
-z_index = 25
+z_index = 26
 custom_minimum_size = Vector2(24, 24)
-offset_left = 23.0
+offset_left = 18.0
 offset_top = 14.0
-offset_right = 55.0
+offset_right = 50.0
 offset_bottom = 46.0
 size_flags_horizontal = 0
 size_flags_vertical = 4
+theme = ExtResource("47_ri40t")
 theme_override_fonts/font = ExtResource("9_81276")
 theme_override_font_sizes/font_size = 4
 icon = SubResource("AtlasTexture_770mg")
 flat = true
 icon_alignment = 1
+metadata/_edit_use_anchors_ = true
 
 [node name="normal_button" type="Button" parent="game_speed_controller/VBox/preset_buttons"]
 z_index = 25
@@ -8305,10 +8304,12 @@ offset_right = 76.0
 offset_bottom = 40.0
 size_flags_horizontal = 0
 size_flags_vertical = 4
+theme = ExtResource("47_ri40t")
 theme_override_fonts/font = ExtResource("9_81276")
 theme_override_font_sizes/font_size = 4
 icon = SubResource("AtlasTexture_6lyqh")
 flat = true
+metadata/_edit_use_anchors_ = true
 
 [node name="fast_button" type="Button" parent="game_speed_controller/VBox/preset_buttons"]
 z_index = 25
@@ -8318,10 +8319,12 @@ offset_right = 87.0
 offset_bottom = 46.0
 size_flags_horizontal = 0
 size_flags_vertical = 4
+theme = ExtResource("47_ri40t")
 theme_override_fonts/font = ExtResource("9_81276")
 theme_override_font_sizes/font_size = 4
 icon = SubResource("AtlasTexture_oqkxr")
 flat = true
+metadata/_edit_use_anchors_ = true
 
 [node name="speed_slider" type="HSlider" parent="game_speed_controller/VBox"]
 z_index = 25
@@ -8330,6 +8333,7 @@ offset_right = 112.0
 offset_bottom = 24.0
 size_flags_vertical = 4
 theme = ExtResource("45_c6ddg")
+exp_edit = true
 
 [node name="speed_label" type="Label" parent="game_speed_controller/VBox"]
 z_index = 25

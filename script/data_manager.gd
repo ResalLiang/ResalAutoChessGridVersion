@@ -64,6 +64,8 @@ const max_won_rounds := 3
 var lose_rounds := 0
 const max_lose_rounds := 3
 
+var mvp_chess
+
 var version := "V1.00"
 
 func _ready() -> void:

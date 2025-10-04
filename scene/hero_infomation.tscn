@@ -1,10 +1,24 @@
-[gd_scene load_steps=6 format=3 uid="uid://c6sf672nmok3s"]
+[gd_scene load_steps=10 format=3 uid="uid://c6sf672nmok3s"]
 
 [ext_resource type="Script" uid="uid://xhm35hpui8l5" path="res://script/chess_information.gd" id="1_f1mac"]
 [ext_resource type="FontFile" uid="uid://d3b2vvdpmh8cc" path="res://asset/font/Everyday_Tiny_Original.ttf" id="1_wkp60"]
 [ext_resource type="PackedScene" uid="uid://mjt8gly10q2q" path="res://scene/effect_icon.tscn" id="3_f1mac"]
 [ext_resource type="Texture2D" uid="uid://b6x8lpjjcmev5" path="res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240713dragonEmptyFrame.png" id="4_brif2"]
 [ext_resource type="SpriteFrames" uid="uid://pcg2bjrj68rm" path="res://asset/animation/elf/elfQueen.tres" id="4_v35lb"]
+[ext_resource type="Shader" uid="uid://d3tyrfwlw2c1g" path="res://asset/shader/LightweightPixelPerfectOutline.gdshader" id="6_kk8ts"]
+[ext_resource type="Texture2D" uid="uid://dhvvnqufsftng" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250422mouseBig-Sheet.png" id="7_kk8ts"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a4h23"]
+shader = ExtResource("6_kk8ts")
+shader_parameter/outline_color = Color(1, 1, 1, 1)
+shader_parameter/blink_color = Color(1, 1, 1, 1)
+shader_parameter/blink_time_scale = 0.0
+shader_parameter/use_monochrome = false
+shader_parameter/monochrome_color = Color(1, 1, 1, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a4h23"]
+atlas = ExtResource("7_kk8ts")
+region = Rect2(0, 0, 23, 23)
 
 [node name="chess_information" type="VBoxContainer"]
 z_index = 20
@@ -13,7 +27,7 @@ offset_right = 100.0
 offset_bottom = 124.0
 script = ExtResource("1_f1mac")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="chess_stats" type="VBoxContainer" parent="."]
 z_index = 20
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
@@ -21,7 +35,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 0
 theme_override_constants/separation = 2
 
-[node name="chess_name" type="Label" parent="VBoxContainer"]
+[node name="chess_name" type="Label" parent="chess_stats"]
 z_index = 25
 custom_minimum_size = Vector2(100, 8)
 layout_mode = 2
@@ -32,7 +46,7 @@ theme_override_font_sizes/font_size = 4
 text = "Hero Name: "
 autowrap_mode = 3
 
-[node name="chess_faction" type="Label" parent="VBoxContainer"]
+[node name="chess_faction" type="Label" parent="chess_stats"]
 z_index = 25
 custom_minimum_size = Vector2(100, 8)
 layout_mode = 2
@@ -43,7 +57,7 @@ theme_override_font_sizes/font_size = 4
 text = "Hero Faction: "
 autowrap_mode = 3
 
-[node name="max_hp" type="Label" parent="VBoxContainer"]
+[node name="max_hp" type="Label" parent="chess_stats"]
 z_index = 25
 custom_minimum_size = Vector2(100, 8)
 layout_mode = 2
@@ -54,7 +68,7 @@ theme_override_font_sizes/font_size = 4
 text = "Max HP:"
 autowrap_mode = 3
 
-[node name="armor" type="Label" parent="VBoxContainer"]
+[node name="armor" type="Label" parent="chess_stats"]
 z_index = 25
 custom_minimum_size = Vector2(100, 8)
 layout_mode = 2
@@ -65,7 +79,7 @@ theme_override_font_sizes/font_size = 4
 text = "Armor:"
 autowrap_mode = 3
 
-[node name="speed" type="Label" parent="VBoxContainer"]
+[node name="speed" type="Label" parent="chess_stats"]
 z_index = 25
 custom_minimum_size = Vector2(100, 8)
 layout_mode = 2
@@ -76,7 +90,7 @@ theme_override_font_sizes/font_size = 4
 text = "Speed: "
 autowrap_mode = 3
 
-[node name="damage" type="Label" parent="VBoxContainer"]
+[node name="damage" type="Label" parent="chess_stats"]
 z_index = 25
 custom_minimum_size = Vector2(100, 8)
 layout_mode = 2
@@ -87,7 +101,7 @@ theme_override_font_sizes/font_size = 4
 text = "Damage: "
 autowrap_mode = 3
 
-[node name="attack_range" type="Label" parent="VBoxContainer"]
+[node name="attack_range" type="Label" parent="chess_stats"]
 z_index = 25
 custom_minimum_size = Vector2(100, 8)
 layout_mode = 2
@@ -98,7 +112,7 @@ theme_override_font_sizes/font_size = 4
 text = "Attack Range: "
 autowrap_mode = 3
 
-[node name="attack_speed" type="Label" parent="VBoxContainer"]
+[node name="attack_speed" type="Label" parent="chess_stats"]
 z_index = 25
 custom_minimum_size = Vector2(100, 8)
 layout_mode = 2
@@ -109,7 +123,7 @@ theme_override_font_sizes/font_size = 4
 text = "Attack Speed:"
 autowrap_mode = 3
 
-[node name="spell" type="Label" parent="VBoxContainer"]
+[node name="spell" type="Label" parent="chess_stats"]
 z_index = 25
 custom_minimum_size = Vector2(100, 8)
 layout_mode = 2
@@ -135,9 +149,9 @@ layout_mode = 2
 [node name="effect_icon3" parent="icon_container" instance=ExtResource("3_f1mac")]
 layout_mode = 2
 
-[node name="Node2D" type="Node2D" parent="."]
+[node name="icons" type="Node2D" parent="."]
 
-[node name="TextureRect" type="TextureRect" parent="Node2D"]
+[node name="TextureRect" type="TextureRect" parent="icons"]
 z_index = 25
 offset_left = 72.0
 offset_top = 29.0
@@ -145,11 +159,40 @@ offset_right = 112.0
 offset_bottom = 69.0
 texture = ExtResource("4_brif2")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Node2D"]
+[node name="kill_icon_template" type="TextureRect" parent="icons"]
+visible = false
+z_index = 35
+material = SubResource("ShaderMaterial_a4h23")
+custom_minimum_size = Vector2(16, 16)
+offset_left = 126.0
+offset_top = 11.0
+offset_right = 149.0
+offset_bottom = 34.0
+size_flags_vertical = 0
+texture = SubResource("AtlasTexture_a4h23")
+flip_h = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="icons"]
 z_index = 4096
 position = Vector2(91, 34)
 scale = Vector2(2, 2)
 sprite_frames = ExtResource("4_v35lb")
 animation = &"die"
 
-[connection signal="animation_finished" from="Node2D/AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
+[node name="kill_count_container" type="VBoxContainer" parent="icons"]
+offset_left = 126.0
+offset_top = 11.0
+offset_right = 149.0
+offset_bottom = 80.0
+theme_override_constants/separation = 0
+
+[node name="kill_icon" type="TextureRect" parent="icons/kill_count_container"]
+z_index = 35
+material = SubResource("ShaderMaterial_a4h23")
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 0
+texture = SubResource("AtlasTexture_a4h23")
+flip_h = true
+
+[connection signal="animation_finished" from="icons/AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]

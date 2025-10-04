@@ -47,6 +47,8 @@ const COLORS_TILE = {
 	Color.RED: Vector2i(5, 22)
 }
 
+const RARITY_ARRY = ["Common", "Uncommon", "Rare", "Epic", "Legenadry"]
+
 # Game state
 var board = []  # Board array, "" = empty, string = piece type
 var current_piece_type = ""
@@ -56,7 +58,10 @@ var next_piece_type = ""
 var score = 0
 var game_over = false
 var drop_timer = 0.0
-const DROP_INTERVAL = 1.0
+var drop_interval = 1.0
+var rarity_index := 0
+
+var game_started:= false
 
 # Node references
 @onready var board_tilemap: TileMapLayer = $Board/TileMapLayer
@@ -66,19 +71,65 @@ const DROP_INTERVAL = 1.0
 @onready var game_over_panel: Panel = $GameOverPanel
 @onready var restart_button: Button = $GameOverPanel/RestartButton
 @onready var final_score_label: Label = $GameOverPanel/FinalScoreLabel
+@onready var left_button: TextureButton = $controller/speed_controller/LeftButton
+@onready var right_button: TextureButton = $controller/speed_controller/RightButton
+@onready var left_button2: TextureButton = $controller/rarity_filter/LeftButton
+@onready var right_button2: TextureButton = $controller/rarity_filter/RightButton
+@onready var label: Label = $controller/speed_controller/Label
+@onready var label2: Label = $controller/rarity_filter/Label
+@onready var game_start_button: TextureButton = $game_start_button
 
 signal to_menu_scene
 
 func _ready():
+	reset_game()
+	
 	restart_button.pressed.connect(_on_restart_button_pressed)
-	start_new_game()
+	update_drop_interval_label()
+	left_button.pressed.connect(
+		func():
+			drop_interval -= 0.1
+			drop_interval = max(0, drop_interval)
+			update_drop_interval_label()
+		
+	)
+	right_button.pressed.connect(
+		func():
+			drop_interval += 0.1
+			update_drop_interval_label()
+		
+	)
+	
+	left_button2.pressed.connect(
+		func():
+			rarity_index -= 1
+			rarity_index = max(0, rarity_index)
+			update_rarity_label()
+		
+	)
+	right_button2.pressed.connect(
+		func():
+			rarity_index += 1
+			rarity_index = min(4, rarity_index)
+			update_rarity_label()
+		
+	)
+	game_start_button.pressed.connect(
+		func():
+			game_started = true
+			start_new_game()
+			
+	)
+	
+func reset_game():
 
-func start_new_game():
 	# Reset game state
 	score = 0
 	game_over = false
 	game_over_panel.visible = false
 	current_piece_rotation = 0
+	
+	current_piece_type = ""
 	
 	# Create empty game board
 	board = []
@@ -93,12 +144,15 @@ func start_new_game():
 	piece_tilemap.clear()
 	next_piece_tilemap.clear()
 	
+	# Update UI
+	score_label.text = "Score: " + str(score)
+
+func start_new_game():
+	
 	# Generate initial pieces
 	next_piece_type = get_random_piece_type()
 	spawn_new_piece()
 	
-	# Update UI
-	score_label.text = "Score: " + str(score)
 
 func get_random_piece_type():
 	var pieces = SHAPES.keys()
@@ -115,6 +169,7 @@ func spawn_new_piece():
 		game_over = true
 		final_score_label.text = "Game Over\nfinal score : " + str(score)
 		game_over_panel.visible = true
+		game_started = false
 		return
 	
 	# Draw current piece and next piece preview
@@ -151,10 +206,14 @@ func draw_current_piece():
 	# Clear current piece tilemap
 	piece_tilemap.clear()
 	
+	# Safety check for empty piece type
+	if current_piece_type == "" or current_piece_type == null:
+		return
+	
 	# Draw current piece
 	var current_shape = get_current_shape()
-	var color = COLORS[current_piece_type]
-	var tile_coords = COLORS_TILE[color]
+	var color = get_color_for_piece(current_piece_type)  # Use safe method
+	var tile_coords = COLORS_TILE.get(color, Vector2i(0, 0))  # Use get method to avoid errors
 	
 	for cell in current_shape:
 		var pos = current_piece_position + cell
@@ -165,13 +224,26 @@ func draw_next_piece():
 	# Clear next piece preview tilemap
 	next_piece_tilemap.clear()
 	
+	# Safety check for empty piece type
+	if next_piece_type == "" or next_piece_type == null:
+		return
+	
 	# Draw next piece preview
-	var color = COLORS[next_piece_type]
-	var tile_coords = COLORS_TILE[color]
+	var color = get_color_for_piece(next_piece_type)  # Use safe method
+	var tile_coords = COLORS_TILE.get(color, Vector2i(0, 0))  # Use get method to avoid errors
 	
 	for cell in SHAPES[next_piece_type]:
 		var preview_pos = cell + Vector2i(0, 0)  # Adjust position for preview
 		next_piece_tilemap.set_cell(preview_pos, 0, tile_coords)
+
+# Safe color retrieval method
+func get_color_for_piece(piece_type: String) -> Color:
+	# Return default color if piece type is empty or null
+	if piece_type == "" or piece_type == null:
+		return Color.WHITE
+	
+	# Use get method to safely access dictionary
+	return COLORS.get(piece_type, Color.WHITE)
 
 func check_collision(position, shape):
 	for cell in shape:
@@ -264,12 +336,12 @@ func lock_piece():
 	spawn_new_piece()
 
 func _process(delta):
-	if game_over:
+	if game_over or not game_started:
 		return
 	
 	# Automatic dropping
 	drop_timer += delta
-	if drop_timer >= DROP_INTERVAL:
+	if drop_timer >= drop_interval:
 		drop_timer = 0.0
 		if not move_piece(Vector2i(0, 1)):
 			lock_piece()
@@ -290,8 +362,11 @@ func _input(event):
 			start_new_game()
 
 func _on_restart_button_pressed():
-	game_over_panel.visible = false
-	start_new_game()
+	reset_game()
+	game_started = false
 
-func _on_button_pressed() -> void:
-	to_menu_scene.emit()
+func update_drop_interval_label():
+	label.text = str(drop_interval)
+
+func update_rarity_label():
+	label2.text = RARITY_ARRY[rarity_index]

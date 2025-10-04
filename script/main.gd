@@ -53,6 +53,7 @@ func show_player_upgrade():
 # 显示设置菜单
 func show_game_finish():
 	await _transition_to_scene("res://scene/game_finish.tscn", main_container, false)
+	current_scene.load_animation()
 	current_scene.to_menu_scene.connect(show_main_menu)
 	current_scene.to_game_scene.connect(show_game)
 
@@ -70,6 +71,7 @@ func show_mini_game():
 
 # 场景切换核心方法 - 这是自定义方法
 func _transition_to_scene(scene_path: String, container: Control, if_transition: bool):
+	transition_layer.set_mouse_filter(0)
 	# 显示过渡效果
 	if if_transition:
 		VirtualCursorSingleton.set_cursor_type("loading")
@@ -102,6 +104,10 @@ func _transition_to_scene(scene_path: String, container: Control, if_transition:
 		await tween.finished
 		VirtualCursorSingleton.set_cursor_type("default")
 		transition_layer.hide()
+		
+	transition_layer.set_mouse_filter(1)
+
+
 		
 func add_scene(scene_path: String, container: Control, if_transition: bool):
 		# 显示过渡效果

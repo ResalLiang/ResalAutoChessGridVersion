@@ -207,6 +207,7 @@ func _ready():
 	game_turn_started.connect(
 		func():
 			game_start_button.disabled = true
+			game_start_button.global_position.x = -40
 			chess_order_hp_high.disabled = true
 			chess_order_hp_low.disabled = true
 			chess_order_near_center.disabled = true
@@ -219,6 +220,7 @@ func _ready():
 	game_turn_finished.connect(
 		func():
 			game_start_button.disabled = false
+			game_start_button.global_position.x = 24
 			chess_order_hp_high.disabled = false
 			chess_order_hp_low.disabled = false
 			chess_order_near_center.disabled = false
@@ -256,16 +258,25 @@ func _ready():
 
 	shop_handler.coins_increased.connect(
 		func(value, reason):
-			remain_coins_label.text = "Remaining Coins : " + str(shop_handler.remain_coins)
-			if shop_handler.remain_coins >= shop_handler.shop_upgrade_price:
-				shop_refresh_button.disabled = false
+			remain_coins_label.text = "Remaining Coins   : " + str(shop_handler.remain_coins)
+			if shop_handler.remain_coins >= shop_handler.get_shop_upgrade_price():
+				shop_upgrade_button.disabled = false
+				shop_upgrade_button.global_position.x = 24
+			else:
+				shop_upgrade_button.disabled = true
+				shop_upgrade_button.global_position.x = -40
+				
 	)
 	shop_handler.coins_decreased.connect(DataManagerSingleton.handle_coin_spend)
 	shop_handler.coins_decreased.connect(
 		func(value, reason):
-			remain_coins_label.text = "Remaining Coins : " + str(shop_handler.remain_coins)
-			if shop_handler.remain_coins < shop_handler.shop_upgrade_price:
+			remain_coins_label.text = "Remaining Coins   : " + str(shop_handler.remain_coins)
+			if shop_handler.remain_coins < shop_handler.shop_refresh_price:
 				shop_refresh_button.disabled = true
+				shop_refresh_button.global_position.x = -40
+			else:
+				shop_refresh_button.disabled = false
+				shop_refresh_button.global_position.x = 24
 	)
 	shop_handler.shop_upgraded.connect(
 		func(value):
@@ -281,6 +292,7 @@ func _ready():
 		func(chess: Obstacle, play_area: PlayArea, tile: Vector2i):
 			if not is_game_turn_start:
 				update_population(false)
+				await check_chess_merge()
 	)
 	
 	chess_mover.chess_raised.connect(
@@ -572,9 +584,14 @@ func handle_game_end():
 	DataManagerSingleton.current_chess_array = []
 	for chess_index in saved_arena_team.values(): #[faction, chess_name]
 		DataManagerSingleton.current_chess_array.append([chess_index[0], chess_index[1]])
-
+	
 	#Show report
-	to_game_finish_scene.emit()
+	if battle_meter.battle_array_sliced.size() <= 0:
+		DataManagerSingleton.mvp_chess = ""
+		to_game_finish_scene.emit()
+	else:
+		DataManagerSingleton.mvp_chess = battle_meter.battle_array_sliced[0]
+		to_game_finish_scene.emit()
 
 func sort_characters(team: Team, mode: ChessActiveOrder) -> Array:
 	var chesses_team = team_dict[team]
@@ -625,28 +642,22 @@ func clear_play_area(play_area_to_clear: PlayArea):
 
 func load_arena_team():
 	team_dict[Team.TEAM1_FULL] = []
-	if saved_arena_team.size() != 0:
-		for tile_index in saved_arena_team.keys():
-			if saved_arena_team[tile_index]:
-				var character = summon_chess(saved_arena_team[tile_index][0], saved_arena_team[tile_index][1], saved_arena_team[tile_index][2], 1, arena, tile_index)
-				if saved_arena_team[tile_index][3].size() <= 0:
-					continue
-				for effect_index in saved_arena_team[tile_index][3]:
-					character.effect_handler.add_to_effect_array(effect_index.duplicate())
-				
+	if saved_arena_team.size() == 0:
+		return
+	for tile_index in saved_arena_team.keys():
+		if saved_arena_team[tile_index]:
+			var character = summon_chess(saved_arena_team[tile_index][0], saved_arena_team[tile_index][1], saved_arena_team[tile_index][2], 1, arena, tile_index)
+			character.total_kill_count = saved_arena_team[tile_index][3]
+	
 func save_arena_team():
 	saved_arena_team = {}
 	for chess_index in arena.unit_grid.units.keys():
 		if not is_instance_valid(arena.unit_grid.units[chess_index]):
 			arena.unit_grid.remove_unit(chess_index)
-		elif arena.unit_grid.units[chess_index] is Obstacle:
+		elif arena.unit_grid.units[chess_index] is Chess:
 			var current_obstacle = arena.unit_grid.units[chess_index]
-			saved_arena_team[chess_index] = [current_obstacle.faction, current_obstacle.chess_name, current_obstacle.chess_level,[]]
-			if current_obstacle.effect_handler.effect_list.size() <= 0:
-				continue
-			for effect_index in current_obstacle.effect_handler.effect_list:
-				if effect_index.effect_type == "PermanentBuff" or effect_index.effect_type == "PermanentDebuff":
-					saved_arena_team[chess_index][3].append(effect_index.duplicate())
+			saved_arena_team[chess_index] = [current_obstacle.faction, current_obstacle.chess_name, current_obstacle.chess_level, current_obstacle.total_kill_count, current_obstacle.chess_serial]
+
 					
 # Generates random chess based on shop level and rarity weights
 '''func generate_random_chess(generate_level: int, specific_faction: String):'''
@@ -876,7 +887,7 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, chess
 	chess_information.setup_chess(summoned_character)
 
 	summoned_character.damage_taken.connect(battle_meter.get_damage_data)
-
+	
 	summoned_character.deal_damage.connect(damage_manager.damage_handler)
 
 	summoned_character.damage_applied.connect(battle_value_display.bind("damage_applied"))
@@ -886,6 +897,17 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, chess
 	summoned_character.is_died.connect(battle_value_display.unbind(1).bind(0, "is_died"))
 
 	summoned_character.is_died.connect(chess_death_handle.unbind(1))
+	
+	if summoned_character is Chess:
+		summoned_character.kill_chess.connect(
+			func(obstacle: Obstacle, target: Obstacle):
+				if obstacle == target:
+					return
+				for chess_index in saved_arena_team.values():			
+					if chess_index[4] == obstacle.chess_serial and chess_index[0] == obstacle.faction and chess_index[1] == obstacle.chess_name:
+						chess_index[3] += 1
+						break
+		)
 
 	if team == 1 and summon_arena != shop:
 		team_dict[Team.TEAM1_FULL].append(summoned_character)
@@ -924,8 +946,10 @@ func update_population(forced_update: bool):
 	population_label.label_settings = label_settings
 	if current_population > max_population:
 		game_start_button.disabled = true
+		game_start_button.global_position.x = -40
 	else:
 		game_start_button.disabled = false
+		game_start_button.global_position.x = 24
 	faction_bonus_manager.bonus_refresh()
 
 func chess_death_handle(obstacle: Obstacle):
@@ -1051,11 +1075,8 @@ func check_chess_merge():
 
 				if node.faction == other_node.faction and node.chess_name == other_node.chess_name:
 					var extra_merge_count = 0
-					if node.effect_handler.effect_list.size() > 0:
-						for effect_index in node.effect_handler.effect_list:
-							if effect_index.effect_name == "KillCount":
-								extra_merge_count = 1 if effect_index.get_meta("kill_count") >= 5 else 0
-								break
+					
+					extra_merge_count = 1 if node.total_kill_count >= 5 else 0
 
 					merge_count += (1 + extra_merge_count)
 					wait_merge.append(other_node)
@@ -1105,7 +1126,10 @@ func check_chess_merge():
 
 	for node in arena.unit_grid.get_children():
 		if node is Chess and node.visible == false:
-			node.free()
+			if node.is_queued_for_deletion():
+				pass
+			else:
+				node.queue_free()
 
 
 	if merge_result:

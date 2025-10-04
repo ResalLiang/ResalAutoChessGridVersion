@@ -1,9 +1,10 @@
-[gd_scene load_steps=20 format=4 uid="uid://ersaky105n5a"]
+[gd_scene load_steps=25 format=4 uid="uid://ersaky105n5a"]
 
 [ext_resource type="Script" uid="uid://d1b3gv5nd6tps" path="res://script/game_finish.gd" id="1_3mysd"]
 [ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="1_hb8o5"]
 [ext_resource type="FontFile" uid="uid://bfd8lxmo20ddl" path="res://asset/font/Everyday_Tiny_Bold.ttf" id="3_7qkl5"]
 [ext_resource type="Texture2D" uid="uid://oyxlko4xp23c" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425helpButton-Sheet.png" id="4_r0o5f"]
+[ext_resource type="Theme" uid="uid://dqa4pio1y4yi4" path="res://asset/customize_button.tres" id="4_sjxou"]
 [ext_resource type="Texture2D" uid="uid://chvlj0aa3r1oi" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425exitButton-Sheet.png" id="5_rua3f"]
 [ext_resource type="Texture2D" uid="uid://cxo06hnpen10p" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250420manaSoul9SlicesA-Sheet.png" id="6_ri1ec"]
 [ext_resource type="Texture2D" uid="uid://bkbce0vqdxf12" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250420manaSoulHeaderA-Sheet.png" id="7_a4nst"]
@@ -14,6 +15,8 @@
 [ext_resource type="Texture2D" uid="uid://dv07qmjw718h4" path="res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240713dragonMapFrame.png" id="12_ri1ec"]
 [ext_resource type="SpriteFrames" uid="uid://8olk54k41qnm" path="res://asset/animation/elf/elfMage.tres" id="13_a4nst"]
 [ext_resource type="Texture2D" uid="uid://3kme76uf4dtb" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250421verticalCursorA-Sheet.png" id="14_a4nst"]
+[ext_resource type="Texture2D" uid="uid://eskabl6wixm4" path="res://asset/sprite/FreeCuteTileset/BG1.png" id="15_8jbpt"]
+[ext_resource type="Texture2D" uid="uid://debfipxurbsk3" path="res://asset/sprite/FreeCuteTileset/BG3.png" id="16_sjxou"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0pg3y"]
 atlas = ExtResource("4_r0o5f")
@@ -34,6 +37,12 @@ region = Rect2(0, 0, 32, 32)
 atlas = ExtResource("14_a4nst")
 region = Rect2(0, 0, 18, 40)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_jxopw"]
+atlas = ExtResource("15_8jbpt")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lkkk0"]
+atlas = ExtResource("16_sjxou")
+
 [node name="game_finish" type="Node2D"]
 script = ExtResource("1_3mysd")
 
@@ -49,6 +58,7 @@ offset_left = 263.0
 offset_top = 113.0
 offset_right = 583.0
 offset_bottom = 129.0
+mouse_filter = 1
 theme_override_colors/font_color = Color(1, 1, 0, 1)
 theme_override_colors/font_outline_color = Color(0.003880049, 0.003880047, 1.1280645e-09, 1)
 theme_override_constants/outline_size = 1
@@ -63,6 +73,7 @@ offset_left = 79.0
 offset_top = 61.0
 offset_right = 399.0
 offset_bottom = 93.0
+mouse_filter = 1
 theme_override_colors/font_color = Color(0.94509804, 0.58431375, 0.039215688, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8901961)
 theme_override_constants/shadow_offset_x = 2
@@ -74,10 +85,13 @@ vertical_alignment = 1
 
 [node name="restart_button" type="Button" parent="."]
 z_index = 25
-offset_left = 484.0
-offset_top = 245.0
-offset_right = 522.0
-offset_bottom = 285.0
+offset_left = 485.0
+offset_top = 249.0
+offset_right = 515.0
+offset_bottom = 281.0
+mouse_filter = 1
+mouse_behavior_recursive = 2
+theme = ExtResource("4_sjxou")
 theme_override_fonts/font = ExtResource("3_7qkl5")
 theme_override_font_sizes/font_size = 8
 theme_override_icons/icon = SubResource("AtlasTexture_0pg3y")
@@ -85,10 +99,13 @@ flat = true
 
 [node name="back_button" type="Button" parent="."]
 z_index = 25
-offset_left = 450.0
-offset_top = 245.0
-offset_right = 488.0
-offset_bottom = 285.0
+offset_left = 451.0
+offset_top = 249.0
+offset_right = 481.0
+offset_bottom = 281.0
+mouse_filter = 1
+mouse_behavior_recursive = 2
+theme = ExtResource("4_sjxou")
 theme_override_fonts/font = ExtResource("3_7qkl5")
 theme_override_font_sizes/font_size = 8
 theme_override_icons/icon = SubResource("AtlasTexture_dcynb")
@@ -327,5 +344,18 @@ scale = Vector2(2, 2)
 texture = SubResource("AtlasTexture_c3x7o")
 stretch_mode = 2
 
-[connection signal="pressed" from="restart_button" to="." method="_on_restart_button_pressed"]
-[connection signal="pressed" from="back_button" to="." method="_on_back_button_pressed"]
+[node name="TextureRect" type="TextureRect" parent="."]
+z_index = -1
+offset_right = 575.0
+offset_bottom = 320.0
+mouse_filter = 2
+texture = SubResource("AtlasTexture_jxopw")
+
+[node name="TextureRect2" type="TextureRect" parent="."]
+z_index = -1
+offset_right = 575.0
+offset_bottom = 320.0
+mouse_filter = 2
+texture = SubResource("AtlasTexture_lkkk0")
+
+[connection signal="animation_finished" from="Node2D/TextureRect19/AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]

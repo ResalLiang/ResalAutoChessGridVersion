@@ -195,6 +195,10 @@ var pikeman_bonus_level := 0
 
 var faction_bonus_manager
 
+var total_kill_count := 0
+
+var record_global_position := Vector2.ZERO
+
 #var status := STATUS.IDLE         # Current character state
 
 #var rng = RandomNumberGenerator.new() # Random number generator
@@ -257,16 +261,16 @@ func _ready():
 		return
 		
 		
-	var effect_instance = ChessEffect.new()
-	effect_instance.register_buff("duration_only", 0, 999)
-	effect_instance.effect_name = "KillCount"
-	effect_instance.effect_type = "PermanentBuff"
-	effect_instance.effect_applier = "System"
-	if effect_instance.get_meta("kill_count") == null:
-		effect_instance.set_meta("kill_count", 0)
-	effect_instance.effect_description = "Total kill: " + str(effect_instance.get_meta("kill_count"))
-	effect_handler.add_to_effect_array(effect_instance)
-	effect_handler.add_child(effect_instance)
+	#var effect_instance = ChessEffect.new()
+	#effect_instance.register_buff("duration_only", 0, 999)
+	#effect_instance.effect_name = "KillCount"
+	#effect_instance.effect_type = "PermanentBuff"
+	#effect_instance.effect_applier = "System"
+	#if effect_instance.get_meta("kill_count") == null:
+		#effect_instance.set_meta("kill_count", 0)
+	#effect_instance.effect_description = "Total kill: " + str(effect_instance.get_meta("kill_count"))
+	#effect_handler.add_to_effect_array(effect_instance)
+	#effect_handler.add_child(effect_instance)
 	
 	# Connect signals
 	idle_timer.timeout.connect(_on_idle_timeout)
@@ -297,12 +301,7 @@ func _ready():
 		func(attacker, target):
 			if attacker == target:
 				return
-			for effect_index in effect_handler.effect_list:
-				if effect_index.effect_name == "KillCount":
-					var current_kill_count = int(effect_index.get_meta("kill_count"))
-					effect_index.set_meta("kill_count", current_kill_count + 1)
-					effect_index.effect_description = "Total kill: " + str(effect_index.get_meta("kill_count"))
-					break		
+			total_kill_count += 1
 	)
 
 	kill_chess.connect(
@@ -383,19 +382,38 @@ func _ready():
 
 func _process(delta: float) -> void:
 	
+	if chess_name == "ShieldMan" and faction == "human":
+		if record_global_position == global_position:
+			pass
+		else:
+			var test
+			
+	record_global_position = global_position
+	
 	hp_bar.value = hp
 	mp_bar.value = mp
 
 	hp_bar.max_value = max_hp
 	mp_bar.max_value = max_mp
-	
-	if get_current_tile(self)[0] != arena:
+
+		
+	#if get_current_tile(self)[0] != arena:
+		#hp_bar.visible = false
+		#mp_bar.visible = false
+	#else:
+		#hp_bar.visible = true
+		#if not animated_sprite_2d.sprite_frames.has_animation("spell") :
+			#mp_bar.visible = false		
+				
+	if get_current_tile(self)[0].name != "arena":
 		hp_bar.visible = false
 		mp_bar.visible = false
 	else:
 		hp_bar.visible = true
 		if not animated_sprite_2d.sprite_frames.has_animation("spell") :
-			mp_bar.visible = false	
+			mp_bar.visible = false
+		else:
+			mp_bar.visible = true
 	
 	if chess_level > 1:
 		level_label.text = "I".repeat(chess_level)
@@ -404,8 +422,6 @@ func _process(delta: float) -> void:
 		level_label.text = "I"
 		level_label.visible = false
 		
-
-	hp_bar.visible = true #hp != max_hp
 		
 	# Update attack indicator line
 	if DataManagerSingleton.check_obstacle_valid(chess_target) and line_visible:
@@ -1522,7 +1538,8 @@ func connect_to_data_manager():
 	kill_chess.connect(DataManagerSingleton.handle_chess_kill)
 
 func get_current_tile(obstacle : Obstacle):
-	var i = chess_mover._get_play_area_for_position(obstacle.global_position)
+	force_update_transform()
+	var i = chess_mover._get_play_area_for_position(obstacle.get_global_position())
 	var current_tile = chess_mover.play_areas[i].get_tile_from_global(obstacle.global_position)
 	return [chess_mover.play_areas[i], current_tile]
 	

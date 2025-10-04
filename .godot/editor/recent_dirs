@@ -1,3 +1,7 @@
+res://script
+res://asset
+res://
+res://asset/tileset
 res://scene
 res://asset/sprite/spell_effect/Buff n Debuff VFX/Buff n Debuff P9 VFX 13
 res://asset/animation/spell_animation/
@@ -16,9 +20,5 @@ res://asset/sprite/GandalfHardcore Pixel Art Game UI
 res://asset/sprite/GandalfHardcore Pixel Art Game UI/Single frames
 res://asset/sprite/spell_effect/Elemental Effects/Fire effect 03/Fire Beam
 res://asset/sprite/spell_effect/Elemental Effects/Ice VFX 1
-res://asset/animation/projectile_animation/
-res://asset/animation/spell_animation
-res://asset/shader
-res://asset/theme
 D:/LearningGodot/ResalAutoChess/script/hero_stats_raw
 D:/LearningGodot/ResalAutoChess/script

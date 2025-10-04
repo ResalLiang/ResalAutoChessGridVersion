@@ -7,6 +7,7 @@ enum DAMAGE_TYPE {DAMAGE_APPLIED, DAMAGE_TAKEN, HEAL_APPLIED, HEAL_TAKEN}
 
 var battle_data: Dictionary = {}
 var battle_meter_type := DAMAGE_TYPE.DAMAGE_APPLIED
+var battle_array_sliced: Array = []
 
 signal update_round_end_data
 
@@ -66,7 +67,7 @@ func update_ranking():
 		battle_array = battle_data.keys().map(func(key): return [key, battle_data[key][3]])
 
 	battle_array.sort_custom(func(a, b): return a[1] > b[1])
-	var battle_array_sliced = battle_array.slice(0, min(10, battle_array.size()))
+	battle_array_sliced = battle_array.slice(0, min(10, battle_array.size()))
 	
 	for chess in battle_array_sliced:
 		if chess[1] > 0:

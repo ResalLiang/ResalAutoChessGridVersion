@@ -47,25 +47,12 @@ func search_effect(search_effect_name: String):
 func add_to_effect_array(chess_effect: ChessEffect):
 	if not chess_effect.check_effect_timeout():
 		return
-	var find_kill_count := false
-	if effect_list.size() > 0:
-		for effect_index in effect_list:
-			if chess_effect.effect_name == "KillCount":
-				effect_index.effect_duration = 999
-				effect_index.set_meta("kill_count", max(effect_index.get_meta("kill_count"), chess_effect.get_meta("kill_count")))
-				effect_index.effect_description = "Total kill: " + str(effect_index.get_meta("kill_count"))
-				return
+		
+	for effect_index in effect_list:
 
-			if chess_effect.effect_name == effect_index.effect_name:
-				effect_index = chess_effect
-				effect_list_updated.emit()
-				return
-
-			if chess_effect.effect_name.get_slice(" ", 0) == effect_index.effect_name.get_slice(" ", 0) and int(chess_effect.effect_name.get_slice(" ", -1)) >= int(effect_index.effect_name.get_slice(" ", -1)):
-				effect_index = chess_effect
-				effect_list_updated.emit()
-				return
-				
+		if chess_effect.effect_name == effect_index.effect_name or chess_effect.effect_name.get_slice(" ", 0) == effect_index.effect_name.get_slice(" ", 0):
+			effect_list.erase(effect_index)
+							
 	effect_list.append(chess_effect)
 	effect_list_updated.emit()
 

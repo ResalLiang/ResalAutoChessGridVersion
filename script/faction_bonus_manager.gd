@@ -116,11 +116,11 @@ func bonus_refresh() -> void:
 
 		clean_chess_faction_bonus(chess_index)
 
-		if not player_faction_count[chess_index.team][chess_index.faction].has(chess_index.chess_name):
-			player_faction_count[chess_index.team][chess_index.faction].append(chess_index.chess_name)
+		if not player_faction_count[chess_index.team][chess_index.faction].has([chess_index.faction, chess_index.chess_name]):
+			player_faction_count[chess_index.team][chess_index.faction].append([chess_index.faction, chess_index.chess_name])
 
-		if not player_faction_count[chess_index.team][chess_index.role].has(chess_index.chess_name):
-			player_faction_count[chess_index.team][chess_index.role].append(chess_index.chess_name)
+		if not player_faction_count[chess_index.team][chess_index.role].has([chess_index.faction, chess_index.chess_name]):
+			player_faction_count[chess_index.team][chess_index.role].append([chess_index.faction, chess_index.chess_name])
 
 	var bonus_count := 0
 	for player_index in player_faction_count.keys(): # summary each team, each faction uniqe chess count and bonus level 

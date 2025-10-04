@@ -5,6 +5,10 @@
 [node name="score_label" type="Label"]
 z_index = 25
 custom_minimum_size = Vector2(64, 8)
+theme_override_colors/font_color = Color(9.3250324e-05, 0, 0.17744896, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.16862746)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
 theme_override_fonts/font = ExtResource("1_r26d0")
 theme_override_font_sizes/font_size = 4
 text = "bonus = "

@@ -141,7 +141,7 @@ func shop_refresh() -> void:
 			if freeze_dict[Vector2i(shop_col_index, shop_row_index)]:
 				continue
 
-			var character = get_parent().summon_chess(debug_chess_faction[debug_index],debug_chess_name[debug_index], 1, 1, shop, Vector2i(shop_col_index, shop_row_index))
+			var character = get_parent().summon_chess(debug_chess_faction[debug_index],debug_chess_name[debug_index], 3, 1, shop, Vector2i(shop_col_index, shop_row_index))
 
 func shop_freeze() -> void:
 	var check_all_freeze := true
