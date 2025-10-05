@@ -192,46 +192,109 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 	# 	0:	arena area
 	# 	1:	bench area
 	# 	2:	shop area
-
-	if drop_area_index == -1:
-		_reset_chess_to_starting_position(starting_position, obstacle)
-		return
-	elif (old_area_index == 0 or old_area_index == 1) and drop_area_index == 2: # move obstacle back to shop means sell
-		shop_handler.sell_chess(obstacle)
-		return
-
 		
 	var old_area := play_areas[old_area_index]
 	var old_tile := old_area.get_tile_from_global(starting_position)
 	var new_area := play_areas[drop_area_index]
 	var new_tile := new_area.get_hovered_tile()
 	
-	if drop_area_index == 0 and not new_area.is_tile_in_placeable_bounds(new_tile):
-		_reset_chess_to_starting_position(starting_position, obstacle)	
-		return	
-
-	if (old_area_index == 2 and drop_area_index == 0 and not get_parent().is_game_turn_start) or (old_area_index == 2 and drop_area_index == 1): # buy chesss
-
-		if shop_handler.can_pay_chess(obstacle) and not new_area.unit_grid.is_tile_occupied(new_tile) and get_parent().current_population < get_parent().max_population:
-			# has enough money and population for buying
-			shop_handler.buy_chess(obstacle)
-			_move_chess(obstacle, new_area, new_tile)
-			if not get_parent().is_game_turn_start:
-				await get_parent().check_chess_merge()
-			return
-
-		elif shop_handler.can_pay_chess(obstacle) and not new_area.unit_grid.is_tile_occupied(new_tile) and (old_area_index == 2 and drop_area_index == 1):
-			# 
-			shop_handler.buy_chess(obstacle)
-			_move_chess(obstacle, new_area, new_tile)
-			return
+	match [old_area_index, drop_area_index]:
+		[0, 0]:
+			# move from arena to arena
+			if not new_area.is_tile_in_placeable_bounds(new_tile):
+				_reset_chess_to_starting_position(starting_position, obstacle)	
+				return	
 			
-		elif not shop_handler.can_pay_chess(obstacle): # cannot pay
-			_reset_chess_to_starting_position(starting_position, obstacle)
-			get_parent().control_shaker(get_parent().remain_coins_label)
+			if new_area.unit_grid.is_tile_occupied(new_tile):
+				var old_obstacle: Obstacle = new_area.unit_grid.units[new_tile]
+				new_area.unit_grid.remove_unit(new_tile)
+				_move_chess(old_obstacle, old_area, old_tile)
+		[1, 1]:
+			# move from bench to bench
+			if new_area.unit_grid.is_tile_occupied(new_tile):
+				var old_obstacle: Obstacle = new_area.unit_grid.units[new_tile]
+				new_area.unit_grid.remove_unit(new_tile)
+				_move_chess(old_obstacle, old_area, old_tile)
+		[2, 2]:
+			# move from shop to shop
+			if new_area.unit_grid.is_tile_occupied(new_tile):
+				var old_obstacle: Obstacle = new_area.unit_grid.units[new_tile]
+				new_area.unit_grid.remove_unit(new_tile)
+				_move_chess(old_obstacle, old_area, old_tile)
+		[0, 1]:
+			# from arena to bench
+			if new_area.unit_grid.is_tile_occupied(new_tile):
+				var old_obstacle: Obstacle = new_area.unit_grid.units[new_tile]
+				new_area.unit_grid.remove_unit(new_tile)
+				_move_chess(old_obstacle, old_area, old_tile)
+		[0, 2]:
+			# from arena to shop
+			shop_handler.sell_chess(obstacle)
 			return
-
-		elif get_parent().current_population >= get_parent().max_population: # not enough population
+		[1, 0]:
+			# from bench to arena
+			if not new_area.is_tile_in_placeable_bounds(new_tile):
+				_reset_chess_to_starting_position(starting_position, obstacle)	
+				return	
+			
+			if new_area.unit_grid.is_tile_occupied(new_tile):
+				var old_obstacle: Obstacle = new_area.unit_grid.units[new_tile]
+				new_area.unit_grid.remove_unit(new_tile)
+				_move_chess(old_obstacle, old_area, old_tile)
+		[1, 2]:
+			# from bench to shop
+			shop_handler.sell_chess(obstacle)
+			return
+		[2, 0]:
+			# from shop to arena
+			if not new_area.is_tile_in_placeable_bounds(new_tile):
+				_reset_chess_to_starting_position(starting_position, obstacle)	
+				return	
+			
+			# cannot buy to a occupied position
+			if new_area.unit_grid.is_tile_occupied(new_tile):
+				_reset_chess_to_starting_position(starting_position, obstacle)
+				return
+			
+			# cannot buy a villager to arena
+			if obstacle is Chess and obstacle.role == "villager":
+				_reset_chess_to_starting_position(starting_position, obstacle)
+				return
+			
+			# population check
+			if get_parent().current_population >= get_parent().max_population:
+				_move_chess(obstacle, new_area, new_tile)
+				var merge_result = await get_parent().check_chess_merge()
+				if merge_result and get_parent().current_population <= get_parent().max_population:
+					shop_handler.buy_chess(merge_result)
+					return
+				else:
+					_reset_chess_to_starting_position(starting_position, obstacle)
+					get_parent().control_shaker(get_parent().population_label)
+					return
+					
+			if not shop_handler.can_pay_chess(obstacle): 
+				# cannot pay
+				_reset_chess_to_starting_position(starting_position, obstacle)
+				get_parent().control_shaker(get_parent().remain_coins_label)
+				return
+				
+		[2, 1]:
+			# from shop to bench
+			
+			# cannot buy to a occupied position
+			if new_area.unit_grid.is_tile_occupied(new_tile):
+				_reset_chess_to_starting_position(starting_position, obstacle)
+				return
+					
+			if not shop_handler.can_pay_chess(obstacle): 
+				# cannot pay
+				_reset_chess_to_starting_position(starting_position, obstacle)
+				get_parent().control_shaker(get_parent().remain_coins_label)
+				return
+							
+			# population check
+			
 			_move_chess(obstacle, new_area, new_tile)
 			var merge_result = await get_parent().check_chess_merge()
 			if merge_result and get_parent().current_population <= get_parent().max_population:
@@ -242,15 +305,59 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 				get_parent().control_shaker(get_parent().population_label)
 				return
 
-		else:
+		_:
+			#other ilegal movement
 			_reset_chess_to_starting_position(starting_position, obstacle)
 			return
-			
-
-	if new_area.unit_grid.is_tile_occupied(new_tile):
-		var old_obstacle: Obstacle = new_area.unit_grid.units[new_tile]
-		new_area.unit_grid.remove_unit(new_tile)
-		_move_chess(old_obstacle, old_area, old_tile)
-		
-	_move_chess(obstacle, new_area, new_tile)		
+	
+	_move_chess(obstacle, new_area, new_tile)
+	
+	
+	#if drop_area_index == 0 and not new_area.is_tile_in_placeable_bounds(new_tile):
+		#_reset_chess_to_starting_position(starting_position, obstacle)	
+		#return	
+#
+	#if (old_area_index == 2 and drop_area_index == 0 and not get_parent().is_game_turn_start) or (old_area_index == 2 and drop_area_index == 1): # buy chesss
+	## area_index: 0: arena; 1: bench; 2: shop
+		#if shop_handler.can_pay_chess(obstacle) and not new_area.unit_grid.is_tile_occupied(new_tile) and get_parent().current_population < get_parent().max_population:
+			## has enough money and population for buying, directly buy to arena
+			#shop_handler.buy_chess(obstacle)
+			#_move_chess(obstacle, new_area, new_tile)
+			#
+#
+		#elif shop_handler.can_pay_chess(obstacle) and not new_area.unit_grid.is_tile_occupied(new_tile) and (old_area_index == 2 and drop_area_index == 1):
+			## directly buy to bench, not merge
+			#shop_handler.buy_chess(obstacle)
+			#_move_chess(obstacle, new_area, new_tile)
+			#return
+			#
+		#elif not shop_handler.can_pay_chess(obstacle): 
+			## cannot pay
+			#_reset_chess_to_starting_position(starting_position, obstacle)
+			#get_parent().control_shaker(get_parent().remain_coins_label)
+			#return
+#
+		#elif get_parent().current_population >= get_parent().max_population: 
+			## not enough population
+			#_move_chess(obstacle, new_area, new_tile)
+			#var merge_result = await get_parent().check_chess_merge()
+			#if merge_result and get_parent().current_population <= get_parent().max_population:
+				#shop_handler.buy_chess(merge_result)
+				#return
+			#else:
+				#_reset_chess_to_starting_position(starting_position, obstacle)
+				#get_parent().control_shaker(get_parent().population_label)
+				#return
+#
+		#else:
+			#_reset_chess_to_starting_position(starting_position, obstacle)
+			#return
+			#
+#
+	#if new_area.unit_grid.is_tile_occupied(new_tile):
+		#var old_obstacle: Obstacle = new_area.unit_grid.units[new_tile]
+		#new_area.unit_grid.remove_unit(new_tile)
+		#_move_chess(old_obstacle, old_area, old_tile)
+		#
+	#_move_chess(obstacle, new_area, new_tile)		
 	

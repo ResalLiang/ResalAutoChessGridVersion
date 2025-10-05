@@ -28,3 +28,14 @@ res://script/obstacle.gd
 res://scene/tetris.tscn
 res://asset/customize_button.tres
 res://script/tetris.gd
+res://asset/theme/menu_button.tres
+res://scene/menu.tscn
+res://script/menu.gd
+res://scene/main.tscn
+res://scene/gallery.tscn
+res://asset/animation/demon/demonDemoness.tres
+res://scene/player_upgrade.tscn
+res://script/player_upgrade.gd
+res://script/game_speed_controller.gd
+res://scene/alternative_choice.tscn
+res://script/gallery.gd

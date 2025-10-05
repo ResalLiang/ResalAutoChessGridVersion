@@ -1,0 +1,36 @@
+[remap]
+
+importer="font_data_dynamic"
+type="FontFile"
+uid="uid://7r12y8yoknjp"
+path="res://.godot/imported/FantasyRPGtitleOutline (size 13).ttf-f813a7ae80cf6341f9cc3a30e7f9fae4.fontdata"
+
+[deps]
+
+source_file="res://asset/sprite/RPG UI pack (by Franuka)/Fonts/FantasyRPGtitleOutline (size 13).ttf"
+dest_files=["res://.godot/imported/FantasyRPGtitleOutline (size 13).ttf-f813a7ae80cf6341f9cc3a30e7f9fae4.fontdata"]
+
+[params]
+
+Rendering=null
+antialiasing=1
+generate_mipmaps=false
+disable_embedded_bitmaps=true
+multichannel_signed_distance_field=false
+msdf_pixel_range=8
+msdf_size=48
+allow_system_fallback=true
+force_autohinter=false
+modulate_color_glyphs=false
+hinting=1
+subpixel_positioning=4
+keep_rounding_remainders=true
+oversampling=0.0
+Fallbacks=null
+fallbacks=[]
+Compress=null
+compress=true
+preload=[]
+language_support={}
+script_support={}
+opentype_features={}

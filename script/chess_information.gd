@@ -19,7 +19,7 @@ const effect_icon_scene = preload("res://scene/effect_icon.tscn")
 
 @onready var icon_container: HBoxContainer = $icon_container
 
-@onready var kill_count_container: VBoxContainer = $icons/kill_count_container
+@onready var kill_count_container: HBoxContainer = $icons/kill_count_container
 @onready var kill_icon: TextureRect = $icons/kill_count_container/kill_icon
 @onready var kill_icon_template: TextureRect = $icons/kill_icon_template
 

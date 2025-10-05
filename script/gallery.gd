@@ -43,7 +43,7 @@ func refresh_gallery():
 	await get_tree().process_frame  # Wait for cleanup to complete
 	
 	# Setup containers
-	chess_container.size = Vector2(320, 240)  # Set appropriate size
+	chess_container.size = Vector2(320, 280)  # Set appropriate size
 	chess_container.clip_contents = true
 	chess_vbox_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	chess_vbox_container.size_flags_vertical = Control.SIZE_EXPAND_FILL

@@ -32,13 +32,13 @@ const alternative_choice_scene = preload("res://scene/alternative_choice.tscn")
 @onready var last_turn_label: Label = $last_turn_label
 
 @onready var game_start_button: Button = $game_button_container/game_start_button
-@onready var game_restart_button: Button = $game_button_container/game_restart_button
+@onready var game_restart_button: TextureButton = $game_button_container/game_restart_button
 @onready var shop_refresh_button: Button = $game_button_container/shop_refresh_button
 @onready var shop_freeze_button: Button = $game_button_container/shop_freeze_button
 @onready var shop_upgrade_button: Button = $game_button_container/shop_upgrade_button
 
 
-@onready var back_button: Button = $back_button
+@onready var back_button: TextureButton = $back_button
 @onready var debug_label: Label = $debug_label
 @onready var tips_label: Label = $tips_label
 
@@ -231,7 +231,21 @@ func _ready():
 					node.dragging_enabled =  true
 	)
 	game_start_button.pressed.connect(new_round_prepare_end)
-	game_restart_button.pressed.connect(start_new_game)
+	game_restart_button.pressed.connect(
+		func():
+			var alternative_choice = alternative_choice_scene.instantiate()
+			alternative_choice.get_node("Label").text = "Restart Game?"
+			alternative_choice.get_node("button_container/Button1").text = "Yes"
+			alternative_choice.get_node("button_container/Button2").text = "No"
+			add_child(alternative_choice)
+			await alternative_choice.choice_made
+			alternative_choice.visible = false
+			if alternative_choice.get_meta("choice") == 1:
+				start_new_game()
+			elif alternative_choice.get_meta("choice") == 2:
+				pass
+			alternative_choice.queue_free()		
+	)
 	shop_refresh_button.pressed.connect(shop_handler.shop_manual_refresh)
 	shop_refresh_button.pressed.connect(
 		func():

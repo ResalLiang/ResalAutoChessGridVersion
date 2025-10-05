@@ -12,7 +12,7 @@ class_name GameSpeedController
 
 @onready var preset_buttons: Node2D = $VBox/preset_buttons
 @onready var slow_button: Button = $VBox/preset_buttons/slow_button
-@onready var normal_button: Button = $VBox/preset_buttons/normal_button
+@onready var normal_button: TextureButton = $VBox/preset_buttons/normal_button
 @onready var fast_button: Button = $VBox/preset_buttons/fast_button
 @onready var speed_slider: HSlider = $VBox/speed_slider
 @onready var speed_label: Label = $VBox/speed_label

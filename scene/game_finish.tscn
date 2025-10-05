@@ -46,6 +46,13 @@ atlas = ExtResource("16_sjxou")
 [node name="game_finish" type="Node2D"]
 script = ExtResource("1_3mysd")
 
+[node name="ReferenceRect" type="ReferenceRect" parent="."]
+z_index = 999
+custom_minimum_size = Vector2(540, 360)
+offset_right = 576.0
+offset_bottom = 360.0
+metadata/_edit_use_anchors_ = true
+
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
 visible = false
 z_index = 9
@@ -54,10 +61,10 @@ tile_set = ExtResource("1_hb8o5")
 
 [node name="Label" type="Label" parent="."]
 z_index = 25
-offset_left = 263.0
-offset_top = 113.0
-offset_right = 583.0
-offset_bottom = 129.0
+offset_left = 257.0
+offset_top = 132.0
+offset_right = 577.0
+offset_bottom = 148.0
 mouse_filter = 1
 theme_override_colors/font_color = Color(1, 1, 0, 1)
 theme_override_colors/font_outline_color = Color(0.003880049, 0.003880047, 1.1280645e-09, 1)
@@ -66,13 +73,14 @@ theme_override_fonts/font = ExtResource("3_7qkl5")
 theme_override_font_sizes/font_size = 8
 text = "You Won the game!"
 vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
 
 [node name="Label2" type="Label" parent="."]
 z_index = 25
-offset_left = 79.0
-offset_top = 61.0
-offset_right = 399.0
-offset_bottom = 93.0
+offset_left = 73.0
+offset_top = 80.0
+offset_right = 393.0
+offset_bottom = 112.0
 mouse_filter = 1
 theme_override_colors/font_color = Color(0.94509804, 0.58431375, 0.039215688, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8901961)
@@ -82,13 +90,14 @@ theme_override_fonts/font = ExtResource("3_7qkl5")
 theme_override_font_sizes/font_size = 12
 text = "Game result"
 vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
 
 [node name="restart_button" type="Button" parent="."]
 z_index = 25
-offset_left = 485.0
-offset_top = 249.0
-offset_right = 515.0
-offset_bottom = 281.0
+offset_left = 479.0
+offset_top = 268.0
+offset_right = 509.0
+offset_bottom = 300.0
 mouse_filter = 1
 mouse_behavior_recursive = 2
 theme = ExtResource("4_sjxou")
@@ -96,13 +105,14 @@ theme_override_fonts/font = ExtResource("3_7qkl5")
 theme_override_font_sizes/font_size = 8
 theme_override_icons/icon = SubResource("AtlasTexture_0pg3y")
 flat = true
+metadata/_edit_use_anchors_ = true
 
 [node name="back_button" type="Button" parent="."]
 z_index = 25
-offset_left = 451.0
-offset_top = 249.0
-offset_right = 481.0
-offset_bottom = 281.0
+offset_left = 445.0
+offset_top = 268.0
+offset_right = 475.0
+offset_bottom = 300.0
 mouse_filter = 1
 mouse_behavior_recursive = 2
 theme = ExtResource("4_sjxou")
@@ -110,70 +120,78 @@ theme_override_fonts/font = ExtResource("3_7qkl5")
 theme_override_font_sizes/font_size = 8
 theme_override_icons/icon = SubResource("AtlasTexture_dcynb")
 flat = true
+metadata/_edit_use_anchors_ = true
 
 [node name="container" type="VBoxContainer" parent="."]
 z_index = 20
-offset_left = 84.0
-offset_top = 108.0
-offset_right = 204.0
-offset_bottom = 249.0
+offset_left = 78.0
+offset_top = 127.0
+offset_right = 198.0
+offset_bottom = 268.0
+metadata/_edit_use_anchors_ = true
 
 [node name="NinePatchRect" type="NinePatchRect" parent="."]
-offset_left = 48.0
-offset_top = 48.0
-offset_right = 544.0
-offset_bottom = 272.0
+offset_left = 42.0
+offset_top = 67.0
+offset_right = 538.0
+offset_bottom = 291.0
 texture = ExtResource("6_ri1ec")
 patch_margin_left = 29
 patch_margin_top = 18
 patch_margin_right = 29
 patch_margin_bottom = 14
+metadata/_edit_use_anchors_ = true
 
 [node name="NinePatchRect2" type="NinePatchRect" parent="."]
-offset_left = 47.0
-offset_top = 61.0
-offset_right = 545.0
-offset_bottom = 93.0
+offset_left = 41.0
+offset_top = 80.0
+offset_right = 539.0
+offset_bottom = 112.0
 texture = ExtResource("7_a4nst")
 patch_margin_left = 34
 patch_margin_top = 13
 patch_margin_right = 32
 patch_margin_bottom = 13
+metadata/_edit_use_anchors_ = true
 
 [node name="NinePatchRect3" type="NinePatchRect" parent="."]
-offset_left = 67.0
-offset_top = 97.0
-offset_right = 227.0
-offset_bottom = 257.0
+offset_left = 61.0
+offset_top = 116.0
+offset_right = 221.0
+offset_bottom = 276.0
 texture = SubResource("AtlasTexture_qhml8")
 patch_margin_left = 34
 patch_margin_top = 13
 patch_margin_right = 32
 patch_margin_bottom = 13
+metadata/_edit_use_anchors_ = true
 
 [node name="NinePatchRect4" type="NinePatchRect" parent="."]
-offset_left = 240.0
-offset_top = 98.0
-offset_right = 520.0
-offset_bottom = 258.0
+offset_left = 234.0
+offset_top = 117.0
+offset_right = 514.0
+offset_bottom = 277.0
 texture = ExtResource("9_8jbpt")
 patch_margin_left = 34
 patch_margin_top = 30
 patch_margin_right = 32
 patch_margin_bottom = 30
+metadata/_edit_use_anchors_ = true
 
 [node name="NinePatchRect5" type="NinePatchRect" parent="."]
-offset_left = 229.0
-offset_top = 111.0
-offset_right = 533.0
-offset_bottom = 134.0
+offset_left = 223.0
+offset_top = 130.0
+offset_right = 527.0
+offset_bottom = 153.0
 texture = ExtResource("10_sjxou")
 patch_margin_left = 32
 patch_margin_top = 11
 patch_margin_right = 32
 patch_margin_bottom = 12
+metadata/_edit_use_anchors_ = true
 
 [node name="Node2D" type="Node2D" parent="."]
+position = Vector2(-6, 19)
 
 [node name="TextureRect" type="TextureRect" parent="Node2D"]
 offset_left = 281.0
@@ -182,6 +200,7 @@ offset_right = 321.0
 offset_bottom = 175.0
 texture = SubResource("AtlasTexture_2v6bs")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect2" type="TextureRect" parent="Node2D"]
 offset_left = 313.0
@@ -190,6 +209,7 @@ offset_right = 353.0
 offset_bottom = 176.0
 texture = SubResource("AtlasTexture_2v6bs")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect3" type="TextureRect" parent="Node2D"]
 offset_left = 345.0
@@ -198,6 +218,7 @@ offset_right = 385.0
 offset_bottom = 177.0
 texture = SubResource("AtlasTexture_2v6bs")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect4" type="TextureRect" parent="Node2D"]
 offset_left = 377.0
@@ -206,6 +227,7 @@ offset_right = 417.0
 offset_bottom = 178.0
 texture = SubResource("AtlasTexture_2v6bs")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect5" type="TextureRect" parent="Node2D"]
 offset_left = 409.0
@@ -214,6 +236,7 @@ offset_right = 449.0
 offset_bottom = 179.0
 texture = SubResource("AtlasTexture_2v6bs")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect6" type="TextureRect" parent="Node2D"]
 offset_left = 298.0
@@ -222,6 +245,7 @@ offset_right = 338.0
 offset_bottom = 194.0
 texture = SubResource("AtlasTexture_2v6bs")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect7" type="TextureRect" parent="Node2D"]
 offset_left = 330.0
@@ -230,6 +254,7 @@ offset_right = 370.0
 offset_bottom = 195.0
 texture = SubResource("AtlasTexture_2v6bs")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect8" type="TextureRect" parent="Node2D"]
 offset_left = 362.0
@@ -238,6 +263,7 @@ offset_right = 402.0
 offset_bottom = 196.0
 texture = SubResource("AtlasTexture_2v6bs")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect9" type="TextureRect" parent="Node2D"]
 offset_left = 394.0
@@ -246,6 +272,7 @@ offset_right = 434.0
 offset_bottom = 197.0
 texture = SubResource("AtlasTexture_2v6bs")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect10" type="TextureRect" parent="Node2D"]
 offset_left = 282.0
@@ -254,6 +281,7 @@ offset_right = 322.0
 offset_bottom = 212.0
 texture = SubResource("AtlasTexture_2v6bs")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect11" type="TextureRect" parent="Node2D"]
 offset_left = 315.0
@@ -262,6 +290,7 @@ offset_right = 355.0
 offset_bottom = 213.0
 texture = SubResource("AtlasTexture_2v6bs")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect12" type="TextureRect" parent="Node2D"]
 offset_left = 347.0
@@ -270,6 +299,7 @@ offset_right = 387.0
 offset_bottom = 214.0
 texture = SubResource("AtlasTexture_2v6bs")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect13" type="TextureRect" parent="Node2D"]
 offset_left = 379.0
@@ -278,6 +308,7 @@ offset_right = 419.0
 offset_bottom = 215.0
 texture = SubResource("AtlasTexture_2v6bs")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect14" type="TextureRect" parent="Node2D"]
 offset_left = 411.0
@@ -286,6 +317,7 @@ offset_right = 451.0
 offset_bottom = 216.0
 texture = SubResource("AtlasTexture_2v6bs")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect15" type="TextureRect" parent="Node2D"]
 offset_left = 299.0
@@ -294,6 +326,7 @@ offset_right = 339.0
 offset_bottom = 231.0
 texture = SubResource("AtlasTexture_2v6bs")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect16" type="TextureRect" parent="Node2D"]
 offset_left = 332.0
@@ -302,6 +335,7 @@ offset_right = 372.0
 offset_bottom = 232.0
 texture = SubResource("AtlasTexture_2v6bs")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect17" type="TextureRect" parent="Node2D"]
 offset_left = 364.0
@@ -310,6 +344,7 @@ offset_right = 404.0
 offset_bottom = 233.0
 texture = SubResource("AtlasTexture_2v6bs")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect18" type="TextureRect" parent="Node2D"]
 offset_left = 396.0
@@ -318,6 +353,7 @@ offset_right = 436.0
 offset_bottom = 234.0
 texture = SubResource("AtlasTexture_2v6bs")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect19" type="TextureRect" parent="Node2D"]
 offset_left = 444.0
@@ -326,6 +362,7 @@ offset_right = 512.0
 offset_bottom = 203.0
 texture = ExtResource("12_ri1ec")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Node2D/TextureRect19"]
 position = Vector2(31, 13)
@@ -343,19 +380,22 @@ rotation = 0.57595867
 scale = Vector2(2, 2)
 texture = SubResource("AtlasTexture_c3x7o")
 stretch_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect" type="TextureRect" parent="."]
 z_index = -1
 offset_right = 575.0
-offset_bottom = 320.0
+offset_bottom = 360.0
 mouse_filter = 2
 texture = SubResource("AtlasTexture_jxopw")
+metadata/_edit_use_anchors_ = true
 
 [node name="TextureRect2" type="TextureRect" parent="."]
 z_index = -1
 offset_right = 575.0
-offset_bottom = 320.0
+offset_bottom = 360.0
 mouse_filter = 2
 texture = SubResource("AtlasTexture_lkkk0")
+metadata/_edit_use_anchors_ = true
 
 [connection signal="animation_finished" from="Node2D/TextureRect19/AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]

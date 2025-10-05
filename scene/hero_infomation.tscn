@@ -179,11 +179,11 @@ scale = Vector2(2, 2)
 sprite_frames = ExtResource("4_v35lb")
 animation = &"die"
 
-[node name="kill_count_container" type="VBoxContainer" parent="icons"]
-offset_left = 126.0
-offset_top = 11.0
-offset_right = 149.0
-offset_bottom = 80.0
+[node name="kill_count_container" type="HBoxContainer" parent="icons"]
+offset_left = -21.0
+offset_top = 124.0
+offset_right = 94.0
+offset_bottom = 147.0
 theme_override_constants/separation = 0
 
 [node name="kill_icon" type="TextureRect" parent="icons/kill_count_container"]
