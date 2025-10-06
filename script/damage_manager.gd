@@ -49,8 +49,10 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 		if damage_result < 0:
 			return
 
-	if target is Chess and target.is_phantom:
+	if target is Chess and target.is_phantom and damage_type != "Magic_attack":
 		damage_result *= 2.5
+	elif target is Chess and target.is_phantom and damage_type == "Magic_attack":
+		damage_result *= 10.0
 
 	if attacker is Chess and attacker.is_phantom:
 		damage_result /= 2.5

@@ -3,6 +3,7 @@ extends Node2D
 @onready var label: Label = $Label
 @onready var heart: HBoxContainer = $VBoxContainer/heart
 @onready var trophy: HBoxContainer = $VBoxContainer/trophy
+@onready var close_button: TextureButton = $close_button
 
 
 var remain_health_pic
@@ -18,6 +19,8 @@ func _ready() -> void:
 	remain_health_pic =	load(AssetPathManagerSingleton.get_asset_path("battle_result", "remain_health"))
 	lose_health_pic =	load(AssetPathManagerSingleton.get_asset_path("battle_result", "lose_health"))
 	trophy_pic =		load(AssetPathManagerSingleton.get_asset_path("battle_result", "winning_trophy"))
+	
+	close_button.pressed.connect(close_window)
 	
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().paused = true
@@ -57,5 +60,9 @@ func set_round_result():
 		trophy.add_child(trophy_icon)
 
 func _on_timer_timeout() -> void:
+	close_window()
+	
+func close_window() -> void:
 	get_tree().paused = false
 	queue_free() # Replace with function body.
+	

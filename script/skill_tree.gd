@@ -1,5 +1,5 @@
 extends Node2D
-class_name gallery
+class_name skill_tree
 
 const alternative_choice_scene = preload("res://scene/alternative_choice.tscn")
 

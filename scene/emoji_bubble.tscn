@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://bad03aby7dwij"]
+
+[ext_resource type="Script" uid="uid://bxd55myqhybb2" path="res://script/emoji_bubble.gd" id="1_ku7h1"]
+[ext_resource type="Texture2D" uid="uid://bsbryqdu32uta" path="res://asset/sprite/emoji_comic_pack_Joyquest_2.0/bubbles/bubble_white_5.png" id="2_cltwr"]
+
+[node name="emoji_bubble" type="Node2D"]
+script = ExtResource("1_ku7h1")
+bubble_index = 2
+emoji_index = 77
+
+[node name="bubble_texture" type="TextureRect" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("2_cltwr")
+
+[node name="emoji_texture" type="TextureRect" parent="."]
+offset_left = 11.0
+offset_top = 10.0
+offset_right = 30.0
+offset_bottom = 29.0

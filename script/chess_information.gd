@@ -159,7 +159,7 @@ func refresh_chess_information():
 			
 			var effect_icon = effect_icon_scene.instantiate()
 			effect_icon.effect_name = effect_index.effect_name
-			effect_icon.tooltip_text = effect_index.effect_name + " by " + effect_index.effect_applier + " :\n" + effect_index.effect_description
+			effect_icon.effect_description = effect_index.effect_name + " by " + effect_index.effect_applier + " :\n" + effect_index.effect_description
 			icon_container.add_child(effect_icon)
 			
 			# Connect mouse entered signal
@@ -168,7 +168,7 @@ func refresh_chess_information():
 					if not effect_icon.get_global_rect().has_point(get_global_mouse_position()):
 						return
 					game_root_scene.tips_label.global_position = get_global_mouse_position() + Vector2(-140, -24)
-					game_root_scene.tips_label.text = effect_index.effect_name + " by " + effect_index.effect_applier + " :\n" + effect_index.effect_description
+					game_root_scene.tips_label.text = effect_icon.effect_description
 					#game_root_scene.tips_label.text = "123"
 					if game_root_scene.tips_label.text != "":
 						game_root_scene.tips_label.visible = true

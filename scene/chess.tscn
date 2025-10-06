@@ -524,7 +524,7 @@ z_index = 50
 position = Vector2(0, 10.5)
 shape = SubResource("RectangleShape2D_10qbj")
 
-[node name="ColorRect" type="ReferenceRect" parent="Area2D"]
+[node name="ReferenceRect" type="ReferenceRect" parent="Area2D"]
 offset_left = -8.0
 offset_top = 3.0
 offset_right = 8.0

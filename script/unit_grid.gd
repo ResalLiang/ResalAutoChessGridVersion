@@ -31,6 +31,8 @@ func remove_unit(tile: Vector2i) -> void:
 	unit_grid_changed.emit()
 	
 func is_tile_occupied(tile: Vector2i) -> bool:
+	if not get_parent().is_tile_in_bounds(tile):
+		return false
 	return DataManagerSingleton.check_obstacle_valid(units[tile])
 	
 func is_grid_full() -> bool:

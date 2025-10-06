@@ -4,6 +4,7 @@ const faction_bonus_bar_scene = preload("res://scene/faction_bonus_bar.tscn")
 
 @onready var arena: PlayArea = %arena
 @onready var bench: PlayArea = %bench
+@onready var shop: PlayArea = %shop
 
 @onready var faction_container : HBoxContainer = $faction_container
 @onready var v_box_container_1: VBoxContainer = $faction_container/VBoxContainer1
@@ -98,16 +99,29 @@ var player_bonus_level_dict_template : Dictionary = {
 var player_bonus_level_dict : Dictionary = {}
 
 func _ready() -> void:
-	player_bonus_level_dict = player_bonus_level_dict_template.duplicate()
+	player_bonus_level_dict = player_bonus_level_dict_template.duplicate(true)
 
 func bonus_refresh() -> void:
+	
+	#remove all bench and shgp faction bonus
+	for chess_index in bench.unit_grid.get_all_units():
+		if not is_instance_valid(chess_index) or not chess_index is Chess:
+			continue
+			
+		clean_chess_faction_bonus(chess_index)
+		
+	for chess_index in shop.unit_grid.get_all_units():
+		if not is_instance_valid(chess_index) or not chess_index is Chess:
+			continue
+			
+		clean_chess_faction_bonus(chess_index)
 
 	for node in faction_container.get_children():
 		for effect_node in node.get_children():
 			effect_node.queue_free()
 
-	var player_faction_count = player_faction_count_template.duplicate()
-	player_bonus_level_dict = player_bonus_level_dict_template.duplicate()
+	var player_faction_count = player_faction_count_template.duplicate(true)
+	player_bonus_level_dict = player_bonus_level_dict_template.duplicate(true)
 
 	for chess_index in arena.unit_grid.get_all_units(): #summary all uniqe chess
 
@@ -428,7 +442,7 @@ func clean_chess_faction_bonus(chess: Obstacle) -> void:
 
 	chess.effect_handler.effect_list = []
 	for effect_index in chess_effect_list:
-		if not effect_index.effect_applier.contains("Faction Bonus"):
+		if not effect_index.effect_type.contains("Faction Bonus"):
 			chess.effect_handler.add_to_effect_array(effect_index)
 
 	chess.effect_handler.refresh_effects()

@@ -111,6 +111,31 @@ theme_override_font_sizes/font_size = 8
 text = "Debug"
 horizontal_alignment = 1
 
+[node name="NinePatchRect3" type="NinePatchRect" parent="Node2D/NinePatchRect"]
+layout_mode = 0
+offset_left = -15.0
+offset_top = 197.0
+offset_right = 279.0
+offset_bottom = 218.0
+texture = ExtResource("3_njfnl")
+region_rect = Rect2(0, 0, 96, 22)
+patch_margin_left = 32
+patch_margin_top = 10
+patch_margin_right = 32
+patch_margin_bottom = 11
+axis_stretch_vertical = 1
+
+[node name="Label" type="Label" parent="Node2D/NinePatchRect/NinePatchRect3"]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 2.0
+offset_right = 293.0
+offset_bottom = 18.0
+theme_override_fonts/font = ExtResource("4_14t45")
+theme_override_font_sizes/font_size = 8
+text = "Skill Tree"
+horizontal_alignment = 1
+
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
 z_index = 9
 tile_set = ExtResource("2_4mnel")

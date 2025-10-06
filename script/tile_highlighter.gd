@@ -29,4 +29,10 @@ func _set_enable(new_value: bool) -> void:
 		
 func _update_tile(select_tile: Vector2i) -> void:
 	highlight_layer.clear()
+	if get_parent().name == "arena" and not play_area.is_tile_in_placeable_bounds(select_tile):
+		source_id = highlight_layer.tile_set.get_source_id(3)
+		tile = Vector2(2, 0)
+	else:
+		source_id = highlight_layer.tile_set.get_source_id(2)
+		tile = Vector2(0, 1)
 	highlight_layer.set_cell(select_tile, source_id, tile)

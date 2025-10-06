@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=4 uid="uid://ho0pqdedxao5"]
+[gd_scene load_steps=13 format=4 uid="uid://ho0pqdedxao5"]
 
 [ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="1_hsqup"]
 [ext_resource type="Script" uid="uid://bagcloalq38co" path="res://script/round_finish.gd" id="1_sipd6"]
@@ -8,6 +8,19 @@
 [ext_resource type="Texture2D" uid="uid://d12yk2xdr1v5x" path="res://asset/sprite/Retro Inventory/Scaled 3x/Hearts_Blue_5.png" id="5_aisiq"]
 [ext_resource type="Texture2D" uid="uid://dwowacjnmlhwy" path="res://asset/sprite/Retro Inventory/Scaled 3x/Hearts_Blue_1.png" id="6_e1qrb"]
 [ext_resource type="Texture2D" uid="uid://xhtju1ikrq5i" path="res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240707dragonHeaderA.png" id="6_gwaum"]
+[ext_resource type="Texture2D" uid="uid://bsdvskkuevpyn" path="res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240713dragonCloseButton-Sheet.png" id="9_aisiq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e1qrb"]
+atlas = ExtResource("9_aisiq")
+region = Rect2(1, 0, 23, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_loovv"]
+atlas = ExtResource("9_aisiq")
+region = Rect2(49, 1, 23, 23)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h0h5j"]
+atlas = ExtResource("9_aisiq")
+region = Rect2(25, 1, 23, 23)
 
 [node name="round_finish" type="Node2D"]
 z_index = 800
@@ -83,7 +96,7 @@ layout_mode = 2
 texture = ExtResource("6_e1qrb")
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 2.0
+wait_time = 5.0
 autostart = true
 
 [node name="NinePatchRect" type="NinePatchRect" parent="."]
@@ -107,5 +120,15 @@ patch_margin_left = 24
 patch_margin_top = 13
 patch_margin_right = 24
 patch_margin_bottom = 20
+
+[node name="close_button" type="TextureButton" parent="."]
+offset_left = 483.0
+offset_top = 204.0
+offset_right = 506.0
+offset_bottom = 228.0
+scale = Vector2(2, 2)
+texture_normal = SubResource("AtlasTexture_e1qrb")
+texture_pressed = SubResource("AtlasTexture_loovv")
+texture_hover = SubResource("AtlasTexture_h0h5j")
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

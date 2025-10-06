@@ -8,6 +8,7 @@ enum DAMAGE_TYPE {DAMAGE_APPLIED, DAMAGE_TAKEN, HEAL_APPLIED, HEAL_TAKEN}
 var battle_data: Dictionary = {}
 var battle_meter_type := DAMAGE_TYPE.DAMAGE_APPLIED
 var battle_array_sliced: Array = []
+var battle_array: Array = []
 
 signal update_round_end_data
 
@@ -55,7 +56,7 @@ func update_ranking():
 	for child in get_children():
 		child.queue_free()
 	
-	var battle_array = []
+	battle_array = []
 
 	if battle_meter_type == DAMAGE_TYPE.DAMAGE_APPLIED:
 		battle_array = battle_data.keys().map(func(key): return [key, battle_data[key][0]])

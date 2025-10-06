@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=4 uid="uid://bpjeisabnyt4i"]
+[gd_scene load_steps=38 format=4 uid="uid://bpjeisabnyt4i"]
 
 [ext_resource type="Script" uid="uid://wotksxe03rn8" path="res://script/tetris.gd" id="1_due0h"]
 [ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="2_p0hdu"]
@@ -37,6 +37,9 @@ region = Rect2(62, 0, 31, 42)
 [sub_resource type="AtlasTexture" id="AtlasTexture_jylcv"]
 atlas = ExtResource("7_sa0hk")
 region = Rect2(1, 1, 95, 95)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aw5hm"]
+atlas = ExtResource("2_r3u21")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_032wp"]
 atlas = ExtResource("8_kywce")
@@ -190,6 +193,19 @@ patch_margin_left = 29
 patch_margin_top = 29
 patch_margin_right = 30
 patch_margin_bottom = 30
+
+[node name="NinePatchRect11" type="NinePatchRect" parent="Node2D"]
+z_index = 10
+offset_left = -216.0
+offset_top = -46.0
+offset_right = 301.0
+offset_bottom = -9.0
+texture = SubResource("AtlasTexture_aw5hm")
+region_rect = Rect2(0, 0, 96, 33)
+patch_margin_left = 29
+patch_margin_top = 16
+patch_margin_right = 30
+patch_margin_bottom = 21
 
 [node name="TextureRect" type="TextureRect" parent="Node2D"]
 z_index = 50

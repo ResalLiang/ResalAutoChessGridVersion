@@ -155,9 +155,9 @@ func _on_chess_drag_started(starting_position: Vector2, status: String, obstacle
 func _on_chess_drag_canceled(starting_position: Vector2, status: String, obstacle: Obstacle) -> void:
 	chess_dropped.emit(obstacle)
 	
-	arena.get_node("arena_bounds").visible = false
-	bench.get_node("bench_bounds").visible = false
-	shop.get_node("shop_bounds").visible = false
+	arena.get_node("arena_bound").visible = false
+	bench.get_node("bench_bound").visible = false
+	shop.get_node("shop_bound").visible = false
 	
 	if get_parent().is_game_turn_start:
 		_set_highlighters(false)
@@ -295,15 +295,9 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 							
 			# population check
 			
+			shop_handler.buy_chess(obstacle)
 			_move_chess(obstacle, new_area, new_tile)
-			var merge_result = await get_parent().check_chess_merge()
-			if merge_result and get_parent().current_population <= get_parent().max_population:
-				shop_handler.buy_chess(merge_result)
-				return
-			else:
-				_reset_chess_to_starting_position(starting_position, obstacle)
-				get_parent().control_shaker(get_parent().population_label)
-				return
+			return
 
 		_:
 			#other ilegal movement

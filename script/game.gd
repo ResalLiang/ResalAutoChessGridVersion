@@ -602,9 +602,18 @@ func handle_game_end():
 	#Show report
 	if battle_meter.battle_array_sliced.size() <= 0:
 		DataManagerSingleton.mvp_chess = ""
-		to_game_finish_scene.emit()
 	else:
-		DataManagerSingleton.mvp_chess = battle_meter.battle_array_sliced[0]
+		var ally_battle_array = battle_meter.battle_array.filter(
+			func(value):
+				if value[0][3] == 1:
+					return true
+				return false			
+		)
+		if ally_battle_array.size() == 0:
+			DataManagerSingleton.mvp_chess = ""
+		else:
+			DataManagerSingleton.mvp_chess = ally_battle_array[0]
+			# Array[[faction, chess_name, serial, team], damage]
 		to_game_finish_scene.emit()
 
 func sort_characters(team: Team, mode: ChessActiveOrder) -> Array:
@@ -1069,14 +1078,18 @@ func check_chess_merge():
 	if is_game_turn_start:
 		return false
 
-	var merge_result = null
+	var merge_result:= [false, false]
 	for merge_level in [1, 2]:
 		var merge_checked := []
+		merge_result[merge_level - 1] = false
 		for node in arena.unit_grid.get_children() + bench.unit_grid.get_children():
 			if not DataManagerSingleton.check_chess_valid(node) or merge_checked.has([node.faction, node.chess_name]) or node.chess_level != merge_level:
 				continue
 			if node.team != 1:
 				continue
+				
+			if merge_result[merge_level - 1]:
+				break
 
 			var merge_count := 0
 			var wait_merge := []
@@ -1090,7 +1103,7 @@ func check_chess_merge():
 				if node.faction == other_node.faction and node.chess_name == other_node.chess_name:
 					var extra_merge_count = 0
 					
-					extra_merge_count = 1 if node.total_kill_count >= 5 else 0
+					extra_merge_count = 1 if other_node.total_kill_count >= 5 else 0
 
 					merge_count += (1 + extra_merge_count)
 					wait_merge.append(other_node)
@@ -1132,7 +1145,7 @@ func check_chess_merge():
 							upgrade_chess= summon_chess(merged_chess_faction, merged_chess_name, merged_level, 1, merged_play_area, merged_tile)
 
 						merge_count = 0
-						merge_result = upgrade_chess
+						merge_result[merge_level - 1] = true
 						merge_checked.append([node.faction, node.chess_name])
 						break
 
@@ -1146,12 +1159,12 @@ func check_chess_merge():
 				node.queue_free()
 
 
-	if merge_result:
+	if merge_result[0] or merge_result[1]:
 		update_population(true)
 
 	await get_tree().process_frame
 
-	return merge_result
+	return merge_result[0] or merge_result[1]
 
 func mid(a: float, b: float, c: float) -> float:
 	var total_sum = a + b + c

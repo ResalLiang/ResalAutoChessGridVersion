@@ -1,5 +1,5 @@
 63f7b34db8d8cdea90c76aacccf841ec
-::res://::1759674487
+::res://::1759718902
 default_bus_layout.tres::AudioBusLayout::7608950725645232333::1757943822::0::1::::<><><>0<>0<><>::
 dungeontileset-extended.png::CompressedTexture2D/CompressedTexture2D::5386095999095507831::1754401131::1754401131::1::::<><><>0<>0<>1e7832a8be6d1e2aa86e8cfa9e764124<>res://.godot/imported/dungeontileset-extended.png-40bb72ba04191d75cadea69acbb68a1d.ctex::
 icon.svg::CompressedTexture2D/CompressedTexture2D::3978766711659692636::1754401131::1754401131::1::::<><><>0<>0<>118e60a3562b828ffb0cc8d00366e4fe<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
@@ -3193,13 +3193,13 @@ Settings_Bar03.png::CompressedTexture2D::5533138726978030859::1759507575::175950
 Settings_Cross01.png::CompressedTexture2D::2624608241712766943::1759507575::1759507576::1::::<><><>0<>0<>3dc6a76644a0b339b1c9f0866c7f7146<>res://.godot/imported/Settings_Cross01.png-0cf2da0d7f97d1e90ae5d2e79dc07a15.ctex::
 Settings_Cross02.png::CompressedTexture2D::287318566105473487::1759507575::1759507576::1::::<><><>0<>0<>2541d251e043627121c6c531814b4d4e<>res://.godot/imported/Settings_Cross02.png-dc3a6024675193447a023fd9c3751c59.ctex::
 Settings_Cross03.png::CompressedTexture2D::2442867557108783919::1759507575::1759507576::1::::<><><>0<>0<>04e0c68e9133d0a7f9fd24bee9d3787f<>res://.godot/imported/Settings_Cross03.png-efa20d0a695968dd1acee4bf3ee0cbbc.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/::1759687967
 License and details.txt::TextFile::-1::1759687962::0::1::::<><><>0<>0<><>::
 Reference sheet.png::CompressedTexture2D::2876831833043688544::1759687962::1759687965::1::::<><><>0<>0<>eb4b061e123fdeb4325bf6639c52d2af<>res://.godot/imported/Reference sheet.png-6e5291b3c3619b5277282783742e4442.ctex::
 UI assets (1x).png::CompressedTexture2D::2814371178475166377::1759687962::1759687965::1::::<><><>0<>0<>a3f924dbbe71aad132ec513b05705d65<>res://.godot/imported/UI assets (1x).png-7383f4eeb7be7b768b0ac3c2dc3b9e53.ctex::
 UI assets (2x).png::CompressedTexture2D::8915468963283590996::1759687962::1759687965::1::::<><><>0<>0<>cb58afe973dd8538d6904bb397f16ac7<>res://.godot/imported/UI assets (2x).png-cd640d98e7ad80ef347e7457eceafe9e.ctex::
 UI assets (3x).png::CompressedTexture2D::2305981964077453062::1759687962::1759687967::1::::<><><>0<>0<>f0ef99ef752d17a0a5dffa77cb877333<>res://.godot/imported/UI assets (3x).png-7943173e43678e07c2e4f4f5728f0ce2.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Examples/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Examples/::1759687967
 Banner.png::CompressedTexture2D::3591972220384474039::1759687962::1759687966::1::::<><><>0<>0<>95a9851762052fc6c533eab2c02cf90a<>res://.godot/imported/Banner.png-63996db3c8b2968efb0fedc6894f7bae.ctex::
 Book mockup.png::CompressedTexture2D::710793653836978084::1759687962::1759687966::1::::<><><>0<>0<>ac374152509347d0da1c3d983ead3ea6<>res://.godot/imported/Book mockup.png-98dc4f20c39a2d20d7279aeaceb21b04.ctex::
 Font_outline.png::CompressedTexture2D::1560624571566319561::1759687962::1759687966::1::::<><><>0<>0<>72eeefd244f3e6d255ada6f8b4b73563<>res://.godot/imported/Font_outline.png-b95b0378443f1a00583a7f78df817fdb.ctex::
@@ -3209,13 +3209,13 @@ Game mockup.png::CompressedTexture2D::9119167439176624754::1759687962::175968796
 Menu boxes.png::CompressedTexture2D::7507892890802831762::1759687962::1759687966::1::::<><><>0<>0<>63ead5e4eb1e70443c4dcb462972f074<>res://.godot/imported/Menu boxes.png-f24f8657366c157ac13a112697af4bc4.ctex::
 Spritesheet.png::CompressedTexture2D::1752681745687664739::1759687962::1759687967::1::::<><><>0<>0<>1143788f79503d59ecbc8eab1756436f<>res://.godot/imported/Spritesheet.png-037b4c681b9409ad9588e31ac9846d10.ctex::
 Thank you!.png::CompressedTexture2D::6419143568902633295::1759687962::1759687966::1::::<><><>0<>0<>cb841f09166be4a5b6ce7a90db8df047<>res://.godot/imported/Thank you!.png-3537b6186e36020d683dbad475309d9e.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Fonts/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Fonts/::1759687964
 FantasyRPGtext (size 8).ttf::FontFile::4267661498884388099::1759687962::1759687964::1::::<><><>0<>0<>9eacd86008e07af02195c804a8c54fa6<>res://.godot/imported/FantasyRPGtext (size 8).ttf-b80ca548487450c8d3df8f35b1dd138a.fontdata::
 FantasyRPGtitle (size 11).ttf::FontFile::3189852247519721148::1759687962::1759687964::1::::<><><>0<>0<>42d9642fa7fe56b295d5cbe1fb3e0024<>res://.godot/imported/FantasyRPGtitle (size 11).ttf-f35d21d1505ce751cd32d083ca9ae8d5.fontdata::
 FantasyRPGtitleOutline (size 13).ttf::FontFile::2282765589131929189::1759687962::1759687964::1::::<><><>0<>0<>dd28218f5e8bad7e7251797aca96083a<>res://.godot/imported/FantasyRPGtitleOutline (size 13).ttf-f813a7ae80cf6341f9cc3a30e7f9fae4.fontdata::
 ::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/::1759687962
 ::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/::1759687962
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Background boxes/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Background boxes/::1759687966
 BGbox_01A.png::CompressedTexture2D::1822293979921781979::1759687962::1759687966::1::::<><><>0<>0<>47a4980aaad31d00ed0b667624f9faf2<>res://.godot/imported/BGbox_01A.png-525ed55a278c0b9f3df0edfbc4b9fd05.ctex::
 BGbox_01B.png::CompressedTexture2D::1764116573790908956::1759687962::1759687966::1::::<><><>0<>0<>7f1f67fcf63d755a8162d94adad3a278<>res://.godot/imported/BGbox_01B.png-ff1cdad739d387122a3df20cf48a98e1.ctex::
 BGbox_01C.png::CompressedTexture2D::9137913482560023808::1759687962::1759687966::1::::<><><>0<>0<>90a5c16735df82322a8747da9635820d<>res://.godot/imported/BGbox_01C.png-43686976ac5ae56d92e0a4c55b5f5712.ctex::
@@ -3225,7 +3225,7 @@ BGbox_03A.png::CompressedTexture2D::6630505290633789841::1759687962::1759687966:
 BGbox_04A.png::CompressedTexture2D::2959885466410252848::1759687962::1759687966::1::::<><><>0<>0<>c91d06ba45a4780a20cc8387f827e4b4<>res://.godot/imported/BGbox_04A.png-5d2d18681fd79cf45e93e1b8825a96cd.ctex::
 BGbox_04B.png::CompressedTexture2D::2733967855303090954::1759687962::1759687966::1::::<><><>0<>0<>a0c52b7470d352010303750faaec3069<>res://.godot/imported/BGbox_04B.png-885067bf2cfa062571bf334daa5ed902.ctex::
 BGbox_04C.png::CompressedTexture2D::5409929060235424029::1759687962::1759687966::1::::<><><>0<>0<>7b5ac1e6acb6fbdc6e33ca3fc8444498<>res://.godot/imported/BGbox_04C.png-1b5d04c0565a9238990321cbe3e05898.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Buttons/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Buttons/::1759687967
 Button_01A_Normal.png::CompressedTexture2D::8882189375747437803::1759687962::1759687966::1::::<><><>0<>0<>c2d17fe599f377e975cee2ab3134049e<>res://.godot/imported/Button_01A_Normal.png-2611aeddbd97a14e95a4076f5c2f6e74.ctex::
 Button_01A_Pressed.png::CompressedTexture2D::8837317851213018038::1759687962::1759687966::1::::<><><>0<>0<>eb644d04b58e736bb415d8846bf91823<>res://.godot/imported/Button_01A_Pressed.png-a6a8988efa96367140eec2d2488f4870.ctex::
 Button_01A_Selected.png::CompressedTexture2D::8933169665670215646::1759687962::1759687966::1::::<><><>0<>0<>c1c80463135234e47567e269439098ae<>res://.godot/imported/Button_01A_Selected.png-25929361702d4988d391cb3c34259933.ctex::
@@ -3495,7 +3495,7 @@ Input_Xbox_X_Selected.png::CompressedTexture2D::1419176347185495159::1759687962:
 Input_Xbox_Y_Normal.png::CompressedTexture2D::2699262362222709281::1759687962::1759687966::1::::<><><>0<>0<>a155d3004aa9d1225015c89f5382afd0<>res://.godot/imported/Input_Xbox_Y_Normal.png-9efd912f735ca1f5a0b72714f367110f.ctex::
 Input_Xbox_Y_Pressed.png::CompressedTexture2D::8297486594623055614::1759687962::1759687966::1::::<><><>0<>0<>7167431f8d11d0429cb38b30b79ca70b<>res://.godot/imported/Input_Xbox_Y_Pressed.png-316c54b87121ac3210c5d188646b5491.ctex::
 Input_Xbox_Y_Selected.png::CompressedTexture2D::6681762002279986720::1759687962::1759687966::1::::<><><>0<>0<>a0a0ed81feafa0eb1e0a32a5d0627183<>res://.godot/imported/Input_Xbox_Y_Selected.png-fd93551b8d4a912558a0e0226b0e35d9.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Checkboxes/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Checkboxes/::1759687966
 Checkbox_01A_Bullet.png::CompressedTexture2D::8419367416215822946::1759687962::1759687966::1::::<><><>0<>0<>ce8c1c99fab6a0ae076a551aec6586b6<>res://.godot/imported/Checkbox_01A_Bullet.png-17a4dc38d864306ca1fb1debfc9f9855.ctex::
 Checkbox_01A_Off.png::CompressedTexture2D::1341130828165442103::1759687962::1759687966::1::::<><><>0<>0<>93ac8a71a252f071875ac29b014e50df<>res://.godot/imported/Checkbox_01A_Off.png-0fa00eba8f11808f2c4525d54ff14dd6.ctex::
 Checkbox_01A_On.png::CompressedTexture2D::1450800509957474750::1759687962::1759687966::1::::<><><>0<>0<>966ba3c5514325a9ad09a37dadcb45e1<>res://.godot/imported/Checkbox_01A_On.png-807408c5fa3dbd8478d5cd21b2ce3aed.ctex::
@@ -3514,7 +3514,7 @@ Checkbox_03A_On.png::CompressedTexture2D::2985026396661293409::1759687962::17596
 Checkbox_03B_Bullet.png::CompressedTexture2D::6546745898298247794::1759687962::1759687966::1::::<><><>0<>0<>18b1fabe5515f7a59c82d9f637975047<>res://.godot/imported/Checkbox_03B_Bullet.png-a9994f8c8671dea87419a09334dbf5bc.ctex::
 Checkbox_03B_Off.png::CompressedTexture2D::6431138594840518996::1759687962::1759687966::1::::<><><>0<>0<>902dc474cabd47e5bef33507f116e0b8<>res://.godot/imported/Checkbox_03B_Off.png-543a9e15203b46cdac7a3e3ab5752b90.ctex::
 Checkbox_03B_On.png::CompressedTexture2D::2700971642660781526::1759687962::1759687966::1::::<><><>0<>0<>4353b522c4ce416f8373025fadc8c7da<>res://.godot/imported/Checkbox_03B_On.png-a6b79d5141f5d12d03bb239bab7044b5.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Cursors/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Cursors/::1759687966
 Cursor01.png::CompressedTexture2D::1168554300163239088::1759687962::1759687966::1::::<><><>0<>0<>665231529ac31c5623b0866a474d8e1c<>res://.godot/imported/Cursor01.png-5aa08c617b0c64a08573ac24bdef9cd0.ctex::
 Cursor02.png::CompressedTexture2D::1713883655969845141::1759687962::1759687966::1::::<><><>0<>0<>ee40e43138b61ab19d68fa005fa975dc<>res://.godot/imported/Cursor02.png-c8adbba002c2e5c34a3914751a27cc55.ctex::
 Cursor03.png::CompressedTexture2D::4452221922683545540::1759687962::1759687966::1::::<><><>0<>0<>0ecd6bbd271b5a7d151283042fcb3fa4<>res://.godot/imported/Cursor03.png-4daa1e9c2f816f9d5108f47a78183bbf.ctex::
@@ -3542,12 +3542,12 @@ Tick03_Down.png::CompressedTexture2D::7462982788182180452::1759687962::175968796
 Tick03_Left.png::CompressedTexture2D::2600763402883503100::1759687962::1759687966::1::::<><><>0<>0<>a5f134bdef0294b40322d3afed1b4ef6<>res://.godot/imported/Tick03_Left.png-4917a7e9cc6f8c8e4249aed9cac018b0.ctex::
 Tick03_Right.png::CompressedTexture2D::1676112526545255960::1759687962::1759687966::1::::<><><>0<>0<>1aec92057ab813eeb7b64575dd1dfcf7<>res://.godot/imported/Tick03_Right.png-ae716e18f3541a7380d9c17158b25d19.ctex::
 Tick03_Up.png::CompressedTexture2D::3260896851876660091::1759687962::1759687966::1::::<><><>0<>0<>30c0e0ac6c7f4ae11b8fb17c1ed7e817<>res://.godot/imported/Tick03_Up.png-3920ae8d741cfdc1d079ad622fc7f1d9.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Dividers/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Dividers/::1759687966
 Divider_01.png::CompressedTexture2D::1390587215472034803::1759687962::1759687966::1::::<><><>0<>0<>746f013a4db519f0cf722fcd92299fdd<>res://.godot/imported/Divider_01.png-19707c6b1550889c8abc48902d03343e.ctex::
 Divider_02.png::CompressedTexture2D::5939477299677833094::1759687962::1759687966::1::::<><><>0<>0<>e579b5f256ff86bfb1b292dc9ac1a4b1<>res://.godot/imported/Divider_02.png-ea7dc7691440280da73254a9d5dbc7b6.ctex::
 Divider_03.png::CompressedTexture2D::4264456928858924533::1759687962::1759687966::1::::<><><>0<>0<>9cd81ec81b230214dfc5f582186cc8f6<>res://.godot/imported/Divider_03.png-bbe76f3afe3c0b34e4954a4f2dc0262a.ctex::
 Divider_04.png::CompressedTexture2D::7905388619851936810::1759687962::1759687966::1::::<><><>0<>0<>912872380b5cea75240152e91b10045e<>res://.godot/imported/Divider_04.png-cdbceb3050e1c8bf6e8ca041ac0c84ba.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Fonts/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Fonts/::1759687966
 FontText_Brown.png::CompressedTexture2D::4473063879824470486::1759687962::1759687966::1::::<><><>0<>0<>7b703a67a825178fcc7d49728467dae1<>res://.godot/imported/FontText_Brown.png-04e04410c909b6b748d59a3091095712.ctex::
 FontText_Gold.png::CompressedTexture2D::7651115846085177420::1759687962::1759687966::1::::<><><>0<>0<>df1427b0a5fab92ad46ea45e8dadb5b8<>res://.godot/imported/FontText_Gold.png-06c084ff4eebfb2d8a4957b99e2e5a8c.ctex::
 FontText_Red.png::CompressedTexture2D::6684687839370249198::1759687962::1759687966::1::::<><><>0<>0<>dcccb761fcd2355eee2f90d08875532e<>res://.godot/imported/FontText_Red.png-6c50eacc9ba715ed3757e9d1a900f457.ctex::
@@ -3556,7 +3556,7 @@ FontTitle_Brown.png::CompressedTexture2D::8463844125223213973::1759687962::17596
 FontTitle_Gold.png::CompressedTexture2D::1944939806433942838::1759687962::1759687966::1::::<><><>0<>0<>0aeccb3a7ae4ce5503b14f3cad8dd84f<>res://.godot/imported/FontTitle_Gold.png-bbe924a7b6498482b8a9b183add8d1d8.ctex::
 FontTitle_Red.png::CompressedTexture2D::3870016326635417967::1759687962::1759687966::1::::<><><>0<>0<>41eb2c253af04e956e815c169369ed36<>res://.godot/imported/FontTitle_Red.png-8ad3fb1a1a36e4a55c784af197f82341.ctex::
 FontTitle_White.png::CompressedTexture2D::5046490090403910408::1759687962::1759687966::1::::<><><>0<>0<>c7a9cead7bd7c0228d3cafe916ce780b<>res://.godot/imported/FontTitle_White.png-e70c5b39c93ac40b404e780cc0e68baf.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Item slots/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Item slots/::1759687966
 Slot_01_Armor.png::CompressedTexture2D::4610548757795392621::1759687962::1759687966::1::::<><><>0<>0<>cc26c3774a98fb2e8f41e4efa15d22e2<>res://.godot/imported/Slot_01_Armor.png-8d231a299364bcabceba711070d4a159.ctex::
 Slot_01_Consumable.png::CompressedTexture2D::6055073827104158100::1759687962::1759687966::1::::<><><>0<>0<>ac78254db14a18305e1e129a8064ad0d<>res://.godot/imported/Slot_01_Consumable.png-8420a7b3dd0f286e6a48e0d810e68942.ctex::
 Slot_01_Empty.png::CompressedTexture2D::9092467630328614045::1759687962::1759687966::1::::<><><>0<>0<>9663000bc48ce5ceab0dcf3c9663889a<>res://.godot/imported/Slot_01_Empty.png-665bf09c23ba40340a3384e27245bd69.ctex::
@@ -3590,7 +3590,7 @@ Slot_03_Potion.png::CompressedTexture2D::1759267853675219077::1759687962::175968
 Slot_03_Ring.png::CompressedTexture2D::7732922228338026588::1759687962::1759687966::1::::<><><>0<>0<>4b2c6a09718a7cf2612c03236543be7c<>res://.godot/imported/Slot_03_Ring.png-8a27046303e9be3a865bc7e101a36623.ctex::
 Slot_03_Shield.png::CompressedTexture2D::3482041684805224159::1759687962::1759687966::1::::<><><>0<>0<>748680be55c55c5c866959e7884416de<>res://.godot/imported/Slot_03_Shield.png-08755c9890e8057df852cdd112378d16.ctex::
 Slot_03_Weapon.png::CompressedTexture2D::5026325544875136517::1759687962::1759687966::1::::<><><>0<>0<>6e1fe37e956bd2ed300e23b6aae5a5e1<>res://.godot/imported/Slot_03_Weapon.png-0bc330bcfd864b2aa8845578413be9f3.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Mini icons/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Mini icons/::1759687967
 Icon_01.png::CompressedTexture2D::1422051663361983022::1759687962::1759687966::1::::<><><>0<>0<>e5ccaefc3303da3b8f29cb4aafb0112b<>res://.godot/imported/Icon_01.png-97e5b7e84cbfe22a4d4abbd47cd06ccd.ctex::
 Icon_01_Outline.png::CompressedTexture2D::8803306316490789521::1759687962::1759687966::1::::<><><>0<>0<>803731920f29c26dcbf898afd40b8774<>res://.godot/imported/Icon_01_Outline.png-68c61bcd97bc2702b2a03e716b46cdaa.ctex::
 Icon_01_Selected.png::CompressedTexture2D::4389593218199717316::1759687962::1759687966::1::::<><><>0<>0<>bb7cb3a0285ffb56b771da991a8cec5f<>res://.godot/imported/Icon_01_Selected.png-32467d61d58bd683c31013e8824981e0.ctex::
@@ -3687,7 +3687,7 @@ Icon_31_Selected.png::CompressedTexture2D::3329685630871855184::1759687962::1759
 Icon_32.png::CompressedTexture2D::7004500126160245220::1759687962::1759687967::1::::<><><>0<>0<>14b1e3c468193c9c6416425a8931841b<>res://.godot/imported/Icon_32.png-3bfce2d91549cfe0bc6fa04483519458.ctex::
 Icon_32_Outline.png::CompressedTexture2D::434047666724444081::1759687962::1759687967::1::::<><><>0<>0<>65ca04af90b037823d5dad2fc05e0db5<>res://.godot/imported/Icon_32_Outline.png-f37a1966f81187db3c93cde46950a303.ctex::
 Icon_32_Selected.png::CompressedTexture2D::3826798717311688571::1759687962::1759687967::1::::<><><>0<>0<>d6a93a0e5c8e6332996c3756823008ed<>res://.godot/imported/Icon_32_Selected.png-548bd474c322b4bd016db1dbdb26b030.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Resource orbs/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Resource orbs/::1759687967
 DecoratedFrame1_Left.png::CompressedTexture2D::199155133286394935::1759687962::1759687967::1::::<><><>0<>0<>ce4543ef3305f39cebafe26853d9b111<>res://.godot/imported/DecoratedFrame1_Left.png-31a4902b62f07e8dd734c910ec540c10.ctex::
 DecoratedFrame1_Right.png::CompressedTexture2D::4826057341014232918::1759687962::1759687967::1::::<><><>0<>0<>a5b1b8cf280afa233ff5772f8f7dbac0<>res://.godot/imported/DecoratedFrame1_Right.png-a61e9c8f5bcbed4a24f049bb9c6433c5.ctex::
 DecoratedFrame2_Left.png::CompressedTexture2D::5821512588212928906::1759687962::1759687967::1::::<><><>0<>0<>973299bb429e2855e74af50db9505660<>res://.godot/imported/DecoratedFrame2_Left.png-0332794267827cc03477f5104a41c766.ctex::
@@ -3699,7 +3699,7 @@ Orb_Frame_HP.png::CompressedTexture2D::4123198532013198665::1759687962::17596879
 Orb_Frame_MP.png::CompressedTexture2D::5694567008030156614::1759687962::1759687967::1::::<><><>0<>0<>e5863b5388d7d4f7a6958e770036b8ed<>res://.godot/imported/Orb_Frame_MP.png-1ce55c6a57a8db6634089cdaf5adc5d0.ctex::
 Orb_HP.png::CompressedTexture2D::8430252533926504323::1759687962::1759687967::1::::<><><>0<>0<>cd53599f5130a84b2a4fd47edeedb6ce<>res://.godot/imported/Orb_HP.png-9b547ed6d912ce94e07601632c88a9b0.ctex::
 Orb_MP.png::CompressedTexture2D::2780950114116063327::1759687962::1759687967::1::::<><><>0<>0<>01fbb65ef30fd8ac7739ef02c8719db0<>res://.godot/imported/Orb_MP.png-e30586e3232127a03836d0edc09ea4fc.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Sliders & Bars/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Sliders & Bars/::1759687967
 Slider01_Bar01.png::CompressedTexture2D::1855077785275872968::1759687962::1759687967::1::::<><><>0<>0<>84b5a48aa234f68d1474cc4b93e279a8<>res://.godot/imported/Slider01_Bar01.png-4af255b4cd7d510262e2a3cf5e3d2ecf.ctex::
 Slider01_Bar02.png::CompressedTexture2D::8673696552183596606::1759687962::1759687967::1::::<><><>0<>0<>1e4fc9f3144b2b79f629d3645fc6b9f2<>res://.godot/imported/Slider01_Bar02.png-36a6836df95a73a3a774e13a89418c23.ctex::
 Slider01_Bar03.png::CompressedTexture2D::2802201360476209386::1759687962::1759687967::1::::<><><>0<>0<>691d4a36cefcb883f1929e60bae8f671<>res://.godot/imported/Slider01_Bar03.png-fbcb553ade38139b42f891181e09a408.ctex::
@@ -3730,7 +3730,7 @@ Slider03_Bar07.png::CompressedTexture2D::9133557956865342700::1759687962::175968
 Slider03_Bar08.png::CompressedTexture2D::7997219370127959544::1759687962::1759687967::1::::<><><>0<>0<>4fcb67da0ff30c4b98a3f4631b57f948<>res://.godot/imported/Slider03_Bar08.png-d26ee8552585ba0b9fd8704bb5a12b67.ctex::
 Slider03_Box.png::CompressedTexture2D::4221742159808105996::1759687962::1759687967::1::::<><><>0<>0<>c552bebd7175e3739691cadcd9581378<>res://.godot/imported/Slider03_Box.png-1d9c458c48915a293ab76d79a468e078.ctex::
 Slider03_Button.png::CompressedTexture2D::4830515899857686285::1759687962::1759687967::1::::<><><>0<>0<>c64e5f79d06c7d8873dd5ddd0535f88f<>res://.godot/imported/Slider03_Button.png-559df0ae3cd9fed12acd07a1736034c2.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Spellbook & Tabs/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Spellbook & Tabs/::1759687967
 PageFold_Left.png::CompressedTexture2D::8864811361792352434::1759687962::1759687967::1::::<><><>0<>0<>b51c3a19733f465245b95dde79e6f199<>res://.godot/imported/PageFold_Left.png-583aa9727429338cf9299088e280526d.ctex::
 PageFold_Right.png::CompressedTexture2D::7690622923298199488::1759687962::1759687967::1::::<><><>0<>0<>c6db720de5b593c9933144ef3f7d9bbc<>res://.godot/imported/PageFold_Right.png-5ee9a82643e9d741f44f14d1fb690f9c.ctex::
 Spellbook.png::CompressedTexture2D::753612482545366071::1759687962::1759687967::1::::<><><>0<>0<>deb59e73a4628d05d182e9d5fa348a84<>res://.godot/imported/Spellbook.png-1ced20a2e7eb714ab51eda76313cfe47.ctex::
@@ -3789,7 +3789,7 @@ Tab14_Bottom_Normal.png::CompressedTexture2D::6684131239607790755::1759687962::1
 Tab14_Bottom_Selected.png::CompressedTexture2D::5351780565192308514::1759687962::1759687967::1::::<><><>0<>0<>f4d54acac2dc6dc6d9f190690fc11563<>res://.godot/imported/Tab14_Bottom_Selected.png-23cc37e5758032c28c7bc76027bde396.ctex::
 Tab15_Bottom_Normal.png::CompressedTexture2D::2493390909136597508::1759687962::1759687967::1::::<><><>0<>0<>a45af48c7c612a83712ab1b64fec8261<>res://.godot/imported/Tab15_Bottom_Normal.png-1fec69e384b1c948d3249e15c0743807.ctex::
 Tab15_Bottom_Selected.png::CompressedTexture2D::2377723699761327503::1759687962::1759687967::1::::<><><>0<>0<>9e657ece0fd2c55941f61b404d0b74ba<>res://.godot/imported/Tab15_Bottom_Selected.png-8213b6660ab80cafd53523efc32bd62c.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Title banners/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Title banners/::1759687967
 BannerMedium_01A.png::CompressedTexture2D::5424284790076969665::1759687962::1759687967::1::::<><><>0<>0<>bc26a946fdd66710c36e2faadd1e12e9<>res://.godot/imported/BannerMedium_01A.png-e7196f17e49ac4687541cfa15674abe5.ctex::
 BannerMedium_01B.png::CompressedTexture2D::1969738415508319893::1759687962::1759687967::1::::<><><>0<>0<>fcfa9669f278a3391fc10c9135facad1<>res://.godot/imported/BannerMedium_01B.png-b42f6e4368c906ce9492c7cc4c008a9d.ctex::
 BannerMedium_01C.png::CompressedTexture2D::1928886380179479750::1759687962::1759687967::1::::<><><>0<>0<>4e660ea2e880a1b8a893855af3e4272f<>res://.godot/imported/BannerMedium_01C.png-a6729f341bee301f41ddf85a34b0e943.ctex::
@@ -3821,7 +3821,7 @@ BannerSmall_03C_Normal.png::CompressedTexture2D::8689442187744777346::1759687962
 BannerSmall_03C_Pressed.png::CompressedTexture2D::2968068101187692972::1759687962::1759687967::1::::<><><>0<>0<>cef7072c709b99c812740c5d8825818d<>res://.godot/imported/BannerSmall_03C_Pressed.png-b217d89135b608daaa749935d444c221.ctex::
 BannerSmall_03C_Selected.png::CompressedTexture2D::5557244917238621185::1759687962::1759687967::1::::<><><>0<>0<>21b481f4ff243b44029bee62f16fd147<>res://.godot/imported/BannerSmall_03C_Selected.png-0a13e676c8d7322ac18b1be441b17a33.ctex::
 ::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/::1759687962
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Background boxes/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Background boxes/::1759687967
 BGbox_01A.png::CompressedTexture2D::7458820501544349326::1759687962::1759687967::1::::<><><>0<>0<>d52bf534f0efeb3c7021be3f880d387a<>res://.godot/imported/BGbox_01A.png-d055290674e0f64307e26b7a08515638.ctex::
 BGbox_01B.png::CompressedTexture2D::6915330458956583700::1759687962::1759687967::1::::<><><>0<>0<>e0c1da9d19f02523cbe3d337f7720fef<>res://.godot/imported/BGbox_01B.png-6b8a38a48289565d5f36826c8ed65f2f.ctex::
 BGbox_01C.png::CompressedTexture2D::1709104008598560514::1759687962::1759687967::1::::<><><>0<>0<>bc43e2b720ea2b5a5b9768406756509b<>res://.godot/imported/BGbox_01C.png-ba4f096ed0d96ef420c473400e6b0ca9.ctex::
@@ -3831,7 +3831,7 @@ BGbox_03A.png::CompressedTexture2D::8384929340463586553::1759687962::1759687967:
 BGbox_04A.png::CompressedTexture2D::2321252795908793123::1759687962::1759687967::1::::<><><>0<>0<>fbee2ea4770e3e38407c32c9690faad9<>res://.godot/imported/BGbox_04A.png-9355bcf2f61699fd7140c708b4198b87.ctex::
 BGbox_04B.png::CompressedTexture2D::8196469532443111216::1759687962::1759687967::1::::<><><>0<>0<>a71745b33cc1382f9f60d7391a636c32<>res://.godot/imported/BGbox_04B.png-9b1a507286275f923fc19a72ee34ea7d.ctex::
 BGbox_04C.png::CompressedTexture2D::8910729341240380247::1759687962::1759687967::1::::<><><>0<>0<>7bd4bfd99a04c08c177c099e5038e415<>res://.godot/imported/BGbox_04C.png-0bb444487e82d6cd10050613cda34c88.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Buttons/::1759687961
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Buttons/::1759687967
 Button_01A_Normal.png::CompressedTexture2D::9139916330154343451::1759687961::1759687967::1::::<><><>0<>0<>0a098facb23203f12ed1dbfe0e0c0256<>res://.godot/imported/Button_01A_Normal.png-7886191baca3e0dfa48ad37c668ebfeb.ctex::
 Button_01A_Pressed.png::CompressedTexture2D::8291828747729018150::1759687961::1759687967::1::::<><><>0<>0<>cbab5e1bdf61dc0399001129500098d4<>res://.godot/imported/Button_01A_Pressed.png-2297bd09283ff7809792e3fe0619bf9d.ctex::
 Button_01A_Selected.png::CompressedTexture2D::107759207831051359::1759687961::1759687967::1::::<><><>0<>0<>b64bef43200befeeed37204c34bd3f14<>res://.godot/imported/Button_01A_Selected.png-a993fe19924d19e231e65c8ff558a07c.ctex::
@@ -4101,7 +4101,7 @@ Input_Xbox_X_Selected.png::CompressedTexture2D::676102293684023377::1759687961::
 Input_Xbox_Y_Normal.png::CompressedTexture2D::9075692171007864832::1759687961::1759687967::1::::<><><>0<>0<>84c86ab208d5f024177d0d84fd4b77c1<>res://.godot/imported/Input_Xbox_Y_Normal.png-9cc4a7acddec7c6ce9967c202cf9f669.ctex::
 Input_Xbox_Y_Pressed.png::CompressedTexture2D::8857923151098864696::1759687961::1759687967::1::::<><><>0<>0<>f9963553ac2ed7c01760ca6f905c875b<>res://.godot/imported/Input_Xbox_Y_Pressed.png-9f24e3e172e9d145eeb1a64d17f4a3fe.ctex::
 Input_Xbox_Y_Selected.png::CompressedTexture2D::8273834471263561649::1759687961::1759687967::1::::<><><>0<>0<>27b1e47ae0dde7a4085a5a298d09ae16<>res://.godot/imported/Input_Xbox_Y_Selected.png-0d0a6ea23eaeb793f24000b15c07808b.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Checkboxes/::1759687961
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Checkboxes/::1759687967
 Checkbox_01A_Bullet.png::CompressedTexture2D::5961127153237456765::1759687961::1759687967::1::::<><><>0<>0<>645449dd95793d9eb6ea61f899ae1397<>res://.godot/imported/Checkbox_01A_Bullet.png-e70833394ae8538c6ac656c5d63a2e11.ctex::
 Checkbox_01A_Off.png::CompressedTexture2D::5148351675698532332::1759687961::1759687967::1::::<><><>0<>0<>bf1b5217acbd8e5512704901e36b605d<>res://.godot/imported/Checkbox_01A_Off.png-ade8b1591376d574ca874b19d2ad75ac.ctex::
 Checkbox_01A_On.png::CompressedTexture2D::123476099032664361::1759687961::1759687967::1::::<><><>0<>0<>d32d4d40029fd7e757781cf28d1c12e1<>res://.godot/imported/Checkbox_01A_On.png-015aecaae3a84b86a2e9ecbbda7a9fa6.ctex::
@@ -4120,7 +4120,7 @@ Checkbox_03A_On.png::CompressedTexture2D::5457165694179636652::1759687961::17596
 Checkbox_03B_Bullet.png::CompressedTexture2D::7271935649946313938::1759687961::1759687967::1::::<><><>0<>0<>cbe13f0659fecff653f56acd85cf91fa<>res://.godot/imported/Checkbox_03B_Bullet.png-c7d958a4bb7f0c8e791ad1e8e94d35bb.ctex::
 Checkbox_03B_Off.png::CompressedTexture2D::2153176849503117290::1759687961::1759687964::1::::<><><>0<>0<>df83aca77d92581202d87c3a28e8c46f<>res://.godot/imported/Checkbox_03B_Off.png-7653320d28bf528e9fe0ede5365d6137.ctex::
 Checkbox_03B_On.png::CompressedTexture2D::7611841289092117543::1759687961::1759687964::1::::<><><>0<>0<>56118e042e741d390868543d5109da5c<>res://.godot/imported/Checkbox_03B_On.png-aa185bb8e6b558d26c9ed7f934fd4cce.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Cursors/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Cursors/::1759687964
 Cursor01.png::CompressedTexture2D::2811003984544792351::1759687962::1759687964::1::::<><><>0<>0<>a16ae90260cd953cab81caf17ade4cf4<>res://.godot/imported/Cursor01.png-46cbf0ce19b80e8b045ab2a40ef954d8.ctex::
 Cursor02.png::CompressedTexture2D::3529827972231859182::1759687962::1759687964::1::::<><><>0<>0<>31a60c3dc13684106192d0bb96b8468a<>res://.godot/imported/Cursor02.png-ed21c524d4e88a32cc88e28f781fae3d.ctex::
 Cursor03.png::CompressedTexture2D::3600985062113181383::1759687962::1759687964::1::::<><><>0<>0<>f9fe59bf81b47a46f45f2ff67cf1236d<>res://.godot/imported/Cursor03.png-6b55e794e0c55171122d5a0e97f38ad9.ctex::
@@ -4148,12 +4148,12 @@ Tick03_Down.png::CompressedTexture2D::1271380250424561863::1759687962::175968796
 Tick03_Left.png::CompressedTexture2D::962631958658816378::1759687962::1759687964::1::::<><><>0<>0<>883646a3f8318ead99eb4cfb98500a45<>res://.godot/imported/Tick03_Left.png-0259bcd3faa114f58f2b58166ed9e56b.ctex::
 Tick03_Right.png::CompressedTexture2D::7190270028770779666::1759687962::1759687964::1::::<><><>0<>0<>0b406926aa13c5a2d17245f5642bdb1c<>res://.godot/imported/Tick03_Right.png-576fbae082ac44469585b03c5258d843.ctex::
 Tick03_Up.png::CompressedTexture2D::5193085846102914219::1759687962::1759687964::1::::<><><>0<>0<>b990494b12a6bda3708ac71e4be7978a<>res://.godot/imported/Tick03_Up.png-dbe9cf864dfbd25b4a3445557300ad9e.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Dividers/::1759687961
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Dividers/::1759687964
 Divider_01.png::CompressedTexture2D::2931269076126951881::1759687961::1759687964::1::::<><><>0<>0<>d4d06f0e26245baa071aeffabc771b25<>res://.godot/imported/Divider_01.png-0c597226287dd8490d4539ca494761d7.ctex::
 Divider_02.png::CompressedTexture2D::4454970946604098492::1759687961::1759687964::1::::<><><>0<>0<>69f86bd09bdb4f5b31c14b4a1b6683d0<>res://.godot/imported/Divider_02.png-9dfd00ab56293b4516fe8c9af8d2660d.ctex::
 Divider_03.png::CompressedTexture2D::2487983663307928804::1759687961::1759687964::1::::<><><>0<>0<>5ca2c2e45ea23271c48da1dfcb00b549<>res://.godot/imported/Divider_03.png-f3c6af0c111e053388c42b5f577535b6.ctex::
 Divider_04.png::CompressedTexture2D::7881068328054017826::1759687961::1759687964::1::::<><><>0<>0<>24f2af169b5a353fbd86fcfd5b941e67<>res://.godot/imported/Divider_04.png-281766dbc413ed412411bcb936e8e970.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Fonts/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Fonts/::1759687964
 FontText_Brown.png::CompressedTexture2D::4009651989820458620::1759687962::1759687964::1::::<><><>0<>0<>0e6196f86f7c00a425584bce3450074f<>res://.godot/imported/FontText_Brown.png-440ceb378a8efa6370e9f324886dbbb5.ctex::
 FontText_Gold.png::CompressedTexture2D::3832836615185724650::1759687962::1759687964::1::::<><><>0<>0<>4a741c1c3c3a41eb935d1f3285a3d01b<>res://.godot/imported/FontText_Gold.png-d768f1bf772c94f31daba9edfdc757b5.ctex::
 FontText_Red.png::CompressedTexture2D::8499001620594367435::1759687962::1759687964::1::::<><><>0<>0<>d1dc3986124a844edf52351ddbea13a3<>res://.godot/imported/FontText_Red.png-6ba02d9d786046b9ad2b9b5cd80df16b.ctex::
@@ -4162,7 +4162,7 @@ FontTitle_Brown.png::CompressedTexture2D::4138628299403539349::1759687962::17596
 FontTitle_Gold.png::CompressedTexture2D::2801143926771577431::1759687962::1759687964::1::::<><><>0<>0<>85a042c5b7d7340405d558c39713832e<>res://.godot/imported/FontTitle_Gold.png-ff6d183fd2645047c744660df72ce4b0.ctex::
 FontTitle_Red.png::CompressedTexture2D::6028372967420865218::1759687962::1759687964::1::::<><><>0<>0<>303e88c0193477f00dcec78dea068de6<>res://.godot/imported/FontTitle_Red.png-0bc903aa9b2b38dd09e037ed540286f8.ctex::
 FontTitle_White.png::CompressedTexture2D::7871779859821015239::1759687962::1759687964::1::::<><><>0<>0<>dc77fed5d0661ef9381a501f765086a5<>res://.godot/imported/FontTitle_White.png-71050374ef00ccbcda9d6881731bb528.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Item slots/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Item slots/::1759687964
 Slot_01_Armor.png::CompressedTexture2D::1061875367609682895::1759687962::1759687964::1::::<><><>0<>0<>6055f7cec16a828d365036ca2a2e9f6a<>res://.godot/imported/Slot_01_Armor.png-4d5b07c9bdaf176c171305ba6615c61e.ctex::
 Slot_01_Consumable.png::CompressedTexture2D::9108182987362861737::1759687962::1759687964::1::::<><><>0<>0<>88b8c7bc512083a440c941d99ef74b13<>res://.godot/imported/Slot_01_Consumable.png-bf251855ca28e2fc66e05fb8a61f3331.ctex::
 Slot_01_Empty.png::CompressedTexture2D::6630635229674947221::1759687962::1759687964::1::::<><><>0<>0<>0263f4413ddb2ed4a6fa9c93364a4d00<>res://.godot/imported/Slot_01_Empty.png-5c8c1cee326e446a0beab8f4268b4063.ctex::
@@ -4196,7 +4196,7 @@ Slot_03_Potion.png::CompressedTexture2D::7052881775210395291::1759687962::175968
 Slot_03_Ring.png::CompressedTexture2D::7564936751342490917::1759687962::1759687964::1::::<><><>0<>0<>cd4b373cfa9c5fc7d912a045ea150046<>res://.godot/imported/Slot_03_Ring.png-21cdaff939745591825f0d1b79d081b8.ctex::
 Slot_03_Shield.png::CompressedTexture2D::5709722460792345351::1759687962::1759687964::1::::<><><>0<>0<>f4d0481e61455d3f61851110c46ee857<>res://.godot/imported/Slot_03_Shield.png-580072774226fadae79dd2c11569fff8.ctex::
 Slot_03_Weapon.png::CompressedTexture2D::3250851103069963154::1759687962::1759687964::1::::<><><>0<>0<>f64693c6612fc7571bb72fee8f3a4a7a<>res://.godot/imported/Slot_03_Weapon.png-3f8b9973b5d9715b9cbc9dc97b8bf410.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Mini icons/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Mini icons/::1759687964
 Icon_01.png::CompressedTexture2D::4735739229003284006::1759687961::1759687964::1::::<><><>0<>0<>2a5cfd98e2d687ed53dbc48d0b43534c<>res://.godot/imported/Icon_01.png-c8c49349cac3b15632b44ba4400b3263.ctex::
 Icon_01_Outline.png::CompressedTexture2D::2362054973737584645::1759687962::1759687964::1::::<><><>0<>0<>776a3cc4026ecf547798e7cc913d88d4<>res://.godot/imported/Icon_01_Outline.png-1ea66d45b6c044dda61968ca29d27532.ctex::
 Icon_01_Selected.png::CompressedTexture2D::1283455440325436732::1759687961::1759687964::1::::<><><>0<>0<>f399a1c50f946c77ceda76db0a98de36<>res://.godot/imported/Icon_01_Selected.png-3fc50e9e383f90a989bc0ebc8dfc479e.ctex::
@@ -4293,7 +4293,7 @@ Icon_31_Selected.png::CompressedTexture2D::8281843057490185503::1759687961::1759
 Icon_32.png::CompressedTexture2D::5022962279795998749::1759687961::1759687964::1::::<><><>0<>0<>4d6b79eec4a910b4b2619f25b3ae3540<>res://.godot/imported/Icon_32.png-fd6d378dc23ac073b2843f748b83dced.ctex::
 Icon_32_Outline.png::CompressedTexture2D::8949163737569032647::1759687961::1759687964::1::::<><><>0<>0<>11f915adea70f34d73a606ecf9436ce0<>res://.godot/imported/Icon_32_Outline.png-c190584d839912ae1eaaaead4dd85033.ctex::
 Icon_32_Selected.png::CompressedTexture2D::2210730482724407354::1759687961::1759687964::1::::<><><>0<>0<>f2958ab8f76668b1a1987c64709055cc<>res://.godot/imported/Icon_32_Selected.png-09888860f642bc77ad2dee9bda7f59b5.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Resource orbs/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Resource orbs/::1759687964
 DecoratedFrame1_Left.png::CompressedTexture2D::8038955274583154226::1759687962::1759687964::1::::<><><>0<>0<>1aea5a54d7311d661602f52a0e25eaf8<>res://.godot/imported/DecoratedFrame1_Left.png-508e060c8e4c9bccdf21750e4f72ed5e.ctex::
 DecoratedFrame1_Right.png::CompressedTexture2D::8400246341187760455::1759687962::1759687964::1::::<><><>0<>0<>37d4c966c6cb15a0782d4b1a17121e74<>res://.godot/imported/DecoratedFrame1_Right.png-6956afe1271ee52145de43c87cab315d.ctex::
 DecoratedFrame2_Left.png::CompressedTexture2D::3683386787329596660::1759687962::1759687964::1::::<><><>0<>0<>e891ed0a4811b41ea1967625f44958ea<>res://.godot/imported/DecoratedFrame2_Left.png-7f2deccc721529c5ec0c9225ec6b208f.ctex::
@@ -4305,7 +4305,7 @@ Orb_Frame_HP.png::CompressedTexture2D::912419208434729365::1759687962::175968796
 Orb_Frame_MP.png::CompressedTexture2D::3649479409834044302::1759687962::1759687964::1::::<><><>0<>0<>c1b025b99cb73fa75e2a0dc728c3ade9<>res://.godot/imported/Orb_Frame_MP.png-de590304f591ee2a25acfcb4f83d5910.ctex::
 Orb_HP.png::CompressedTexture2D::8161006420218872239::1759687962::1759687964::1::::<><><>0<>0<>98941fcda651ebeb9a2f540d1627397a<>res://.godot/imported/Orb_HP.png-e87039a632d072957b706fcdba7fe3b8.ctex::
 Orb_MP.png::CompressedTexture2D::2672396362765647262::1759687962::1759687964::1::::<><><>0<>0<>3607f30c178f9b4f4cd7a868adbe2429<>res://.godot/imported/Orb_MP.png-15610372e97dc834f6797c40791b811e.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Sliders & Bars/::1759687961
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Sliders & Bars/::1759687964
 Slider01_Bar01.png::CompressedTexture2D::3236327798134478479::1759687961::1759687964::1::::<><><>0<>0<>1f23b7e5b44c34cce9b733aa2dfc99b9<>res://.godot/imported/Slider01_Bar01.png-592b19e4c232a8a6fe3b4e550c50a3b6.ctex::
 Slider01_Bar02.png::CompressedTexture2D::7675875698583014144::1759687961::1759687964::1::::<><><>0<>0<>e3456719dd9ccd9700b2d598e49cf53d<>res://.godot/imported/Slider01_Bar02.png-1c96db72b706d1a03ebf2efeddea67d2.ctex::
 Slider01_Bar03.png::CompressedTexture2D::460554807009475763::1759687961::1759687964::1::::<><><>0<>0<>4e4e2e0b91f45e5e9e6ec572b55f09d7<>res://.godot/imported/Slider01_Bar03.png-43483bf86e5300c3c7564489705cf043.ctex::
@@ -4336,7 +4336,7 @@ Slider03_Bar07.png::CompressedTexture2D::8235775713661962882::1759687961::175968
 Slider03_Bar08.png::CompressedTexture2D::4015122161923998784::1759687961::1759687964::1::::<><><>0<>0<>1b5af5366fefa07a6d2a3ac6b6dacce5<>res://.godot/imported/Slider03_Bar08.png-4c5e83556316bd5337184921f9b102e7.ctex::
 Slider03_Box.png::CompressedTexture2D::7413129990740531494::1759687961::1759687964::1::::<><><>0<>0<>274539d3ee83ae241c2e305a6b2dfe64<>res://.godot/imported/Slider03_Box.png-9d312c7f48296021220d2cbe55fe1b9d.ctex::
 Slider03_Button.png::CompressedTexture2D::5485067925636942977::1759687961::1759687964::1::::<><><>0<>0<>d75a2ff4fd13cfe82a0f1a6f13d59a7e<>res://.godot/imported/Slider03_Button.png-949d8fb41df4c18637aebd4315dd41bd.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Spellbook & Tabs/::1759687962
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Spellbook & Tabs/::1759687965
 PageFold_Left.png::CompressedTexture2D::8126280176807283927::1759687962::1759687964::1::::<><><>0<>0<>dadc21c06eef8f47c5fc07cadf746874<>res://.godot/imported/PageFold_Left.png-bd29d00eff3c36b191cc1ab33e79f8ea.ctex::
 PageFold_Right.png::CompressedTexture2D::3425045694182365275::1759687962::1759687964::1::::<><><>0<>0<>46f45f3b63db2991070d71266fb54249<>res://.godot/imported/PageFold_Right.png-8bc855f9dd8eebfc906a2dd480613142.ctex::
 Spellbook.png::CompressedTexture2D::5827754575808662574::1759687962::1759687964::1::::<><><>0<>0<>e88ad1fc9b7c2b66f6a4f7777051f931<>res://.godot/imported/Spellbook.png-e4058a6cc1e2cb4eb513c268c1b3dc04.ctex::
@@ -4395,7 +4395,7 @@ Tab14_Bottom_Normal.png::CompressedTexture2D::4051494406484096583::1759687962::1
 Tab14_Bottom_Selected.png::CompressedTexture2D::1586909779392918776::1759687962::1759687964::1::::<><><>0<>0<>64c5597f37cc4b4c343fbd8f42cb30aa<>res://.godot/imported/Tab14_Bottom_Selected.png-157c1cb755c6f913436ba9f368b465f9.ctex::
 Tab15_Bottom_Normal.png::CompressedTexture2D::2105046569006750914::1759687962::1759687964::1::::<><><>0<>0<>d7861e77cf55229a41d96a8b05fbda63<>res://.godot/imported/Tab15_Bottom_Normal.png-42e6bf5ed5caff5e4ac72c0f5ca65514.ctex::
 Tab15_Bottom_Selected.png::CompressedTexture2D::2029272072645425479::1759687962::1759687964::1::::<><><>0<>0<>24ae5b58ed4fb044ff4642629ee2b993<>res://.godot/imported/Tab15_Bottom_Selected.png-1fa73fb8c5aafc089bf9616b90597833.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Title banners/::1759687961
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Title banners/::1759687964
 BannerMedium_01A.png::CompressedTexture2D::7848664456907299508::1759687961::1759687964::1::::<><><>0<>0<>9ed3091a4aad14540237611b1d4d24e4<>res://.godot/imported/BannerMedium_01A.png-7e222242cff148f9bc218571a2dcbac2.ctex::
 BannerMedium_01B.png::CompressedTexture2D::6187982839977259809::1759687961::1759687964::1::::<><><>0<>0<>1fa59dcd002be5ae48dd31f295e49348<>res://.godot/imported/BannerMedium_01B.png-1941a8ddc574b2901dfcc568e4e9ff04.ctex::
 BannerMedium_01C.png::CompressedTexture2D::7201350607377010772::1759687961::1759687964::1::::<><><>0<>0<>5a38bc201aa05a924cdab66f07d98e8c<>res://.godot/imported/BannerMedium_01C.png-d9248b7ea079aa41840a30fd5a0f83cf.ctex::
@@ -4427,7 +4427,7 @@ BannerSmall_03C_Normal.png::CompressedTexture2D::1543501192854111356::1759687961
 BannerSmall_03C_Pressed.png::CompressedTexture2D::3350909487907907475::1759687961::1759687964::1::::<><><>0<>0<>b15004f958bcc560728f5c6fa6990268<>res://.godot/imported/BannerSmall_03C_Pressed.png-7736cb0264e520b8e4ad6b42a22d54f2.ctex::
 BannerSmall_03C_Selected.png::CompressedTexture2D::6398548509764058911::1759687961::1759687964::1::::<><><>0<>0<>27f7a1180fb9684f11367e7928685c6a<>res://.godot/imported/BannerSmall_03C_Selected.png-176ef471f84316d3edbecaaec21e4bb2.ctex::
 ::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/::1759687961
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Background boxes/::1759687961
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Background boxes/::1759687964
 BGbox_01A.png::CompressedTexture2D::6426181897637135264::1759687961::1759687964::1::::<><><>0<>0<>24057d5e5a750fd8302400d3c4285314<>res://.godot/imported/BGbox_01A.png-a5c6ee64deaacd6b218b553e00ee0b3b.ctex::
 BGbox_01B.png::CompressedTexture2D::3846726512564362673::1759687961::1759687964::1::::<><><>0<>0<>04dd6a7f5300fb7073a2b707d0133649<>res://.godot/imported/BGbox_01B.png-bbd058752c7a8c1c95476189415bf584.ctex::
 BGbox_01C.png::CompressedTexture2D::5372447474218623287::1759687961::1759687964::1::::<><><>0<>0<>fe25a4767b10958a2acce18b8a8c0da7<>res://.godot/imported/BGbox_01C.png-048f36c51ae32250958ffbf8e34f75e3.ctex::
@@ -4437,7 +4437,7 @@ BGbox_03A.png::CompressedTexture2D::4685491797384292011::1759687961::1759687964:
 BGbox_04A.png::CompressedTexture2D::4465034401859401496::1759687961::1759687964::1::::<><><>0<>0<>97c8341de49ef4d1e40490cbce6e6f29<>res://.godot/imported/BGbox_04A.png-8a763ccf6c31eb39957b893fe1fafd48.ctex::
 BGbox_04B.png::CompressedTexture2D::1364733654614213889::1759687961::1759687964::1::::<><><>0<>0<>462bb34a35b682d2cadd4464d666a1cd<>res://.godot/imported/BGbox_04B.png-640c06d3e37a25942210c9e4aaf2968e.ctex::
 BGbox_04C.png::CompressedTexture2D::8077203169336647414::1759687961::1759687964::1::::<><><>0<>0<>b948760e86eb3939530fed43e0a7185e<>res://.godot/imported/BGbox_04C.png-cf0b85b2c2c61750fc77d01cca900f65.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Buttons/::1759687961
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Buttons/::1759687966
 Button_01A_Normal.png::CompressedTexture2D::8598853373590461883::1759687961::1759687964::1::::<><><>0<>0<>c75f40a65505d4d7f251588d54247f4b<>res://.godot/imported/Button_01A_Normal.png-cd82781ecb0f4f69e5ed258b2f7a3b9f.ctex::
 Button_01A_Pressed.png::CompressedTexture2D::4136731149633121677::1759687961::1759687964::1::::<><><>0<>0<>f36eafd81ec62d4d589da7c9339d269a<>res://.godot/imported/Button_01A_Pressed.png-3e9515ee5f025f4dd106de485fd8acc9.ctex::
 Button_01A_Selected.png::CompressedTexture2D::749060880498889252::1759687961::1759687964::1::::<><><>0<>0<>4dd8da613e5c821b6e8744396ddcf732<>res://.godot/imported/Button_01A_Selected.png-6bf54b5d568561579bdf781921b7c21f.ctex::
@@ -4707,7 +4707,7 @@ Input_Xbox_X_Selected.png::CompressedTexture2D::3506942755379733665::1759687961:
 Input_Xbox_Y_Normal.png::CompressedTexture2D::3232652189715968305::1759687961::1759687966::1::::<><><>0<>0<>85841ac198a01e160b16a5735799479f<>res://.godot/imported/Input_Xbox_Y_Normal.png-7843b223175843c25f6a843ad6a678d1.ctex::
 Input_Xbox_Y_Pressed.png::CompressedTexture2D::1892632636151777931::1759687961::1759687966::1::::<><><>0<>0<>0e3b187165de2661d9fcde7d27a47cb1<>res://.godot/imported/Input_Xbox_Y_Pressed.png-a7d3a5314f3ced3b07b3b1919706ca72.ctex::
 Input_Xbox_Y_Selected.png::CompressedTexture2D::3938392567191429444::1759687961::1759687966::1::::<><><>0<>0<>f24781e71fd407869e6f7e29538f2fab<>res://.godot/imported/Input_Xbox_Y_Selected.png-d036e9a21677d456920634e89e17d0c2.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Checkboxes/::1759687961
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Checkboxes/::1759687966
 Checkbox_01A_Bullet.png::CompressedTexture2D::701248551274196653::1759687961::1759687966::1::::<><><>0<>0<>7713480ac727c7a6ab82e911f52f182b<>res://.godot/imported/Checkbox_01A_Bullet.png-de3369b8f9c9b70dfec542e1f361d9a2.ctex::
 Checkbox_01A_Off.png::CompressedTexture2D::8877581823140739227::1759687961::1759687966::1::::<><><>0<>0<>440bd147ee85c59f75bd54691dab0b6c<>res://.godot/imported/Checkbox_01A_Off.png-a2629b4dad83916d9f174bbdfd068df2.ctex::
 Checkbox_01A_On.png::CompressedTexture2D::3228054492524840396::1759687961::1759687966::1::::<><><>0<>0<>61016ba74bb47c898acc978e58d99e41<>res://.godot/imported/Checkbox_01A_On.png-dc8c1636ef3b5b73b8cb1d404969465a.ctex::
@@ -4726,7 +4726,7 @@ Checkbox_03A_On.png::CompressedTexture2D::4231479808082023161::1759687961::17596
 Checkbox_03B_Bullet.png::CompressedTexture2D::982156989812264736::1759687961::1759687966::1::::<><><>0<>0<>e296cb215e355d820faa5ee724e546cb<>res://.godot/imported/Checkbox_03B_Bullet.png-8acd1c5222ba1f0eb778d6d244263c42.ctex::
 Checkbox_03B_Off.png::CompressedTexture2D::2895702440825221136::1759687961::1759687966::1::::<><><>0<>0<>cc2e6411383fbd9386a2a3c5dc45af7c<>res://.godot/imported/Checkbox_03B_Off.png-5c6273bde35dc04bfa57af8e7855012c.ctex::
 Checkbox_03B_On.png::CompressedTexture2D::5572321823488376222::1759687961::1759687966::1::::<><><>0<>0<>38cd6c7019bbc4c6c836ccbe0fa573a5<>res://.godot/imported/Checkbox_03B_On.png-8445d4def7ab5a21c178dff06b2186d2.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Cursors/::1759687961
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Cursors/::1759687966
 Cursor01.png::CompressedTexture2D::8395842935071420803::1759687961::1759687966::1::::<><><>0<>0<>74218f191d56031de00270f25c13cb1f<>res://.godot/imported/Cursor01.png-b9cccd5fc51fa6b5f2e88ded5f28106b.ctex::
 Cursor02.png::CompressedTexture2D::7116771362851873864::1759687961::1759687966::1::::<><><>0<>0<>f8f3b2549b035fa73f44b56d4a5e4b3d<>res://.godot/imported/Cursor02.png-922e97fa087f1062cfd34cab30d4a318.ctex::
 Cursor03.png::CompressedTexture2D::6384412646874673897::1759687961::1759687966::1::::<><><>0<>0<>99a0fa0e73bb26e0f7702cdcc34e2f79<>res://.godot/imported/Cursor03.png-48066bc85f8076fbe4d5e25d4e917dbb.ctex::
@@ -4754,12 +4754,12 @@ Tick03_Down.png::CompressedTexture2D::8279387953183274503::1759687961::175968796
 Tick03_Left.png::CompressedTexture2D::5101997183705010121::1759687961::1759687966::1::::<><><>0<>0<>c6154d83474a53ac16ef3956db626e16<>res://.godot/imported/Tick03_Left.png-e1050df185349f0229abc16ede12c780.ctex::
 Tick03_Right.png::CompressedTexture2D::527755117060801622::1759687961::1759687966::1::::<><><>0<>0<>0904355afdc509080a676f9250030042<>res://.godot/imported/Tick03_Right.png-f73f577f06de81c1d2b1292a80009404.ctex::
 Tick03_Up.png::CompressedTexture2D::9059000323075143477::1759687961::1759687966::1::::<><><>0<>0<>7f8a29123e729ef59fc4159148a3e3d9<>res://.godot/imported/Tick03_Up.png-4f736f05307951df23fc9aa508f4b0ca.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Dividers/::1759687961
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Dividers/::1759687966
 Divider_01.png::CompressedTexture2D::3567296011849086271::1759687961::1759687966::1::::<><><>0<>0<>5b0b0bc8770b6d705225eea086bfca3a<>res://.godot/imported/Divider_01.png-7d56964f11767f3ada85e34a4db7e425.ctex::
 Divider_02.png::CompressedTexture2D::7590800701996530959::1759687961::1759687966::1::::<><><>0<>0<>9f3ce74f4841206f3bedf1a62f138c3f<>res://.godot/imported/Divider_02.png-74ec0af1903180aeb24c669fa8cf9c07.ctex::
 Divider_03.png::CompressedTexture2D::3345741818917580715::1759687961::1759687966::1::::<><><>0<>0<>fe3a604c6cceba89eeb4c372ef1485fa<>res://.godot/imported/Divider_03.png-25ad36062b4b069e5016607a5e7c4d3f.ctex::
 Divider_04.png::CompressedTexture2D::3329982190027751813::1759687961::1759687966::1::::<><><>0<>0<>92b2046921751bde77408866a32d2a4e<>res://.godot/imported/Divider_04.png-82a8740b6beafb8c5abe4df0a78d32d1.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Fonts/::1759687961
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Fonts/::1759687966
 FontText_Brown.png::CompressedTexture2D::1837638579638412200::1759687961::1759687966::1::::<><><>0<>0<>68e19b92301d6757b240c3c34f92fa1b<>res://.godot/imported/FontText_Brown.png-d6baee19c5bb7d560299e7d9b88a89c9.ctex::
 FontText_Gold.png::CompressedTexture2D::6188762327437410540::1759687961::1759687966::1::::<><><>0<>0<>7e040ecc96dc740a12e7d4a5419903d5<>res://.godot/imported/FontText_Gold.png-ce641ade34116c5b38782caf83077c2a.ctex::
 FontText_Red.png::CompressedTexture2D::6853405269346355462::1759687961::1759687966::1::::<><><>0<>0<>ffbb3ff3af6532d6b063334164b9b7f2<>res://.godot/imported/FontText_Red.png-82e265287429f2c9f8eef641fa60504e.ctex::
@@ -4768,7 +4768,7 @@ FontTitle_Brown.png::CompressedTexture2D::1888073120510218991::1759687961::17596
 FontTitle_Gold.png::CompressedTexture2D::3881555625089519676::1759687961::1759687966::1::::<><><>0<>0<>805d1c0f07dcd426db2b0d57b1456638<>res://.godot/imported/FontTitle_Gold.png-fbf868e372f19bd907b328ca77db62dc.ctex::
 FontTitle_Red.png::CompressedTexture2D::8976997989241304741::1759687961::1759687966::1::::<><><>0<>0<>3bf64cd432822538bfb632e6479264e5<>res://.godot/imported/FontTitle_Red.png-250f83ccef86eaa80297b5ae27a0d15a.ctex::
 FontTitle_White.png::CompressedTexture2D::8947920093228204478::1759687961::1759687966::1::::<><><>0<>0<>1bfe8679d3b924291469b7f3d814c6c8<>res://.godot/imported/FontTitle_White.png-790e60c54d885735025c6d4d22a22e94.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Item slots/::1759687961
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Item slots/::1759687966
 Slot_01_Armor.png::CompressedTexture2D::6683882836254009067::1759687961::1759687966::1::::<><><>0<>0<>6bf9ab75f53a80874757f2339624a9f4<>res://.godot/imported/Slot_01_Armor.png-e1a283205eb2665563a626fa4517ccf1.ctex::
 Slot_01_Consumable.png::CompressedTexture2D::1101025822241274181::1759687961::1759687966::1::::<><><>0<>0<>cfcaf04e185eee1e4df901a0209997d4<>res://.godot/imported/Slot_01_Consumable.png-8d55e82fa99e4087ce279b363c7e90f0.ctex::
 Slot_01_Empty.png::CompressedTexture2D::4883591953037586507::1759687961::1759687966::1::::<><><>0<>0<>93eb819e4158d087b8879771d5925d6c<>res://.godot/imported/Slot_01_Empty.png-b41ed9c7c7de9df1cb30857efd0f6502.ctex::
@@ -4802,7 +4802,7 @@ Slot_03_Potion.png::CompressedTexture2D::5135515381198853028::1759687961::175968
 Slot_03_Ring.png::CompressedTexture2D::8602567761688643662::1759687961::1759687966::1::::<><><>0<>0<>aee770528aa20245eacb385a89f76ca4<>res://.godot/imported/Slot_03_Ring.png-9cfbc6306eab6087d519f0f2c4464de8.ctex::
 Slot_03_Shield.png::CompressedTexture2D::540416368919204544::1759687961::1759687966::1::::<><><>0<>0<>b1d8cd78657eddcb17152d7b916e4646<>res://.godot/imported/Slot_03_Shield.png-bc9c19a802198356fd39693374dde22c.ctex::
 Slot_03_Weapon.png::CompressedTexture2D::8147840540775668388::1759687961::1759687966::1::::<><><>0<>0<>f7a6102946ce37fe798f17997b5e4f0c<>res://.godot/imported/Slot_03_Weapon.png-357230cd269397e3e3bd840eeed60b6d.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Mini icons/::1759687961
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Mini icons/::1759687966
 Icon_01.png::CompressedTexture2D::5588021177679264448::1759687961::1759687966::1::::<><><>0<>0<>1c6c59c870d90f642515728e719c84f1<>res://.godot/imported/Icon_01.png-7ad6f7cde330a9236009e93590e866ad.ctex::
 Icon_01_Outline.png::CompressedTexture2D::4194307533027960537::1759687961::1759687966::1::::<><><>0<>0<>1d248a1e3a8b5fd8db5f14fd609357bd<>res://.godot/imported/Icon_01_Outline.png-aaf3290221fbd9fd381c790ccfde1603.ctex::
 Icon_01_Selected.png::CompressedTexture2D::4262010346724407847::1759687961::1759687966::1::::<><><>0<>0<>fe13afae42d6f3a980b811c302606c32<>res://.godot/imported/Icon_01_Selected.png-c94e8ec6ac567d23ce5503978dc533e0.ctex::
@@ -4899,7 +4899,7 @@ Icon_31_Selected.png::CompressedTexture2D::7058344516021557419::1759687961::1759
 Icon_32.png::CompressedTexture2D::6227143083540864048::1759687961::1759687965::1::::<><><>0<>0<>82ff76f31082943c0a4258ed9b9a7309<>res://.godot/imported/Icon_32.png-68da5b9a04722b93bdb4282d69a9ab49.ctex::
 Icon_32_Outline.png::CompressedTexture2D::7314935011087408269::1759687961::1759687965::1::::<><><>0<>0<>d59c4f6ae6092959b03047a33f3920c8<>res://.godot/imported/Icon_32_Outline.png-9d8f1a7d5b01a314ea2ddd3ae4bff98c.ctex::
 Icon_32_Selected.png::CompressedTexture2D::1457376417611688442::1759687961::1759687965::1::::<><><>0<>0<>ea475492c75d4bd0524c3296f7b59ec6<>res://.godot/imported/Icon_32_Selected.png-b84be24d5af23040b8ac67593e3a0e59.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Resource orbs/::1759687961
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Resource orbs/::1759687965
 DecoratedFrame1_Left.png::CompressedTexture2D::1715073508585232472::1759687961::1759687965::1::::<><><>0<>0<>eb30321ece0d63dcfded829efd891543<>res://.godot/imported/DecoratedFrame1_Left.png-e32bc486a8a957cd1fa29c4343600b61.ctex::
 DecoratedFrame1_Right.png::CompressedTexture2D::6371936707469715060::1759687961::1759687965::1::::<><><>0<>0<>9453ea1917e1d7937807e46386d98d47<>res://.godot/imported/DecoratedFrame1_Right.png-e29d5b31f6b423db0841eff74e0e7205.ctex::
 DecoratedFrame2_Left.png::CompressedTexture2D::5909612219738567229::1759687961::1759687965::1::::<><><>0<>0<>917d6f76d3b6251504473453e6ac8970<>res://.godot/imported/DecoratedFrame2_Left.png-b84958a73418d4cef3412e17f0cd52c0.ctex::
@@ -4911,7 +4911,7 @@ Orb_Frame_HP.png::CompressedTexture2D::4742135596610695975::1759687961::17596879
 Orb_Frame_MP.png::CompressedTexture2D::1585955784706664968::1759687961::1759687964::1::::<><><>0<>0<>1f80229640aaa961ae3f559b886a0f41<>res://.godot/imported/Orb_Frame_MP.png-5771b3b021a9625bb1c1841084baf9d6.ctex::
 Orb_HP.png::CompressedTexture2D::599330303988818339::1759687961::1759687964::1::::<><><>0<>0<>7d876d947909148161e8c8dd39ee10df<>res://.godot/imported/Orb_HP.png-3c4fa5f90cccf990a949933735ed2112.ctex::
 Orb_MP.png::CompressedTexture2D::8478201168543941386::1759687961::1759687964::1::::<><><>0<>0<>d7933f0f4671b7d1918a01ad8d260e5c<>res://.godot/imported/Orb_MP.png-e6dabe651894aef1511bccb519bbc021.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Sliders & Bars/::1759687961
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Sliders & Bars/::1759687965
 Slider01_Bar01.png::CompressedTexture2D::8176106392196991866::1759687961::1759687964::1::::<><><>0<>0<>f5f467c97884db9f23f8acbe58d2bfc1<>res://.godot/imported/Slider01_Bar01.png-c3af077e83e714fe8c8fad42377f39c6.ctex::
 Slider01_Bar02.png::CompressedTexture2D::503377787318168905::1759687961::1759687964::1::::<><><>0<>0<>e60d21b9c24d73683a7ff860b56b4b1a<>res://.godot/imported/Slider01_Bar02.png-0fa492a341481e8ba2c627dabf9137d9.ctex::
 Slider01_Bar03.png::CompressedTexture2D::8216336134220213543::1759687961::1759687964::1::::<><><>0<>0<>c7431dd875c4952f6e32d88bc37cdc2b<>res://.godot/imported/Slider01_Bar03.png-1dfb24daf1818b46829d0a3dbf0d5316.ctex::
@@ -4942,7 +4942,7 @@ Slider03_Bar07.png::CompressedTexture2D::1973996301629677846::1759687961::175968
 Slider03_Bar08.png::CompressedTexture2D::7780420012435092305::1759687961::1759687965::1::::<><><>0<>0<>a924d744152c40a66c4919a21105be33<>res://.godot/imported/Slider03_Bar08.png-0756b80d1a15a52b0c841e218c64ac22.ctex::
 Slider03_Box.png::CompressedTexture2D::7469209343719962484::1759687961::1759687965::1::::<><><>0<>0<>edc4fc4dfcd9ae4ae34941412d0c0f74<>res://.godot/imported/Slider03_Box.png-5e0804a8c0878f42dc56e1fdf6b7ce4b.ctex::
 Slider03_Button.png::CompressedTexture2D::3975924435322426068::1759687961::1759687965::1::::<><><>0<>0<>6dfeeca009da59de0d5154bd481de468<>res://.godot/imported/Slider03_Button.png-efc575b6ca7dcfddc5a9ded46a797216.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Spellbook & Tabs/::1759687961
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Spellbook & Tabs/::1759687966
 PageFold_Left.png::CompressedTexture2D::7536709583167696669::1759687961::1759687965::1::::<><><>0<>0<>49be75ff7eb974f5c02cbbad4892d9a8<>res://.godot/imported/PageFold_Left.png-06ae3956449a5c45e739f0547825eea1.ctex::
 PageFold_Right.png::CompressedTexture2D::66979680303298174::1759687961::1759687965::1::::<><><>0<>0<>ab5b86683b96806bac18f8e7931be28f<>res://.godot/imported/PageFold_Right.png-9053bbc0f67f7122704c9f33de05b68d.ctex::
 Spellbook.png::CompressedTexture2D::264699006740637798::1759687961::1759687965::1::::<><><>0<>0<>c555983b0e8e4876dc667eb3aee6cf18<>res://.godot/imported/Spellbook.png-bee58c89deeb66f89d6d0490e349a22f.ctex::
@@ -5001,7 +5001,7 @@ Tab14_Bottom_Normal.png::CompressedTexture2D::2026608793586804569::1759687961::1
 Tab14_Bottom_Selected.png::CompressedTexture2D::2606143239063483807::1759687961::1759687965::1::::<><><>0<>0<>394a249d6b30f941fa3caa7d29fb3549<>res://.godot/imported/Tab14_Bottom_Selected.png-04122aacfb50f288b286dcd929d82209.ctex::
 Tab15_Bottom_Normal.png::CompressedTexture2D::194298114064790979::1759687961::1759687965::1::::<><><>0<>0<>0cad1705f7cc0db3407bafb58c724cc2<>res://.godot/imported/Tab15_Bottom_Normal.png-6117a927a11a1bf94c465974ab7e86e9.ctex::
 Tab15_Bottom_Selected.png::CompressedTexture2D::468773077525944267::1759687961::1759687965::1::::<><><>0<>0<>6ab03b5b5b06da5ed981904b7e82169a<>res://.godot/imported/Tab15_Bottom_Selected.png-1e2ec98d9fd907f45fe264d22fc0e6ea.ctex::
-::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Title banners/::1759687961
+::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/3x/Title banners/::1759687965
 BannerMedium_01A.png::CompressedTexture2D::5375510309310452948::1759687961::1759687965::1::::<><><>0<>0<>c3ff7d23fb5668a3e19d682864697b61<>res://.godot/imported/BannerMedium_01A.png-e45b2de567dba60b7f538a08bd195806.ctex::
 BannerMedium_01B.png::CompressedTexture2D::1189828715945193667::1759687961::1759687965::1::::<><><>0<>0<>196a8468b4e8c18e0cd1ac77e53ebbf0<>res://.godot/imported/BannerMedium_01B.png-a90505b4ea2a91436ccd647961c8c342.ctex::
 BannerMedium_01C.png::CompressedTexture2D::3228628982343890413::1759687961::1759687965::1::::<><><>0<>0<>2d6a27cffca0b927830c74e57f289a96<>res://.godot/imported/BannerMedium_01C.png-d82dfedd51384880de0a1f3e6451b814.ctex::
@@ -11508,7 +11508,7 @@ Full_Tileset_Background.png::CompressedTexture2D/CompressedTexture2D::4899137933
 Grass.png::CompressedTexture2D/CompressedTexture2D::5075495572221869799::1754833067::1754833068::1::::<><><>0<>0<>a9d9b65eb3e410584b0fd0356fbd2427<>res://.godot/imported/Grass.png-0cb33431b4f3121cd32b3f239eab0df9.ctex::
 Grass_Light.png::CompressedTexture2D/CompressedTexture2D::5848672033745012289::1754833063::1754833064::1::::<><><>0<>0<>adbd299bcd240d6e9664472844d7f854<>res://.godot/imported/Grass_Light.png-2f4a29da9a928e3f034f381f74d83783.ctex::
 Spinning Coin.png::CompressedTexture2D/CompressedTexture2D::1864530950598099691::1754833055::1754833055::1::::<><><>0<>0<>b7933b824d120cb867f4e128bc15a345<>res://.godot/imported/Spinning Coin.png-f3f2a7130bc9316c023644f6f102e43e.ctex::
-::res://scene/::1759686793
+::res://scene/::1759688059
 alternative_choice.tscn::PackedScene::280801098604107613::1759684311::0::1::::<><><>0<>0<><>::uid://bh3lrdhrgmbga::::res://script/alternative_choice.gd<>uid://cxo06hnpen10p::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250420manaSoul9SlicesA-Sheet.png<>uid://bfd8lxmo20ddl::::res://asset/font/Everyday_Tiny_Bold.ttf<>uid://dyndhdo6l5rw8::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250421cursorTarget-Sheet.png<>uid://d3tyrfwlw2c1g::::res://asset/shader/LightweightPixelPerfectOutline.gdshader<>uid://xhtju1ikrq5i::::res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240707dragonHeaderA.png<>uid://djosx0lsv35m8::::res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240709dragonButtonA-Sheet.png<>uid://cttiyfnemjlwx::::res://asset/font/Everyday_Tiny_Bold_Original.ttf
 battle_meter.tscn::PackedScene::710875673853802040::1759333742::0::1::::<><><>0<>0<><>::uid://clbdihywm3w1j::::res://script/battle_meter.gd
 battle_meter_bar.tscn::PackedScene::9104335679050198793::1759562069::0::1::::<><><>0<>0<><>::uid://bnr8mv8yg14k2::::res://script/battle_meter_bar.gd<>uid://djnrv3fbswxcb::::res://asset/sprite/MiniFolks/MinifolksHumans/Without Outline/MiniShieldMan.png<>uid://d3b2vvdpmh8cc::::res://asset/font/Everyday_Tiny_Original.ttf
@@ -11516,7 +11516,7 @@ chess.tscn::PackedScene::9122913873670671635::1759572964::0::1::::<><><>0<>0<><>
 chess_icon.tscn::PackedScene::3405414252138885228::1759334476::0::1::::<><><>0<>0<><>::uid://byrnfbbr04whc::::res://asset/animation/forestProtector/forestProtectorDryadEnchantress.tres
 effect_icon.tscn::PackedScene::862058410763497358::1759380511::0::1::::<><><>0<>0<><>::uid://dqkuswiuyemm4::::res://script/effect_icon.gd<>uid://c2f4hhbuv2cw8::::res://asset/sprite/icon/wisdom.png
 faction_bonus_bar.tscn::PackedScene::1794208281011027450::1759487947::0::1::::<><><>0<>0<><>::uid://oxjyul8a81ej::::res://script/faction_bonus_bar.gd<>uid://d3b2vvdpmh8cc::::res://asset/font/Everyday_Tiny_Original.ttf<>uid://brnpxkp3qyrf1::::res://asset/sprite/Slots-Frames/All.png
-gallery.tscn::PackedScene::3876171263338956871::1759686793::0::1::::<><><>0<>0<><>::uid://d3fsuop1cf6mo::::res://script/gallery.gd<>uid://brca0se5ca4v8::::res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240707dragon9SlicesA.png<>uid://bfd8lxmo20ddl::::res://asset/font/Everyday_Tiny_Bold.ttf<>uid://d3b2vvdpmh8cc::::res://asset/font/Everyday_Tiny_Original.ttf<>uid://dxdlstuhcqyei::::res://asset/animation/demon/demonDemoness.tres<>uid://eskabl6wixm4::::res://asset/sprite/FreeCuteTileset/BG1.png<>uid://bij6posn3caot::::res://asset/sprite/FreeCuteTileset/BG2.png
+gallery.tscn::PackedScene::3876171263338956871::1759688059::0::1::::<><><>0<>0<><>::uid://d3fsuop1cf6mo::::res://script/gallery.gd<>uid://brca0se5ca4v8::::res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240707dragon9SlicesA.png<>uid://cpbajb8j6nqje::::res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Spellbook & Tabs/Spellbook.png<>uid://bfd8lxmo20ddl::::res://asset/font/Everyday_Tiny_Bold.ttf<>uid://d3b2vvdpmh8cc::::res://asset/font/Everyday_Tiny_Original.ttf<>uid://dxdlstuhcqyei::::res://asset/animation/demon/demonDemoness.tres<>uid://eskabl6wixm4::::res://asset/sprite/FreeCuteTileset/BG1.png<>uid://bij6posn3caot::::res://asset/sprite/FreeCuteTileset/BG2.png
 game.tscn::PackedScene::6120957946076711242::1759682643::0::1::::<><><>0<>0<><>::uid://c7rtc63knhqn2::::res://script/game.gd<>uid://canr2c7puh78g::::res://asset/tileset/dungeon_tileset.tres<>uid://bf8ewc86eld58::::res://script/unit_grid.gd<>uid://d3fjiohmxfkv2::::res://script/play_area.gd<>uid://ci0chjunkkyw2::::res://dungeontileset-extended.png<>uid://k66qmjhfvp2w::::res://script/tile_highlighter.gd<>uid://g8k2q0fol0um::::res://asset/tileset/Full_Tileset_Background.png<>uid://d6bylde4el1n::::res://asset/tileset/0x72_DungeonTilesetII_v1.7.png<>uid://cekuw2eyqfdjb::::res://asset/tileset/Grass.png<>uid://bj8r1mq64aqwi::::res://asset/tileset/Final_Tileset.png<>uid://cple1kveswqsn::::res://asset/tileset/Grass_Light.png<>uid://c6sf672nmok3s::::res://scene/hero_infomation.tscn<>uid://3or0fwe8aqhk::::res://asset/sprite/01_TravelBookLite/UI_TravelBook_Select01a.png<>uid://d3b2vvdpmh8cc::::res://asset/font/Everyday_Tiny_Original.ttf<>uid://bwj55n52t01ii::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/16x16 Slider Button.png<>uid://wegw08lsn4ug::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/16x16 Slider Buttons.png<>uid://da2ctgfaxxegu::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/64x64 button no frame.png<>uid://bnobjccy7mbl1::::res://script/shop_handler.gd<>uid://taccdysuiiqx::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/64x64 button.png<>uid://bux1pqccpqytm::::res://asset/sprite/Slots-Frames/All/16x16_ui_slots_frames7.png<>uid://c741ay1j7xpf4::::res://script/debug_handler.gd<>uid://cdtqc8myh23v4::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/64x64 frame.png<>uid://woe5v11hw2qp::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/128x32 paper.png<>uid://dg6lmvt5ro8u8::::res://script/faction_bonus_manager.gd<>uid://kemavmwmkxpo::::res://scene/battle_meter.tscn<>uid://dj0ycdkhedk1t::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/128x96 paper.png<>uid://rxa6ts4scjj8::::res://script/chess_mover.gd<>uid://g00bttgy5sp::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/Cursor.png<>uid://b7xe48kxh34gj::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/Decorated Frame.png<>uid://caow6wk4t07q2::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/dropdown menu.png<>uid://c2yqxkafgsoer::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/Large Sprite Sheet.png<>uid://bo1r34gjsrw3s::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/Toggle buttons 2.png<>uid://dukhyph01nxb3::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/16x64 button no frame.png<>uid://b8l2exyqb5wgb::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/Toggle buttons.png<>uid://bney1no86h4d7::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/16x64 button.png<>uid://7lrhhv8iuls0::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/16x64 Slider Bar.png<>uid://bhbo18tw2bhhx::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/32x64 button no frame.png<>uid://daegeakmaj3uv::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/32x64 button.png<>uid://cwvsyds8f2hlw::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/32x64 frame.png<>uid://cw57lok07i1lu::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/64x16 resource counter.png<>uid://da6wn3yt347n::::res://asset/sprite/GandalfHardcore Pixel Art Game UI/64x16 Slider Bar.png<>uid://bj1i38o7uu7ni::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250421manaSoulButtonB-Sheet.png<>uid://cxo06hnpen10p::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250420manaSoul9SlicesA-Sheet.png<>uid://bq541wfctmvcb::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250420manaTabB-Sheet.png<>uid://brca0se5ca4v8::::res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240707dragon9SlicesA.png<>uid://3kme76uf4dtb::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250421verticalCursorA-Sheet.png<>uid://cdt7cpglibtql::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250420manaSoul9SlicesB-Sheet.png<>uid://cttiyfnemjlwx::::res://asset/font/Everyday_Tiny_Bold_Original.ttf<>uid://dr537xnww7yjc::::res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240707dragonTabB-Sheet.png<>uid://bxwx7d3n5biy3::::res://asset/sprite/01_TravelBookLite/UI_TravelBook_BookPageRight01a.png<>uid://cueatlo23wx10::::res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240707dragonTabA-Sheet.png<>uid://6rd8dx6cs16n::::res://script/pause.gd<>uid://c7tb0jrcwtwg0::::res://script/custom_arrow_renderer.gd<>uid://c13x2xqwox3y7::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250420manaSoulHeaderB-Sheet.png<>uid://yo6l1uo6dhds::::res://asset/sprite/icon/arrow_dot.png<>uid://dyndhdo6l5rw8::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250421cursorTarget-Sheet.png<>uid://bfd8lxmo20ddl::::res://asset/font/Everyday_Tiny_Bold.ttf<>uid://bp0gtvd3sgrhh::::res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240707dragonHeaderB.png<>uid://d2yhcwylpopef::::res://scene/battle_meter_bar.tscn<>uid://lf2qschg5l5r::::res://script/game_speed_controller.gd<>uid://d3tyrfwlw2c1g::::res://asset/shader/LightweightPixelPerfectOutline.gdshader<>uid://csgrh2hl21j51::::res://script/damage_manager.gd<>uid://b4hwtdp2epofe::::res://asset/theme/toggle.tres<>uid://ckoscmg1tkcf4::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425lessButton-Sheet.png<>uid://dqa4pio1y4yi4::::res://asset/customize_button.tres<>uid://0tel3twsixb3::::res://scene/faction_bonus_bar.tscn<>uid://db6majxnbxnot::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425closeButton-Sheet.png<>uid://bwc2s8y8drnq::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425moreButton-Sheet.png<>uid://j2j6nwfh84kq::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425optionsButton-Sheet.png<>uid://chvlj0aa3r1oi::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425exitButton-Sheet.png
 game_finish.tscn::PackedScene::316943265765674096::1759675752::0::1::::<><><>0<>0<><>::uid://d1b3gv5nd6tps::::res://script/game_finish.gd<>uid://canr2c7puh78g::::res://asset/tileset/dungeon_tileset.tres<>uid://bfd8lxmo20ddl::::res://asset/font/Everyday_Tiny_Bold.ttf<>uid://oyxlko4xp23c::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425helpButton-Sheet.png<>uid://dqa4pio1y4yi4::::res://asset/customize_button.tres<>uid://chvlj0aa3r1oi::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425exitButton-Sheet.png<>uid://cxo06hnpen10p::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250420manaSoul9SlicesA-Sheet.png<>uid://bkbce0vqdxf12::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250420manaSoulHeaderA-Sheet.png<>uid://dp783qu7ogqqf::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250420manaSoul9SlicesE-Sheet.png<>uid://cdt7cpglibtql::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250420manaSoul9SlicesB-Sheet.png<>uid://c13x2xqwox3y7::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250420manaSoulHeaderB-Sheet.png<>uid://bwo5qhdhmep6::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250423emptyFrame-Sheet.png<>uid://dv07qmjw718h4::::res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240713dragonMapFrame.png<>uid://8olk54k41qnm::::res://asset/animation/elf/elfMage.tres<>uid://3kme76uf4dtb::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250421verticalCursorA-Sheet.png<>uid://eskabl6wixm4::::res://asset/sprite/FreeCuteTileset/BG1.png<>uid://debfipxurbsk3::::res://asset/sprite/FreeCuteTileset/BG3.png
 hero_infomation.tscn::PackedScene::6986214987377349250::1759676951::0::1::::<><><>0<>0<><>::uid://xhm35hpui8l5::::res://script/chess_information.gd<>uid://d3b2vvdpmh8cc::::res://asset/font/Everyday_Tiny_Original.ttf<>uid://mjt8gly10q2q::::res://scene/effect_icon.tscn<>uid://b6x8lpjjcmev5::::res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240713dragonEmptyFrame.png<>uid://pcg2bjrj68rm::::res://asset/animation/elf/elfQueen.tres<>uid://d3tyrfwlw2c1g::::res://asset/shader/LightweightPixelPerfectOutline.gdshader<>uid://dhvvnqufsftng::::res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250422mouseBig-Sheet.png

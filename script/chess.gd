@@ -1,7 +1,7 @@
 class_name Chess
 extends Obstacle
 
-
+const emoji_bubble_scene = preload("res://scene/emoji_bubble.tscn")
 # ========================
 # Constants and Enums
 # ========================
@@ -29,6 +29,7 @@ enum TARGET_CHOICE {CLOSE, FAR, STRONG, WEAK, ALLY, SELF}
 #@onready var area_effect_handler: AreaEffectHandler = $area_effect_handler
 #@onready var hp_bar: ProgressBar = $hp_bar
 #@onready var mp_bar: ProgressBar = $mp_bar
+@onready var reference_rect: ReferenceRect = $Area2D/ReferenceRect
 
 # ========================
 # Exported Variables
@@ -341,11 +342,13 @@ func _ready():
 		attack_target_line.default_color = Color(0, 1, 0)
 	else:
 		attack_target_line.default_color = Color(1, 0, 0)
-	attack_target_line.visible = true
+	if line_visible:
+		attack_target_line.visible = true
 	
 	# Configure attack indicator line
 	spell_target_line.width = 0.5
 	spell_target_line.default_color = Color(0, 0, 1)
+	
 	spell_target_line.visible = false
 	
 	# Load chess stats from JSON
@@ -374,7 +377,7 @@ func _ready():
 
 	connect_to_data_manager()
 	
-	
+	line_visible = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]
 # ========================
 # Process Functions
 # ========================
@@ -501,6 +504,35 @@ func _process(delta: float) -> void:
 		else:
 			animated_sprite_2d.flip_h = true
 
+	if randf() < 0.00005:
+		var emoji_bubble = emoji_bubble_scene.instantiate()
+		add_child(emoji_bubble)
+		emoji_bubble.z_index = 60
+		var emoji_offset := Vector2.ZERO
+		match emoji_bubble.bubble_index:
+			1:
+				emoji_offset = Vector2(-15, -43)
+			2:
+				emoji_offset = Vector2(-7, -43)
+			3:
+				emoji_offset = Vector2(-22, -43)
+			4:
+				emoji_offset = Vector2(-16, 6)
+			5:
+				emoji_offset = Vector2(-7, 6)
+			6:
+				emoji_offset = Vector2(-24, 6)
+			7:
+				emoji_offset = Vector2(8, -19)
+			8:
+				emoji_offset = Vector2(8, -27)
+			9:
+				emoji_offset = Vector2(8, -10)
+			_:
+				emoji_offset = Vector2(-15, -43)
+		emoji_bubble.position += emoji_offset
+		
+	reference_rect.visible = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]
 # ========================
 # Private Functions
 # ========================
@@ -983,7 +1015,8 @@ func _handle_targeting():
 	# Clear invalid targets (dead or invalid instances)
 	attack_target_line.visible = false
 	change_target_to(_find_new_target(chess_target_choice))
-	attack_target_line.visible = true
+	if line_visible:
+		attack_target_line.visible = true
 		
 # Find a new target based on selection strategy
 func _find_new_target(target_choice) -> Obstacle:
@@ -1426,7 +1459,8 @@ func handle_target_death(chess: Obstacle):
 
 	if chess_target:
 		chess_target.is_died.connect(handle_target_death)
-		attack_target_line.visible = true
+		if line_visible:
+			attack_target_line.visible = true
 
 func handle_spell_target_death():
 	chess_spell_target = null
