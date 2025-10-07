@@ -1277,7 +1277,7 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 	elif chess_name == "ArchMage" and faction == "human":
 		cast_spell_result = freezing_field(20)
 	elif chess_name == "Mage" and faction == "elf":
-		cast_spell_result = await sun_strike(3)
+		cast_spell_result = await sun_strike(chess_level)
 		# cast_spell_result = elf_mage_damage(spell_tgt, 0.2, 10, 80)
 	elif chess_name == "Queen" and faction == "elf":
 		cast_spell_result = freezing_field(20)

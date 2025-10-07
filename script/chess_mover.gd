@@ -278,6 +278,10 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 				_reset_chess_to_starting_position(starting_position, obstacle)
 				get_parent().control_shaker(get_parent().remain_coins_label)
 				return
+			
+			shop_handler.buy_chess(obstacle)
+			_move_chess(obstacle, new_area, new_tile)
+			return			
 				
 		[2, 1]:
 			# from shop to bench

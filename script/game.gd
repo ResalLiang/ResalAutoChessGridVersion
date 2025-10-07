@@ -312,6 +312,13 @@ func _ready():
 			else:
 				shop_refresh_button.disabled = false
 				shop_refresh_button.global_position.x = 24
+				
+			if shop_handler.remain_coins < shop_handler.get_shop_upgrade_price():
+				shop_upgrade_button.disabled = true
+				shop_upgrade_button.global_position.x = -40
+			else:
+				shop_upgrade_button.disabled = false
+				shop_upgrade_button.global_position.x = 24
 	)
 	shop_handler.shop_upgraded.connect(
 		func(value):
