@@ -1,2 +1,13 @@
 # Godot 4+ ignores
 .godot/
+build/
+export/
+*.pck
+
+# 导出文件
+*.exe
+*.zip
+*.app
+*.x86_64
+*.html"build/" 
+"export/" 
