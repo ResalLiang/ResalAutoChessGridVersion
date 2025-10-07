@@ -18,7 +18,8 @@ var player_data_template : Dictionary = {
 	"highest_score" : 0,
 	"debug_mode" : false,
 	"chess_stat" : {},
-	"player_upgrade" : {}
+	"player_upgrade" : {},
+	"difficulty" : "Normal"
 }
 
 var chess_stat_template = {
@@ -60,9 +61,9 @@ var current_chess_array = []
 var difficulty := 1
 
 var won_rounds := 0
-const max_won_rounds := 3
+const max_won_rounds := 7
 var lose_rounds := 0
-const max_lose_rounds := 3
+const max_lose_rounds := 5
 
 var mvp_chess
 
@@ -71,6 +72,8 @@ var version := "V1.00"
 func _ready() -> void:
 
 	in_game_data = player_data_template.duplicate()
+
+	load_game_json()
 	
 	if player_datas.keys().size() != 0:
 		last_player = player_datas.keys().back()
@@ -78,16 +81,22 @@ func _ready() -> void:
 	else:
 		last_player = "Resal"
 		current_player = "Resal"
-
-	load_game_json()
+		player_datas[current_player] = player_data_template.duplicate(true)
 	
 	load_chess_stats()
+	
+	
+	player_data = player_datas[current_player]
+
 	
 	if not player_datas[current_player].has("debug_mode"):
 		player_datas[current_player]["debug_mode"] = false
 		
 	if not player_datas[current_player].has("player_upgrade") or player_datas[current_player]["player_upgrade"].keys().size() == 0:
-		player_datas[current_player]["player_upgrade"] = player_upgrade_template.duplicate()
+		player_datas[current_player]["player_upgrade"] = player_upgrade_template.duplicate(true)
+		
+	if not player_datas[current_player].has("difficulty"):
+		player_datas[current_player]["difficulty"] = "Normal"
 
 # func load_game_binary():
 # 	if FileAccess.file_exists("user://gamedata.dat"):
@@ -143,11 +152,6 @@ func load_game_json():
 		player_datas = {}
 		return
 		
-	if player_datas.keys().has(current_player):
-		player_data = player_datas[current_player]
-
-	if not player_datas[current_player].has("player_upgrade") or player_datas[current_player]["player_upgrade"].keys().size() == 0:
-		player_datas[current_player]["player_upgrade"] = player_upgrade_template.duplicate()
 
 func convert_numbers_to_int(data):
 	if typeof(data) == TYPE_DICTIONARY:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://dvhphrqverdrh"]
+[gd_scene load_steps=52 format=3 uid="uid://dvhphrqverdrh"]
 
 [ext_resource type="Script" uid="uid://cm3w5gno8tv4h" path="res://script/skill_tree.gd" id="1_47c73"]
 [ext_resource type="Texture2D" uid="uid://b0bq1lymvlbwx" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Spellbook & Tabs/Spellbook_PreviousPage.png" id="2_bcn20"]
@@ -6,12 +6,16 @@
 [ext_resource type="Texture2D" uid="uid://dn1owahokhb1h" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Spellbook & Tabs/PageFold_Left.png" id="4_e7hi6"]
 [ext_resource type="Texture2D" uid="uid://bo2eacrug1gj8" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Spellbook & Tabs/PageFold_Right.png" id="5_8faxr"]
 [ext_resource type="FontFile" uid="uid://bfd8lxmo20ddl" path="res://asset/font/Everyday_Tiny_Bold.ttf" id="6_s4q4r"]
-[ext_resource type="Texture2D" uid="uid://ckukaaeujn7rm" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Spellbook & Tabs/Tab03_Bottom_Normal.png" id="7_nagfc"]
 [ext_resource type="Texture2D" uid="uid://bq0ofl5a6uujg" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Spellbook & Tabs/Tab05_Bottom_Normal.png" id="8_47c73"]
-[ext_resource type="SpriteFrames" uid="uid://dxdlstuhcqyei" path="res://asset/animation/demon/demonDemoness.tres" id="11_djhyx"]
-[ext_resource type="Texture2D" uid="uid://eskabl6wixm4" path="res://asset/sprite/FreeCuteTileset/BG1.png" id="12_5a8vn"]
-[ext_resource type="Texture2D" uid="uid://dmseoihee33c5" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Resource orbs/DecoratedFrame1_Left.png" id="12_bcn20"]
-[ext_resource type="Texture2D" uid="uid://bij6posn3caot" path="res://asset/sprite/FreeCuteTileset/BG2.png" id="13_62rnm"]
+[ext_resource type="Texture2D" uid="uid://npp1myr5mh8j" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250423helmetFrame-Sheet.png" id="8_nagfc"]
+[ext_resource type="Texture2D" uid="uid://bqp6a1ox58gg5" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250423bootsFrame-Sheet.png" id="9_47c73"]
+[ext_resource type="Texture2D" uid="uid://2n1by5nb0aft" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250423weaponFrame-Sheet.png" id="10_bcn20"]
+[ext_resource type="Texture2D" uid="uid://dxxxgbvi3dh74" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250423neckFrame-Sheet.png" id="11_dopsg"]
+[ext_resource type="Texture2D" uid="uid://dejdxiuryw8by" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Background boxes/BGbox_01A.png" id="12_e7hi6"]
+[ext_resource type="Texture2D" uid="uid://d3hpc7dxtj2l8" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Buttons/Button_01A_Normal.png" id="13_8faxr"]
+[ext_resource type="Texture2D" uid="uid://dqevhcqfvsh5o" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Buttons/Button_01A_Pressed.png" id="14_s4q4r"]
+[ext_resource type="Texture2D" uid="uid://d252ccixdnss4" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Cursors/Tick02_Down.png" id="15_e7hi6"]
+[ext_resource type="Texture2D" uid="uid://bsg1p3ugiafv" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Buttons/Button_01A_Selected.png" id="15_g4pxf"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ghqgj"]
 atlas = ExtResource("2_bcn20")
@@ -138,9 +142,73 @@ animations = [{
 "speed": 10.0
 }]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_l8fyk"]
-atlas = ExtResource("7_nagfc")
-region = Rect2(14, 10, 36, 54)
+[sub_resource type="AtlasTexture" id="AtlasTexture_e7hi6"]
+atlas = ExtResource("8_nagfc")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8faxr"]
+atlas = ExtResource("8_nagfc")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s4q4r"]
+atlas = ExtResource("8_nagfc")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g4pxf"]
+atlas = ExtResource("8_nagfc")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_64t65"]
+atlas = ExtResource("9_47c73")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k4y50"]
+atlas = ExtResource("9_47c73")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2xqit"]
+atlas = ExtResource("9_47c73")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_djhyx"]
+atlas = ExtResource("9_47c73")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5a8vn"]
+atlas = ExtResource("10_bcn20")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_62rnm"]
+atlas = ExtResource("10_bcn20")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bss1g"]
+atlas = ExtResource("10_bcn20")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aphwf"]
+atlas = ExtResource("10_bcn20")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0cdwr"]
+atlas = ExtResource("11_dopsg")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_trhrk"]
+atlas = ExtResource("11_dopsg")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w1hmn"]
+atlas = ExtResource("11_dopsg")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uutju"]
+atlas = ExtResource("11_dopsg")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5gve0"]
+atlas = ExtResource("15_e7hi6")
+region = Rect2(10, 10, 14, 14)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ghqgj"]
 
@@ -154,35 +222,36 @@ offset_right = 540.0
 offset_bottom = 360.0
 mouse_filter = 2
 
-[node name="Node2D" type="Node2D" parent="."]
-position = Vector2(24, 6)
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Node2D"]
-z_index = 15
-position = Vector2(243, 151)
+[node name="next_page_animated_sprite_2d" type="AnimatedSprite2D" parent="."]
+z_index = 800
+position = Vector2(267, 157)
 sprite_frames = SubResource("SpriteFrames_l8fyk")
 animation = &"backward"
 frame = 7
 frame_progress = 1.0
 
-[node name="backward_page" type="TextureButton" parent="Node2D"]
-z_index = 20
+[node name="ui" type="Node2D" parent="."]
+z_index = 820
+position = Vector2(24, 6)
+
+[node name="backward_page" type="TextureButton" parent="ui"]
+z_index = 820
 offset_left = 19.0
 offset_top = 7.0
 offset_right = 83.0
 offset_bottom = 71.0
 texture_normal = ExtResource("4_e7hi6")
 
-[node name="forward_page" type="TextureButton" parent="Node2D"]
-z_index = 20
+[node name="forward_page" type="TextureButton" parent="ui"]
+z_index = 820
 offset_left = 395.0
 offset_top = 1.0
 offset_right = 459.0
 offset_bottom = 65.0
 texture_normal = ExtResource("5_8faxr")
 
-[node name="current_page_label" type="Label" parent="Node2D"]
-z_index = 50
+[node name="current_page_label" type="Label" parent="ui"]
+z_index = 820
 offset_left = 402.0
 offset_top = 242.0
 offset_right = 442.0
@@ -192,64 +261,285 @@ theme_override_fonts/font = ExtResource("6_s4q4r")
 text = "2"
 horizontal_alignment = 1
 
-[node name="NinePatchRect2" type="NinePatchRect" parent="Node2D"]
-z_index = 20
-offset_left = 289.0
-offset_top = 275.0
-offset_right = 326.0
-offset_bottom = 350.0
-texture = SubResource("AtlasTexture_l8fyk")
-region_rect = Rect2(0, 0, 36, 54)
-patch_margin_left = 15
-patch_margin_top = 18
-patch_margin_right = 16
-patch_margin_bottom = 18
+[node name="bonus_button_container" type="Node2D" parent="ui"]
+z_index = 820
 
-[node name="NinePatchRect3" type="NinePatchRect" parent="Node2D"]
-z_index = 20
-offset_left = 338.0
-offset_top = 272.0
-offset_right = 374.0
-offset_bottom = 339.0
-texture = ExtResource("8_47c73")
-region_rect = Rect2(14, 10, 36, 54)
-patch_margin_left = 16
-patch_margin_top = 19
-patch_margin_right = 16
-patch_margin_bottom = 18
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-visible = false
-z_index = 25
-position = Vector2(411, 73)
+[node name="path1_button1" type="TextureButton" parent="ui/bonus_button_container"]
+z_index = 820
+z_as_relative = false
+offset_left = 44.0
+offset_top = 58.0
+offset_right = 74.0
+offset_bottom = 88.0
 scale = Vector2(2, 2)
-sprite_frames = ExtResource("11_djhyx")
-animation = &"die"
-metadata/_edit_lock_ = true
+texture_normal = SubResource("AtlasTexture_e7hi6")
+texture_pressed = SubResource("AtlasTexture_8faxr")
+texture_hover = SubResource("AtlasTexture_s4q4r")
+texture_disabled = SubResource("AtlasTexture_g4pxf")
 
-[node name="menu_container" type="Node2D" parent="."]
-z_index = 20
-position = Vector2(24, 6)
+[node name="path1_button2" type="TextureButton" parent="ui/bonus_button_container"]
+z_index = 820
+z_as_relative = false
+offset_left = 80.0
+offset_top = 94.0
+offset_right = 110.0
+offset_bottom = 124.0
+scale = Vector2(2, 2)
+texture_normal = SubResource("AtlasTexture_e7hi6")
+texture_pressed = SubResource("AtlasTexture_8faxr")
+texture_hover = SubResource("AtlasTexture_s4q4r")
+texture_disabled = SubResource("AtlasTexture_g4pxf")
 
-[node name="reset_button" type="Button" parent="menu_container"]
-z_index = 25
-offset_left = 320.0
-offset_top = 283.0
-offset_right = 376.0
-offset_bottom = 307.0
-rotation = 1.5707964
+[node name="path1_button3" type="TextureButton" parent="ui/bonus_button_container"]
+z_index = 820
+z_as_relative = false
+offset_left = 114.0
+offset_top = 58.0
+offset_right = 144.0
+offset_bottom = 88.0
+scale = Vector2(2, 2)
+texture_normal = SubResource("AtlasTexture_e7hi6")
+texture_pressed = SubResource("AtlasTexture_8faxr")
+texture_hover = SubResource("AtlasTexture_s4q4r")
+texture_disabled = SubResource("AtlasTexture_g4pxf")
+
+[node name="path2_button1" type="TextureButton" parent="ui/bonus_button_container"]
+z_index = 820
+z_as_relative = false
+offset_left = 44.0
+offset_top = 130.0
+offset_right = 74.0
+offset_bottom = 160.0
+scale = Vector2(2, 2)
+texture_normal = SubResource("AtlasTexture_64t65")
+texture_pressed = SubResource("AtlasTexture_k4y50")
+texture_hover = SubResource("AtlasTexture_2xqit")
+texture_disabled = SubResource("AtlasTexture_djhyx")
+
+[node name="path2_button2" type="TextureButton" parent="ui/bonus_button_container"]
+z_index = 820
+z_as_relative = false
+offset_left = 83.0
+offset_top = 164.0
+offset_right = 113.0
+offset_bottom = 194.0
+scale = Vector2(2, 2)
+texture_normal = SubResource("AtlasTexture_64t65")
+texture_pressed = SubResource("AtlasTexture_k4y50")
+texture_hover = SubResource("AtlasTexture_2xqit")
+texture_disabled = SubResource("AtlasTexture_djhyx")
+
+[node name="path2_button3" type="TextureButton" parent="ui/bonus_button_container"]
+z_index = 820
+z_as_relative = false
+offset_left = 44.0
+offset_top = 198.0
+offset_right = 76.0
+offset_bottom = 230.0
+scale = Vector2(2, 2)
+texture_normal = SubResource("AtlasTexture_64t65")
+texture_pressed = SubResource("AtlasTexture_k4y50")
+texture_hover = SubResource("AtlasTexture_2xqit")
+texture_disabled = SubResource("AtlasTexture_djhyx")
+
+[node name="path3_button1" type="TextureButton" parent="ui/bonus_button_container"]
+z_index = 820
+z_as_relative = false
+offset_left = 151.0
+offset_top = 96.0
+offset_right = 183.0
+offset_bottom = 128.0
+scale = Vector2(2, 2)
+texture_normal = SubResource("AtlasTexture_5a8vn")
+texture_pressed = SubResource("AtlasTexture_62rnm")
+texture_hover = SubResource("AtlasTexture_bss1g")
+texture_disabled = SubResource("AtlasTexture_aphwf")
+
+[node name="path3_button2" type="TextureButton" parent="ui/bonus_button_container"]
+z_index = 820
+z_as_relative = false
+offset_left = 116.0
+offset_top = 130.0
+offset_right = 146.0
+offset_bottom = 160.0
+scale = Vector2(2, 2)
+texture_normal = SubResource("AtlasTexture_5a8vn")
+texture_pressed = SubResource("AtlasTexture_62rnm")
+texture_hover = SubResource("AtlasTexture_bss1g")
+texture_disabled = SubResource("AtlasTexture_aphwf")
+
+[node name="path3_button3" type="TextureButton" parent="ui/bonus_button_container"]
+z_index = 820
+z_as_relative = false
+offset_left = 152.0
+offset_top = 169.0
+offset_right = 182.0
+offset_bottom = 199.0
+scale = Vector2(2, 2)
+texture_normal = SubResource("AtlasTexture_5a8vn")
+texture_pressed = SubResource("AtlasTexture_62rnm")
+texture_hover = SubResource("AtlasTexture_bss1g")
+texture_disabled = SubResource("AtlasTexture_aphwf")
+
+[node name="path4_button1" type="TextureButton" parent="ui/bonus_button_container"]
+z_index = 820
+z_as_relative = false
+offset_left = 115.0
+offset_top = 202.0
+offset_right = 145.0
+offset_bottom = 232.0
+scale = Vector2(2, 2)
+texture_normal = SubResource("AtlasTexture_0cdwr")
+texture_pressed = SubResource("AtlasTexture_trhrk")
+texture_hover = SubResource("AtlasTexture_w1hmn")
+texture_disabled = SubResource("AtlasTexture_uutju")
+
+[node name="faction_label" type="Label" parent="ui"]
+z_index = 820
+offset_left = 37.0
+offset_top = 21.0
+offset_right = 241.0
+offset_bottom = 59.0
+theme_override_colors/font_color = Color(0.44806224, 0.16572773, 0.024388526, 1)
+theme_override_fonts/font = ExtResource("6_s4q4r")
+text = "Elf"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NinePatchRect" type="NinePatchRect" parent="ui"]
+z_index = 820
+offset_left = 262.0
+offset_top = 49.0
+offset_right = 433.0
+offset_bottom = 230.0
+texture = ExtResource("12_e7hi6")
+region_rect = Rect2(3, 6, 90, 85)
+patch_margin_left = 31
+patch_margin_top = 29
+patch_margin_right = 29
+patch_margin_bottom = 31
+
+[node name="faction_path_label" type="Label" parent="ui/NinePatchRect"]
+z_index = 820
+layout_mode = 0
+offset_left = 25.0
+offset_top = 20.0
+offset_right = 147.0
+offset_bottom = 36.0
+theme_override_colors/font_color = Color(0.44806224, 0.16572773, 0.024388526, 1)
 theme_override_fonts/font = ExtResource("6_s4q4r")
 theme_override_font_sizes/font_size = 8
-theme_override_styles/focus = SubResource("StyleBoxEmpty_ghqgj")
-text = "Reset"
-flat = true
+text = "Path1"
 
-[node name="back_button" type="Button" parent="menu_container"]
-z_index = 25
-offset_left = 367.0
-offset_top = 278.0
-offset_right = 417.0
-offset_bottom = 302.0
+[node name="faction_bonus_description" type="Label" parent="ui/NinePatchRect"]
+z_index = 820
+layout_mode = 0
+offset_left = 25.0
+offset_top = 40.0
+offset_right = 147.0
+offset_bottom = 150.0
+theme_override_colors/font_color = Color(0.44806224, 0.16572773, 0.024388526, 1)
+theme_override_fonts/font = ExtResource("6_s4q4r")
+theme_override_font_sizes/font_size = 4
+text = "Description:"
+autowrap_mode = 3
+
+[node name="path_active_button" type="TextureButton" parent="ui"]
+z_index = 820
+offset_left = 295.0
+offset_top = 224.0
+offset_right = 391.0
+offset_bottom = 256.0
+texture_normal = ExtResource("13_8faxr")
+texture_pressed = ExtResource("14_s4q4r")
+texture_hover = ExtResource("15_g4pxf")
+
+[node name="Label" type="Label" parent="ui/path_active_button"]
+z_index = 820
+layout_mode = 0
+offset_left = 18.0
+offset_top = 7.0
+offset_right = 72.0
+offset_bottom = 23.0
+theme_override_fonts/font = ExtResource("6_s4q4r")
+theme_override_font_sizes/font_size = 8
+text = "Active"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ui"]
+z_index = 820
+offset_left = 84.00001
+offset_top = 107.00001
+offset_right = 98.00001
+offset_bottom = 121.00001
+rotation = -0.7853982
+mouse_filter = 2
+texture = SubResource("AtlasTexture_5gve0")
+stretch_mode = 2
+
+[node name="TextureRect2" type="TextureRect" parent="ui"]
+z_index = 820
+offset_left = 128.0
+offset_top = 117.99999
+offset_right = 142.0
+offset_bottom = 132.0
+rotation = -2.3561945
+mouse_filter = 2
+texture = SubResource("AtlasTexture_5gve0")
+stretch_mode = 2
+
+[node name="TextureRect3" type="TextureRect" parent="ui"]
+z_index = 820
+offset_left = 85.00001
+offset_top = 178.0
+offset_right = 99.00001
+offset_bottom = 192.0
+rotation = -0.7853982
+mouse_filter = 2
+texture = SubResource("AtlasTexture_5gve0")
+stretch_mode = 2
+
+[node name="TextureRect4" type="TextureRect" parent="ui"]
+z_index = 820
+offset_left = 155.0
+offset_top = 181.0
+offset_right = 169.0
+offset_bottom = 195.0
+rotation = -0.7853982
+mouse_filter = 2
+texture = SubResource("AtlasTexture_5gve0")
+stretch_mode = 2
+
+[node name="TextureRect5" type="TextureRect" parent="ui"]
+z_index = 820
+offset_left = 163.0
+offset_top = 135.0
+offset_right = 177.0
+offset_bottom = 149.0
+rotation = 0.7853982
+mouse_filter = 2
+texture = SubResource("AtlasTexture_5gve0")
+stretch_mode = 2
+
+[node name="TextureRect6" type="TextureRect" parent="ui"]
+z_index = 820
+offset_left = 95.00001
+offset_top = 204.00002
+offset_right = 109.00001
+offset_bottom = 218.00002
+rotation = 0.7853982
+mouse_filter = 2
+texture = SubResource("AtlasTexture_5gve0")
+stretch_mode = 2
+
+[node name="back_button" type="Button" parent="."]
+z_index = 830
+z_as_relative = false
+offset_left = 391.0
+offset_top = 284.0
+offset_right = 441.0
+offset_bottom = 308.0
 rotation = 1.5707964
 theme_override_fonts/font = ExtResource("6_s4q4r")
 theme_override_font_sizes/font_size = 8
@@ -257,34 +547,20 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_ghqgj")
 text = "Back"
 flat = true
 
-[node name="TextureRect" type="TextureRect" parent="."]
-offset_right = 540.0
-offset_bottom = 360.0
-scale = Vector2(2, 2)
-mouse_filter = 2
-texture = ExtResource("12_5a8vn")
-expand_mode = 1
-stretch_mode = 2
-metadata/_edit_lock_ = true
+[node name="NinePatchRect3" type="NinePatchRect" parent="back_button"]
+z_index = 820
+z_as_relative = false
+layout_mode = 0
+offset_left = -6.0
+offset_top = 29.0
+offset_right = 30.0
+offset_bottom = 96.0
+rotation = -1.5707964
+texture = ExtResource("8_47c73")
+region_rect = Rect2(14, 10, 36, 54)
+patch_margin_left = 16
+patch_margin_top = 19
+patch_margin_right = 16
+patch_margin_bottom = 18
 
-[node name="TextureRect2" type="TextureRect" parent="."]
-offset_right = 540.0
-offset_bottom = 360.0
-scale = Vector2(2, 2)
-mouse_filter = 2
-texture = ExtResource("13_62rnm")
-expand_mode = 1
-stretch_mode = 2
-metadata/_edit_lock_ = true
-
-[node name="DecoratedFrame1Left" type="TextureRect" parent="."]
-z_index = 30
-offset_left = -21.0
-offset_top = -16.0
-offset_right = 139.0
-offset_bottom = 144.0
-texture = ExtResource("12_bcn20")
-stretch_mode = 2
-
-[connection signal="pressed" from="menu_container/reset_button" to="." method="_on_reset_button_pressed"]
-[connection signal="pressed" from="menu_container/back_button" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="back_button" to="." method="_on_back_button_pressed"]

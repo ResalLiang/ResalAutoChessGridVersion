@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://ci63qrx0cqk8p"]
+[gd_scene load_steps=26 format=3 uid="uid://ci63qrx0cqk8p"]
 
 [ext_resource type="Script" uid="uid://drxhwji5s0rgy" path="res://script/player_upgrade.gd" id="1_ky6jo"]
 [ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="2_4mnel"]
@@ -7,7 +7,9 @@
 [ext_resource type="FontFile" uid="uid://cttiyfnemjlwx" path="res://asset/font/Everyday_Tiny_Bold_Original.ttf" id="4_14t45"]
 [ext_resource type="FontFile" uid="uid://bmp6ednj2j2ir" path="res://asset/font/Everyday_Tiny.ttf" id="6_hbppc"]
 [ext_resource type="Texture2D" uid="uid://b8l2exyqb5wgb" path="res://asset/sprite/GandalfHardcore Pixel Art Game UI/Toggle buttons.png" id="7_46ec0"]
+[ext_resource type="Texture2D" uid="uid://1xg2pws35vj8" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425leftArrow-Sheet.png" id="8_14t45"]
 [ext_resource type="Texture2D" uid="uid://chvlj0aa3r1oi" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425exitButton-Sheet.png" id="8_r5nws"]
+[ext_resource type="Texture2D" uid="uid://dhawkfn61ogbw" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425rightArrow-Sheet.png" id="9_hbppc"]
 [ext_resource type="Texture2D" uid="uid://eskabl6wixm4" path="res://asset/sprite/FreeCuteTileset/BG1.png" id="9_iupli"]
 [ext_resource type="Texture2D" uid="uid://bij6posn3caot" path="res://asset/sprite/FreeCuteTileset/BG2.png" id="10_7asve"]
 
@@ -20,6 +22,30 @@ region = Rect2(16, 0, 16, 16)
 [sub_resource type="AtlasTexture" id="AtlasTexture_tpwrm"]
 atlas = ExtResource("7_46ec0")
 region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_46ec0"]
+atlas = ExtResource("8_14t45")
+region = Rect2(2, 0, 19, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r5nws"]
+atlas = ExtResource("8_14t45")
+region = Rect2(44, 0, 19, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iupli"]
+atlas = ExtResource("8_14t45")
+region = Rect2(21, 0, 21, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7asve"]
+atlas = ExtResource("9_hbppc")
+region = Rect2(0, 0, 19, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yr4l1"]
+atlas = ExtResource("9_hbppc")
+region = Rect2(42, 0, 19, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xuri5"]
+atlas = ExtResource("9_hbppc")
+region = Rect2(21, 0, 21, 14)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bhmnh"]
 atlas = ExtResource("8_r5nws")
@@ -136,6 +162,31 @@ theme_override_font_sizes/font_size = 8
 text = "Skill Tree"
 horizontal_alignment = 1
 
+[node name="NinePatchRect4" type="NinePatchRect" parent="Node2D/NinePatchRect"]
+layout_mode = 0
+offset_left = -15.0
+offset_top = 247.0
+offset_right = 279.0
+offset_bottom = 268.0
+texture = ExtResource("3_njfnl")
+region_rect = Rect2(0, 0, 96, 22)
+patch_margin_left = 32
+patch_margin_top = 10
+patch_margin_right = 32
+patch_margin_bottom = 11
+axis_stretch_vertical = 1
+
+[node name="Label" type="Label" parent="Node2D/NinePatchRect/NinePatchRect4"]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 2.0
+offset_right = 293.0
+offset_bottom = 18.0
+theme_override_fonts/font = ExtResource("4_14t45")
+theme_override_font_sizes/font_size = 8
+text = "Difficulty"
+horizontal_alignment = 1
+
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
 z_index = 9
 tile_set = ExtResource("2_4mnel")
@@ -224,7 +275,7 @@ z_index = 25
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_hbppc")
 theme_override_font_sizes/font_size = 8
-text = "holy"
+text = "demon"
 
 [node name="demon_faction_lock" type="CheckBox" parent="faction_lock_container/demon_lock_container"]
 z_index = 25
@@ -236,7 +287,7 @@ theme_override_icons/checked = SubResource("AtlasTexture_cxsyo")
 theme_override_icons/unchecked = SubResource("AtlasTexture_tpwrm")
 icon_alignment = 2
 
-[node name="Node2D" type="ColorRect" parent="faction_lock_container"]
+[node name="place_holder" type="ColorRect" parent="faction_lock_container"]
 custom_minimum_size = Vector2(0, 12.82)
 layout_mode = 2
 color = Color(1, 1, 1, 0)
@@ -261,7 +312,37 @@ size_flags_horizontal = 8
 theme_override_styles/focus = SubResource("StyleBoxEmpty_esy48")
 theme_override_icons/checked = SubResource("AtlasTexture_cxsyo")
 theme_override_icons/unchecked = SubResource("AtlasTexture_tpwrm")
+disabled = true
 icon_alignment = 2
+
+[node name="place_holder2" type="ColorRect" parent="faction_lock_container"]
+custom_minimum_size = Vector2(0, 65.61)
+layout_mode = 2
+color = Color(1, 1, 1, 0)
+
+[node name="difficulty_container" type="HBoxContainer" parent="faction_lock_container"]
+layout_mode = 2
+
+[node name="difficulty_left_arrow" type="TextureButton" parent="faction_lock_container/difficulty_container"]
+layout_mode = 2
+texture_normal = SubResource("AtlasTexture_46ec0")
+texture_pressed = SubResource("AtlasTexture_r5nws")
+texture_hover = SubResource("AtlasTexture_iupli")
+
+[node name="difficulty_label" type="Label" parent="faction_lock_container/difficulty_container"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("6_hbppc")
+theme_override_font_sizes/font_size = 8
+text = "hard"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="difficulty_right_arrow" type="TextureButton" parent="faction_lock_container/difficulty_container"]
+layout_mode = 2
+texture_normal = SubResource("AtlasTexture_7asve")
+texture_pressed = SubResource("AtlasTexture_yr4l1")
+texture_hover = SubResource("AtlasTexture_xuri5")
 
 [node name="back_button" type="TextureButton" parent="."]
 z_index = 25

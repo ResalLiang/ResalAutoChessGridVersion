@@ -1933,11 +1933,11 @@ func freezing_field(arrow_count: int) -> bool:
 func mana_transfer() -> bool:
 	var chess_affected := false
 	var all_chesses = arena.unit_grid.get_all_units()
-	var all_ally = all_chesses.filter(func(obstacle): return (DataManagerSingleton.check_chess_valid(obstacle) and obstacle.team == team and obstacle.max_hp != 0))
+	var all_ally = all_chesses.filter(func(obstacle): return (DataManagerSingleton.check_chess_valid(obstacle) and obstacle != self and obstacle.team == team and obstacle.animated_sprite_2d.sprite_frames.has_animation("spell")))
 	if all_ally.size() == 0:
 		chess_affected = false
 	elif all_ally.size() == 1:
-		all_ally[0].gain_mp(mp * 0.2 * chess_level)
+		all_ally[0].gain_mp(mp * 0.3 * chess_level)
 		chess_affected =  true
 	else:
 		all_ally.sort_custom(

@@ -16,11 +16,19 @@ class_name PlayerUpgrade
 
 @onready var back_button: TextureButton = $back_button
 
+@onready var difficulty_left_arrow: TextureButton = $faction_lock_container/difficulty_container/difficulty_left_arrow
+@onready var difficulty_label: Label = $faction_lock_container/difficulty_container/difficulty_label
+@onready var difficulty_right_arrow: TextureButton = $faction_lock_container/difficulty_container/difficulty_right_arrow
+
 
 #TODO: add debug button
 signal to_menu_scene
 
 var current_player_upgrade : Dictionary
+
+var difficulty_array = ["Easy", "Normal", "Hard"]
+var current_difficulty_index
+var current_difficulty
 
 func _ready():
 	current_player_upgrade = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]
@@ -39,7 +47,30 @@ func _ready():
 			var faction_name = node.get_name().replace("_faction_lock", "")
 			node.set_pressed(current_player_upgrade["faction_locked"][faction_name])
 			node.toggled.connect(faction_lock_button_pressed.bind(node))
-
+	
+	
+	
+	current_difficulty = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["difficulty"]
+	if difficulty_array.has(current_difficulty):
+		current_difficulty_index = difficulty_array.find(current_difficulty, 0)
+	else:
+		current_difficulty_index = 1
+		
+	difficulty_left_arrow.pressed.connect(
+		func():
+			current_difficulty_index -= 1
+			current_difficulty_index = max(0, min(2, current_difficulty_index))
+			difficulty_label.text = difficulty_array[current_difficulty_index]
+			DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["difficulty"] = difficulty_array[current_difficulty_index]
+	)
+	
+	difficulty_right_arrow.pressed.connect(
+		func():
+			current_difficulty_index += 1
+			current_difficulty_index = max(0, min(2, current_difficulty_index))
+			difficulty_label.text = difficulty_array[current_difficulty_index]
+			DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["difficulty"] = difficulty_array[current_difficulty_index]
+	)
 
 func faction_lock_button_pressed(button_index: CheckBox):
 	if button_index.get_name() == "debug_mode_button":

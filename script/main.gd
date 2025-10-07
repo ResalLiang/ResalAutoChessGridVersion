@@ -77,7 +77,7 @@ func _transition_to_scene(scene_path: String, container: Control, if_transition:
 		VirtualCursorSingleton.set_cursor_type("loading")
 		transition_layer.show()
 		tween = create_tween()
-		tween.tween_property(transition_layer, "color", Color(0, 0, 0, 1), 0.2)
+		tween.tween_property(transition_layer, "color", Color(0, 0, 0, 1), 0.15)
 		await tween.finished
 	
 	# 清理当前场景

@@ -6,6 +6,7 @@ const chess_scene = preload("res://scene/chess.tscn")
 const obstacle_scene = preload("res://scene/obstacle.tscn")
 const chess_class = preload("res://script/chess.gd")
 const alternative_choice_scene = preload("res://scene/alternative_choice.tscn")
+const skill_tree_scene = preload("res://scene/skill_tree.tscn")
 
 @onready var arena: PlayArea = %arena
 @onready var bench: PlayArea = %bench
@@ -51,6 +52,7 @@ const alternative_choice_scene = preload("res://scene/alternative_choice.tscn")
 @onready var chess_information: ChessInformation = $chess_information
 @onready var arrow: CustomArrowRenderer = $arrow
 @onready var game_speed_controller: GameSpeedController = $game_speed_controller
+@onready var faction_bonus_button: Button = $tilemap/ui/faction_bonus_button
 
 
 enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
@@ -186,6 +188,25 @@ var current_population := 0
 var max_population := 3
 var population_record : Array = []
 
+var faction_path_update_template = {
+	"elf": {
+		"path1" : 0,
+		"path2" : 0,
+		"path3" : 0
+	},
+	"human": {
+		"path1" : 0,
+		"path2" : 0,
+		"path3" : 0
+	},
+	"dwarf": {
+		"path1" : 0,
+		"path2" : 0,
+		"path3" : 0
+	}	
+}
+var faction_path_update: Dictionary
+
 signal round_finished
 signal chess_appearance_finished
 signal game_turn_started
@@ -319,6 +340,12 @@ func _ready():
 		func(obstacle):
 			arrow.is_visible = false		
 	)
+	
+	faction_bonus_button.pressed.connect(
+		func():
+			var skill_tree = skill_tree_scene.instantiate()
+			add_child(skill_tree)
+	)
 
 	player_won_round.connect(DataManagerSingleton.handle_player_won_round)
 	player_lose_round.connect(DataManagerSingleton.handle_player_lose_round)
@@ -379,6 +406,8 @@ func start_new_game() -> void:
 	await clear_play_area(bench)
 
 	saved_arena_team = {}
+	
+	faction_path_update = faction_path_update_template.duplicate(true)
 
 	team_dict[Team.TEAM1] = []
 	team_dict[Team.TEAM2] = []
@@ -435,14 +464,24 @@ func new_round_prepare_end():
 			player_max_hp_sum += chess_index.max_hp			
 	save_arena_team()
 
-	if DataManagerSingleton.difficulty == 1:
-		generate_enemy(mid(player_max_hp_sum, current_round * 200, shop_handler.shop_level * 200))
+	var game_difficulty
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player].has("difficulty"):
+		game_difficulty = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["difficulty"]
+	else:
+		game_difficulty = "Normal"
+		
+	match game_difficulty:
+		"Easy":
+			generate_enemy(mid(player_max_hp_sum, current_round * 200, shop_handler.shop_level * 200))
 
-	elif DataManagerSingleton.difficulty == 2:
-		generate_enemy(max(player_max_hp_sum * 1.2, current_round * 200, shop_handler.shop_level * 200))
+		"Normal":
+			generate_enemy(max(player_max_hp_sum * 1.2, current_round * 200, shop_handler.shop_level * 200))
 
-	elif DataManagerSingleton.difficulty == 3:
-		generate_enemy(max(player_max_hp_sum * 1.5, current_round * 300, shop_handler, shop_handler.shop_level * 300))
+		"Hard":
+			generate_enemy(max(player_max_hp_sum * 1.5, current_round * 300, shop_handler, shop_handler.shop_level * 300))
+
+		_:
+			generate_enemy(max(player_max_hp_sum * 1.2, current_round * 200, shop_handler.shop_level * 200))
 
 	faction_bonus_manager.bonus_refresh()
 

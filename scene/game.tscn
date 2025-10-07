@@ -7852,18 +7852,16 @@ offset_right = 108.0
 offset_bottom = 309.0
 texture = SubResource("AtlasTexture_58qvq")
 
-[node name="Label" type="Label" parent="tilemap/ui"]
+[node name="faction_bonus_button" type="Button" parent="tilemap/ui"]
 offset_left = 193.0
-offset_top = 21.0
-offset_right = 315.0
-offset_bottom = 37.0
+offset_top = 18.0
+offset_right = 323.0
+offset_bottom = 42.0
 theme_override_colors/font_color = Color(0.95686275, 0.7254902, 0.2509804, 1)
-theme_override_colors/font_shadow_color = Color(0.16078432, 0.16078432, 0.16078432, 0.47058824)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
 theme_override_fonts/font = ExtResource("42_l2xpq")
 theme_override_font_sizes/font_size = 8
 text = "Faction Bonus"
+flat = true
 
 [node name="decoration" type="TileMapLayer" parent="tilemap"]
 z_index = 10
