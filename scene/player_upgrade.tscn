@@ -312,7 +312,6 @@ size_flags_horizontal = 8
 theme_override_styles/focus = SubResource("StyleBoxEmpty_esy48")
 theme_override_icons/checked = SubResource("AtlasTexture_cxsyo")
 theme_override_icons/unchecked = SubResource("AtlasTexture_tpwrm")
-disabled = true
 icon_alignment = 2
 
 [node name="place_holder2" type="ColorRect" parent="faction_lock_container"]

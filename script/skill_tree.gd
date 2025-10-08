@@ -15,41 +15,56 @@ const alternative_choice_scene = preload("res://scene/alternative_choice.tscn")
 @onready var bonus_button_container: Node2D = $ui/bonus_button_container
 
 @onready var faction_label: Label = $ui/faction_label
-@onready var faction_path_label: Label = $ui/NinePatchRect/faction_path_label
-@onready var faction_bonus_description: Label = $ui/NinePatchRect/faction_bonus_description
 @onready var path_active_button: TextureButton = $ui/path_active_button
+@onready var faction_path_label: Label = $ui/NinePatchRect/VBoxContainer/faction_path_label
+@onready var faction_bonus_description: Label = $ui/NinePatchRect/VBoxContainer/faction_bonus_description
 
-signal to_menu_scene
+@onready var consume_remian_lose_round: TextureButton = $ui/active_button_container/consume_remian_lose_round
+@onready var consume_max_lose_round: TextureButton = $ui/active_button_container/consume_max_lose_round
+@onready var consume_won_round: TextureButton = $ui/active_button_container/consume_won_round
+@onready var just_active: TextureButton = $ui/active_button_container/just_active
+@onready var just_active_label: Label = $ui/active_button_container/just_active/Label
+
+@onready var lose_round_container: HBoxContainer = $ui/won_lose_round_container/lose_round_container
+@onready var remain_lose_rounds_template: TextureRect = $ui/won_lose_round_container/lose_round_container/remain_lose_rounds_template
+@onready var lose_rounds_template: TextureRect = $ui/won_lose_round_container/lose_round_container/lose_rounds_template
+@onready var won_round_container: HBoxContainer = $ui/won_lose_round_container/won_round_container
+@onready var won_rounds_template: TextureRect = $ui/won_lose_round_container/won_round_container/won_rounds_template
+@onready var remain_won_rounds_template: TextureRect = $ui/won_lose_round_container/won_round_container/remain_won_rounds_template
 
 var current_page := 0
-var faction_array := ["Elf", "Human", "Dwarf"]
+var faction_array := ["elf", "human", "dwarf"]
 var game_faction_path_update
 
 var current_path_number := 0
 var current_level_number := 0
 
 var faction_path_update_template = {
-	"Elf": {
+	"elf": {
 		"path1" : 0,
 		"path2" : 0,
 		"path3" : 0
 	},
-	"Human": {
+	"human": {
 		"path1" : 0,
 		"path2" : 0,
 		"path3" : 0
 	},
-	"Dwarf": {
+	"dwarf": {
 		"path1" : 0,
 		"path2" : 0,
 		"path3" : 0
 	}	
 }
 
+signal button_actived
+
 func _ready() -> void:
 	
-	#game_faction_path_update = get_parent().faction_path_update
-	game_faction_path_update = faction_path_update_template.duplicate(true)
+	game_faction_path_update = get_parent().faction_path_update
+	#game_faction_path_update = faction_path_update_template.duplicate(true)
+	
+	button_actived.connect(handle_button_actived)
 	
 	var total_page = faction_array.size()
 	
@@ -57,6 +72,9 @@ func _ready() -> void:
 		if not node is TextureButton:
 			continue
 		node.pressed.connect(on_path_bonus_pressed.bind(node))
+	
+	
+	handle_button_actived()
 		
 	backward_page.pressed.connect(
 		func():
@@ -76,6 +94,7 @@ func _ready() -> void:
 			current_path_number = 0
 			current_level_number = 0
 			refresh_page()
+			handle_button_actived()
 	)	
 	
 	forward_page.pressed.connect(
@@ -95,10 +114,42 @@ func _ready() -> void:
 			current_path_number = 0
 			current_level_number = 0
 			refresh_page()
+			handle_button_actived()
 	)
 	
-	path_active_button.pressed.connect(
+	consume_remian_lose_round.pressed.connect(
 		func():
+			DataManagerSingleton.lose_rounds += 1
+			button_actived.emit()
+			if current_level_number == 0 or current_path_number == 0:
+				return
+			game_faction_path_update[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
+			refresh_page()
+	)
+	consume_max_lose_round.pressed.connect(
+		func():
+			DataManagerSingleton.max_lose_rounds_modifier -= 1
+			if DataManagerSingleton.max_lose_rounds + DataManagerSingleton.max_lose_rounds_modifier < DataManagerSingleton.lose_rounds:
+				DataManagerSingleton.lose_rounds -= 1
+			button_actived.emit()
+			if current_level_number == 0 or current_path_number == 0:
+				return
+			game_faction_path_update[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
+			refresh_page()		
+	)
+	consume_won_round.pressed.connect(
+		func():
+			DataManagerSingleton.won_rounds -= 1
+			button_actived.emit()
+			if current_level_number == 0 or current_path_number == 0:
+				return
+			game_faction_path_update[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
+			refresh_page()
+	)
+	just_active.pressed.connect(
+		func():
+			get_parent().remain_upgrade_count -= 1
+			button_actived.emit()
 			if current_level_number == 0 or current_path_number == 0:
 				return
 			game_faction_path_update[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
@@ -106,40 +157,47 @@ func _ready() -> void:
 	)
 	
 	current_page_label.text = str(current_page + 1)
+	handle_button_actived()
 	refresh_page()
 	
-func refresh_page():			
-	if current_level_number == 0 or current_path_number == 0:
-		path_active_button.disabled = true
-	elif current_path_number == 4:
-		path_active_button.disabled = true
-	elif current_level_number - game_faction_path_update[faction_array[current_page]]["path" + str(current_path_number)] == 1:
-		path_active_button.disabled = false
-	else:
-		path_active_button.disabled = true
-		
+func refresh_page():		
 	
 	for path_index in game_faction_path_update[faction_array[current_page]].keys():
 		var current_path_level =  game_faction_path_update[faction_array[current_page]][path_index]
 		
 		match current_path_level:
 			0:
+				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button1"), false)
+				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button2"), false)
+				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button3"), false)
 				get_node("ui/bonus_button_container/"+ path_index + "_button1").disabled = false
 				get_node("ui/bonus_button_container/"+ path_index + "_button2").disabled = true
 				get_node("ui/bonus_button_container/"+ path_index + "_button3").disabled = true
 			1:
 				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button1"), true)
+				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button2"), false)
+				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button3"), false)
+				get_node("ui/bonus_button_container/"+ path_index + "_button1").disabled = false
 				get_node("ui/bonus_button_container/"+ path_index + "_button2").disabled = false
 				get_node("ui/bonus_button_container/"+ path_index + "_button3").disabled = true
 			2:
 				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button1"), true)
 				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button2"), true)
+				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button3"), false)
+				get_node("ui/bonus_button_container/"+ path_index + "_button1").disabled = false
+				get_node("ui/bonus_button_container/"+ path_index + "_button2").disabled = false
 				get_node("ui/bonus_button_container/"+ path_index + "_button3").disabled = false
 			3:
 				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button1"), true)
 				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button2"), true)
 				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button3"), true)
+				get_node("ui/bonus_button_container/"+ path_index + "_button1").disabled = false
+				get_node("ui/bonus_button_container/"+ path_index + "_button2").disabled = false
+				get_node("ui/bonus_button_container/"+ path_index + "_button3").disabled = false
 			_:
+				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button1"), false)
+				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button2"), false)
+				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button3"), false)
 				get_node("ui/bonus_button_container/"+ path_index + "_button1").disabled = false
 				get_node("ui/bonus_button_container/"+ path_index + "_button2").disabled = true
 				get_node("ui/bonus_button_container/"+ path_index + "_button3").disabled = true
@@ -156,89 +214,90 @@ func on_path_bonus_pressed(node: TextureButton):
 	current_level_number = int(node.name.right(1))
 	
 	match faction_array[current_page] + " Path " + str(current_path_number) + " Level " + str(current_level_number):
-		"Elf Path 1 Level 1" :
+		"elf Path 1 Level 1" :
 			faction_bonus_description.text = "Critical strike chance increased by 10%"
-		"Elf Path 1 Level 2" :
+		"elf Path 1 Level 2" :
 			faction_bonus_description.text = "Critical strike chance increased by 10%, critical damage multiplier increased by 100%"
-		"Elf Path 1 Level 3" :
+		"elf Path 1 Level 3" :
 			faction_bonus_description.text = "Critical strike chance increased by 20%, critical damage multiplier increased by 250%"
-		"Elf Path 2 Level 1" :
+		"elf Path 2 Level 1" :
 			faction_bonus_description.text = "Dodge chance increased by 10%"
-		"Elf Path 2 Level 2" :
+		"elf Path 2 Level 2" :
 			faction_bonus_description.text = "Dodge chance increased by 20%, 50% chance to counterattack when dodging"
-		"Elf Path 2 Level 3" :
+		"elf Path 2 Level 3" :
 			faction_bonus_description.text = "Dodge chance increased by 30%, 50% chance to counterattack when being attacked"
-		"Elf Path 3 Level 1" :
+		"elf Path 3 Level 1" :
 			faction_bonus_description.text = "Damage reduced by 50% (minimum 1 damage), gain +1 additional attack"
-		"Elf Path 3 Level 2" :
+		"elf Path 3 Level 2" :
 			faction_bonus_description.text = "Damage reduced by 60% (minimum 2 damage), gain +2 additional attacks"
-		"Elf Path 3 Level 3" :
+		"elf Path 3 Level 3" :
 			faction_bonus_description.text = "Damage reduced by 70% (minimum 3 damage), gain +3 additional attacks"
-		"Human Path 1 Level 1" :
+		"human Path 1 Level 1" :
 			faction_bonus_description.text = "Maximum population capacity increased by 1"
-		"Human Path 1 Level 2" :
+		"human Path 1 Level 2" :
 			faction_bonus_description.text = "Maximum population capacity increased by 2"
-		"Human Path 1 Level 3" :
+		"human Path 1 Level 3" :
 			faction_bonus_description.text = "Maximum population capacity increased by 3"
-		"Human Path 2 Level 1" :
+		"human Path 2 Level 1" :
 			faction_bonus_description.text = "For every 2 additional Human chess pieces purchased, refresh 1 Villager chess piece (maximum shop tier 2)"
-		"Human Path 2 Level 2" :
+		"human Path 2 Level 2" :
 			faction_bonus_description.text = "For every 2 additional Human chess pieces purchased, refresh 1 Villager chess piece (maximum shop tier 4)"
-		"Human Path 2 Level 3" :
+		"human Path 2 Level 3" :
 			faction_bonus_description.text = "For every 2 additional Human chess pieces purchased, refresh 1 Villager chess piece (maximum shop tier 6)"
-		"Human Path 3 Level 1": 
+		"human Path 3 Level 1": 
 			faction_bonus_description.text = "Common rarity chess pieces can choose to become their upgraded version when merging"
-		"Human Path 3 Level 2": 
+		"human Path 3 Level 2": 
 			faction_bonus_description.text = "Uncommon rarity chess pieces can choose to become their upgraded version when merging"
-		"Human Path 3 Level 3": 
+		"human Path 3 Level 3": 
 			faction_bonus_description.text = "Rare rarity chess pieces can choose to become their upgraded version when merging"
-		"Dwarf Path 1 Level 1" :
+		"dwarf Path 1 Level 1" :
 			faction_bonus_description.text = "Armor increased by 2 points, increased by 4 points when adjacent to allied Dwarf"
-		"Dwarf Path 1 Level 2" :
+		"dwarf Path 1 Level 2" :
 			faction_bonus_description.text = "Armor increased by 4 points, increased by 6 points when adjacent to allied Dwarf, gain 5 points of damage reflection"
-		"Dwarf Path 1 Level 3" :
+		"dwarf Path 1 Level 3" :
 			faction_bonus_description.text = "Armor increased by 6 points, increased by 8 points when adjacent to allied Dwarf, gain 10 points of damage reflection"
-		"Dwarf Path 2 Level 1" :
+		"dwarf Path 2 Level 1" :
 			faction_bonus_description.text = "Damage increased by 3 points"
-		"Dwarf Path 2 Level 2" :
+		"dwarf Path 2 Level 2" :
 			faction_bonus_description.text = "Damage increased by 4 points; when HP falls below one-third maximum: lose all armor, gain melee damage bonus equal to 50% of lost armor value and 50% damage lifesteal (lasts one turn)"
-		"Dwarf Path 2 Level 3" :
+		"dwarf Path 2 Level 3" :
 			faction_bonus_description.text = "Damage increased by 5 points; when HP falls below one-third maximum: lose all armor, gain melee damage bonus equal to 100% of lost armor value and 100% damage lifesteal (lasts one turn)"
-		"Dwarf Path 3 Level 1" :
+		"dwarf Path 3 Level 1" :
 			faction_bonus_description.text = "Movement speed increased by 1 point during first turn"
-		"Dwarf Path 3 Level 2" :
+		"dwarf Path 3 Level 2" :
 			faction_bonus_description.text = "Movement speed increased by 2 points during first turn"
-		"Dwarf Path 3 Level 3" :
+		"dwarf Path 3 Level 3" :
 			faction_bonus_description.text = "Movement speed increased by 3 points during first turn"
 		_:
-			faction_bonus_description.text = ""
+			faction_bonus_description.text = "place holder"
 			
 	match faction_array[current_page] + " Path " + str(current_path_number):
-		"Elf Path 1" :
-			faction_path_label.text = "Critical Mastery"
-		"Elf Path 2" :
-			faction_path_label.text = "Evasion Mastery"
-		"Elf Path 3" :
-			faction_path_label.text = "Multi-Strike Mastery"
-		"Human Path 1" :
-			faction_path_label.text = "Population Expansion"
-		"Human Path 2" :
-			faction_path_label.text = "Village Recruitment"
-		"Human Path 3" :
-			faction_path_label.text = "Evolutionary Merge"
-		"Dwarf Path 1" :
-			faction_path_label.text = "Iron Defense"
-		"Dwarf Path 2" :
-			faction_path_label.text = "Berserker Rage"
-		"Dwarf Path 3" :
-			faction_path_label.text = "Battle Momentum"
+		"elf Path 1" :
+			faction_path_label.text = "Path1 Critical Mastery"
+		"elf Path 2" :
+			faction_path_label.text = "Path2 Evasion Mastery"
+		"elf Path 3" :
+			faction_path_label.text = "Path3 Multi-Strike Mastery"
+		"human Path 1" :
+			faction_path_label.text = "Path1 Population Expansion"
+		"human Path 2" :
+			faction_path_label.text = "Path2 Village Recruitment"
+		"human Path 3" :
+			faction_path_label.text = "Path3 Evolutionary Merge"
+		"dwarf Path 1" :
+			faction_path_label.text = "Path1 Iron Defense"
+		"dwarf Path 2" :
+			faction_path_label.text = "Path2 Berserker Rage"
+		"dwarf Path 3" :
+			faction_path_label.text = "Path3 Battle Momentum"
 		_:
-			faction_path_label.text = ""	
+			faction_path_label.text = "place holder"	
 		
 	refresh_page()
+	handle_button_actived()
 		
 func set_button_texture(button: TextureButton, is_active: bool) -> void:
-	pass
+	
 	if not button.texture_normal is AtlasTexture:
 		return
 	var new_texture = button.texture_normal.duplicate(true)
@@ -250,3 +309,70 @@ func set_button_texture(button: TextureButton, is_active: bool) -> void:
 		_:
 			new_texture.region.position.x = 0
 	button.texture_normal = new_texture
+
+func handle_button_actived():
+	for node in lose_round_container.get_children() + won_round_container.get_children():
+		if not node.name.contains("template"):
+			node.queue_free()
+	
+	for i in range(DataManagerSingleton.max_lose_rounds + DataManagerSingleton.max_lose_rounds_modifier - DataManagerSingleton.lose_rounds):
+		var new_remain_lose_rounds_icon = remain_lose_rounds_template.duplicate(true)
+		new_remain_lose_rounds_icon.visible = true
+		lose_round_container.add_child(new_remain_lose_rounds_icon)
+
+	for i in range(DataManagerSingleton.lose_rounds):
+		var new_lose_rounds_icon = lose_rounds_template.duplicate(true)
+		new_lose_rounds_icon.visible = true
+		lose_round_container.add_child(new_lose_rounds_icon)
+
+	for i in range(DataManagerSingleton.won_rounds):
+		var new_won_rounds_icon = won_rounds_template.duplicate(true)
+		new_won_rounds_icon.visible = true
+		won_round_container.add_child(new_won_rounds_icon)
+		
+	for i in range(DataManagerSingleton.max_won_rounds + DataManagerSingleton.max_won_rounds_modifier - DataManagerSingleton.won_rounds):
+		var new_remain_won_rounds_icon = remain_won_rounds_template.duplicate(true)
+		new_remain_won_rounds_icon.visible = true
+		won_round_container.add_child(new_remain_won_rounds_icon)
+			
+	just_active_label.text = "Active(" + str(get_parent().remain_upgrade_count) + ")"
+	
+	if current_level_number == 0 or current_path_number == 0:
+		consume_remian_lose_round.disabled = true
+		consume_max_lose_round.disabled = true
+		consume_won_round.disabled = true
+		just_active.disabled = true
+		return
+	elif current_path_number == 4:
+		consume_remian_lose_round.disabled = true
+		consume_max_lose_round.disabled = true
+		consume_won_round.disabled = true
+		just_active.disabled = true
+		return
+	elif current_level_number - game_faction_path_update[faction_array[current_page]]["path" + str(current_path_number)] == 1:
+		consume_remian_lose_round.disabled = false
+		consume_max_lose_round.disabled = false
+		consume_won_round.disabled = false
+		just_active.disabled = false
+		
+	if DataManagerSingleton.max_lose_rounds + DataManagerSingleton.max_lose_rounds_modifier - DataManagerSingleton.lose_rounds > 1:
+		consume_remian_lose_round.disabled = false
+	else:
+		consume_remian_lose_round.disabled = true
+		
+	if DataManagerSingleton.max_lose_rounds + DataManagerSingleton.max_lose_rounds_modifier > 1 and DataManagerSingleton.max_lose_rounds + DataManagerSingleton.max_lose_rounds_modifier - DataManagerSingleton.lose_rounds > 0:
+		consume_max_lose_round.disabled = false
+	else:
+		consume_max_lose_round.disabled = true
+		
+	if DataManagerSingleton.won_rounds > 0:
+		consume_won_round.disabled = false
+	else:
+		consume_won_round.disabled = true
+		
+	if get_parent().remain_upgrade_count > 0:
+		just_active.disabled = false
+	else:
+		just_active.disabled = true
+
+	

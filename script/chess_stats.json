@@ -294,7 +294,7 @@
 	  "attack_range": 25,
 	  "attack_speed": 1,
 	  "max_health": 120,
-	  "max_mana": 0,
+	  "max_mana": 50,
 	  "melee_attack_damage": 15,
 	  "rarity": "Rare",
 	  "role": "ranger",

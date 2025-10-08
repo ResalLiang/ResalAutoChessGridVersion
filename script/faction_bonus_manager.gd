@@ -30,6 +30,8 @@ var bonus_level_list : Dictionary = {
 }
 
 # player_faction_count for storing players chess name
+var player_faction_count
+
 var player_faction_count_template : Dictionary = {
 	1 : {
 		"elf" : [],
@@ -64,6 +66,8 @@ var player_faction_count_template : Dictionary = {
 }
 
 # player_bonus_level_dict for summary player bonus level
+var player_bonus_level_dict : Dictionary = {}
+
 var player_bonus_level_dict_template : Dictionary = {
 	1 : {
 		"elf" : 0,
@@ -96,9 +100,9 @@ var player_bonus_level_dict_template : Dictionary = {
 		"speller" : 0
 	}
 }
-var player_bonus_level_dict : Dictionary = {}
 
 func _ready() -> void:
+	player_faction_count = player_faction_count_template.duplicate(true)
 	player_bonus_level_dict = player_bonus_level_dict_template.duplicate(true)
 
 func bonus_refresh() -> void:
@@ -120,7 +124,7 @@ func bonus_refresh() -> void:
 		for effect_node in node.get_children():
 			effect_node.queue_free()
 
-	var player_faction_count = player_faction_count_template.duplicate(true)
+	player_faction_count = player_faction_count_template.duplicate(true)
 	player_bonus_level_dict = player_bonus_level_dict_template.duplicate(true)
 
 	for chess_index in arena.unit_grid.get_all_units(): #summary all uniqe chess
@@ -212,38 +216,53 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				return
 
 			for chess_index in friendly_faction_chess:
-				var effect_instance = ChessEffect.new()
-				var critical_damage_bonus 
-				var critical_rate_bonus 
-				match bonus_level:
-					1:
-						critical_damage_bonus = 0
-						critical_rate_bonus = 0.1
-					2:
-						critical_damage_bonus = 1.0
-						critical_rate_bonus = 0.2
-					3:
-						critical_damage_bonus = 2.5
-						critical_rate_bonus = 0.2
+				var effect_instance
+				
+				var path2_bonus_level: int
+				if applier_team == 1:
+					path2_bonus_level = min(bonus_level, get_parent().faction_path_update[faction]["path2"])
+				elif applier_team == 2:
+					path2_bonus_level = bonus_level
+				
+				if path2_bonus_level > 0:
+					effect_instance = ChessEffect.new()
+					var critical_damage_bonus 
+					var critical_rate_bonus 
+					match path2_bonus_level:
+						1:
+							critical_damage_bonus = 0
+							critical_rate_bonus = 0.1
+						2:
+							critical_damage_bonus = 1.0
+							critical_rate_bonus = 0.2
+						3:
+							critical_damage_bonus = 2.5
+							critical_rate_bonus = 0.2
 
-				effect_instance.register_buff("critical_rate_modifier", critical_damage_bonus, 999)
-				effect_instance.register_buff("critical_damage_modifier", critical_rate_bonus, 999)
-				effect_instance.effect_name = "Precise - Level " + str(bonus_level)
-				effect_instance.effect_type = "Faction Bonus"
-				effect_instance.effect_applier = "Elf path2 Faction Bonus"
-				effect_instance.effect_description = "Friendly elf chesses gain critical rate and critical damage boost."
-				chess_index.effect_handler.add_to_effect_array(effect_instance)
-				chess_index.effect_handler.add_child(effect_instance)
-
-
-				effect_instance = ChessEffect.new()
-				effect_instance.register_buff("evasion_rate_modifier", bonus_level * 0.1, 999)
-				effect_instance.effect_name = "Gentle - Level " + str(bonus_level)
-				effect_instance.effect_type = "Faction Bonus"
-				effect_instance.effect_applier = "Elf path3 Faction Bonus"
-				effect_instance.effect_description = "Friendly elf chesses gain critical rate boost."
-				chess_index.effect_handler.add_to_effect_array(effect_instance)
-				chess_index.effect_handler.add_child(effect_instance)
+					effect_instance.register_buff("critical_rate_modifier", critical_damage_bonus, 999)
+					effect_instance.register_buff("critical_damage_modifier", critical_rate_bonus, 999)
+					effect_instance.effect_name = "Precise - Level " + str(path2_bonus_level)
+					effect_instance.effect_type = "Faction Bonus"
+					effect_instance.effect_applier = "Elf path2 Faction Bonus"
+					effect_instance.effect_description = "Friendly elf chesses gain critical rate and critical damage boost."
+					chess_index.effect_handler.add_to_effect_array(effect_instance)
+					chess_index.effect_handler.add_child(effect_instance)
+				
+				var path3_bonus_level: int
+				if applier_team == 1:
+					path3_bonus_level = min(bonus_level, get_parent().faction_path_update[faction]["path3"])
+				elif applier_team == 2:
+					path3_bonus_level = bonus_level
+				
+				if path3_bonus_level > 0:
+					effect_instance = ChessEffect.new()
+					effect_instance.register_buff("evasion_rate_modifier", bonus_level * 0.1, 999)
+					effect_instance.effect_name = "Gentle - Level " + str(path3_bonus_level)
+					effect_instance.effect_type = "Faction Bonus"
+					effect_instance.effect_applier = "Elf path3 Faction Bonus"
+					effect_instance.effect_description = "Friendly elf chesses gain critical rate boost."
+					chess_index.effect_handler.add_to_effect_array(effect_instance)
+					chess_index.effect_handler.add_child(effect_instance)
 
 		"human":
 			pass

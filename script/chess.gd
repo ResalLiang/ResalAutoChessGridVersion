@@ -199,6 +199,7 @@ var faction_bonus_manager
 var total_kill_count := 0
 
 var record_global_position := Vector2.ZERO
+var game_root_scene
 
 #var status := STATUS.IDLE         # Current character state
 
@@ -252,7 +253,8 @@ func _ready():
 	effect_handler = EffectHandler.new()
 	add_child(effect_handler)
 	
-
+	game_root_scene = arena.get_parent().get_parent()
+	
 	# Load animations
 	_load_animations()
 
@@ -356,7 +358,7 @@ func _ready():
 	
 	# Initialize character properties
 	hp = max_hp
-	mp = max_mp
+	mp = max_mp if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] else 0
 
 	hp_bar.min_value = 0
 	hp_bar.max_value = max_hp
@@ -1481,7 +1483,6 @@ func handle_special_effect(target: Obstacle, attacker: Obstacle):
 			var tile_offset_index = tile_offset_array.front()
 			var current_tile = get_current_tile(attacker)[1]
 			if arena.is_tile_in_bounds(current_tile + tile_offset_index) and not arena.unit_grid.is_tile_occupied(current_tile + tile_offset_index):					
-				var game_root_scene = arena.get_parent().get_parent()
 				var summoned_character = game_root_scene.summon_chess(attacker.faction, attacker.chess_name, 1, team, arena, current_tile + tile_offset_index)
 
 				summoned_character.is_phantom = true
@@ -1507,7 +1508,6 @@ func handle_special_effect(target: Obstacle, attacker: Obstacle):
 			var tile_offset_index = tile_offset_array.front()
 			var current_tile = get_current_tile(attacker)[1]
 			if arena.is_tile_in_bounds(current_tile + tile_offset_index) and not arena.unit_grid.is_tile_occupied(current_tile + tile_offset_index):					
-				var game_root_scene = arena.get_parent().get_parent()
 				var summoned_character = game_root_scene.summon_chess(target.faction, target.chess_name, 1, team, arena, current_tile + tile_offset_index)
 
 				summoned_character.is_phantom = true
@@ -1654,7 +1654,13 @@ func handle_free_strike(target: Obstacle):
 	return
 	
 func elf_path1_bonus():
-	var bonus_level = faction_bonus_manager.get_bonus_level("elf", team)
+	var bonus_level : int
+	
+	if team ==1:
+		bonus_level = faction_bonus_manager.get_bonus_level("elf", team)
+		bonus_level = min(bonus_level, game_root_scene.faction_path_update["elf"]["path1"])
+	elif team == 2:
+		bonus_level = faction_bonus_manager.get_bonus_level("elf", team)
 
 	if  bonus_level > 0 and faction == "elf":
 
@@ -1672,7 +1678,13 @@ func elf_path1_bonus():
 		effect_handler.refresh_effects()
 
 func elf_path3_bonus():
-	var bonus_level = faction_bonus_manager.get_bonus_level("elf", chess_target.team)
+	var bonus_level : int
+	
+	if chess_target.team == 1:
+		bonus_level = faction_bonus_manager.get_bonus_level("elf", chess_target.team)
+		bonus_level = min(bonus_level, game_root_scene.faction_path_update["elf"]["path3"])
+	elif chess_target.team == 2:
+		bonus_level = faction_bonus_manager.get_bonus_level("elf", chess_target.team)
 
 	if bonus_level == 2 and randf() >= 0.5 and target_evased_attack:
 		if DataManagerSingleton.check_chess_valid(chess_target):
@@ -1683,7 +1695,16 @@ func elf_path3_bonus():
 
 
 func dwarf_path1_bonus():
-	var bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
+	var bonus_level : int
+	
+	if team ==1:
+		bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
+		bonus_level = min(bonus_level, game_root_scene.faction_path_update["dwarf"]["path1"])
+	elif team == 2:
+		bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
+		
+		
+	#var bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
 	var b2b_ally_dwarf := false
 
 	if not (faction == "dwarf" and bonus_level > 0):
@@ -1717,7 +1738,15 @@ func dwarf_path1_bonus():
 	effect_handler.refresh_effects()
 
 func dwarf_path2_bonus():
-	var bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
+	var bonus_level : int
+	
+	if team ==1:
+		bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
+		bonus_level = min(bonus_level, game_root_scene.faction_path_update["dwarf"]["path2"])
+	elif team == 2:
+		bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
+		
+	#var bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
 
 	if not (faction == "dwarf" and bonus_level > 0):
 		return
@@ -1753,7 +1782,13 @@ func dwarf_path2_bonus():
 	await effect_animation_display("DwarfBerserker", arena, get_current_tile(self)[1], "RightTop")
 
 func dwarf_path3_bonus():
-	var bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
+	var bonus_level : int
+	
+	if team ==1:
+		bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
+		bonus_level = min(bonus_level, game_root_scene.faction_path_update["dwarf"]["path3"])
+	elif team == 2:
+		bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
 
 	if bonus_level > 0 and faction == "dwarf":
 		var effect_instance = ChessEffect.new()
@@ -2069,8 +2104,6 @@ func undead_necromancer_summon(summoned_chess_name: String, summon_unit_count: i
 			if rand_x >=0 and rand_x < arena.unit_grid.size.x and rand_y >=0 and rand_y < arena.unit_grid.size.y:
 				attempt_summon_count -= 1
 				if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
-					
-					var game_root_scene = arena.get_parent().get_parent()
 					var summoned_character = game_root_scene.summon_chess("undead", summoned_chess_name, 1, team, arena, Vector2i(rand_x, rand_y))
 
 					if summoned_character.animated_sprite_2d.sprite_frames.has_animation("rise") :
@@ -2096,7 +2129,6 @@ func dwarf_demolitionist_placebomb(spell_range: int) -> bool:
 			if rand_x >=0 and rand_x < arena.unit_grid.size.x and rand_y >=0 and rand_y < arena.unit_grid.size.y:
 				attempt_summon_count -= 1
 				if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
-					var game_root_scene = arena.get_parent().get_parent()
 					var summoned_character = game_root_scene.summon_chess("dwarf", "Bomb", 1, team, arena, Vector2i(rand_x, rand_y))	
 					summoned_character.obstacle_counter = 2
 					summoned_character.obstacle_level = 1

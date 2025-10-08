@@ -1,7 +1,7 @@
 class_name ShopHandler
 extends Node2D
 
-const max_shop_level := 7
+const max_shop_level := 6
 const chess_scene = preload("res://scene/chess.tscn")
 const obstacle_scene = preload("res://scene/obstacle.tscn")
 
@@ -170,14 +170,14 @@ func shop_freeze() -> void:
 
 func shop_upgrade() -> void:
 	var current_upgrade_price = get_shop_upgrade_price()
-	if remain_coins >= current_upgrade_price and shop_level < max_shop_level:
+	if remain_coins >= current_upgrade_price and shop_level < (7 if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] else max_shop_level):
 		remain_coins -= current_upgrade_price
 		coins_decreased.emit(current_upgrade_price, "upgrading shop")
 		shop_level += 1
 		shop_upgraded.emit(shop_level)
 	elif remain_coins < current_upgrade_price:
 		get_parent().control_shaker(get_parent().remain_coins_label)
-	elif shop_level >= max_shop_level:
+	elif shop_level >= (7 if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] else max_shop_level):
 		get_parent().control_shaker(get_parent().current_shop_level)
 
 func get_shop_upgrade_price():
@@ -187,8 +187,18 @@ func get_current_difficulty():
 	return shop_level * 200
 
 func get_max_population():
-	var max_population = 999 if shop_level == 7 else (shop_level + 2 + get_parent().faction_bonus_manager.get_bonus_level("human", 1))
-	return max_population
+	#var max_population = 999 if (shop_level == 7 and DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]) else (shop_level + 2 + get_parent().faction_bonus_manager.get_bonus_level("human", 1))
+	var max_population: int
+	var extra_max_population := 0
+	if shop_level == 7 and DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
+		max_population = 999
+	else:	
+		max_population = shop_level + 2
+		
+	if get_parent().faction_bonus_manager.get_bonus_level("human", 1) > 0:
+		extra_max_population = min(get_parent().faction_bonus_manager.get_bonus_level("human", 1), get_parent().faction_path_update["human"]["path1"])
+
+	return (max_population + extra_max_population)
 
 func can_pay_chess(chess: Obstacle) -> bool:
 	if get_chess_buy_price(chess) > remain_coins:
@@ -202,7 +212,8 @@ func buy_chess(chess: Obstacle):
 	coins_decreased.emit(get_chess_buy_price(chess), "buyinging chess")
 
 	var human_bonus_level = get_parent().faction_bonus_manager.get_bonus_level("human", 1)
-
+	human_bonus_level = min(human_bonus_level, get_parent().faction_path_update["human"]["path2"])
+	
 	if human_bonus_level <= 0:
 		return
 	
@@ -247,7 +258,7 @@ func turn_start_income(current_round: int):
 	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"].has("income_bonus"):
 		player_income_bonus = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["income_bonus"]
 
-	var turn_start_interest = floor(remain_coins * (0.2 + play_interest_bonus))
+	var turn_start_interest = min(5, floor(remain_coins * (0.1 + play_interest_bonus)))
 	if turn_start_interest > 0:
 		remain_coins += turn_start_interest
 		coins_increased.emit(turn_start_interest, "interest")

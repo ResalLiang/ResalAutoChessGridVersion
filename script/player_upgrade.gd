@@ -55,6 +55,7 @@ func _ready():
 		current_difficulty_index = difficulty_array.find(current_difficulty, 0)
 	else:
 		current_difficulty_index = 1
+	difficulty_label.text = difficulty_array[current_difficulty_index]
 		
 	difficulty_left_arrow.pressed.connect(
 		func():

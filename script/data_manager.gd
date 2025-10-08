@@ -62,8 +62,10 @@ var difficulty := 1
 
 var won_rounds := 0
 const max_won_rounds := 7
+var max_won_rounds_modifier := 0
 var lose_rounds := 0
 const max_lose_rounds := 5
+var max_lose_rounds_modifier := 0
 
 var mvp_chess
 
@@ -106,6 +108,12 @@ func _ready() -> void:
 # 		if player_datas.keys().has(current_player):
 # 			player_data = player_datas[current_player]
 
+func win_lose_round_init():
+	
+	won_rounds = 0
+	max_won_rounds_modifier = 0
+	lose_rounds = 0
+	max_lose_rounds_modifier = 0
 
 func merge_game_data():
 	if current_player == "":

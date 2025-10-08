@@ -38,7 +38,7 @@ func set_round_result():
 	for child in trophy.get_children():
 		child.queue_free()
 		
-	for health_index in range(DataManagerSingleton.max_lose_rounds - DataManagerSingleton.lose_rounds):
+	for health_index in range(DataManagerSingleton.max_lose_rounds + DataManagerSingleton.max_lose_rounds_modifier - DataManagerSingleton.lose_rounds):
 		var remain_health_icon = TextureRect.new()
 		remain_health_icon.set_stretch_mode(2)
 		#remain_health_icon.scale = Vector2(4, 4)
@@ -51,12 +51,19 @@ func set_round_result():
 		lose_health_icon.set_stretch_mode(2)
 		lose_health_icon.texture = lose_health_pic
 		heart.add_child(lose_health_icon)
-		
+				
 	for trophy_index in range(DataManagerSingleton.won_rounds):
 		var trophy_icon = TextureRect.new()
 		#trophy_icon.scale = Vector2(4, 4)
 		trophy_icon.set_stretch_mode(2)
 		trophy_icon.texture = trophy_pic
+		trophy.add_child(trophy_icon)
+		
+	for trophy_index in range(DataManagerSingleton.max_won_rounds + DataManagerSingleton.max_won_rounds_modifier - DataManagerSingleton.won_rounds):
+		var trophy_icon = TextureRect.new()
+		#trophy_icon.scale = Vector2(4, 4)
+		trophy_icon.set_stretch_mode(2)
+		trophy_icon.texture = lose_health_pic
 		trophy.add_child(trophy_icon)
 
 func _on_timer_timeout() -> void:

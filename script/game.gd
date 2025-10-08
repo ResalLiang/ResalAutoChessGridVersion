@@ -31,6 +31,7 @@ const skill_tree_scene = preload("res://scene/skill_tree.tscn")
 @onready var population_label: Label = $population_label
 @onready var current_round_label: Label = $current_round_label
 @onready var last_turn_label: Label = $last_turn_label
+@onready var won_lose_round_label: Label = $won_lose_round_label
 
 @onready var game_start_button: Button = $game_button_container/game_start_button
 @onready var game_restart_button: TextureButton = $game_button_container/game_restart_button
@@ -42,6 +43,7 @@ const skill_tree_scene = preload("res://scene/skill_tree.tscn")
 @onready var back_button: TextureButton = $back_button
 @onready var debug_label: Label = $debug_label
 @onready var tips_label: Label = $tips_label
+@onready var exclamation_mark: TextureRect = $tilemap/ui/exclamation_mark
 
 @onready var chess_order_hp_high: Button = $chess_order_control/chess_order_hp_high
 @onready var chess_order_hp_low: Button = $chess_order_control/chess_order_hp_low
@@ -207,6 +209,10 @@ var faction_path_update_template = {
 }
 var faction_path_update: Dictionary
 
+var max_won_rounds_modifier := 0
+var max_lose_rounds_modifier := 0
+var remain_upgrade_count := 0
+
 signal round_finished
 signal chess_appearance_finished
 signal game_turn_started
@@ -322,7 +328,25 @@ func _ready():
 	)
 	shop_handler.shop_upgraded.connect(
 		func(value):
-			current_shop_level.text = "Shop Level : " + str(shop_handler.shop_level)
+			var label_value = ""
+			match shop_handler.shop_level:
+				1:
+					label_value = "I"
+				2:
+					label_value = "II"
+				3:
+					label_value = "IIII"
+				4:
+					label_value = "IV"
+				5:
+					label_value = "V"
+				6:
+					label_value = "VI"
+				7:
+					label_value = "VII"
+				_:
+					label_value = "I"
+			current_shop_level.text = label_value
 			update_population(true)
 	)
 	chess_appearance_finished.connect(
@@ -352,6 +376,8 @@ func _ready():
 		func():
 			var skill_tree = skill_tree_scene.instantiate()
 			add_child(skill_tree)
+			await skill_tree.tree_exiting
+			faction_bonus_manager.bonus_refresh()
 	)
 
 	player_won_round.connect(DataManagerSingleton.handle_player_won_round)
@@ -385,6 +411,11 @@ func _process(delta: float) -> void:
 	if current_playarea_index.is_tile_in_bounds(current_tile) and DataManagerSingleton.check_obstacle_valid(current_playarea_index.unit_grid.units[current_tile]):
 		var mouse_position_obstacle = current_playarea_index.unit_grid.units[current_tile]
 		debug_label.text += "\n" + mouse_position_obstacle.faction + " / " +  mouse_position_obstacle.chess_name
+	
+	if remain_upgrade_count > 0:
+		exclamation_mark.visible = true
+	else:
+		exclamation_mark.visible = false
 
 func _input(event: InputEvent) -> void:
 	# Handle drag cancellation
@@ -426,21 +457,40 @@ func start_new_game() -> void:
 	battle_meter.battle_data = {}
 
 	current_round = 0
-	DataManagerSingleton.won_rounds = 0
-	DataManagerSingleton.lose_rounds = 0
-
+	DataManagerSingleton.win_lose_round_init()
+	remain_upgrade_count = 0
+	
 	shop_handler.shop_init()
 	update_population(true)
 	new_round_prepare_start()
 
 func new_round_prepare_start():
 	# start shopping
-	current_shop_level.text = "Shop Level : " + str(shop_handler.shop_level)
+	var label_value = ""
+	match shop_handler.shop_level:
+		1:
+			label_value = "I"
+		2:
+			label_value = "II"
+		3:
+			label_value = "IIII"
+		4:
+			label_value = "IV"
+		5:
+			label_value = "V"
+		6:
+			label_value = "VI"
+		7:
+			label_value = "VII"
+		_:
+			label_value = "I"
+	current_shop_level.text = label_value
 	
 	current_round += 1
+	remain_upgrade_count += 1
 	
-	current_round_label.text = "Current round : " + str(current_round) + " | (" + str(DataManagerSingleton.won_rounds) + " / " + str(DataManagerSingleton.lose_rounds) +")"
-	
+	current_round_label.text = "Current round : " + str(current_round)
+	won_lose_round_label.text = "Won rounds: " + str(DataManagerSingleton.won_rounds) + " | Lose rounds: " + str(DataManagerSingleton.lose_rounds)
 
 	shop_handler.shop_refresh()
 	shop_handler.buy_human_count = 0
@@ -628,11 +678,11 @@ func handle_round_finished(msg):
 
 	battle_meter.round_end_data_update() #update to ingame data
 
-	if DataManagerSingleton.won_rounds >= DataManagerSingleton.max_won_rounds:
+	if DataManagerSingleton.won_rounds >= DataManagerSingleton.max_won_rounds + DataManagerSingleton.max_won_rounds_modifier:
 		player_won_game.emit()
 		handle_game_end()
 		return
-	elif DataManagerSingleton.lose_rounds >= DataManagerSingleton.max_lose_rounds:
+	elif DataManagerSingleton.lose_rounds >= DataManagerSingleton.max_lose_rounds + DataManagerSingleton.max_lose_rounds_modifier:
 		player_lose_game.emit()
 		handle_game_end()
 		return
@@ -1165,13 +1215,40 @@ func check_chess_merge():
 							var removed_chess_play_area = removed_chess.get_current_tile(removed_chess)[0]
 							var removed_chess_tile = removed_chess.get_current_tile(removed_chess)[1]
 
-							removed_chess_play_area.unit_grid.remove_unit(removed_chess_tile)
+							#removed_chess_play_area.unit_grid.remove_unit(removed_chess_tile)
 
 							removed_chess.visible = false
 
 						var upgrade_chess 
 						var merged_level = merge_level + 1
-						if DataManagerSingleton.get_chess_data()[merged_chess_faction][merged_chess_name].has("upgrade_chess") and merged_chess_faction == "human":
+						var human_path3_level : int
+						human_path3_level = min(faction_path_update["human"]["path3"], faction_bonus_manager.get_bonus_level("human", 1))
+						var can_upgrade: bool
+						match DataManagerSingleton.get_chess_data()[merged_chess_faction][merged_chess_name]["rarity"]:
+							"Common":
+								if human_path3_level >= 1:
+									can_upgrade = true
+								else:
+									can_upgrade = false
+							"Uncommon":
+								if human_path3_level >= 2:
+									can_upgrade = true
+								else:
+									can_upgrade = false
+							"Rare":
+								if human_path3_level >= 3:
+									can_upgrade = true
+								else:
+									can_upgrade = false
+							"Epic":
+								if human_path3_level >= 4:
+									can_upgrade = true
+								else:
+									can_upgrade = false
+							_:
+								can_upgrade = false
+						
+						if can_upgrade:
 							
 							var alternative_choice = alternative_choice_scene.instantiate()
 							alternative_choice.get_node("button_container/Button1").text = "Upgrade"
@@ -1192,23 +1269,23 @@ func check_chess_merge():
 
 						merge_count = 0
 						merge_result[merge_level - 1] = true
-						merge_checked.append([node.faction, node.chess_name])
+						merge_checked.append([other_node.faction, other_node.chess_name])
 						break
 
 			merge_checked.append([node.faction, node.chess_name])
 
-	for node in arena.unit_grid.get_children():
+	for node in arena.unit_grid.get_children() + bench.unit_grid.get_children():
 		if node is Chess and node.visible == false:
 			if node.is_queued_for_deletion():
 				pass
 			else:
 				node.queue_free()
 
-
+	await get_tree().process_frame
+	
 	if merge_result[0] or merge_result[1]:
 		update_population(true)
 
-	await get_tree().process_frame
 
 	return merge_result[0] or merge_result[1]
 

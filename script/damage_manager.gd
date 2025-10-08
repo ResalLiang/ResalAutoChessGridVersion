@@ -77,10 +77,18 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 	if life_steal_result > 0:
 		attacker.take_heal(life_steal_result, attacker)
 		
+	#if attacker != target and damage_type != "Magic_attack" and attacker is Chess:
+		#attacker.gain_mp(damage_result)
+	#elif attacker != target and damage_type == "Magic_attack" and attacker is Chess and attacker.chess_name == "ArchMage" and attacker.faction == "human":
+		#attacker.gain_mp(damage_result * 0.15 * attacker.chess_level)
+		
 	if attacker != target and damage_type != "Magic_attack" and attacker is Chess:
 		attacker.gain_mp(damage_result)
 	elif attacker != target and damage_type == "Magic_attack" and attacker is Chess and attacker.chess_name == "ArchMage" and attacker.faction == "human":
-		attacker.gain_mp(damage_result * 0.15 * attacker.chess_level)
+		attacker.gain_mp(damage_result * 0.3 * attacker.chess_level)
+		
+	if attacker != target and target is Chess:
+		target.gain_mp(damage_result)
 
 	if attacker.chess_name == "Queen" and attacker.faction == "elf" and damage_type == "Magic_attack":
 		attacker.random_heal(damage_result, attacker)

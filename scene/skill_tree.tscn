@@ -1,4 +1,4 @@
-[gd_scene load_steps=52 format=3 uid="uid://dvhphrqverdrh"]
+[gd_scene load_steps=60 format=3 uid="uid://dvhphrqverdrh"]
 
 [ext_resource type="Script" uid="uid://cm3w5gno8tv4h" path="res://script/skill_tree.gd" id="1_47c73"]
 [ext_resource type="Texture2D" uid="uid://b0bq1lymvlbwx" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Spellbook & Tabs/Spellbook_PreviousPage.png" id="2_bcn20"]
@@ -16,6 +16,14 @@
 [ext_resource type="Texture2D" uid="uid://dqevhcqfvsh5o" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Buttons/Button_01A_Pressed.png" id="14_s4q4r"]
 [ext_resource type="Texture2D" uid="uid://d252ccixdnss4" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Cursors/Tick02_Down.png" id="15_e7hi6"]
 [ext_resource type="Texture2D" uid="uid://bsg1p3ugiafv" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Buttons/Button_01A_Selected.png" id="15_g4pxf"]
+[ext_resource type="Texture2D" uid="uid://bq3uxnjofeqb2" path="res://asset/sprite/Retro Inventory/Original/Hearts_Red_1.png" id="16_64t65"]
+[ext_resource type="Texture2D" uid="uid://bphlah3le810g" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Buttons/Button_01A_Disabled.png" id="16_k4y50"]
+[ext_resource type="Texture2D" uid="uid://di2b77ct8m2ag" path="res://asset/sprite/Retro Inventory/Original/Hearts_Red_4.png" id="17_k4y50"]
+[ext_resource type="Texture2D" uid="uid://ccy2sqtgfo6ja" path="res://asset/sprite/Retro Inventory/Original/Hearts_Blue_1.png" id="18_2xqit"]
+[ext_resource type="Texture2D" uid="uid://7h5p5w7k8j05" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Mini icons/Icon_03.png" id="20_5a8vn"]
+[ext_resource type="Texture2D" uid="uid://b45hv7w3vv52u" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Mini icons/Icon_04.png" id="21_62rnm"]
+[ext_resource type="Texture2D" uid="uid://ui38oq8v83nm" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Mini icons/Icon_01.png" id="22_bss1g"]
+[ext_resource type="Texture2D" uid="uid://bdjd7cbtin1yc" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Mini icons/Icon_02.png" id="23_aphwf"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ghqgj"]
 atlas = ExtResource("2_bcn20")
@@ -408,10 +416,10 @@ vertical_alignment = 1
 
 [node name="NinePatchRect" type="NinePatchRect" parent="ui"]
 z_index = 820
-offset_left = 262.0
-offset_top = 49.0
-offset_right = 433.0
-offset_bottom = 230.0
+offset_left = 256.0
+offset_top = 42.0
+offset_right = 445.0
+offset_bottom = 195.0
 texture = ExtResource("12_e7hi6")
 region_rect = Rect2(3, 6, 90, 85)
 patch_margin_left = 31
@@ -419,53 +427,30 @@ patch_margin_top = 29
 patch_margin_right = 29
 patch_margin_bottom = 31
 
-[node name="faction_path_label" type="Label" parent="ui/NinePatchRect"]
-z_index = 820
+[node name="VBoxContainer" type="VBoxContainer" parent="ui/NinePatchRect"]
 layout_mode = 0
-offset_left = 25.0
-offset_top = 20.0
-offset_right = 147.0
-offset_bottom = 36.0
+offset_left = 24.0
+offset_top = 25.0
+offset_right = 162.0
+offset_bottom = 132.0
+
+[node name="faction_path_label" type="Label" parent="ui/NinePatchRect/VBoxContainer"]
+z_index = 820
+layout_mode = 2
 theme_override_colors/font_color = Color(0.44806224, 0.16572773, 0.024388526, 1)
 theme_override_fonts/font = ExtResource("6_s4q4r")
 theme_override_font_sizes/font_size = 8
 text = "Path1"
+autowrap_mode = 3
 
-[node name="faction_bonus_description" type="Label" parent="ui/NinePatchRect"]
+[node name="faction_bonus_description" type="Label" parent="ui/NinePatchRect/VBoxContainer"]
 z_index = 820
-layout_mode = 0
-offset_left = 25.0
-offset_top = 40.0
-offset_right = 147.0
-offset_bottom = 150.0
+layout_mode = 2
 theme_override_colors/font_color = Color(0.44806224, 0.16572773, 0.024388526, 1)
 theme_override_fonts/font = ExtResource("6_s4q4r")
 theme_override_font_sizes/font_size = 4
 text = "Description:"
 autowrap_mode = 3
-
-[node name="path_active_button" type="TextureButton" parent="ui"]
-z_index = 820
-offset_left = 295.0
-offset_top = 224.0
-offset_right = 391.0
-offset_bottom = 256.0
-texture_normal = ExtResource("13_8faxr")
-texture_pressed = ExtResource("14_s4q4r")
-texture_hover = ExtResource("15_g4pxf")
-
-[node name="Label" type="Label" parent="ui/path_active_button"]
-z_index = 820
-layout_mode = 0
-offset_left = 18.0
-offset_top = 7.0
-offset_right = 72.0
-offset_bottom = 23.0
-theme_override_fonts/font = ExtResource("6_s4q4r")
-theme_override_font_sizes/font_size = 8
-text = "Active"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="ui"]
 z_index = 820
@@ -532,6 +517,191 @@ rotation = 0.7853982
 mouse_filter = 2
 texture = SubResource("AtlasTexture_5gve0")
 stretch_mode = 2
+
+[node name="active_button_container" type="Node2D" parent="ui"]
+z_index = 820
+z_as_relative = false
+position = Vector2(248, 187)
+
+[node name="consume_remian_lose_round" type="TextureButton" parent="ui/active_button_container"]
+z_index = 820
+z_as_relative = false
+offset_right = 96.0
+offset_bottom = 32.0
+texture_normal = ExtResource("13_8faxr")
+texture_pressed = ExtResource("14_s4q4r")
+texture_hover = ExtResource("15_g4pxf")
+texture_disabled = ExtResource("16_k4y50")
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="ui/active_button_container/consume_remian_lose_round"]
+z_index = 820
+z_as_relative = false
+layout_mode = 0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 66.0
+offset_bottom = 24.0
+theme_override_fonts/font = ExtResource("6_s4q4r")
+theme_override_font_sizes/font_size = 8
+text = "Active"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureRect7" type="TextureRect" parent="ui/active_button_container/consume_remian_lose_round"]
+z_index = 820
+z_as_relative = false
+layout_mode = 0
+offset_left = 73.0
+offset_top = 9.0
+offset_right = 89.0
+offset_bottom = 25.0
+texture = ExtResource("16_64t65")
+metadata/_edit_use_anchors_ = true
+
+[node name="consume_max_lose_round" type="TextureButton" parent="ui/active_button_container"]
+z_index = 820
+z_as_relative = false
+offset_left = 95.0
+offset_right = 191.0
+offset_bottom = 32.0
+texture_normal = ExtResource("13_8faxr")
+texture_pressed = ExtResource("14_s4q4r")
+texture_hover = ExtResource("15_g4pxf")
+texture_disabled = ExtResource("16_k4y50")
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="ui/active_button_container/consume_max_lose_round"]
+z_index = 820
+z_as_relative = false
+layout_mode = 0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 66.0
+offset_bottom = 24.0
+theme_override_fonts/font = ExtResource("6_s4q4r")
+theme_override_font_sizes/font_size = 8
+text = "Active"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureRect7" type="TextureRect" parent="ui/active_button_container/consume_max_lose_round"]
+z_index = 820
+z_as_relative = false
+layout_mode = 0
+offset_left = 73.0
+offset_top = 9.0
+offset_right = 89.0
+offset_bottom = 25.0
+texture = ExtResource("17_k4y50")
+metadata/_edit_use_anchors_ = true
+
+[node name="consume_won_round" type="TextureButton" parent="ui/active_button_container"]
+z_index = 820
+z_as_relative = false
+offset_top = 28.0
+offset_right = 96.0
+offset_bottom = 60.0
+texture_normal = ExtResource("13_8faxr")
+texture_pressed = ExtResource("14_s4q4r")
+texture_hover = ExtResource("15_g4pxf")
+texture_disabled = ExtResource("16_k4y50")
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="ui/active_button_container/consume_won_round"]
+z_index = 820
+z_as_relative = false
+layout_mode = 0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 66.0
+offset_bottom = 24.0
+theme_override_fonts/font = ExtResource("6_s4q4r")
+theme_override_font_sizes/font_size = 8
+text = "Active"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureRect7" type="TextureRect" parent="ui/active_button_container/consume_won_round"]
+z_index = 820
+z_as_relative = false
+layout_mode = 0
+offset_left = 73.0
+offset_top = 9.0
+offset_right = 89.0
+offset_bottom = 25.0
+texture = ExtResource("18_2xqit")
+metadata/_edit_use_anchors_ = true
+
+[node name="just_active" type="TextureButton" parent="ui/active_button_container"]
+z_index = 820
+z_as_relative = false
+offset_left = 95.0
+offset_top = 28.0
+offset_right = 191.0
+offset_bottom = 60.0
+texture_normal = ExtResource("13_8faxr")
+texture_pressed = ExtResource("14_s4q4r")
+texture_hover = ExtResource("15_g4pxf")
+texture_disabled = ExtResource("16_k4y50")
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="ui/active_button_container/just_active"]
+z_index = 820
+z_as_relative = false
+layout_mode = 0
+offset_left = 10.0
+offset_top = 8.0
+offset_right = 64.0
+offset_bottom = 24.0
+theme_override_fonts/font = ExtResource("6_s4q4r")
+theme_override_font_sizes/font_size = 8
+text = "Active(0)"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="won_lose_round_container" type="VBoxContainer" parent="ui"]
+offset_left = 258.0
+offset_top = 17.0
+offset_right = 399.0
+offset_bottom = 49.0
+theme_override_constants/separation = 0
+
+[node name="lose_round_container" type="HBoxContainer" parent="ui/won_lose_round_container"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="remain_lose_rounds_template" type="TextureRect" parent="ui/won_lose_round_container/lose_round_container"]
+visible = false
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("20_5a8vn")
+
+[node name="lose_rounds_template" type="TextureRect" parent="ui/won_lose_round_container/lose_round_container"]
+visible = false
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("21_62rnm")
+
+[node name="won_round_container" type="HBoxContainer" parent="ui/won_lose_round_container"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="won_rounds_template" type="TextureRect" parent="ui/won_lose_round_container/won_round_container"]
+visible = false
+layout_mode = 2
+texture = ExtResource("22_bss1g")
+
+[node name="remain_won_rounds_template" type="TextureRect" parent="ui/won_lose_round_container/won_round_container"]
+visible = false
+layout_mode = 2
+texture = ExtResource("23_aphwf")
 
 [node name="back_button" type="Button" parent="."]
 z_index = 830

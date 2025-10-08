@@ -1,4 +1,4 @@
-[gd_scene load_steps=142 format=4 uid="uid://cthbjvirwy2mg"]
+[gd_scene load_steps=146 format=4 uid="uid://cthbjvirwy2mg"]
 
 [ext_resource type="Script" uid="uid://c7rtc63knhqn2" path="res://script/game.gd" id="1_ll5lq"]
 [ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="2_dbls1"]
@@ -64,13 +64,16 @@
 [ext_resource type="Shader" uid="uid://d3tyrfwlw2c1g" path="res://asset/shader/LightweightPixelPerfectOutline.gdshader" id="45_58qvq"]
 [ext_resource type="Script" uid="uid://csgrh2hl21j51" path="res://script/damage_manager.gd" id="45_c3n0e"]
 [ext_resource type="Theme" uid="uid://b4hwtdp2epofe" path="res://asset/theme/toggle.tres" id="45_c6ddg"]
+[ext_resource type="Texture2D" uid="uid://cdu7d4hm7uqab" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Title banners/BannerSmall_02C.png" id="47_eycuj"]
 [ext_resource type="Texture2D" uid="uid://ckoscmg1tkcf4" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425lessButton-Sheet.png" id="47_gs7ni"]
 [ext_resource type="Theme" uid="uid://dqa4pio1y4yi4" path="res://asset/customize_button.tres" id="47_ri40t"]
+[ext_resource type="Texture2D" uid="uid://0raj7a1rkiai" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Mini icons/Icon_07_Outline.png" id="48_ntqlo"]
 [ext_resource type="PackedScene" uid="uid://0tel3twsixb3" path="res://scene/faction_bonus_bar.tscn" id="48_pueyi"]
 [ext_resource type="Texture2D" uid="uid://db6majxnbxnot" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425closeButton-Sheet.png" id="48_saluk"]
 [ext_resource type="Texture2D" uid="uid://bwc2s8y8drnq" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425moreButton-Sheet.png" id="49_sybv5"]
 [ext_resource type="Texture2D" uid="uid://j2j6nwfh84kq" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425optionsButton-Sheet.png" id="51_ri40t"]
 [ext_resource type="Texture2D" uid="uid://chvlj0aa3r1oi" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425exitButton-Sheet.png" id="52_8bryy"]
+[ext_resource type="FontFile" uid="uid://dhvwmgcsmbfsf" path="res://asset/font/Everyday_Tiny_Blocky.ttf" id="55_ntqlo"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_x3x2e"]
 texture = ExtResource("6_qpk70")
@@ -7415,6 +7418,8 @@ region = Rect2(128, 46, 59, 17)
 [sub_resource type="AtlasTexture" id="AtlasTexture_58qvq"]
 atlas = ExtResource("43_fyii8")
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ckp4v"]
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_8bryy"]
 atlas = ExtResource("39_tq4ud")
 region = Rect2(6, 0, 28, 22)
@@ -7695,8 +7700,8 @@ axis_stretch_vertical = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="NinePatchRect2" type="NinePatchRect" parent="tilemap/ui"]
-offset_left = 128.0
-offset_right = 256.0
+offset_left = 343.0
+offset_right = 496.0
 offset_bottom = 20.0
 texture = SubResource("AtlasTexture_b5wrk")
 region_rect = Rect2(0, 0, 96, 22)
@@ -7706,11 +7711,10 @@ patch_margin_right = 13
 patch_margin_bottom = 5
 axis_stretch_horizontal = 1
 axis_stretch_vertical = 1
-metadata/_edit_use_anchors_ = true
 
 [node name="NinePatchRect3" type="NinePatchRect" parent="tilemap/ui"]
-offset_left = 255.0
-offset_right = 359.0
+offset_left = 128.0
+offset_right = 232.0
 offset_bottom = 20.0
 texture = SubResource("AtlasTexture_b5wrk")
 region_rect = Rect2(0, 0, 96, 22)
@@ -7722,8 +7726,8 @@ axis_stretch_horizontal = 1
 axis_stretch_vertical = 1
 
 [node name="NinePatchRect4" type="NinePatchRect" parent="tilemap/ui"]
-offset_left = 359.0
-offset_right = 495.0
+offset_left = 232.0
+offset_right = 343.0
 offset_bottom = 20.0
 texture = SubResource("AtlasTexture_b5wrk")
 region_rect = Rect2(0, 0, 96, 22)
@@ -7852,20 +7856,37 @@ offset_right = 108.0
 offset_bottom = 309.0
 texture = SubResource("AtlasTexture_58qvq")
 
+[node name="TextureRect10" type="TextureRect" parent="tilemap/ui"]
+offset_left = 123.0
+offset_top = 105.0
+offset_right = 171.0
+offset_bottom = 121.0
+texture = ExtResource("47_eycuj")
+stretch_mode = 2
+
+[node name="exclamation_mark" type="TextureRect" parent="tilemap/ui"]
+offset_left = 305.0
+offset_top = 21.0
+offset_right = 321.0
+offset_bottom = 37.0
+texture = ExtResource("48_ntqlo")
+stretch_mode = 2
+
 [node name="faction_bonus_button" type="Button" parent="tilemap/ui"]
-offset_left = 193.0
+offset_left = 183.0
 offset_top = 18.0
-offset_right = 323.0
+offset_right = 313.0
 offset_bottom = 42.0
 theme_override_colors/font_color = Color(0.95686275, 0.7254902, 0.2509804, 1)
 theme_override_fonts/font = ExtResource("42_l2xpq")
 theme_override_font_sizes/font_size = 8
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_ckp4v")
 text = "Faction Bonus"
 flat = true
 
 [node name="decoration" type="TileMapLayer" parent="tilemap"]
 z_index = 10
-tile_map_data = PackedByteArray("AAAYAAEABAAGAA8AAAAYAAUAAQANABYAAAASAAMABAAHAAkAAAARAA8ABAALAAsAAAAAABAAAwADABEAAAADAA8AAwANAAEAAAADABEAAwALAA4AAAACABEAAwARAAAAAAAEAAkAAwANAAgAAAABAAgAAwAIAAoAAAABAAEAAwAQABMAAAAjAAYAAwAIAAQAAAAOAA4AAwABAAwAAAAPABAAAwAFAAwAAAATABAAAwAKAAsAAAARAAQAAwACAAQAAAAKAAIAAwARAAwAAAAJAAQAAwAGAAYAAAAPAAMAAwARAAEAAAAPAAIAAwADAAIAAAAMAAMAAwADAAQAAAAdAAoAAwAGABMAAAAgAAoAAwARABMAAAAWAAMAAwARABMAAAAAAAoAAwAHAAMAAAADAAsAAwANAA4AAAAEABEAAwAGABEAAAACABAAAwADAAkAAAAIABEAAwAHAAYAAAAPAA4AAwAAAA0AAAANABAAAwAQAAkAAAAWAAUAAQANABYAAAAIAAkAAwAGAAEAAAAIAA0AAQAHAAYAAAAJAAcAAQATABMAAAANAAoAAwAGAAQAAAANAA0AAwATAA0AAAARAAcABAASAAEAAAARAAoAAwADAAAAAAATAAwAAwAIAA0AAAAVAAwAAwABAAQAAAAWAAcAAQANABcAAAAXAAcAAQAUABoAAAAYAAcAAQANABcAAAA=")
+tile_map_data = PackedByteArray("AAAYAAEABAAGAA8AAAAYAAUAAQANABYAAAASAAMABAAHAAkAAAARAA8ABAALAAsAAAAAABAAAwADABEAAAADAA8AAwANAAEAAAADABEAAwALAA4AAAACABEAAwARAAAAAAAEAAkAAwANAAgAAAABAAgAAwAIAAoAAAABAAEAAwAQABMAAAAjAAYAAwAIAAQAAAAOAA4AAwABAAwAAAAPABAAAwAFAAwAAAATABAAAwAKAAsAAAARAAQAAwACAAQAAAAKAAIAAwARAAwAAAAJAAQAAwAGAAYAAAAPAAMAAwARAAEAAAAPAAIAAwADAAIAAAAMAAMAAwADAAQAAAAdAAoAAwAGABMAAAAgAAoAAwARABMAAAAWAAMAAwARABMAAAAAAAoAAwAHAAMAAAADAAsAAwANAA4AAAAEABEAAwAGABEAAAACABAAAwADAAkAAAAIABEAAwAHAAYAAAAPAA4AAwAAAA0AAAANABAAAwAQAAkAAAAWAAUAAQANABYAAAAIAAkAAwAGAAEAAAAIAA0AAQAHAAYAAAANAAoAAwAGAAQAAAANAA0AAwATAA0AAAARAAcABAASAAEAAAARAAoAAwADAAAAAAATAAwAAwAIAA0AAAAVAAwAAwABAAQAAAAWAAcAAQANABcAAAAXAAcAAQAUABoAAAAYAAcAAQANABcAAAA=")
 tile_set = ExtResource("2_dbls1")
 
 [node name="game_button_container" type="Node2D" parent="."]
@@ -8019,22 +8040,22 @@ frame_progress = 0.347104
 
 [node name="current_shop_level" type="Label" parent="."]
 z_index = 25
-offset_left = 138.00002
-offset_top = 6.0000005
-offset_right = 246.00002
-offset_bottom = 14.0
+offset_left = 119.0
+offset_top = 107.00001
+offset_right = 166.0
+offset_bottom = 115.00001
 scale = Vector2(1.1869464, 0.9991004)
 theme_override_colors/font_color = Color(4.6046605, 5.171312, 0.25034758, 1)
-theme_override_fonts/font = ExtResource("38_8ssax")
+theme_override_fonts/font = ExtResource("55_ntqlo")
 theme_override_font_sizes/font_size = 4
-text = "Shop level = "
-metadata/_edit_use_anchors_ = true
+text = "I"
+horizontal_alignment = 1
 
 [node name="population_label" type="Label" parent="."]
 z_index = 25
-offset_left = 265.0
+offset_left = 138.0
 offset_top = 6.0
-offset_right = 373.0
+offset_right = 246.0
 offset_bottom = 14.0
 theme_override_colors/font_color = Color(4.6046605, 5.171312, 0.25034758, 1)
 theme_override_fonts/font = ExtResource("38_8ssax")
@@ -8044,15 +8065,25 @@ metadata/_edit_use_anchors_ = true
 
 [node name="current_round_label" type="Label" parent="."]
 z_index = 25
-offset_left = 368.0
+offset_left = 241.0
 offset_top = 6.0
-offset_right = 476.0
+offset_right = 331.0
 offset_bottom = 14.0
 theme_override_colors/font_color = Color(4.6046605, 5.171312, 0.25034758, 1)
 theme_override_fonts/font = ExtResource("38_8ssax")
 theme_override_font_sizes/font_size = 4
 text = "Current round ="
-metadata/_edit_use_anchors_ = true
+
+[node name="won_lose_round_label" type="Label" parent="."]
+z_index = 25
+offset_left = 352.0
+offset_top = 6.0
+offset_right = 482.0
+offset_bottom = 14.0
+theme_override_colors/font_color = Color(4.6046605, 5.171312, 0.25034758, 1)
+theme_override_fonts/font = ExtResource("38_8ssax")
+theme_override_font_sizes/font_size = 4
+text = "Won round: 0 | Lose round: 0"
 
 [node name="last_turn_label" type="Label" parent="."]
 z_index = 25
