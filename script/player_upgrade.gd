@@ -19,6 +19,7 @@ class_name PlayerUpgrade
 @onready var difficulty_left_arrow: TextureButton = $faction_lock_container/difficulty_container/difficulty_left_arrow
 @onready var difficulty_label: Label = $faction_lock_container/difficulty_container/difficulty_label
 @onready var difficulty_right_arrow: TextureButton = $faction_lock_container/difficulty_container/difficulty_right_arrow
+@onready var line_edit: LineEdit = $LineEdit
 
 
 #TODO: add debug button
@@ -72,6 +73,12 @@ func _ready():
 			difficulty_label.text = difficulty_array[current_difficulty_index]
 			DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["difficulty"] = difficulty_array[current_difficulty_index]
 	)
+	
+func _process(delta: float) -> void:
+	if line_edit.text == "maria":
+		debug_mode_button.disabled = false
+	else:
+		debug_mode_button.disabled = true
 
 func faction_lock_button_pressed(button_index: CheckBox):
 	if button_index.get_name() == "debug_mode_button":

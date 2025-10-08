@@ -458,7 +458,10 @@ func start_new_game() -> void:
 
 	current_round = 0
 	DataManagerSingleton.win_lose_round_init()
-	remain_upgrade_count = 0
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
+		remain_upgrade_count = 99
+	else:
+		remain_upgrade_count = 0
 	
 	shop_handler.shop_init()
 	update_population(true)

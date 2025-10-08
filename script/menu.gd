@@ -9,9 +9,19 @@ extends Node2D
 @onready var button_container: HBoxContainer = $button_container
 
 @onready var version: Label = $version
-@onready var current_player: Label = $current_player
+@onready var current_player: Button = $current_player
 
 @onready var cursor_highlight: Node2D = $Node2D/Node2D
+
+@onready var change_player: Control = $Node2D/change_player
+@onready var new_player_button: TextureButton = $Node2D/change_player/new_player_button
+
+@onready var add_new_player: Control = $Node2D/change_player/add_new_player
+@onready var create_new_player_button: TextureButton = $Node2D/change_player/add_new_player/create_new_player_button
+@onready var cancel_create_player_button: TextureButton = $Node2D/change_player/add_new_player/cancel_create_player_button
+@onready var new_player_edit_line: LineEdit = $Node2D/change_player/add_new_player/new_player_edit_line
+@onready var player_name_container: VBoxContainer = $Node2D/change_player/ScrollContainer/player_name_container
+@onready var player_template: Button = $Node2D/change_player/ScrollContainer/player_name_container/player_template
 
 signal to_game_scene
 signal to_gallery_scene
@@ -34,7 +44,43 @@ func _ready() -> void:
 			new_material.set_shader_parameter("monochrome_color", Color(0.77, 0.77 ,0.77, 1))
 			node.material = new_material
 	
+	if DataManagerSingleton.player_datas.size() == 0:
+		change_player.visible = true
+		change_player.visible = false
+	else:
+		change_player.visible = false
+		change_player.visible = false
+	
+	refresh_player_list()
+	
+	current_player.pressed.connect(
+		func():
+			change_player.visible = true
+			add_new_player.visible = false
+	)
+	new_player_button.pressed.connect(
+		func():
+			add_new_player.visible = true
+	)
+	cancel_create_player_button.pressed.connect(
+		func():
+			add_new_player.visible = false
+	)
+	create_new_player_button.pressed.connect(
+		func():
+			var new_player_name : String =  new_player_edit_line.text
+			if new_player_name == "" or DataManagerSingleton.player_datas.keys().has(new_player_name):
+				return
+			DataManagerSingleton.player_datas[new_player_name] = DataManagerSingleton.player_data_template.duplicate(true)
+			refresh_player_list()
+			change_player.visible = false
+			DataManagerSingleton.load_player(new_player_name)
+			current_player.text = new_player_name
+	)
+	
 func _process(delta: float) -> void:
+	if get_global_mouse_position().y > 250 or get_global_mouse_position().y < 120:
+		return
 	var button_index: int
 	button_index = floor((get_global_mouse_position().x - 43) / 72)
 	button_index = max(0, min(button_index, 5))
@@ -71,3 +117,21 @@ func _on_quit_button_pressed() -> void:
 
 func _on_upgrade_button_pressed() -> void:
 	to_upgrade_scene.emit()
+
+func refresh_player_list() -> void:
+	if DataManagerSingleton.player_datas.size() == 0:
+		return
+		
+	for node in player_name_container.get_children():
+		if not node.name.contains("template"):
+			node.queue_free()
+		
+	for player_index in DataManagerSingleton.player_datas.keys():
+		var player_button = player_template.duplicate(true)
+		player_name_container.add_child(player_button)
+		player_button.text = player_index
+		player_button.pressed.connect(
+			func():
+				DataManagerSingleton.load_player(player_index)
+		)
+		

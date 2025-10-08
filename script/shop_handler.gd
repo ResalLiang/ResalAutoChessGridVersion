@@ -84,13 +84,13 @@ func _ready():
 		for x in shop.unit_grid.size.x:
 			freeze_dict[Vector2i(x,y)] = false
 			
-	if DataManagerSingleton.player_data["debug_mode"]:
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
 		shop_level = 7
 
 
 func shop_init():
 	remain_coins = 0 #game_start_coins
-	if DataManagerSingleton.player_data["debug_mode"]:
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
 		shop_level = 7
 	else:
 		shop_level = 1

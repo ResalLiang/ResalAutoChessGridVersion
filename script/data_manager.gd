@@ -87,18 +87,7 @@ func _ready() -> void:
 	
 	load_chess_stats()
 	
-	
-	player_data = player_datas[current_player]
-
-	
-	if not player_datas[current_player].has("debug_mode"):
-		player_datas[current_player]["debug_mode"] = false
-		
-	if not player_datas[current_player].has("player_upgrade") or player_datas[current_player]["player_upgrade"].keys().size() == 0:
-		player_datas[current_player]["player_upgrade"] = player_upgrade_template.duplicate(true)
-		
-	if not player_datas[current_player].has("difficulty"):
-		player_datas[current_player]["difficulty"] = "Normal"
+	load_player(current_player)
 
 # func load_game_binary():
 # 	if FileAccess.file_exists("user://gamedata.dat"):
@@ -107,6 +96,20 @@ func _ready() -> void:
 # 		file.close()
 # 		if player_datas.keys().has(current_player):
 # 			player_data = player_datas[current_player]
+func load_player(player_name: String):
+	if player_name == "" or not (player_datas.keys().has(player_name)):
+		return
+	current_player = player_name
+	player_data = player_datas[current_player]
+	
+	if not player_datas[current_player].has("debug_mode"):
+		player_datas[current_player]["debug_mode"] = false
+		
+	if not player_datas[current_player].has("player_upgrade") or player_datas[current_player]["player_upgrade"].keys().size() == 0:
+		player_datas[current_player]["player_upgrade"] = player_upgrade_template.duplicate(true)
+		
+	if not player_datas[current_player].has("difficulty"):
+		player_datas[current_player]["difficulty"] = "Normal"	
 
 func win_lose_round_init():
 	

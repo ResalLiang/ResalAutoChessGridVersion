@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://ci63qrx0cqk8p"]
+[gd_scene load_steps=27 format=3 uid="uid://ci63qrx0cqk8p"]
 
 [ext_resource type="Script" uid="uid://drxhwji5s0rgy" path="res://script/player_upgrade.gd" id="1_ky6jo"]
 [ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="2_4mnel"]
@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://dhawkfn61ogbw" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425rightArrow-Sheet.png" id="9_hbppc"]
 [ext_resource type="Texture2D" uid="uid://eskabl6wixm4" path="res://asset/sprite/FreeCuteTileset/BG1.png" id="9_iupli"]
 [ext_resource type="Texture2D" uid="uid://bij6posn3caot" path="res://asset/sprite/FreeCuteTileset/BG2.png" id="10_7asve"]
+[ext_resource type="FontFile" uid="uid://bfd8lxmo20ddl" path="res://asset/font/Everyday_Tiny_Bold.ttf" id="13_hbppc"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_esy48"]
 
@@ -365,6 +366,15 @@ offset_right = 541.0
 offset_bottom = 361.0
 mouse_filter = 2
 texture = ExtResource("10_7asve")
+
+[node name="LineEdit" type="LineEdit" parent="."]
+z_index = 50
+offset_left = 406.0
+offset_top = 10.0
+offset_right = 526.0
+offset_bottom = 34.0
+theme_override_fonts/font = ExtResource("13_hbppc")
+theme_override_font_sizes/font_size = 8
 
 [connection signal="toggled" from="faction_lock_container/holy_lock_container/holy_faction_lock" to="." method="_on_holy_faction_lock_toggled"]
 [connection signal="pressed" from="back_button" to="." method="_on_back_button_pressed"]

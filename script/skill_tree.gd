@@ -349,11 +349,12 @@ func handle_button_actived():
 		consume_won_round.disabled = true
 		just_active.disabled = true
 		return
-	elif current_level_number - game_faction_path_update[faction_array[current_page]]["path" + str(current_path_number)] == 1:
-		consume_remian_lose_round.disabled = false
-		consume_max_lose_round.disabled = false
-		consume_won_round.disabled = false
-		just_active.disabled = false
+	elif not current_level_number - game_faction_path_update[faction_array[current_page]]["path" + str(current_path_number)] == 1:
+		consume_remian_lose_round.disabled = true
+		consume_max_lose_round.disabled = true
+		consume_won_round.disabled = true
+		just_active.disabled = true
+		return
 		
 	if DataManagerSingleton.max_lose_rounds + DataManagerSingleton.max_lose_rounds_modifier - DataManagerSingleton.lose_rounds > 1:
 		consume_remian_lose_round.disabled = false
