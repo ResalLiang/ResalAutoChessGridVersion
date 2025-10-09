@@ -212,6 +212,7 @@ var faction_path_update: Dictionary
 var max_won_rounds_modifier := 0
 var max_lose_rounds_modifier := 0
 var remain_upgrade_count := 0
+var enemey_array: Array
 
 signal round_finished
 signal chess_appearance_finished
@@ -358,7 +359,7 @@ func _ready():
 		func(chess: Obstacle, play_area: PlayArea, tile: Vector2i):
 			if not is_game_turn_start:
 				update_population(false)
-				await check_chess_merge()
+				#await check_chess_merge()
 	)
 	
 	chess_mover.chess_raised.connect(
@@ -378,6 +379,7 @@ func _ready():
 			add_child(skill_tree)
 			await skill_tree.tree_exiting
 			faction_bonus_manager.bonus_refresh()
+			update_population(true)
 	)
 
 	player_won_round.connect(DataManagerSingleton.handle_player_won_round)
@@ -502,7 +504,8 @@ func new_round_prepare_start():
 
 	await clear_play_area(arena)
 
-	var enemey_array = await intelligent_generate_enemy()
+	enemey_array = await intelligent_generate_enemy()
+	print(str(enemey_array))
 
 	if saved_arena_team.size() != 0:
 		load_arena_team()
@@ -533,18 +536,31 @@ func new_round_prepare_end():
 	else:
 		game_difficulty = "Normal"
 		
-	match game_difficulty:
-		"Easy":
-			generate_enemy(mid(player_max_hp_sum, current_round * 200, shop_handler.shop_level * 200))
+		
+	team_dict[Team.TEAM2_FULL] = []
+	for node in get_tree().get_nodes_in_group("obstacle_group"):
+		if node is Obstacle and node.current_play_area == node.play_areas.playarea_arena and node.team != 1:
+			node.queue_free()
+	for chess_index in enemey_array:
+		var rand_x = randi_range(arena.unit_grid.size.x / 2, arena.unit_grid.size.x - 1)
+		var rand_y = randi_range(0, arena.unit_grid.size.y - 1)
+		if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
 
-		"Normal":
-			generate_enemy(max(player_max_hp_sum * 1.2, current_round * 200, shop_handler.shop_level * 200))
+			var character = summon_chess(chess_index[0], chess_index[1], chess_index[3], 2, arena, Vector2i(rand_x, rand_y))
 
-		"Hard":
-			generate_enemy(max(player_max_hp_sum * 1.5, current_round * 300, shop_handler, shop_handler.shop_level * 300))
-
-		_:
-			generate_enemy(max(player_max_hp_sum * 1.2, current_round * 200, shop_handler.shop_level * 200))
+		
+	#match game_difficulty:
+		#"Easy":
+			#generate_enemy(mid(player_max_hp_sum, current_round * 200, shop_handler.shop_level * 200))
+#
+		#"Normal":
+			#generate_enemy(max(player_max_hp_sum * 1.2, current_round * 200, shop_handler.shop_level * 200))
+#
+		#"Hard":
+			#generate_enemy(max(player_max_hp_sum * 1.5, current_round * 300, shop_handler, shop_handler.shop_level * 300))
+#
+		#_:
+			#generate_enemy(max(player_max_hp_sum * 1.2, current_round * 200, shop_handler.shop_level * 200))
 
 	faction_bonus_manager.bonus_refresh()
 
@@ -696,6 +712,7 @@ func handle_round_finished(msg):
 	new_round_prepare_start()
 
 func handle_game_end():
+	game_speed_controller._set_preset_speed(1.0)
 	DataManagerSingleton.merge_game_data()
 	DataManagerSingleton.current_chess_array = []
 	for chess_index in saved_arena_team.values(): #[faction, chess_name]
@@ -1322,7 +1339,7 @@ func intelligent_generate_enemy() -> Array:
 			continue
 		unique_chess_array.append([chess_index.faction, chess_index.chess_name, chess_index.role, chess_index.chess_level])
 
-	for faction_index in bonus_level_list.keys():
+	for faction_index in faction_bonus_manager.bonus_level_list.keys():
 		var faction_count_array := unique_chess_array.duplicate(true).filter(
 			func(chess):
 				if chess[0] == faction_index or chess[2] == faction_index:
@@ -1331,7 +1348,7 @@ func intelligent_generate_enemy() -> Array:
 		)
 		var faction_count := faction_count_array.size()
 		var faction_level : int = 0
-		for level_index in bonus_level_list[faction_index]:
+		for level_index in faction_bonus_manager.bonus_level_list[faction_index]:
 			if faction_count >= level_index:
 				faction_level += 1
 			else:
@@ -1561,14 +1578,14 @@ func intelligent_generate_enemy() -> Array:
 				continue
 			unique_enemy_chess_array.append(chess_index)
 
-		for faction_index in bonus_level_list.keys():
+		for faction_index in faction_bonus_manager.bonus_level_list.keys():
 			var faction_count_array := unique_enemy_chess_array.filter(
 				func(chess):
 					return chess[0] == faction_index or chess[2] == faction_index
 			)
 			var faction_count := faction_count_array.size()
 			var faction_level : int = 0
-			for level_index in bonus_level_list[faction_index]:
+			for level_index in faction_bonus_manager.bonus_level_list[faction_index]:
 				if faction_count >= level_index:
 					faction_level += 1
 				else:
@@ -1577,6 +1594,9 @@ func intelligent_generate_enemy() -> Array:
 
 		if (enemy_population >= enemy_limit[current_round]["min_population"] and enemy_population <= enemy_limit[current_round]["max_population"] and enemy_max_level <= enemy_limit[current_round]["max_level"] and enemy_faction_sum >= enemy_limit[current_round]["min_faction_bonus"] + player_faction_sum and enemy_faction_sum <= enemy_limit[current_round]["max_faction_bonus"] + player_faction_sum):
 			return enemy_array
+			
+		print("Total " + str(current_try_count) + " times try fail.")
+		
 	print("Generate enemy fail.")		
 	return []
 	

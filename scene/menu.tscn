@@ -26,6 +26,14 @@
 [ext_resource type="Texture2D" uid="uid://dmyj6laixmnnt" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Buttons/Button_03A_Selected.png" id="15_b08iv"]
 [ext_resource type="Texture2D" uid="uid://ck04j6jmvyoqa" path="res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240707dragon9SlicesD.png" id="16_dow5n"]
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8of67"]
+shader = ExtResource("13_026qx")
+shader_parameter/outline_color = Color(1, 1, 1, 1)
+shader_parameter/blink_color = Color(1, 1, 1, 1)
+shader_parameter/blink_time_scale = 0.0
+shader_parameter/use_monochrome = false
+shader_parameter/monochrome_color = Color(0.7764706, 0.7764706, 0.7764706, 1)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_pb5j1"]
 atlas = ExtResource("3_1qlln")
 
@@ -47,14 +55,6 @@ region = Rect2(0, 42, 48, 30)
 atlas = ExtResource("6_qp55b")
 region = Rect2(45, 0, 33, 22)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_8of67"]
-shader = ExtResource("13_026qx")
-shader_parameter/outline_color = Color(1, 1, 1, 1)
-shader_parameter/blink_color = Color(1, 1, 1, 1)
-shader_parameter/blink_time_scale = 0.0
-shader_parameter/use_monochrome = false
-shader_parameter/monochrome_color = Color(0.7764706, 0.7764706, 0.7764706, 1)
-
 [node name="menu" type="Node2D"]
 script = ExtResource("1_15se8")
 
@@ -63,6 +63,76 @@ z_index = 999
 offset_right = 540.0
 offset_bottom = 360.0
 mouse_filter = 2
+
+[node name="button_container" type="HBoxContainer" parent="."]
+z_index = 20
+offset_left = 57.0
+offset_top = 148.0
+offset_right = 481.0
+offset_bottom = 212.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="start_button" type="TextureButton" parent="button_container"]
+z_index = 20
+material = SubResource("ShaderMaterial_8of67")
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+texture_normal = ExtResource("8_pgh6j")
+stretch_mode = 0
+
+[node name="setting_button" type="TextureButton" parent="button_container"]
+z_index = 20
+material = SubResource("ShaderMaterial_8of67")
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+texture_normal = ExtResource("9_wmmby")
+stretch_mode = 0
+
+[node name="upgrade_button" type="TextureButton" parent="button_container"]
+z_index = 20
+material = SubResource("ShaderMaterial_8of67")
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+texture_normal = ExtResource("10_qp55b")
+stretch_mode = 0
+
+[node name="gallery_button" type="TextureButton" parent="button_container"]
+z_index = 20
+material = SubResource("ShaderMaterial_8of67")
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+texture_normal = ExtResource("11_wbutu")
+stretch_mode = 0
+
+[node name="statistics_button" type="TextureButton" parent="button_container"]
+z_index = 20
+material = SubResource("ShaderMaterial_8of67")
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+texture_normal = ExtResource("12_6i5tc")
+stretch_mode = 0
+
+[node name="quit_button" type="TextureButton" parent="button_container"]
+z_index = 20
+material = SubResource("ShaderMaterial_8of67")
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+texture_normal = ExtResource("14_8pci4")
+stretch_mode = 0
 
 [node name="Node2D" type="Node2D" parent="."]
 
@@ -110,6 +180,7 @@ z_index = 50
 offset_right = 48.0
 offset_bottom = 18.0
 scale = Vector2(2, 2)
+mouse_filter = 2
 texture = SubResource("AtlasTexture_ahy0u")
 
 [node name="TextureRect2" type="TextureRect" parent="Node2D/Node2D"]
@@ -118,6 +189,7 @@ offset_top = 51.0
 offset_right = 48.0
 offset_bottom = 81.0
 scale = Vector2(2, 2)
+mouse_filter = 2
 texture = SubResource("AtlasTexture_bh37c")
 
 [node name="TextureRect3" type="TextureRect" parent="Node2D"]
@@ -143,11 +215,13 @@ vertical_alignment = 1
 [node name="TextureRect" type="TextureRect" parent="Node2D"]
 offset_right = 540.0
 offset_bottom = 360.0
+mouse_filter = 2
 texture = ExtResource("7_wmmby")
 
 [node name="TextureRect2" type="TextureRect" parent="Node2D"]
 offset_right = 541.0
 offset_bottom = 361.0
+mouse_filter = 2
 texture = ExtResource("8_qp55b")
 
 [node name="change_player" type="Control" parent="Node2D"]
@@ -227,14 +301,13 @@ text = "template"
 [node name="new_player_button" type="TextureButton" parent="Node2D/change_player"]
 z_index = 820
 layout_mode = 0
-offset_left = 88.0
+offset_left = 32.0
 offset_top = 98.0
-offset_right = 136.0
+offset_right = 80.0
 offset_bottom = 114.0
 texture_normal = ExtResource("13_t04dq")
 texture_pressed = ExtResource("14_sd7bm")
 texture_hover = ExtResource("15_b08iv")
-metadata/_edit_use_anchors_ = true
 
 [node name="Label2" type="Label" parent="Node2D/change_player/new_player_button"]
 z_index = 830
@@ -248,6 +321,58 @@ mouse_filter = 0
 theme_override_fonts/font = ExtResource("12_ro420")
 theme_override_font_sizes/font_size = 4
 text = "New"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="delete_new_player" type="TextureButton" parent="Node2D/change_player"]
+z_index = 820
+layout_mode = 0
+offset_left = 92.0
+offset_top = 98.0
+offset_right = 140.0
+offset_bottom = 114.0
+texture_normal = ExtResource("13_t04dq")
+texture_pressed = ExtResource("14_sd7bm")
+texture_hover = ExtResource("15_b08iv")
+
+[node name="Label2" type="Label" parent="Node2D/change_player/delete_new_player"]
+z_index = 830
+z_as_relative = false
+layout_mode = 0
+offset_left = 10.0
+offset_top = 4.0
+offset_right = 39.0
+offset_bottom = 12.0
+mouse_filter = 0
+theme_override_fonts/font = ExtResource("12_ro420")
+theme_override_font_sizes/font_size = 4
+text = "Delete"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="cancel_new_player" type="TextureButton" parent="Node2D/change_player"]
+z_index = 820
+layout_mode = 0
+offset_left = 153.0
+offset_top = 98.0
+offset_right = 201.0
+offset_bottom = 114.0
+texture_normal = ExtResource("13_t04dq")
+texture_pressed = ExtResource("14_sd7bm")
+texture_hover = ExtResource("15_b08iv")
+
+[node name="Label2" type="Label" parent="Node2D/change_player/cancel_new_player"]
+z_index = 830
+z_as_relative = false
+layout_mode = 0
+offset_left = 10.0
+offset_top = 4.0
+offset_right = 39.0
+offset_bottom = 12.0
+mouse_filter = 0
+theme_override_fonts/font = ExtResource("12_ro420")
+theme_override_font_sizes/font_size = 4
+text = "Cancel"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -375,76 +500,6 @@ theme_override_fonts/font = ExtResource("11_6i5tc")
 theme_override_font_sizes/font_size = 8
 text = "Resal"
 flat = true
-
-[node name="button_container" type="HBoxContainer" parent="."]
-z_index = 20
-offset_left = 57.0
-offset_top = 148.0
-offset_right = 481.0
-offset_bottom = 212.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 8
-
-[node name="start_button" type="TextureButton" parent="button_container"]
-z_index = 20
-material = SubResource("ShaderMaterial_8of67")
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 3
-texture_normal = ExtResource("8_pgh6j")
-stretch_mode = 0
-
-[node name="setting_button" type="TextureButton" parent="button_container"]
-z_index = 20
-material = SubResource("ShaderMaterial_8of67")
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 3
-texture_normal = ExtResource("9_wmmby")
-stretch_mode = 0
-
-[node name="upgrade_button" type="TextureButton" parent="button_container"]
-z_index = 20
-material = SubResource("ShaderMaterial_8of67")
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 3
-texture_normal = ExtResource("10_qp55b")
-stretch_mode = 0
-
-[node name="gallery_button" type="TextureButton" parent="button_container"]
-z_index = 20
-material = SubResource("ShaderMaterial_8of67")
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 3
-texture_normal = ExtResource("11_wbutu")
-stretch_mode = 0
-
-[node name="statistics_button" type="TextureButton" parent="button_container"]
-z_index = 20
-material = SubResource("ShaderMaterial_8of67")
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 3
-texture_normal = ExtResource("12_6i5tc")
-stretch_mode = 0
-
-[node name="quit_button" type="TextureButton" parent="button_container"]
-z_index = 20
-material = SubResource("ShaderMaterial_8of67")
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 3
-texture_normal = ExtResource("14_8pci4")
-stretch_mode = 0
 
 [connection signal="pressed" from="button_container/start_button" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="button_container/upgrade_button" to="." method="_on_upgrade_button_pressed"]

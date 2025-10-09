@@ -67,7 +67,8 @@ func _ready():
 		sfx_player.set_bus("SFX")
 		add_child(sfx_player)
 		sfx_player_pool.append(sfx_player)
-	print("AudioManager (Singleton) is ready. Created ", sfx_pool_size, " SFX players.")
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
+		print("AudioManager (Singleton) is ready. Created ", sfx_pool_size, " SFX players.")
 
 # --- Public Methods ---
 
@@ -89,7 +90,8 @@ func play_music(music_key: String):
 	bgm_player.stop()
 	bgm_player.stream = music_stream
 	bgm_player.play()
-	print("Playing BGM with key: ", music_key)
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
+		print("Playing BGM with key: ", music_key)
 
 #summoned_character.spell_casted.connect(AudioManagerSingleton.play_sfx.bind("spell_casted"))
 #summoned_character.ranged_attack_started.connect(AudioManagerSingleton.play_sfx.bind("ranged_attack_started"))
@@ -115,7 +117,8 @@ func play_sfx(obstacle: Obstacle, action: String):
 		if not player.is_playing():
 			player.stream = sfx_stream
 			player.play()
-			print("Playing SFX for: ", str(keys), " on player ", player.name)
+			if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
+				print("Playing SFX for: ", str(keys), " on player ", player.name)
 			return
 	
 	push_warning("No available SFX players in the pool. Could not play: " + str(keys))

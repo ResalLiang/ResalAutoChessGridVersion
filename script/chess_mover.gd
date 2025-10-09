@@ -74,9 +74,10 @@ func _move_chess(obstacle: Obstacle, play_area: PlayArea, tile: Vector2i) -> voi
 		obstacle.current_play_area = obstacle.play_areas.playarea_shop
 	obstacle.global_position = play_area.global_position + play_area.to_local(play_area.get_global_from_tile(tile))
 	chess_moved.emit(obstacle, play_area, tile)
-	print("=".repeat(20))
-	print("moving" + obstacle.chess_name + " to " + str(tile) + ", global_position = " + str(obstacle.global_position))
-	print("current area : " + obstacle.get_current_tile(obstacle)[0].name + ", current_tile : " + str(obstacle.get_current_tile(obstacle)[1]))
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
+		print("=".repeat(20))
+		print("moving" + obstacle.chess_name + " to " + str(tile) + ", global_position = " + str(obstacle.global_position))
+		print("current area : " + obstacle.get_current_tile(obstacle)[0].name + ", current_tile : " + str(obstacle.get_current_tile(obstacle)[1]))
 
 
 func tween_move_chess(obstacle: Obstacle, play_area: PlayArea, chess_position: Vector2i) -> void:
@@ -146,10 +147,10 @@ func _on_chess_drag_started(starting_position: Vector2, status: String, obstacle
 				bench.get_node("bench_bound").visible = true	
 				shop.get_node("shop_bound").visible = false		
 				
-	
-	print("=".repeat(20))
-	print("start moving " + obstacle.chess_name + ", global_position = " + str(obstacle.global_position))
-	print("current area : " + obstacle.get_current_tile(obstacle)[0].name + ", current_tile : " + str(obstacle.get_current_tile(obstacle)[1]))
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
+		print("=".repeat(20))
+		print("start moving " + obstacle.chess_name + ", global_position = " + str(obstacle.global_position))
+		print("current area : " + obstacle.get_current_tile(obstacle)[0].name + ", current_tile : " + str(obstacle.get_current_tile(obstacle)[1]))
 	
 		
 func _on_chess_drag_canceled(starting_position: Vector2, status: String, obstacle: Obstacle) -> void:
@@ -266,7 +267,7 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 				_move_chess(obstacle, new_area, new_tile)
 				var merge_result = await get_parent().check_chess_merge()
 				if merge_result and get_parent().current_population <= get_parent().max_population:
-					shop_handler.buy_chess(merge_result)
+					shop_handler.buy_chess(obstacle)
 					return
 				else:
 					_reset_chess_to_starting_position(starting_position, obstacle)
@@ -296,12 +297,12 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 				_reset_chess_to_starting_position(starting_position, obstacle)
 				get_parent().control_shaker(get_parent().remain_coins_label)
 				return
-							
+					
 			# population check
-			
-			shop_handler.buy_chess(obstacle)
 			_move_chess(obstacle, new_area, new_tile)
-			return
+			var merge_result = await get_parent().check_chess_merge()
+			shop_handler.buy_chess(obstacle)
+			return	
 
 		_:
 			#other ilegal movement

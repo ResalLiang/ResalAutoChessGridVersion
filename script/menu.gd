@@ -15,6 +15,7 @@ extends Node2D
 
 @onready var change_player: Control = $Node2D/change_player
 @onready var new_player_button: TextureButton = $Node2D/change_player/new_player_button
+@onready var cancel_new_player: TextureButton = $Node2D/change_player/cancel_new_player
 
 @onready var add_new_player: Control = $Node2D/change_player/add_new_player
 @onready var create_new_player_button: TextureButton = $Node2D/change_player/add_new_player/create_new_player_button
@@ -73,9 +74,15 @@ func _ready() -> void:
 				return
 			DataManagerSingleton.player_datas[new_player_name] = DataManagerSingleton.player_data_template.duplicate(true)
 			refresh_player_list()
-			change_player.visible = false
 			DataManagerSingleton.load_player(new_player_name)
 			current_player.text = new_player_name
+			DataManagerSingleton.save_game_json()
+			change_player.visible = false
+	)
+	cancel_new_player.pressed.connect(
+		func():
+			DataManagerSingleton.save_game_json()	
+			change_player.visible = false	
 	)
 	
 func _process(delta: float) -> void:
@@ -111,6 +118,8 @@ func _on_gallery_button_pressed() -> void:
 
 
 func _on_quit_button_pressed() -> void:
+	for user_index in DataManagerSingleton.player_datas.keys():
+		DataManagerSingleton.player_datas[user_index]["debug_mode"] = false
 	DataManagerSingleton.save_game_json()
 	get_tree().quit()
 
@@ -125,13 +134,18 @@ func refresh_player_list() -> void:
 	for node in player_name_container.get_children():
 		if not node.name.contains("template"):
 			node.queue_free()
+		else:
+			node.visible = false
 		
 	for player_index in DataManagerSingleton.player_datas.keys():
 		var player_button = player_template.duplicate(true)
 		player_name_container.add_child(player_button)
+		player_button.visible = true
 		player_button.text = player_index
 		player_button.pressed.connect(
 			func():
 				DataManagerSingleton.load_player(player_index)
+				current_player.text = player_index
+				change_player.visible = false
 		)
 		
