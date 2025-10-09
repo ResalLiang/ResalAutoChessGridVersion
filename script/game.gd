@@ -501,6 +501,9 @@ func new_round_prepare_start():
 	game_turn_finished.emit()
 
 	await clear_play_area(arena)
+
+	var enemey_array = await intelligent_generate_enemy()
+
 	if saved_arena_team.size() != 0:
 		load_arena_team()
 		
@@ -1302,3 +1305,278 @@ func get_current_tile(current_position: Vector2):
 	var i = chess_mover._get_play_area_for_position(current_position)
 	var current_tile = chess_mover.play_areas[i].get_tile_from_global(current_position)
 	return [chess_mover.play_areas[i], current_tile]
+
+func intelligent_generate_enemy() -> Array:
+	var max_try_count := 999
+	var current_try_count := 0
+
+	var player_population := arena.unit_grid.get_all_units().size() # player population
+	var player_chess_team : Array = arena.unit_grid.get_all_units()
+	var player_max_level : int = 1 # player max level
+	var player_faction_sum : int = 0 # player faction bonus sum
+	var unique_chess_array := []
+	for chess_index in arena.unit_grid.get_all_units():
+		if chess_index.chess_level > player_max_level:
+			player_max_level = chess_index.chess_level
+		if unique_chess_array.any(func(chess): return (chess[0] == chess_index.faction and chess[1] == chess_index.chess_name and chess[2] == chess_index.role)):
+			continue
+		unique_chess_array.append([chess_index.faction, chess_index.chess_name, chess_index.role, chess_index.chess_level])
+
+	for faction_index in bonus_level_list.keys():
+		var faction_count_array := unique_chess_array.duplicate(true).filter(
+			func(chess):
+				if chess[0] == faction_index or chess[2] == faction_index:
+					return true
+				return false
+		)
+		var faction_count := faction_count_array.size()
+		var faction_level : int = 0
+		for level_index in bonus_level_list[faction_index]:
+			if faction_count >= level_index:
+				faction_level += 1
+			else:
+				break
+		player_faction_sum += faction_level
+
+	var enemy_limit := {
+		1: {
+			"max_shop_level" : 1,
+			"min_population" : 3,
+			"max_population" : 4,
+			"max_level" : 1,
+			"level_distribution" : [1.0, 0, 0],
+			"min_faction_bonus" : -1,
+			"max_faction_bonus" : 1
+		},
+		2: {
+			"max_shop_level" : 1,
+			"min_population" : 3,
+			"max_population" : 4,
+			"max_level" : 1,
+			"level_distribution" : [1.0, 0, 0],
+			"min_faction_bonus" : -1,
+			"max_faction_bonus" : 1
+		},
+		3: {
+			"max_shop_level" : 2,
+			"min_population" : 4,
+			"max_population" : 5,
+			"max_level" : 1,
+			"level_distribution" : [1.0, 0, 0],
+			"min_faction_bonus" : -1,
+			"max_faction_bonus" : 1
+		},
+		4: {
+			"max_shop_level" : 2,
+			"min_population" : 4,
+			"max_population" : 5,
+			"max_level" : 1,
+			"level_distribution" : [1.0, 0, 0],
+			"min_faction_bonus" : -1,
+			"max_faction_bonus" : 1
+		},
+		5: {
+			"max_shop_level" : 2,
+			"min_population" : 4,
+			"max_population" : 5,
+			"max_level" : 1,
+			"level_distribution" : [1.0, 0, 0],
+			"min_faction_bonus" : -1,
+			"max_faction_bonus" : 1
+		},
+		6: {
+			"max_shop_level" : 3,
+			"min_population" : 5,
+			"max_population" : 6,
+			"max_level" : 2,
+			"level_distribution" : [0.8, 0.2, 0],
+			"min_faction_bonus" : -1,
+			"max_faction_bonus" : 1
+		},
+		7: {
+			"max_shop_level" : 3,
+			"min_population" : 5,
+			"max_population" : 6,
+			"max_level" : 2,
+			"level_distribution" : [0.8, 0.2, 0],
+			"min_faction_bonus" : -1,
+			"max_faction_bonus" : 1
+		},
+		8: {
+			"max_shop_level" : 3,
+			"min_population" : 5,
+			"max_population" : 6,
+			"max_level" : 2,
+			"level_distribution" : [0.7, 0.3, 0],
+			"min_faction_bonus" : -1,
+			"max_faction_bonus" : 1
+		},
+		9: {
+			"max_shop_level" : 4,
+			"min_population" : 6,
+			"max_population" : 7,
+			"max_level" : 2,
+			"level_distribution" : [0.7, 0.3, 0],
+			"min_faction_bonus" : -1,
+			"max_faction_bonus" : 1
+		},
+		10: {
+			"max_shop_level" : 4,
+			"min_population" : 6,
+			"max_population" : 7,
+			"max_level" : 2,
+			"level_distribution" : [0.7, 0.3, 0],
+			"min_faction_bonus" : -1,
+			"max_faction_bonus" : 1
+		},
+		11: {
+			"max_shop_level" : 4,
+			"min_population" : 6,
+			"max_population" : 7,
+			"max_level" : 3,
+			"level_distribution" : [0.7, 0.25, 0.05],
+			"min_faction_bonus" : 0,
+			"max_faction_bonus" : 2
+		},
+		12: {
+			"max_shop_level" : 5,
+			"min_population" : 7,
+			"max_population" : 8,
+			"max_level" : 3,
+			"level_distribution" : [0.7, 0.25, 0.05],
+			"min_faction_bonus" : 0,
+			"max_faction_bonus" : 2
+		},
+		13: {
+			"max_shop_level" : 5,
+			"min_population" : 7,
+			"max_population" : 8,
+			"max_level" : 3,
+			"level_distribution" : [0.7, 0.25, 0.05],
+			"min_faction_bonus" : 0,
+			"max_faction_bonus" : 2
+		},
+		14: {
+			"max_shop_level" : 5,
+			"min_population" : 7,
+			"max_population" : 8,
+			"max_level" : 3,
+			"level_distribution" : [0.7, 0.25, 0.05],
+			"min_faction_bonus" : 0,
+			"max_faction_bonus" : 2
+		},
+		15: {
+			"max_shop_level" : 6,
+			"min_population" : 8,
+			"max_population" : 9,
+			"max_level" : 3,
+			"level_distribution" : [0.7, 0.25, 0.05],
+			"min_faction_bonus" : 0,
+			"max_faction_bonus" : 2
+		},
+		16: {
+			"max_shop_level" : 6,
+			"min_population" : 8,
+			"max_population" : 9,
+			"max_level" : 3,
+			"level_distribution" : [0.65, 0.3, 0.05],
+			"min_faction_bonus" : 0,
+			"max_faction_bonus" : 2
+		},
+		17: {
+			"max_shop_level" : 6,
+			"min_population" : 8,
+			"max_population" : 9,
+			"max_level" : 3,
+			"level_distribution" : [0.65, 0.3, 0.05],
+			"min_faction_bonus" : 0,
+			"max_faction_bonus" : 2
+		},
+		18: {
+			"max_shop_level" : 6,
+			"min_population" : 8,
+			"max_population" : 9,
+			"max_level" : 3,
+			"level_distribution" : [0.65, 0.3, 0.05],
+			"min_faction_bonus" : 0,
+			"max_faction_bonus" : 2
+		},
+		19: {
+			"max_shop_level" : 6,
+			"min_population" : 8,
+			"max_population" : 9,
+			"max_level" : 3,
+			"level_distribution" : [0.6, 0.3, 0.1],
+			"min_faction_bonus" : 0,
+			"max_faction_bonus" : 2
+		},
+		20: {
+			"max_shop_level" : 6,
+			"min_population" : 8,
+			"max_population" : 9,
+			"max_level" : 3,
+			"level_distribution" : [0.6, 0.3, 0.1],
+			"min_faction_bonus" : 0,
+			"max_faction_bonus" : 2
+		}
+	}
+
+	var enemy_array := []
+
+	while current_try_count <= max_try_count:
+		current_try_count += 1
+		enemy_array.clear()
+
+		# generate one time
+		for i in range(randi_range(enemy_limit[current_round]["min_population"], enemy_limit[current_round]["max_population"])):
+			var generate_chess = generate_random_chess(enemy_limit[current_round]["max_shop_level"], "locked")
+			var generate_chess_faction = generate_chess[0]
+			var generate_chess_name = generate_chess[1]
+			var generate_chess_role = DataManagerSingleton.get_chess_data()[generate_chess_faction][generate_chess_name]["role"]
+			var generate_chess_level := 1
+			var rand_level := randf()
+			var level_distribution = enemy_limit[current_round]["level_distribution"]
+			var distribution_sum = level_distribution[0] + level_distribution[1] + level_distribution[2]
+			
+			
+			var cumulative_prob = 0.0
+			for j in range(level_distribution.size()):
+				cumulative_prob += level_distribution[j] / distribution_sum
+				if rand_level <= cumulative_prob:
+					generate_chess_level = j + 1
+					break
+
+			enemy_array.append([generate_chess_faction, generate_chess_name, generate_chess_role, generate_chess_level])
+
+		# [chess_index.faction, chess_index.chess_name, chess_index.role, chess_index.chess_level]
+		var enemy_population := enemy_array.size() # enemy population
+		var enemy_max_level : int = 1 # enemy max level
+		var enemy_faction_sum : int = 0 # enemy faction bonus sum
+		var unique_enemy_chess_array := []
+
+		for chess_index in enemy_array:
+			if chess_index[3] > enemy_max_level:
+				enemy_max_level = chess_index[3]
+			if unique_enemy_chess_array.any(func(chess): return (chess[0] == chess_index[0] and chess[1] == chess_index[1] and chess[2] == chess_index[2])):
+				continue
+			unique_enemy_chess_array.append(chess_index)
+
+		for faction_index in bonus_level_list.keys():
+			var faction_count_array := unique_enemy_chess_array.filter(
+				func(chess):
+					return chess[0] == faction_index or chess[2] == faction_index
+			)
+			var faction_count := faction_count_array.size()
+			var faction_level : int = 0
+			for level_index in bonus_level_list[faction_index]:
+				if faction_count >= level_index:
+					faction_level += 1
+				else:
+					break
+			enemy_faction_sum += faction_level
+
+		if (enemy_population >= enemy_limit[current_round]["min_population"] and enemy_population <= enemy_limit[current_round]["max_population"] and enemy_max_level <= enemy_limit[current_round]["max_level"] and enemy_faction_sum >= enemy_limit[current_round]["min_faction_bonus"] + player_faction_sum and enemy_faction_sum <= enemy_limit[current_round]["max_faction_bonus"] + player_faction_sum):
+			return enemy_array
+	print("Generate enemy fail.")		
+	return []
+	
