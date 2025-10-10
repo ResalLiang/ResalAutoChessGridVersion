@@ -15,13 +15,18 @@ const obstacle_scene = preload("res://scene/obstacle.tscn")
 
 var shop_buy_price := 3
 var shop_sell_price := 1
-var shop_refresh_price := 1
-var shop_upgrade_price := 3
+var shop_refresh_price := 1:
+	get():
+		if get_meta("free_refresh_count", 0) > 0:
+			return 0
+		return shop_refresh_price
 
 var remain_coins := 0
 var base_income := 10
 
 var shop_level := 1
+
+var shop_upgrade_price := 7
 
 var buy_human_count := 0
 
@@ -99,15 +104,20 @@ func shop_init():
 		for x in shop.unit_grid.size.x:
 			freeze_dict[Vector2i(x,y)] = false
 	
-	shop_refresh()
+	shop_refresh(shop_level)
 
 func shop_manual_refresh() -> void:
-	if remain_coins >= shop_refresh_price:
+	if get_meta("free_refresh_count", 0) > 0:
+		var remain_free_refresh_count = get_meta("free_refresh_count", 0) - 1
+		set_meta("free_refresh_count", remain_free_refresh_count)
+		shop_refresh(shop_level)	
+
+	elif remain_coins >= shop_refresh_price:
 		remain_coins -= shop_refresh_price
 		coins_decreased.emit(shop_refresh_price, "refresh shop")
-		shop_refresh()	
+		shop_refresh(shop_level)
 
-func shop_refresh() -> void:
+func shop_refresh(level: int) -> void:
 
 	shop_refreshed.emit()
 	
@@ -127,7 +137,13 @@ func shop_refresh() -> void:
 		# var rand_faction_index = randi_range(0, get_parent().chess_data.keys().size() - 2) # remove villager
 		# var rand_faction = get_parent().chess_data.keys()[rand_faction_index]
 
-		var rand_character_result = get_parent().generate_random_chess_update(min(6, shop_level), "all")
+		var rand_character_result
+		if get_parent().check_villager_count("OldWoman") > 0 and randf() <= 0.3:
+			var rand_exist_chess = arena.unit_grid.get_all_units().duplicate().pick_random()
+			rand_character_result = [rand_exist_chess.faction, rand_exist_chess.chess_name]
+		else:
+			rand_character_result = get_parent().generate_random_chess_update(min(6, shop_level), "locked")
+
 		var character = get_parent().summon_chess(rand_character_result[0], rand_character_result[1], 1, 1, shop, Vector2i(shop_col_index, shop_row_index))
 
 	if DataManagerSingleton.player_data["debug_mode"]:
@@ -169,19 +185,19 @@ func shop_freeze() -> void:
 
 
 func shop_upgrade() -> void:
-	var current_upgrade_price = get_shop_upgrade_price()
 	if remain_coins >= current_upgrade_price and shop_level < (7 if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] else max_shop_level):
 		remain_coins -= current_upgrade_price
 		coins_decreased.emit(current_upgrade_price, "upgrading shop")
 		shop_level += 1
 		shop_upgraded.emit(shop_level)
+		shop_upgrade_price = get_shop_upgrade_price()
 	elif remain_coins < current_upgrade_price:
 		get_parent().control_shaker(get_parent().remain_coins_label)
 	elif shop_level >= (7 if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] else max_shop_level):
 		get_parent().control_shaker(get_parent().current_shop_level)
 
 func get_shop_upgrade_price():
-	return shop_level + 2 
+	return shop_level + 5 
 
 func get_current_difficulty():
 	return shop_level * 200
