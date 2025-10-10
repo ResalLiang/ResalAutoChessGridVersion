@@ -19,7 +19,8 @@ var player_data_template : Dictionary = {
 	"debug_mode" : false,
 	"chess_stat" : {},
 	"player_upgrade" : {},
-	"difficulty" : "Normal"
+	"difficulty" : "Normal",
+	"gem_count" : 0
 }
 
 var chess_stat_template = {
@@ -110,6 +111,9 @@ func load_player(player_name: String):
 		
 	if not player_datas[current_player].has("difficulty"):
 		player_datas[current_player]["difficulty"] = "Normal"	
+
+	if not player_datas[current_player].has("gem_count"):
+		player_datas[current_player]["gem_count"] = 0
 
 func win_lose_round_init():
 	
