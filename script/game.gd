@@ -7,6 +7,7 @@ const obstacle_scene = preload("res://scene/obstacle.tscn")
 const chess_class = preload("res://script/chess.gd")
 const alternative_choice_scene = preload("res://scene/alternative_choice.tscn")
 const skill_tree_scene = preload("res://scene/skill_tree.tscn")
+const faction_bonus_bar_scene = preload("res://scene/faction_bonus_bar.tscn")
 
 @onready var arena: PlayArea = %arena
 @onready var bench: PlayArea = %bench
@@ -55,7 +56,7 @@ const skill_tree_scene = preload("res://scene/skill_tree.tscn")
 @onready var arrow: CustomArrowRenderer = $arrow
 @onready var game_speed_controller: GameSpeedController = $game_speed_controller
 @onready var faction_bonus_button: Button = $tilemap/ui/faction_bonus_button
-
+@onready var enemy_faction_container: VBoxContainer = $enemy_faction_container
 
 enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
 enum ChessActiveOrder { HIGH_HP, LOW_HP, NEAR_CENTER, FAR_CENTER, BUY_SEQ, RE_BUY_SEQ }
@@ -275,10 +276,6 @@ func _ready():
 			alternative_choice.queue_free()		
 	)
 	shop_refresh_button.pressed.connect(shop_handler.shop_manual_refresh)
-	shop_refresh_button.pressed.connect(
-		func():
-			control_shaker(remain_coins_label)
-	)
 	shop_freeze_button.pressed.connect(shop_handler.shop_freeze)
 	shop_upgrade_button.pressed.connect(shop_handler.shop_upgrade)
 	chess_order_hp_high.pressed.connect(
@@ -301,7 +298,14 @@ func _ready():
 	shop_handler.coins_increased.connect(
 		func(value, reason):
 			remain_coins_label.text = "Remaining Coins   : " + str(shop_handler.remain_coins)
-			if shop_handler.remain_coins >= shop_handler.get_shop_upgrade_price():
+			if shop_handler.remain_coins < shop_handler.shop_refresh_price or shop_handle.get_meta("free_refresh_count", 0) == 0:
+				shop_refresh_button.disabled = true
+				shop_refresh_button.global_position.x = -40
+			else:
+				shop_refresh_button.disabled = false
+				shop_refresh_button.global_position.x = 24
+
+			if shop_handler.remain_coins >= shop_handler.shop_upgrade_price:
 				shop_upgrade_button.disabled = false
 				shop_upgrade_button.global_position.x = 24
 			else:
@@ -320,7 +324,7 @@ func _ready():
 				shop_refresh_button.disabled = false
 				shop_refresh_button.global_position.x = 24
 				
-			if shop_handler.remain_coins < shop_handler.get_shop_upgrade_price():
+			if shop_handler.remain_coins < shop_handler.shop_upgrade_price:
 				shop_upgrade_button.disabled = true
 				shop_upgrade_button.global_position.x = -40
 			else:
@@ -358,14 +362,23 @@ func _ready():
 	chess_mover.chess_moved.connect(
 		func(chess: Obstacle, play_area: PlayArea, tile: Vector2i):
 			if not is_game_turn_start:
-				update_population(false)
-				#await check_chess_merge()
+				faction_bonus_manager.bonus_refresh()
+				update_population(true)
 	)
 	
 	chess_mover.chess_raised.connect(
 		func(chess_position, obstacle):
 			arrow.is_visible = true
 			arrow.start_pos = chess_position
+			#TODO : add faction_bonus_highlight material
+			if not obstacle is Chess:
+				return
+			for bar_index in (faction_bonus_manager.v_box_container_1.get_children() + faction_bonus_manager.v_box_container_2.get_children() + faction_bonus_manager.v_box_container_3.get_children()):
+				if bar_index is FactionBonusBar and (bar_index.label.text = obstacle.faction or bar_index.label.text = obstacle.role):
+					var new_material = bar_index.material.duplicate()
+					new_material.set_shader_parameter("use_monochrome", true)
+					new_material.set_shader_parameter("monochrome_color", Color(0.77, 0.77 ,0.77, 1))
+					bar_index.material = new_material
 	)
 	
 	chess_mover.chess_dropped.connect(
@@ -395,7 +408,7 @@ func _ready():
 	debug_label.visible = DataManagerSingleton.player_data["debug_mode"]
 	tips_label.visible = false
 	
-	shop_handler.shop_refresh()
+	shop_handler.shop_refresh(shop_handler.shop_level)
 	shop_handler.buy_human_count = 0
 	current_round = 0
 	
@@ -493,11 +506,12 @@ func new_round_prepare_start():
 	
 	current_round += 1
 	remain_upgrade_count += 1
+	shop_handler.shop_upgrade_price = max(0, shop_handler.shop_upgrade_price - 1)
 	
 	current_round_label.text = "Current round : " + str(current_round)
 	won_lose_round_label.text = "Won rounds: " + str(DataManagerSingleton.won_rounds) + " | Lose rounds: " + str(DataManagerSingleton.lose_rounds)
 
-	shop_handler.shop_refresh()
+	shop_handler.shop_refresh(shop_handler.shop_level)
 	shop_handler.buy_human_count = 0
 
 	game_turn_finished.emit()
@@ -506,6 +520,46 @@ func new_round_prepare_start():
 
 	enemey_array = await intelligent_generate_enemy()
 	print(str(enemey_array))
+
+	# [chess_index.faction, chess_index.chess_name, chess_index.role, chess_index.chess_level]
+	var checked_faction: Array = []
+
+	for chess_index in enemey_array:
+		if checked_faction.has(chess_index[0]):
+			continue
+		var current_faction_count = enemey_array.reduce(
+			func(accum, number):
+				if number[0] == chess_index:
+					accum += 1
+		,0)
+		add_bonus_bar_to_enemy_container(chess_index[0], current_faction_count)
+
+	for chess_index in enemey_array:
+		if checked_faction.has(chess_index[2]):
+			continue
+		var current_faction_count = enemey_array.reduce(
+			func(accum, number):
+				if number[2] == chess_index:
+					accum += 1
+		,0)
+		add_bonus_bar_to_enemy_container(chess_index[2], current_faction_count)
+
+
+	if check_villager_count("Miner") > 0:
+		for i in range(check_villager_count("Miner")):
+			if randf() <= 0.3:
+				#TODO: add animation
+				DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["gem_count"] += 1
+
+	if check_villager_count("Peasant") > 0:
+		var remain_peasant_count = get_meta("peasant_counter", 0) + check_villager_count("Peasant")
+		set_meta("peasant_counter", remain_peasant_count)
+		while get_meta("peasant_counter", 0) >= 2:
+			remain_peasant_count = get_meta("peasant_counter", 0) - 2
+			shop_handler.remain_coins += 1
+			shop_handler.coins_increased.emit(1, "peasant passive effect")
+			set_meta("peasant_counter", remain_peasant_count)
+
 
 	if saved_arena_team.size() != 0:
 		load_arena_team()
@@ -567,7 +621,7 @@ func new_round_prepare_end():
 	chess_appearance(arena)
 
 func start_new_round():
-	# if start new turn, it will be fully auto.
+	# if start new turn, it will bef ully auto.
 	print("Start new round.")
 	var team1_alive_cnt = 0
 	var team2_alive_cnt = 0
@@ -1075,7 +1129,7 @@ func update_population(forced_update: bool):
 			current_population += 1
 			population_record.append(chess_index)
 			
-	max_population = shop_handler.get_max_population()
+	max_population = shop_handler.get_max_population() + 2 * check_villager_count("Princess")
 	population_label.text = "Population = " + str(current_population)	+ "/" + str(max_population)
 	var label_settings = LabelSettings.new()
 	if current_population > max_population:
@@ -1289,7 +1343,8 @@ func check_chess_merge():
 							alternative_choice.queue_free()
 						else:
 							upgrade_chess= summon_chess(merged_chess_faction, merged_chess_name, merged_level, 1, merged_play_area, merged_tile)
-
+						# TODO add animation name
+						await upgrade_chess.effect_animation_display("", arena, merged_tile, "Center")
 						merge_count = 0
 						merge_result[merge_level - 1] = true
 						merge_checked.append([other_node.faction, other_node.chess_name])
@@ -1600,3 +1655,55 @@ func intelligent_generate_enemy() -> Array:
 	print("Generate enemy fail.")		
 	return []
 	
+
+func add_bonus_bar_to_enemy_container(faction: String, count: int):
+
+	var faction_bonus_bar = faction_bonus_bar_scene.instantiate().duplicate()
+	
+	enemy_faction_container.add_child(faction_bonus_bar)
+
+	var bar_color : Color
+	match faction:
+		"elf":
+			faction_bonus_bar.bar_color = Color.GREEN
+			faction_bonus_bar.frame_color = "Silver"
+		"human":
+			faction_bonus_bar.bar_color = Color.BLUE
+			faction_bonus_bar.frame_color = "Iron"
+		"dwarf":
+			faction_bonus_bar.bar_color = Color.RED
+			faction_bonus_bar.frame_color = "Copper"
+		_:
+			faction_bonus_bar.bar_color = Color.RED
+			faction_bonus_bar.frame_color = "Iron"
+			
+	faction_bonus_bar.bar_value = count
+	faction_bonus_bar.label.text = faction
+
+func check_villager_count(villager_name: String) -> int:
+	if not DataManagerSingleton.get_chess_data()["villager"].keys().has(villager_name):
+		return 0
+
+	var villager_count := 0
+	for chess_index in bench.unit_grid.get_all_units():
+		if not DataManagerSingleton.check_chess_valid(chess_index):
+			continue
+		if chess_index.faction == "villager" and chess_index.chess_name == villager_name:
+			villager_count += 1
+	return villager_count
+
+func villager_release(villager_name: String) -> void:
+	if not DataManagerSingleton.get_chess_data()["villager"].keys().has(villager_name):
+		return
+
+	match villager_name:
+	"OldMan":
+		remain_upgrade_count += 1
+
+	"NobleWoman":
+		shop_handler.shop_refresh(shop_hanlder.shop_level + 1)
+
+	"Merchant":
+		var shop_free_refresh_count = shop_handler.get_meta("free_refresh_count", 0)
+		shop_free_refresh_count += 3
+		shop_handler.set_meta("free_refresh_count", shop_free_refresh_count)
