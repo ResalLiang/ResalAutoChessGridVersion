@@ -298,8 +298,6 @@ func _ready():
 	attack_evased.connect(AudioManagerSingleton.play_sfx.unbind(1).bind("attack_evased"))
 	is_died.connect(AudioManagerSingleton.play_sfx.unbind(1).bind("is_died"))
 	
-	
-	#TODO: load previous effect first or init first???
 	kill_chess.connect(
 		func(attacker, target):
 			if attacker == target:
@@ -1905,6 +1903,8 @@ func sun_strike(strike_count: int) -> bool:
 	
 	var arena_units = arena.unit_grid.get_all_units()
 	for i in range(strike_count):
+		if randf() > 0.5:
+			continue
 		for obstacle_index in arena_units:
 			if obstacle_index.team == team:
 				continue
@@ -2131,7 +2131,7 @@ func dwarf_demolitionist_placebomb(spell_range: int) -> bool:
 				if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
 					var summoned_character = game_root_scene.summon_chess("dwarf", "Bomb", 1, team, arena, Vector2i(rand_x, rand_y))	
 					summoned_character.obstacle_counter = 2
-					summoned_character.obstacle_level = 1
+					summoned_character.obstacle_level = 1 + chess_level
 
 					return true				
 	return false	
