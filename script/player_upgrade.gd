@@ -21,8 +21,6 @@ class_name PlayerUpgrade
 @onready var difficulty_right_arrow: TextureButton = $faction_lock_container/difficulty_container/difficulty_right_arrow
 @onready var line_edit: LineEdit = $LineEdit
 
-
-#TODO: add debug button
 signal to_menu_scene
 
 var current_player_upgrade : Dictionary
