@@ -84,6 +84,13 @@ func _ready() -> void:
 			DataManagerSingleton.save_game_json()	
 			change_player.visible = false	
 	)
+
+	if is_past_date():
+		for node in button_container.get_children():
+			if not node is TextureButton:
+				continue
+			node.diabled = true
+
 	
 func _process(delta: float) -> void:
 	if get_global_mouse_position().y > 250 or get_global_mouse_position().y < 120:
@@ -149,3 +156,18 @@ func refresh_player_list() -> void:
 				change_player.visible = false
 		)
 		
+func is_past_date() -> bool:
+    # 获取当前时间戳
+    var current_unix_time = OS.get_unix_time()
+    
+    # 2025/10/15 00:00:00 的时间戳
+    var target_unix_time = Time.get_unix_time_from_datetime_dict({
+        "year": 2025,
+        "month": 10,
+        "day": 15,
+        "hour": 0,
+        "minute": 0,
+        "second": 0
+    })
+    
+    return current_unix_time > target_unix_time
