@@ -609,9 +609,9 @@ func get_current_tile(obstacle : Obstacle):
 func effect_animation_display(effect_name: String, display_play_area: PlayArea, display_tile: Vector2i, alignment_pivot: String):
 	if not ["Center", "LeftTop", "Left", "LeftBottom", "Bottom", "RightBottom", "Right", "RightTop", "Top"].has(alignment_pivot):
 		return
+	
 	var effect_animation = AnimatedSprite2D.new()
 	var effect_animation_path = AssetPathManagerSingleton.get_asset_path("effect_animation", effect_name)
-	var frame_offset = Vector2(0, 0)
 	
 	if ResourceLoader.exists(effect_animation_path):
 		var frames = ResourceLoader.load(effect_animation_path)
@@ -620,57 +620,71 @@ func effect_animation_display(effect_name: String, display_play_area: PlayArea, 
 			frames.set_animation_speed(anim_name, 16.0)
 		effect_animation.sprite_frames = frames
 		effect_animation.centered = false
-		var frame_texture = frames.get_frame_texture("default", 0)
 		
+		var frame_texture = frames.get_frame_texture("default", 0)
+		var texture_size = frame_texture.get_size()
+		
+		# Get tile center position
+		var tile_center = display_play_area.get_global_from_tile(display_tile)
+		
+		# Calculate final position based on alignment
+		var final_position = tile_center
 		match alignment_pivot:
 			"Center":
-				frame_offset.x = -frame_texture.region.size.x / 2.0
-				frame_offset.y = -frame_texture.region.size.y / 2.0
+				# Center alignment - no offset needed
+				final_position = tile_center
 			"LeftTop":
-				frame_offset.x = -8
-				frame_offset.y = -8
+				# Move from center to left top
+				final_position = tile_center + Vector2(-texture_size.x / 2, -texture_size.y / 2)
 			"Left":
-				frame_offset.x = -8
-				frame_offset.y = -frame_texture.region.size.y / 2.0				
+				# Move from center to left center
+				final_position = tile_center + Vector2(-texture_size.x / 2, 0)
 			"LeftBottom":
-				frame_offset.x = -8
-				frame_offset.y = -frame_texture.region.size.y + 8
+				# Move from center to left bottom
+				final_position = tile_center + Vector2(-texture_size.x / 2, texture_size.y / 2)
 			"Bottom":
-				frame_offset.x = -frame_texture.region.size.x / 2.0				
-				frame_offset.y = -frame_texture.region.size.y + 8
+				# Move from center to bottom center
+				final_position = tile_center + Vector2(0, texture_size.y / 2)
 			"RightBottom":
-				frame_offset.x = -frame_texture.region.size.y + 8
-				frame_offset.y = -frame_texture.region.size.y + 8
+				# Move from center to right bottom
+				final_position = tile_center + Vector2(texture_size.x / 2, texture_size.y / 2)
 			"Right":
-				frame_offset.x = -frame_texture.region.size.y + 8
-				frame_offset.y = -frame_texture.region.size.y / 2.0				
+				# Move from center to right center
+				final_position = tile_center + Vector2(texture_size.x / 2, 0)
 			"RightTop":
-				frame_offset.x = -frame_texture.region.size.y + 8
-				frame_offset.y = -8
+				# Move from center to right top
+				final_position = tile_center + Vector2(texture_size.x / 2, -texture_size.y / 2)
 			"Top":
-				frame_offset.x = -frame_texture.region.size.x / 2.0				
-				frame_offset.y = -8
-			_:
-				frame_offset = Vector2(0, 0)
+				# Move from center to top center
+				final_position = tile_center + Vector2(0, -texture_size.y / 2)
+		
+		# Debug information
+		if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
+			print("Tile: ", display_tile)
+			print("Tile Center: ", tile_center)
+			print("Texture Size: ", texture_size)
+			print("Alignment: ", alignment_pivot)
+			print("Final Position: ", final_position)
+		
+		add_child(effect_animation)
+		effect_animation.global_position = final_position
+		effect_animation.z_index = 60
+		effect_animation.play("default")
+		await effect_animation.animation_finished
+		effect_animation.queue_free()
 		
 	else:
 		push_error("Animation resource not found: " + effect_animation_path)
-		
-	add_child(effect_animation)
-	effect_animation.global_position = display_play_area.get_global_from_tile(display_tile) + frame_offset
-	effect_animation.z_index = 60
-	effect_animation.play("default")
-	await effect_animation.animation_finished
-	effect_animation.queue_free()
 
 func dwarf_bomb_boom():
 	for x in range(-obstacle_level, obstacle_level):
 		for y in range(-obstacle_level, obstacle_level):
 			if x >=0 and x < arena.unit_grid.size.x and y >=0 and y < arena.unit_grid.size.y:
-				var target_area_chess = arena.unit_grid.units[get_current_tile(self)[1] + Vector2i(x, y)]
-				if is_instance_valid(target_area_chess) and target_area_chess is Obstacle and target_area_chess.status != STATUS.DIE:
-					# _apply_damage(target_area_chess, 50 * obstacle_level)
-					deal_damage.emit(self, target_area_chess, 50 * obstacle_level, "Ranged_attack", [])
+				if arena.is_tile_in_bounds(get_current_tile(self)[1] + Vector2i(x, y)):
+					var target_area_chess = arena.unit_grid.units[get_current_tile(self)[1] + Vector2i(x, y)]
+					if DataManagerSingleton.check_obstacle_valid(target_area_chess):
+						# _apply_damage(target_area_chess, 50 * obstacle_level)
+						deal_damage.emit(self, target_area_chess, 50 * obstacle_level, "Ranged_attack", [])
 					
 	status = STATUS.DIE
 	animated_sprite_2d.stop()
