@@ -34,6 +34,9 @@ var effect_icon_path = {
 	"PikemanSkill" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon83.png",
 	"SpellerSkill" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon87.png",
 	"RangerSkill" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon52.png",
+	"Swift" = "",
+	"Berserker" = "",
+	"March" = "",
 	"Default" = "res://asset/sprite/icon/wisdom.png"
 }
 
