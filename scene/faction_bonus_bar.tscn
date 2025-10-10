@@ -1,12 +1,21 @@
-[gd_scene load_steps=6 format=3 uid="uid://0tel3twsixb3"]
+[gd_scene load_steps=8 format=3 uid="uid://0tel3twsixb3"]
 
 [ext_resource type="Script" uid="uid://oxjyul8a81ej" path="res://script/faction_bonus_bar.gd" id="1_8yi03"]
 [ext_resource type="FontFile" uid="uid://d3b2vvdpmh8cc" path="res://asset/font/Everyday_Tiny_Original.ttf" id="1_sptt2"]
 [ext_resource type="Texture2D" uid="uid://brnpxkp3qyrf1" path="res://asset/sprite/Slots-Frames/All.png" id="2_8yi03"]
+[ext_resource type="Shader" uid="uid://d3tyrfwlw2c1g" path="res://asset/shader/LightweightPixelPerfectOutline.gdshader" id="3_glq32"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_glq32"]
 atlas = ExtResource("2_8yi03")
 region = Rect2(675, 53.97, 42, 5)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3lf3h"]
+shader = ExtResource("3_glq32")
+shader_parameter/outline_color = Color(1, 1, 0, 0)
+shader_parameter/blink_color = Color(1, 1, 1, 1)
+shader_parameter/blink_time_scale = 0.0
+shader_parameter/use_monochrome = false
+shader_parameter/monochrome_color = Color(1, 1, 1, 1)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3lf3h"]
 atlas = ExtResource("2_8yi03")
@@ -28,6 +37,7 @@ texture = SubResource("AtlasTexture_glq32")
 stretch_mode = 2
 
 [node name="TextureRect" type="TextureRect" parent="TextureRect"]
+material = SubResource("ShaderMaterial_3lf3h")
 layout_mode = 0
 offset_left = -3.0
 offset_top = -3.0

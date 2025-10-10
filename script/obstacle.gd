@@ -619,7 +619,7 @@ func effect_animation_display(effect_name: String, display_play_area: PlayArea, 
 			frames.set_animation_loop(anim_name, false)
 			frames.set_animation_speed(anim_name, 16.0)
 		effect_animation.sprite_frames = frames
-		effect_animation.centered = false
+		effect_animation.centered = true
 		
 		var frame_texture = frames.get_frame_texture("default", 0)
 		var texture_size = frame_texture.get_size()
@@ -659,7 +659,7 @@ func effect_animation_display(effect_name: String, display_play_area: PlayArea, 
 				final_position = tile_center + Vector2(0, -texture_size.y / 2)
 		
 		# Debug information
-		if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
+		if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or true:
 			print("Tile: ", display_tile)
 			print("Tile Center: ", tile_center)
 			print("Texture Size: ", texture_size)

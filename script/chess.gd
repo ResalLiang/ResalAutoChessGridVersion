@@ -384,13 +384,7 @@ func _ready():
 
 
 func _process(delta: float) -> void:
-	
-	if chess_name == "ShieldMan" and faction == "human":
-		if record_global_position == global_position:
-			pass
-		else:
-			var test
-			
+				
 	record_global_position = global_position
 	
 	hp_bar.value = hp

@@ -8443,4 +8443,10 @@ vertical_alignment = 1
 [node name="damage_manager" type="Node" parent="."]
 script = ExtResource("45_c3n0e")
 
+[node name="enemy_faction_container" type="VBoxContainer" parent="."]
+offset_left = 27.0
+offset_top = 129.0
+offset_right = 109.0
+offset_bottom = 222.0
+
 [connection signal="pressed" from="back_button" to="." method="_on_back_button_pressed"]

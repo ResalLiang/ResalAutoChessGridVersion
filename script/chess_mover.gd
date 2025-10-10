@@ -264,10 +264,15 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 			
 			# population check
 			if get_parent().current_population >= get_parent().max_population:
-				_move_chess(obstacle, new_area, new_tile)
-				var merge_result = await get_parent().check_chess_merge()
-				if merge_result and get_parent().current_population <= get_parent().max_population:
-					shop_handler.buy_chess(obstacle)
+				var same_chess_count := 0
+				for chess_index in (arena.unit_grid.get_all_units() + bench.unit_grid.get_all_units()):
+					if chess_index.faction == obstacle.faction and chess_index.chess_name == obstacle.chess_name and chess_index.team == obstacle.team and chess_index.chess_level == obstacle.chess_level:
+						same_chess_count += 1
+				if same_chess_count >= 2:
+					var obstacle_phantom = obstacle.duplicate(true) as Chess
+					_move_chess(obstacle, new_area, new_tile)
+					shop_handler.buy_chess(obstacle_phantom)
+					obstacle_phantom.queue_free()
 					return
 				else:
 					_reset_chess_to_starting_position(starting_position, obstacle)
@@ -299,9 +304,10 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 				return
 					
 			# population check
+			var obstacle_phantom = obstacle.duplicate(true) as Chess
 			_move_chess(obstacle, new_area, new_tile)
-			var merge_result = await get_parent().check_chess_merge()
-			shop_handler.buy_chess(obstacle)
+			shop_handler.buy_chess(obstacle_phantom)
+			obstacle_phantom.queue_free()
 			return	
 
 		_:

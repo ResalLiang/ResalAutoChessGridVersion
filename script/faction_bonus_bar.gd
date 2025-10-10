@@ -30,6 +30,7 @@ var bar_value: int:
 			texture_rect.texture.region.position.x = 627 + (6 - bar_value) * 48
 		else:
 			texture_rect.visible = false
+			frame_texture_rect.visible = true
 			
 var frame_color: String:
 	set(value):

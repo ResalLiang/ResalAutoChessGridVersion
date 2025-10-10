@@ -34,9 +34,9 @@ var effect_icon_path = {
 	"PikemanSkill" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon83.png",
 	"SpellerSkill" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon87.png",
 	"RangerSkill" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon52.png",
-	"Swift" = "",
-	"Berserker" = "",
-	"March" = "",
+	"Swift" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon71.png",
+	"Berserker" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon64.png",
+	"March" = "res://asset/sprite/GandalfHardcore Icons/16x16 Icon60.png",
 	"Default" = "res://asset/sprite/icon/wisdom.png"
 }
 
@@ -68,6 +68,7 @@ var effect_animation_path = {
 	"DwarfKingPassive" = "res://asset/animation/spell_animation/DwarfKingPassive.tres",
 	"DwarfMarch" = "res://asset/animation/spell_animation/DwarfMarch.tres",
 	"ElfSwift" = "res://asset/animation/spell_animation/ElfSwift.tres",
+	"ChessMerge" = "res://asset/animation/spell_animation/ChessMerge.tres",
 	"Default" = "res://asset/animation/spell_animation/FireBeam.tres"
 }
 

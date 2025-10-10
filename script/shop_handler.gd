@@ -185,13 +185,13 @@ func shop_freeze() -> void:
 
 
 func shop_upgrade() -> void:
-	if remain_coins >= current_upgrade_price and shop_level < (7 if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] else max_shop_level):
-		remain_coins -= current_upgrade_price
-		coins_decreased.emit(current_upgrade_price, "upgrading shop")
+	if remain_coins >= shop_upgrade_price and shop_level < (7 if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] else max_shop_level):
+		remain_coins -= shop_upgrade_price
+		coins_decreased.emit(shop_upgrade_price, "upgrading shop")
 		shop_level += 1
 		shop_upgraded.emit(shop_level)
 		shop_upgrade_price = get_shop_upgrade_price()
-	elif remain_coins < current_upgrade_price:
+	elif remain_coins < shop_upgrade_price:
 		get_parent().control_shaker(get_parent().remain_coins_label)
 	elif shop_level >= (7 if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] else max_shop_level):
 		get_parent().control_shaker(get_parent().current_shop_level)

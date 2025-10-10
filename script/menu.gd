@@ -157,17 +157,17 @@ func refresh_player_list() -> void:
 		)
 		
 func is_past_date() -> bool:
-    # 获取当前时间戳
-    var current_unix_time = OS.get_unix_time()
-    
-    # 2025/10/15 00:00:00 的时间戳
-    var target_unix_time = Time.get_unix_time_from_datetime_dict({
-        "year": 2025,
-        "month": 10,
-        "day": 15,
-        "hour": 0,
-        "minute": 0,
-        "second": 0
-    })
-    
-    return current_unix_time > target_unix_time
+	# 获取当前时间戳
+	var current_unix_time = Time.get_unix_time_from_system()
+	
+	# 2025/10/15 00:00:00 的时间戳
+	var target_unix_time = Time.get_unix_time_from_datetime_dict({
+		"year": 2025,
+		"month": 10,
+		"day": 15,
+		"hour": 0,
+		"minute": 0,
+		"second": 0
+	})
+	
+	return current_unix_time > target_unix_time

@@ -214,6 +214,7 @@ var max_won_rounds_modifier := 0
 var max_lose_rounds_modifier := 0
 var remain_upgrade_count := 0
 var enemey_array: Array
+var merge_start:= false
 
 signal round_finished
 signal chess_appearance_finished
@@ -298,7 +299,7 @@ func _ready():
 	shop_handler.coins_increased.connect(
 		func(value, reason):
 			remain_coins_label.text = "Remaining Coins   : " + str(shop_handler.remain_coins)
-			if shop_handler.remain_coins < shop_handler.shop_refresh_price or shop_handle.get_meta("free_refresh_count", 0) == 0:
+			if shop_handler.remain_coins < shop_handler.shop_refresh_price and shop_handler.get_meta("free_refresh_count", 0) == 0:
 				shop_refresh_button.disabled = true
 				shop_refresh_button.global_position.x = -40
 			else:
@@ -317,7 +318,7 @@ func _ready():
 	shop_handler.coins_decreased.connect(
 		func(value, reason):
 			remain_coins_label.text = "Remaining Coins   : " + str(shop_handler.remain_coins)
-			if shop_handler.remain_coins < shop_handler.shop_refresh_price:
+			if shop_handler.remain_coins < shop_handler.shop_refresh_price and shop_handler.get_meta("free_refresh_count", 0) == 0:
 				shop_refresh_button.disabled = true
 				shop_refresh_button.global_position.x = -40
 			else:
@@ -361,7 +362,8 @@ func _ready():
 	)
 	chess_mover.chess_moved.connect(
 		func(chess: Obstacle, play_area: PlayArea, tile: Vector2i):
-			if not is_game_turn_start:
+			if not is_game_turn_start and not merge_start:
+				await check_chess_merge()
 				faction_bonus_manager.bonus_refresh()
 				update_population(true)
 	)
@@ -374,16 +376,21 @@ func _ready():
 			if not obstacle is Chess:
 				return
 			for bar_index in (faction_bonus_manager.v_box_container_1.get_children() + faction_bonus_manager.v_box_container_2.get_children() + faction_bonus_manager.v_box_container_3.get_children()):
-				if bar_index is FactionBonusBar and (bar_index.label.text = obstacle.faction or bar_index.label.text = obstacle.role):
-					var new_material = bar_index.material.duplicate()
-					new_material.set_shader_parameter("use_monochrome", true)
-					new_material.set_shader_parameter("monochrome_color", Color(0.77, 0.77 ,0.77, 1))
-					bar_index.material = new_material
+				if bar_index is FactionBonusBar and (bar_index.label.text == obstacle.faction or bar_index.label.text == obstacle.role):
+					var new_material = bar_index.frame_texture_rect.material.duplicate()
+					#new_material.set_shader_parameter("use_monochrome", true)
+					new_material.set_shader_parameter("outline_color", Color(1, 1 ,0, 1))
+					bar_index.frame_texture_rect.material = new_material
 	)
 	
 	chess_mover.chess_dropped.connect(
 		func(obstacle):
-			arrow.is_visible = false		
+			arrow.is_visible = false
+			for bar_index in (faction_bonus_manager.v_box_container_1.get_children() + faction_bonus_manager.v_box_container_2.get_children() + faction_bonus_manager.v_box_container_3.get_children()):
+				var new_material = bar_index.frame_texture_rect.material.duplicate()
+				#new_material.set_shader_parameter("use_monochrome", true)
+				new_material.set_shader_parameter("outline_color", Color(1, 1 ,0, 0))
+				bar_index.frame_texture_rect.material = new_material		
 	)
 	
 	faction_bonus_button.pressed.connect(
@@ -521,28 +528,41 @@ func new_round_prepare_start():
 	enemey_array = await intelligent_generate_enemy()
 	print(str(enemey_array))
 
+	for node in enemy_faction_container.get_children():
+		node.queue_free()
+		
 	# [chess_index.faction, chess_index.chess_name, chess_index.role, chess_index.chess_level]
 	var checked_faction: Array = []
 
+	# Count factions from faction
 	for chess_index in enemey_array:
-		if checked_faction.has(chess_index[0]):
+		var faction = chess_index[0]
+		if checked_faction.has(faction):
 			continue
-		var current_faction_count = enemey_array.reduce(
-			func(accum, number):
-				if number[0] == chess_index:
-					accum += 1
-		,0)
-		add_bonus_bar_to_enemy_container(chess_index[0], current_faction_count)
+		checked_faction.append(faction)
+		
+		var current_faction_count = 0
+		for enemy in enemey_array:
+			if enemy[0] == faction:
+				current_faction_count += 1
+		
+		add_bonus_bar_to_enemy_container(faction, 6)
+		#add_bonus_bar_to_enemy_container(faction, current_faction_count)
 
+	# Count factions from role
 	for chess_index in enemey_array:
-		if checked_faction.has(chess_index[2]):
+		var faction = chess_index[2]
+		if checked_faction.has(faction):
 			continue
-		var current_faction_count = enemey_array.reduce(
-			func(accum, number):
-				if number[2] == chess_index:
-					accum += 1
-		,0)
-		add_bonus_bar_to_enemy_container(chess_index[2], current_faction_count)
+		checked_faction.append(faction)
+		
+		var current_faction_count = 0
+		for enemy in enemey_array:
+			if enemy[2] == faction:
+				current_faction_count += 1
+		
+		add_bonus_bar_to_enemy_container(faction, 6)
+		#add_bonus_bar_to_enemy_container(faction, current_faction_count)
 
 
 	if check_villager_count("Miner") > 0:
@@ -1247,10 +1267,11 @@ func battle_value_display(chess: Obstacle, chess2: Obstacle, display_value, sign
 
 
 func check_chess_merge():
-
+	merge_start = true
 	if is_game_turn_start:
 		return false
-
+	
+	var merge_record := []
 	var merge_result:= [false, false]
 	for merge_level in [1, 2]:
 		var merge_checked := []
@@ -1258,6 +1279,7 @@ func check_chess_merge():
 		for node in arena.unit_grid.get_children() + bench.unit_grid.get_children():
 			if not DataManagerSingleton.check_chess_valid(node) or merge_checked.has([node.faction, node.chess_name]) or node.chess_level != merge_level:
 				continue
+				
 			if node.team != 1:
 				continue
 				
@@ -1270,6 +1292,7 @@ func check_chess_merge():
 			for other_node in arena.unit_grid.get_children() + bench.unit_grid.get_children():
 				if not DataManagerSingleton.check_chess_valid(other_node) or merge_checked.has([other_node.faction, other_node.chess_name]) or other_node.chess_level != merge_level:
 					continue
+				
 				if other_node.team != 1:
 					continue
 
@@ -1344,7 +1367,7 @@ func check_chess_merge():
 						else:
 							upgrade_chess= summon_chess(merged_chess_faction, merged_chess_name, merged_level, 1, merged_play_area, merged_tile)
 						# TODO add animation name
-						await upgrade_chess.effect_animation_display("", arena, merged_tile, "Center")
+						await upgrade_chess.effect_animation_display("ChessMerge", arena, merged_tile, "Center")
 						merge_count = 0
 						merge_result[merge_level - 1] = true
 						merge_checked.append([other_node.faction, other_node.chess_name])
@@ -1364,7 +1387,7 @@ func check_chess_merge():
 	if merge_result[0] or merge_result[1]:
 		update_population(true)
 
-
+	merge_start = false
 	return merge_result[0] or merge_result[1]
 
 func mid(a: float, b: float, c: float) -> float:
@@ -1697,13 +1720,13 @@ func villager_release(villager_name: String) -> void:
 		return
 
 	match villager_name:
-	"OldMan":
-		remain_upgrade_count += 1
+		"OldMan":
+			remain_upgrade_count += 1
 
-	"NobleWoman":
-		shop_handler.shop_refresh(shop_hanlder.shop_level + 1)
+		"NobleWoman":
+			shop_handler.shop_refresh(shop_handler.shop_level + 1)
 
-	"Merchant":
-		var shop_free_refresh_count = shop_handler.get_meta("free_refresh_count", 0)
-		shop_free_refresh_count += 3
-		shop_handler.set_meta("free_refresh_count", shop_free_refresh_count)
+		"Merchant":
+			var shop_free_refresh_count = shop_handler.get_meta("free_refresh_count", 0)
+			shop_free_refresh_count += 3
+			shop_handler.set_meta("free_refresh_count", shop_free_refresh_count)
