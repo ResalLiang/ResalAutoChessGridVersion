@@ -70,7 +70,7 @@ var max_lose_rounds_modifier := 0
 
 var mvp_chess
 
-var version := "V1.00"
+var version := "V1.01"
 
 func _ready() -> void:
 
