@@ -70,7 +70,16 @@ var max_lose_rounds_modifier := 0
 
 var mvp_chess
 
-var version := "V1.01"
+var version := "V1.00.01"
+
+var expiration_date := Time.get_unix_time_from_datetime_dict({
+		"year": 2025,
+		"month": 10,
+		"day": 15,
+		"hour": 0,
+		"minute": 0,
+		"second": 0
+	})
 
 func _ready() -> void:
 
