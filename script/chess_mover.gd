@@ -272,6 +272,7 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 					var obstacle_phantom = obstacle.duplicate(true) as Chess
 					_move_chess(obstacle, new_area, new_tile)
 					shop_handler.buy_chess(obstacle_phantom)
+					await get_tree().process_frame
 					obstacle_phantom.queue_free()
 					return
 				else:
@@ -307,6 +308,7 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 			var obstacle_phantom = obstacle.duplicate(true) as Chess
 			_move_chess(obstacle, new_area, new_tile)
 			shop_handler.buy_chess(obstacle_phantom)
+			await get_tree().process_frame
 			obstacle_phantom.queue_free()
 			return	
 

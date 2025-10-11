@@ -16,12 +16,12 @@
 - complete every effect icon
 - modify chess turn end check: if only on team chess remaning, round will finish
 - modify path dictionary from faction_path_update to faction_path_upgrade
+- change arrow sprite
 
 ## **Balance update:**
 - human Kingman and PrinceMan will not generate phantom when attcking phantoms
 
 ## **Plan:**
-- change arrow sprite
 - add villager passive effect:
 -- VillagerMan	price = 1, release to tetrix game (Done, wait add animation)
 -- VillagerWoman	price = 1, release to tetrix game (Done, wait add animation)

@@ -372,7 +372,7 @@ func _ready():
 						effect_instance.effect_applier = "Villager hunter"
 						effect_instance.effect_description = "Hunter's Mark increases move speed by 1/2/3 towards marked targets."
 						chess_index.effect_handler.add_to_effect_array(effect_instance)
-						await chess_index.effect_animation_display("DwarfHunterMark", arena, get_current_tile(chess_index)[1], "Center")
+						await chess_index.effect_animation_display("DwarfHunterMark", arena, chess_index.get_current_tile(chess_index)[1], "Center")
 						#target.effect_handler.refresh_effects()
 
 				start_new_round()
@@ -590,9 +590,9 @@ func new_round_prepare_start():
 				current_role_count += 1
 		
 		if check_villager_count("NobleMan") > 0:
-			add_bonus_bar_to_enemy_container(faction, current_role_count)
+			add_bonus_bar_to_enemy_container(role, current_role_count)
 		else:
-			add_bonus_bar_to_enemy_container(faction, 6)
+			add_bonus_bar_to_enemy_container(role, 6)
 
 
 	if check_villager_count("Miner") > 0:
@@ -642,7 +642,7 @@ func new_round_prepare_end():
 				var current_chess_faction = chess_index.faction
 				var current_chess_name = chess_index.chess_name
 				var upgrade_chess_name = DataManagerSingleton.get_chess_data()[chess_index.faction][chess_index.chess_name]["upgrade_chess"]
-				var current_chess_tile = chess_index.get_current_tile[1]
+				var current_chess_tile = chess_index.get_current_tile(chess_index)[1]
 				var current_chess_level = chess_index.chess_level
 				arena.unit_grid.remove_unit(current_chess_tile)
 				chess_index.queue_free()
@@ -1668,12 +1668,12 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			current_max_population = current_min_population
 			current_max_faction_bonus = current_min_faction_bonus
 		"Normal":
-
+			pass
 		"Hard":
 			current_min_population = current_max_population
-			max_faction_bonus += 1
-
+			current_max_faction_bonus += 1
 		_:
+			pass
 
 	while current_try_count <= max_try_count:
 		current_try_count += 1
@@ -1761,16 +1761,6 @@ func add_bonus_bar_to_enemy_container(faction: String, count: int):
 	faction_bonus_bar.bar_value = count
 	faction_bonus_bar.label.text = faction
 
-	var max_player_upgrade_level := 0
-	for i in faction_path_upgrade[faction].values():
-		if i > max_player_upgrade_level:
-			max_player_upgrade_level = i
-
-	if count > max_player_upgrade_level:
-		var new_material = faction_bonus_bar.frame_texture_rect.material.duplicate()
-		new_material.set_shader_parameter("use_monochrome", true)
-		new_material.set_shader_parameter("monochrome_color", Color(0.77, 0.77 ,0.77, 1))
-		faction_bonus_bar.frame_texture_rect.material = new_material
 
 
 func check_villager_count(villager_name: String) -> int:
@@ -1806,7 +1796,7 @@ func villager_release(villager_name: String) -> void:
 			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["ally_death_count"], 1)
 			# DataManagerSingleton.record_death_chess()
 
-		"VillagerWoman"
+		"VillagerWoman":
 			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["ally_death_array"], ["villager", villager_name])
 			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["ally_death_count"], 1)
 			# DataManagerSingleton.record_death_chess()

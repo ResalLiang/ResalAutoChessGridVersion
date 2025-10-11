@@ -1,4 +1,4 @@
-[gd_scene load_steps=146 format=4 uid="uid://cthbjvirwy2mg"]
+[gd_scene load_steps=148 format=4 uid="uid://cthbjvirwy2mg"]
 
 [ext_resource type="Script" uid="uid://c7rtc63knhqn2" path="res://script/game.gd" id="1_ll5lq"]
 [ext_resource type="TileSet" uid="uid://canr2c7puh78g" path="res://asset/tileset/dungeon_tileset.tres" id="2_dbls1"]
@@ -64,6 +64,7 @@
 [ext_resource type="Shader" uid="uid://d3tyrfwlw2c1g" path="res://asset/shader/LightweightPixelPerfectOutline.gdshader" id="45_58qvq"]
 [ext_resource type="Script" uid="uid://csgrh2hl21j51" path="res://script/damage_manager.gd" id="45_c3n0e"]
 [ext_resource type="Theme" uid="uid://b4hwtdp2epofe" path="res://asset/theme/toggle.tres" id="45_c6ddg"]
+[ext_resource type="Texture2D" uid="uid://ti3hxodp6lux" path="res://asset/sprite/tinyRPG_dragonRegaliaGUI_v1_0/20240707dragon9SlicesE.png" id="45_ckp4v"]
 [ext_resource type="Texture2D" uid="uid://cdu7d4hm7uqab" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/1x/Title banners/BannerSmall_02C.png" id="47_eycuj"]
 [ext_resource type="Texture2D" uid="uid://ckoscmg1tkcf4" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425lessButton-Sheet.png" id="47_gs7ni"]
 [ext_resource type="Theme" uid="uid://dqa4pio1y4yi4" path="res://asset/customize_button.tres" id="47_ri40t"]
@@ -74,6 +75,7 @@
 [ext_resource type="Texture2D" uid="uid://j2j6nwfh84kq" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425optionsButton-Sheet.png" id="51_ri40t"]
 [ext_resource type="Texture2D" uid="uid://chvlj0aa3r1oi" path="res://asset/sprite/tinyRPG_manaSoulGUI_v_1_0/20250425exitButton-Sheet.png" id="52_8bryy"]
 [ext_resource type="FontFile" uid="uid://dhvwmgcsmbfsf" path="res://asset/font/Everyday_Tiny_Blocky.ttf" id="55_ntqlo"]
+[ext_resource type="Texture2D" uid="uid://bqj40se30su5c" path="res://asset/sprite/RPG UI pack (by Franuka)/Individual files/2x/Cursors/Cursor02.png" id="69_anyr7"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_x3x2e"]
 texture = ExtResource("6_qpk70")
@@ -7841,6 +7843,18 @@ patch_margin_top = 10
 patch_margin_right = 32
 patch_margin_bottom = 11
 
+[node name="TextureRect11" type="NinePatchRect" parent="tilemap/ui"]
+offset_left = 29.0
+offset_top = 135.0
+offset_right = 107.0
+offset_bottom = 223.0
+texture = ExtResource("45_ckp4v")
+region_rect = Rect2(0, 0, 48, 48)
+patch_margin_left = 32
+patch_margin_top = 10
+patch_margin_right = 32
+patch_margin_bottom = 11
+
 [node name="TextureRect8" type="TextureRect" parent="tilemap/ui"]
 offset_left = 237.0
 offset_top = 94.0
@@ -8328,10 +8342,9 @@ layout_mode = 2
 visible = false
 layout_mode = 2
 
-[node name="chess_mover" type="Node2D" parent="." node_paths=PackedStringArray("play_areas")]
+[node name="chess_mover" type="Node2D" parent="."]
 unique_name_in_owner = true
 script = ExtResource("15_ve786")
-play_areas = [NodePath("../tilemap/arena"), NodePath("../tilemap/bench"), NodePath("../tilemap/shop")]
 
 [node name="chess_information" parent="." instance=ExtResource("8_ve786")]
 offset_left = 417.0
@@ -8347,7 +8360,7 @@ offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("41_lip20")
 curve_texture = ExtResource("42_efr1a")
-arrow_head_texture = ExtResource("42_efr1a")
+arrow_head_texture = ExtResource("69_anyr7")
 
 [node name="game_pause" type="Node" parent="."]
 script = ExtResource("41_400sm")
@@ -8444,9 +8457,9 @@ vertical_alignment = 1
 script = ExtResource("45_c3n0e")
 
 [node name="enemy_faction_container" type="VBoxContainer" parent="."]
-offset_left = 27.0
-offset_top = 129.0
-offset_right = 109.0
-offset_bottom = 222.0
+offset_left = 36.0
+offset_top = 142.0
+offset_right = 99.0
+offset_bottom = 216.0
 
 [connection signal="pressed" from="back_button" to="." method="_on_back_button_pressed"]

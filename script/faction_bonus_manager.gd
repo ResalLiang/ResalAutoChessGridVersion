@@ -188,6 +188,19 @@ func add_bonus_bar_to_container(faction: String, level: int, bonus_count: int):
 	faction_bonus_bar.label.text = faction
 	
 
+	var max_player_upgrade_level := 0
+	if DataManagerSingleton.get_chess_data().keys().has(faction):
+		for i in get_parent().faction_path_upgrade[faction].values():
+			if i > max_player_upgrade_level:
+				max_player_upgrade_level = i
+
+		if level > max_player_upgrade_level:
+			var new_material = faction_bonus_bar.frame_texture_rect.material.duplicate()
+			new_material.set_shader_parameter("use_monochrome", true)
+			new_material.set_shader_parameter("monochrome_color", Color(0.77, 0.77 ,0.77, 1))
+			faction_bonus_bar.frame_texture_rect.material = new_material
+	
+
 func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -> void:
 
 	var friendly_faction_chess : Array[Chess]
