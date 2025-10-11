@@ -1465,7 +1465,7 @@ func handle_special_effect(target: Obstacle, attacker: Obstacle):
 	if is_phantom:
 		return
 		
-	if attacker.chess_name == "KingMan" and attacker.faction == "human" and attacker.is_active:
+	if attacker.chess_name == "KingMan" and attacker.faction == "human" and attacker.is_active and not target.is_phantom:
 		var max_attempt_summon_count := 10
 		var attempt_summon_count := 0
 		var current_summon_count := 0
@@ -1490,7 +1490,7 @@ func handle_special_effect(target: Obstacle, attacker: Obstacle):
 			attempt_summon_count += 1
 
 
-	elif attacker.chess_name == "PrinceMan" and attacker.faction == "human" and attacker.is_active and target is Chess:
+	elif attacker.chess_name == "PrinceMan" and attacker.faction == "human" and attacker.is_active and target is Chess and not target.is_phantom:
 		var max_attempt_summon_count := 10
 		var attempt_summon_count := 0
 		var current_summon_count := 0
@@ -1650,7 +1650,7 @@ func elf_path1_bonus():
 	
 	if team ==1:
 		bonus_level = faction_bonus_manager.get_bonus_level("elf", team)
-		bonus_level = min(bonus_level, game_root_scene.faction_path_update["elf"]["path1"])
+		bonus_level = min(bonus_level, game_root_scene.faction_path_upgrade["elf"]["path1"])
 	elif team == 2:
 		bonus_level = faction_bonus_manager.get_bonus_level("elf", team)
 
@@ -1674,7 +1674,7 @@ func elf_path3_bonus():
 	
 	if chess_target.team == 1:
 		bonus_level = faction_bonus_manager.get_bonus_level("elf", chess_target.team)
-		bonus_level = min(bonus_level, game_root_scene.faction_path_update["elf"]["path3"])
+		bonus_level = min(bonus_level, game_root_scene.faction_path_upgrade["elf"]["path3"])
 	elif chess_target.team == 2:
 		bonus_level = faction_bonus_manager.get_bonus_level("elf", chess_target.team)
 
@@ -1691,7 +1691,7 @@ func dwarf_path1_bonus():
 	
 	if team ==1:
 		bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
-		bonus_level = min(bonus_level, game_root_scene.faction_path_update["dwarf"]["path1"])
+		bonus_level = min(bonus_level, game_root_scene.faction_path_upgrade["dwarf"]["path1"])
 	elif team == 2:
 		bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
 		
@@ -1734,7 +1734,7 @@ func dwarf_path2_bonus():
 	
 	if team ==1:
 		bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
-		bonus_level = min(bonus_level, game_root_scene.faction_path_update["dwarf"]["path2"])
+		bonus_level = min(bonus_level, game_root_scene.faction_path_upgrade["dwarf"]["path2"])
 	elif team == 2:
 		bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
 		
@@ -1778,7 +1778,7 @@ func dwarf_path3_bonus():
 	
 	if team ==1:
 		bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
-		bonus_level = min(bonus_level, game_root_scene.faction_path_update["dwarf"]["path3"])
+		bonus_level = min(bonus_level, game_root_scene.faction_path_upgrade["dwarf"]["path3"])
 	elif team == 2:
 		bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
 
