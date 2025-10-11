@@ -37,9 +37,10 @@ const faction_bonus_bar_scene = preload("res://scene/faction_bonus_bar.tscn")
 @onready var game_start_button: Button = $game_button_container/game_start_button
 @onready var game_restart_button: TextureButton = $game_button_container/game_restart_button
 @onready var shop_refresh_button: Button = $game_button_container/shop_refresh_button
+@onready var shop_refresh_label: Label = $game_button_container/shop_refresh_button/shop_refresh_label
 @onready var shop_freeze_button: Button = $game_button_container/shop_freeze_button
 @onready var shop_upgrade_button: Button = $game_button_container/shop_upgrade_button
-
+@onready var shop_upgrade_label: Label = $game_button_container/shop_upgrade_button/shop_upgrade_label
 
 @onready var back_button: TextureButton = $back_button
 @onready var debug_label: Label = $debug_label
@@ -191,7 +192,7 @@ var current_population := 0
 var max_population := 3
 var population_record : Array = []
 
-var faction_path_update_template = {
+var faction_path_upgrade_template = {
 	"elf": {
 		"path1" : 0,
 		"path2" : 0,
@@ -208,7 +209,7 @@ var faction_path_update_template = {
 		"path3" : 0
 	}	
 }
-var faction_path_update: Dictionary
+var faction_path_upgrade: Dictionary
 
 var max_won_rounds_modifier := 0
 var max_lose_rounds_modifier := 0
@@ -358,6 +359,22 @@ func _ready():
 	chess_appearance_finished.connect(
 		func(play_area):
 			if play_area == arena:
+				if check_villager_count("Hunter") > 0:
+					for chess_index in arena.unit_grid.get_all_units():
+						if not DataManagerSingleton.check_chess_valid(chess_index) or chess_index.team == 1:
+							continue
+
+						var effect_instance = ChessEffect.new()
+						chess_index.effect_handler.add_child(effect_instance)
+						effect_instance.register_buff("duration_only", 0, 1)
+						effect_instance.effect_name = "HunterMark"
+						effect_instance.effect_type = "Debuff"
+						effect_instance.effect_applier = "Villager hunter"
+						effect_instance.effect_description = "Hunter's Mark increases move speed by 1/2/3 towards marked targets."
+						chess_index.effect_handler.add_to_effect_array(effect_instance)
+						await chess_index.effect_animation_display("DwarfHunterMark", arena, get_current_tile(chess_index)[1], "Center")
+						#target.effect_handler.refresh_effects()
+
 				start_new_round()
 	)
 	chess_mover.chess_moved.connect(
@@ -467,7 +484,7 @@ func start_new_game() -> void:
 
 	saved_arena_team = {}
 	
-	faction_path_update = faction_path_update_template.duplicate(true)
+	faction_path_upgrade = faction_path_upgrade_template.duplicate(true)
 
 	team_dict[Team.TEAM1] = []
 	team_dict[Team.TEAM2] = []
@@ -514,6 +531,9 @@ func new_round_prepare_start():
 	current_round += 1
 	remain_upgrade_count += 1
 	shop_handler.shop_upgrade_price = max(0, shop_handler.shop_upgrade_price - 1)
+
+	var current_suspicious_merchant_turn = max(get_meta("suspicious_merchant_turn", 0) - 1, 0)
+	set_meta("suspicious_merchant_turn", current_suspicious_merchant_turn)
 	
 	current_round_label.text = "Current round : " + str(current_round)
 	won_lose_round_label.text = "Won rounds: " + str(DataManagerSingleton.won_rounds) + " | Lose rounds: " + str(DataManagerSingleton.lose_rounds)
@@ -525,7 +545,13 @@ func new_round_prepare_start():
 
 	await clear_play_area(arena)
 
-	enemey_array = await intelligent_generate_enemy()
+	var game_difficulty
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player].has("difficulty"):
+		game_difficulty = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["difficulty"]
+	else:
+		game_difficulty = "Normal"
+
+	enemey_array = await intelligent_generate_enemy(game_difficulty)
 	print(str(enemey_array))
 
 	for node in enemy_faction_container.get_children():
@@ -545,24 +571,28 @@ func new_round_prepare_start():
 		for enemy in enemey_array:
 			if enemy[0] == faction:
 				current_faction_count += 1
-		
-		add_bonus_bar_to_enemy_container(faction, 6)
-		#add_bonus_bar_to_enemy_container(faction, current_faction_count)
+
+		if check_villager_count("NobleMan") > 0:
+			add_bonus_bar_to_enemy_container(faction, current_faction_count)
+		else:
+			add_bonus_bar_to_enemy_container(faction, 6)
 
 	# Count factions from role
 	for chess_index in enemey_array:
-		var faction = chess_index[2]
-		if checked_faction.has(faction):
+		var role = chess_index[2]
+		if checked_faction.has(role):
 			continue
-		checked_faction.append(faction)
+		checked_faction.append(role)
 		
-		var current_faction_count = 0
+		var current_role_count = 0
 		for enemy in enemey_array:
-			if enemy[2] == faction:
-				current_faction_count += 1
+			if enemy[2] == role:
+				current_role_count += 1
 		
-		add_bonus_bar_to_enemy_container(faction, 6)
-		#add_bonus_bar_to_enemy_container(faction, current_faction_count)
+		if check_villager_count("NobleMan") > 0:
+			add_bonus_bar_to_enemy_container(faction, current_role_count)
+		else:
+			add_bonus_bar_to_enemy_container(faction, 6)
 
 
 	if check_villager_count("Miner") > 0:
@@ -604,12 +634,19 @@ func new_round_prepare_end():
 			player_max_hp_sum += chess_index.max_hp			
 	save_arena_team()
 
-	var game_difficulty
-	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player].has("difficulty"):
-		game_difficulty = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["difficulty"]
-	else:
-		game_difficulty = "Normal"
-		
+	if get_meta("blacksmith_turn", 0) > 0:
+		var current_blacksmith_turn = max(get_meta("blacksmith_turn", 0) - 1, 0)
+		set_meta("blacksmith_turn", current_blacksmith_turn)
+		for chess_index in arena.unit_grid.get_all_units():
+			if DataManagerSingleton.get_chess_data()[chess_index.faction][chess_index.chess_name].has("upgrade_chess"):
+				var current_chess_faction = chess_index.faction
+				var current_chess_name = chess_index.chess_name
+				var upgrade_chess_name = DataManagerSingleton.get_chess_data()[chess_index.faction][chess_index.chess_name]["upgrade_chess"]
+				var current_chess_tile = chess_index.get_current_tile[1]
+				var current_chess_level = chess_index.chess_level
+				arena.unit_grid.remove_unit(current_chess_tile)
+				chess_index.queue_free()
+				summon_chess(current_chess_faction, upgrade_chess_name, current_chess_level, 1, arena, current_chess_tile)
 		
 	team_dict[Team.TEAM2_FULL] = []
 	for node in get_tree().get_nodes_in_group("obstacle_group"):
@@ -737,8 +774,8 @@ func handle_character_action_finished():
 		current_team = Team.TEAM1
 		start_chess_turn(current_team)
 		
-	elif team_dict[Team.TEAM2].size() != 0 or team_dict[Team.TEAM1].size() != 0:
-		start_chess_turn(current_team)
+	# elif team_dict[Team.TEAM2].size() != 0 or team_dict[Team.TEAM1].size() != 0:
+	# 	start_chess_turn(current_team)
 		
 	elif team_dict[Team.TEAM2_FULL].size() == 0 and team_dict[Team.TEAM1_FULL].size() == 0:
 		round_finished.emit("draw")
@@ -1322,7 +1359,7 @@ func check_chess_merge():
 						var upgrade_chess 
 						var merged_level = merge_level + 1
 						var human_path3_level : int
-						human_path3_level = min(faction_path_update["human"]["path3"], faction_bonus_manager.get_bonus_level("human", 1))
+						human_path3_level = min(faction_path_upgrade["human"]["path3"], faction_bonus_manager.get_bonus_level("human", 1))
 						var can_upgrade: bool
 						match DataManagerSingleton.get_chess_data()[merged_chess_faction][merged_chess_name]["rarity"]:
 							"Common":
@@ -1401,7 +1438,7 @@ func get_current_tile(current_position: Vector2):
 	var current_tile = chess_mover.play_areas[i].get_tile_from_global(current_position)
 	return [chess_mover.play_areas[i], current_tile]
 
-func intelligent_generate_enemy() -> Array:
+func intelligent_generate_enemy(difficulty: String) -> Array:
 	var max_try_count := 999
 	var current_try_count := 0
 
@@ -1618,19 +1655,39 @@ func intelligent_generate_enemy() -> Array:
 
 	var enemy_array := []
 
+	var current_max_shop_level = enemy_limit[current_round]["max_shop_level"]
+	var current_min_population = enemy_limit[current_round]["min_population"]
+	var current_max_population = enemy_limit[current_round]["max_population"]
+	var current_max_level = enemy_limit[current_round]["max_level"]
+	var current_level_distribution = enemy_limit[current_round]["level_distribution"]
+	var current_min_faction_bonus = enemy_limit[current_round]["min_faction_bonus"]
+	var current_max_faction_bonus = enemy_limit[current_round]["max_faction_bonus"]
+
+	match difficulty:
+		"Easy":
+			current_max_population = current_min_population
+			current_max_faction_bonus = current_min_faction_bonus
+		"Normal":
+
+		"Hard":
+			current_min_population = current_max_population
+			max_faction_bonus += 1
+
+		_:
+
 	while current_try_count <= max_try_count:
 		current_try_count += 1
 		enemy_array.clear()
 
 		# generate one time
-		for i in range(randi_range(enemy_limit[current_round]["min_population"], enemy_limit[current_round]["max_population"])):
-			var generate_chess = generate_random_chess(enemy_limit[current_round]["max_shop_level"], "locked")
+		for i in range(randi_range(current_min_population, current_max_population)):
+			var generate_chess = generate_random_chess(current_max_shop_level, "locked")
 			var generate_chess_faction = generate_chess[0]
 			var generate_chess_name = generate_chess[1]
 			var generate_chess_role = DataManagerSingleton.get_chess_data()[generate_chess_faction][generate_chess_name]["role"]
 			var generate_chess_level := 1
 			var rand_level := randf()
-			var level_distribution = enemy_limit[current_round]["level_distribution"]
+			var level_distribution = current_level_distribution
 			var distribution_sum = level_distribution[0] + level_distribution[1] + level_distribution[2]
 			
 			
@@ -1670,7 +1727,8 @@ func intelligent_generate_enemy() -> Array:
 					break
 			enemy_faction_sum += faction_level
 
-		if (enemy_population >= enemy_limit[current_round]["min_population"] and enemy_population <= enemy_limit[current_round]["max_population"] and enemy_max_level <= enemy_limit[current_round]["max_level"] and enemy_faction_sum >= enemy_limit[current_round]["min_faction_bonus"] + player_faction_sum and enemy_faction_sum <= enemy_limit[current_round]["max_faction_bonus"] + player_faction_sum):
+		if (enemy_population >= current_min_population and enemy_population <= current_max_population and enemy_max_level <= current_max_level and enemy_faction_sum >= current_min_faction_bonus + player_faction_sum and enemy_faction_sum <= current_max_faction_bonus + player_faction_sum):
+			print("Success to generate enemy.")
 			return enemy_array
 			
 		print("Total " + str(current_try_count) + " times try fail.")
@@ -1703,6 +1761,18 @@ func add_bonus_bar_to_enemy_container(faction: String, count: int):
 	faction_bonus_bar.bar_value = count
 	faction_bonus_bar.label.text = faction
 
+	var max_player_upgrade_level := 0
+	for i in faction_path_upgrade[faction].values():
+		if i > max_player_upgrade_level:
+			max_player_upgrade_level = i
+
+	if count > max_player_upgrade_level:
+		var new_material = faction_bonus_bar.frame_texture_rect.material.duplicate()
+		new_material.set_shader_parameter("use_monochrome", true)
+		new_material.set_shader_parameter("monochrome_color", Color(0.77, 0.77 ,0.77, 1))
+		faction_bonus_bar.frame_texture_rect.material = new_material
+
+
 func check_villager_count(villager_name: String) -> int:
 	if not DataManagerSingleton.get_chess_data()["villager"].keys().has(villager_name):
 		return 0
@@ -1730,3 +1800,21 @@ func villager_release(villager_name: String) -> void:
 			var shop_free_refresh_count = shop_handler.get_meta("free_refresh_count", 0)
 			shop_free_refresh_count += 3
 			shop_handler.set_meta("free_refresh_count", shop_free_refresh_count)
+
+		"VillagerMan":
+			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["ally_death_array"], ["villager", villager_name])
+			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["ally_death_count"], 1)
+			# DataManagerSingleton.record_death_chess()
+
+		"VillagerWoman"
+			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["ally_death_array"], ["villager", villager_name])
+			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["ally_death_count"], 1)
+			# DataManagerSingleton.record_death_chess()
+
+		"SuspiciousMerchant":
+			var current_suspicious_merchant_turn = get_meta("suspicious_merchant_turn", 0) + 1
+			set_meta("suspicious_merchant_turn", current_suspicious_merchant_turn)
+
+		"Blacksmith":
+			var current_blacksmith_turn = get_meta("blacksmith_turn", 0) + 1
+			set_meta("blacksmith_turn", current_blacksmith_turn)
