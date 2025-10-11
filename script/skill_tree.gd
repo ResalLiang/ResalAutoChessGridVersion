@@ -34,12 +34,12 @@ const alternative_choice_scene = preload("res://scene/alternative_choice.tscn")
 
 var current_page := 0
 var faction_array := ["elf", "human", "dwarf"]
-var game_faction_path_update
+var game_faction_path_upgrade
 
 var current_path_number := 0
 var current_level_number := 0
 
-var faction_path_update_template = {
+var faction_path_upgrade_template = {
 	"elf": {
 		"path1" : 0,
 		"path2" : 0,
@@ -61,8 +61,8 @@ signal button_actived
 
 func _ready() -> void:
 	
-	game_faction_path_update = get_parent().faction_path_update
-	#game_faction_path_update = faction_path_update_template.duplicate(true)
+	game_faction_path_upgrade = get_parent().faction_path_upgrade
+	#game_faction_path_upgrade = faction_path_upgrade_template.duplicate(true)
 	
 	button_actived.connect(handle_button_actived)
 	
@@ -123,7 +123,7 @@ func _ready() -> void:
 			button_actived.emit()
 			if current_level_number == 0 or current_path_number == 0:
 				return
-			game_faction_path_update[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
+			game_faction_path_upgrade[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
 			refresh_page()
 	)
 	consume_max_lose_round.pressed.connect(
@@ -134,7 +134,7 @@ func _ready() -> void:
 			button_actived.emit()
 			if current_level_number == 0 or current_path_number == 0:
 				return
-			game_faction_path_update[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
+			game_faction_path_upgrade[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
 			refresh_page()		
 	)
 	consume_won_round.pressed.connect(
@@ -143,7 +143,7 @@ func _ready() -> void:
 			button_actived.emit()
 			if current_level_number == 0 or current_path_number == 0:
 				return
-			game_faction_path_update[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
+			game_faction_path_upgrade[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
 			refresh_page()
 	)
 	just_active.pressed.connect(
@@ -152,7 +152,7 @@ func _ready() -> void:
 			button_actived.emit()
 			if current_level_number == 0 or current_path_number == 0:
 				return
-			game_faction_path_update[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
+			game_faction_path_upgrade[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
 			refresh_page()
 	)
 	
@@ -162,8 +162,8 @@ func _ready() -> void:
 	
 func refresh_page():		
 	
-	for path_index in game_faction_path_update[faction_array[current_page]].keys():
-		var current_path_level =  game_faction_path_update[faction_array[current_page]][path_index]
+	for path_index in game_faction_path_upgrade[faction_array[current_page]].keys():
+		var current_path_level =  game_faction_path_upgrade[faction_array[current_page]][path_index]
 		
 		match current_path_level:
 			0:
@@ -349,7 +349,7 @@ func handle_button_actived():
 		consume_won_round.disabled = true
 		just_active.disabled = true
 		return
-	elif not current_level_number - game_faction_path_update[faction_array[current_page]]["path" + str(current_path_number)] == 1:
+	elif not current_level_number - game_faction_path_upgrade[faction_array[current_page]]["path" + str(current_path_number)] == 1:
 		consume_remian_lose_round.disabled = true
 		consume_max_lose_round.disabled = true
 		consume_won_round.disabled = true
