@@ -174,7 +174,7 @@ func get_random_piece_type():
 	return pieces[randi() % pieces.size()]
 
 func spawn_new_piece():
-	waiting_chess_checkin()
+	var check_in_chess = await waiting_chess_checkin()
 	current_piece_type = next_piece_type
 	current_piece_position = Vector2i(BOARD_WIDTH / 2 - 2, 0)
 	current_piece_rotation = 0
@@ -408,6 +408,9 @@ func line_up_chess():
 		if DataManagerSingleton.get_chess_data().keys().has(chess_faction) and DataManagerSingleton.get_chess_data()[chess_faction].keys().has(chess_name):
 			var chess_animation = AnimatedSprite2D.new()
 			waiting_chess.add_child(chess_animation) 
+
+			chess_animation.set_meta("faction", chess_faction)
+			chess_animation.set_meta("chess_name", chess_name)
 			
 			var current_chess_tile
 
@@ -451,12 +454,13 @@ func _load_animations(aniamtion: AnimatedSprite2D, faction: String, chess_name: 
 	else:
 		push_error("Animation resource not found: " + path)
 
-func waiting_chess_checkin():
+func waiting_chess_checkin() -> Array:
 	var chess_array_width := 8
 	var chess_array_height := 10
 	var chess_size = Vector2i(20, 20)
 	var new_position
-	
+	var check_in_chess_faction: String = ""
+	var check_in_chess_name: String = ""
 	
 	
 	for node in waiting_chess.get_children():
@@ -472,6 +476,8 @@ func waiting_chess_checkin():
 			move_tween1 = create_tween()
 			move_tween1.set_trans(Tween.TRANS_LINEAR)
 			move_tween1.tween_property(node, "position", new_position, 0.1)
+			check_in_chess_faction = node.get_meta("faction", "")
+			check_in_chess_name = node.get_meta("chess_name", "")
 			await move_tween1.finished
 			node.queue_free()
 			await get_tree().process_frame
@@ -512,13 +518,13 @@ func waiting_chess_checkin():
 	waiting_chess.add_child(chess_animation) 
 	
 	if enemy_death_array.size() <= 0:
-		return
+		return [check_in_chess_faction, check_in_chess_name]
 		
 	var chess_faction = enemy_death_array.pop_front()
 	var chess_name = enemy_death_array.pop_front()
 	
 	if not (DataManagerSingleton.get_chess_data().keys().has(chess_faction) and DataManagerSingleton.get_chess_data()[chess_faction].keys().has(chess_name)):
-		return
+		return [check_in_chess_faction, check_in_chess_name]
 		
 	chess_animation.flip_h = true				
 	chess_animation.position = Vector2((chess_array_width - 1) * chess_size.x, (chess_array_height - 1) * chess_size.y)
@@ -534,3 +540,5 @@ func waiting_chess_checkin():
 			if is_instance_valid(chess_animation) and not chess_animation.is_queued_for_deletion():
 				chess_animation.play("idle")
 	)
+
+	return [check_in_chess_faction, check_in_chess_name]
