@@ -13,20 +13,28 @@ const obstacle_scene = preload("res://scene/obstacle.tscn")
 @onready var chess_information: ChessInformation = $"../chess_information"
 
 
+var remain_coins := 0
+
 var shop_buy_price := 3
-var shop_sell_price := 1
+# var shop_sell_price := 1
 var shop_refresh_price := 1:
+	set(value):
+		shop_refresh_price = value
+		get_parent().shop_refresh_label.text = "Refresh (A): " + str(shop_refresh_price)
 	get():
 		if get_meta("free_refresh_count", 0) > 0:
 			return 0
 		return shop_refresh_price
 
-var remain_coins := 0
+var shop_upgrade_price := 7
+	set(value):
+		shop_upgrade_price = value
+		get_parent().shop_upgrade_label.text = "Upgrade (F): " + str(shop_upgrade_price)
+
 var base_income := 10
 
 var shop_level := 1
 
-var shop_upgrade_price := 7
 
 var buy_human_count := 0
 
@@ -107,6 +115,11 @@ func shop_init():
 	shop_refresh(shop_level)
 
 func shop_manual_refresh() -> void:
+	if get_meta("suspicious_merchant_turn", 0) > 0:
+		shop_refresh_price = 2
+	else:
+		shop_refresh_price = 1
+
 	if get_meta("free_refresh_count", 0) > 0:
 		var remain_free_refresh_count = get_meta("free_refresh_count", 0) - 1
 		set_meta("free_refresh_count", remain_free_refresh_count)
@@ -212,7 +225,7 @@ func get_max_population():
 		max_population = shop_level + 2
 		
 	if get_parent().faction_bonus_manager.get_bonus_level("human", 1) > 0:
-		extra_max_population = min(get_parent().faction_bonus_manager.get_bonus_level("human", 1), get_parent().faction_path_update["human"]["path1"])
+		extra_max_population = min(get_parent().faction_bonus_manager.get_bonus_level("human", 1), get_parent().faction_path_upgrade["human"]["path1"])
 
 	return (max_population + extra_max_population)
 
@@ -228,7 +241,7 @@ func buy_chess(chess: Obstacle):
 	coins_decreased.emit(get_chess_buy_price(chess), "buyinging chess")
 
 	var human_bonus_level = get_parent().faction_bonus_manager.get_bonus_level("human", 1)
-	human_bonus_level = min(human_bonus_level, get_parent().faction_path_update["human"]["path2"])
+	human_bonus_level = min(human_bonus_level, get_parent().faction_path_upgrade["human"]["path2"])
 	
 	if human_bonus_level <= 0:
 		return
@@ -252,16 +265,20 @@ func buy_chess(chess: Obstacle):
 
 func sell_chess(chess: Chess):
 	chess_sold.emit(chess)
-	remain_coins += get_chess_buy_price(chess)
-	coins_increased.emit(get_chess_buy_price(chess), "selling chess")
+	remain_coins += get_chess_sell_price(chess)
+	coins_increased.emit(get_chess_sell_price(chess), "selling chess")
 	chess.queue_free()
 
 func get_chess_buy_price(chess: Obstacle):
-	return shop_buy_price
+	var buy_chess_discount = -1 if get_meta("suspicious_merchant_turn", 0) > 0 else 0
+
+	if chess.faction == "villager" and (chess.chess_name == "VillagerMan" or chess.chess_name == "VillagerWoman"):
+		return 1 + buy_chess_discount
+	return shop_buy_price + buy_chess_discount
 
 func get_chess_sell_price(chess: Obstacle):
 	if chess is Chess:
-		return chess.chess_level
+		return (chess.chess_level + 1)
 	else:
 		return 1
 
