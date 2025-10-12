@@ -356,6 +356,10 @@ func _ready():
 			current_shop_level.text = label_value
 			update_population(true)
 	)
+	shop_handler.chess_bought.connect(
+		func(chess: Chess):
+			update_population(true)		
+	)
 	chess_appearance_finished.connect(
 		func(play_area):
 			if play_area == arena:
@@ -659,20 +663,11 @@ func new_round_prepare_end():
 
 			var character = summon_chess(chess_index[0], chess_index[1], chess_index[3], 2, arena, Vector2i(rand_x, rand_y))
 
-		
-	#match game_difficulty:
-		#"Easy":
-			#generate_enemy(mid(player_max_hp_sum, current_round * 200, shop_handler.shop_level * 200))
-#
-		#"Normal":
-			#generate_enemy(max(player_max_hp_sum * 1.2, current_round * 200, shop_handler.shop_level * 200))
-#
-		#"Hard":
-			#generate_enemy(max(player_max_hp_sum * 1.5, current_round * 300, shop_handler, shop_handler.shop_level * 300))
-#
-		#_:
-			#generate_enemy(max(player_max_hp_sum * 1.2, current_round * 200, shop_handler.shop_level * 200))
-
+	for chess_index in chess_mover.phantom_chess_group:
+		if chess_index:
+			chess_index.queue_free()
+	chess_mover.phantom_chess_group = []
+	
 	faction_bonus_manager.bonus_refresh()
 
 	chess_appearance(arena)
@@ -791,6 +786,17 @@ func handle_character_action_finished():
 
 func handle_round_finished(msg):
 	
+	battle_meter.round_end_data_update() #update to ingame data
+
+	if DataManagerSingleton.won_rounds >= DataManagerSingleton.max_won_rounds + DataManagerSingleton.max_won_rounds_modifier:
+		player_won_game.emit()
+		handle_game_end()
+		return
+	elif DataManagerSingleton.lose_rounds >= DataManagerSingleton.max_lose_rounds + DataManagerSingleton.max_lose_rounds_modifier:
+		player_lose_game.emit()
+		handle_game_end()
+		return
+	
 	if msg == "team1":
 		DataManagerSingleton.won_rounds += 1
 		print("Round %d over, you won!" % current_round)
@@ -807,18 +813,6 @@ func handle_round_finished(msg):
 		print("Round %d over,draw..." % current_round)
 		last_turn_label.text = 'DRAW'
 		add_round_finish_scene.emit('DRAW')
-
-
-	battle_meter.round_end_data_update() #update to ingame data
-
-	if DataManagerSingleton.won_rounds >= DataManagerSingleton.max_won_rounds + DataManagerSingleton.max_won_rounds_modifier:
-		player_won_game.emit()
-		handle_game_end()
-		return
-	elif DataManagerSingleton.lose_rounds >= DataManagerSingleton.max_lose_rounds + DataManagerSingleton.max_lose_rounds_modifier:
-		player_lose_game.emit()
-		handle_game_end()
-		return
 
 	new_round_prepare_start()
 

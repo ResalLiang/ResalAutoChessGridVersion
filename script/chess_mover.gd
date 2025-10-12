@@ -11,6 +11,8 @@ extends Node
 
 @export var play_areas: Array[PlayArea]
 
+var phantom_chess_group : Array = []
+
 signal chess_moved(obstacle: Obstacle, play_area: PlayArea, tile: Vector2i)
 signal chess_raised(chess_position: Vector2, obstacle: Obstacle)
 signal chess_dropped(obstacle: Obstacle)
@@ -269,11 +271,12 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 					if chess_index.faction == obstacle.faction and chess_index.chess_name == obstacle.chess_name and chess_index.team == obstacle.team and chess_index.chess_level == obstacle.chess_level:
 						same_chess_count += 1
 				if same_chess_count >= 2:
-					var obstacle_phantom = obstacle.duplicate(true) as Chess
+					var obstacle_phantom = obstacle.get_temp_copy() #as Chess
 					_move_chess(obstacle, new_area, new_tile)
 					shop_handler.buy_chess(obstacle_phantom)
+					phantom_chess_group.append(obstacle_phantom)
 					await get_tree().process_frame
-					obstacle_phantom.queue_free()
+					#obstacle_phantom.queue_free()
 					return
 				else:
 					_reset_chess_to_starting_position(starting_position, obstacle)
@@ -305,11 +308,12 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 				return
 					
 			# population check
-			var obstacle_phantom = obstacle.duplicate(true) as Chess
+			var obstacle_phantom = obstacle.get_temp_copy() #as Chess
 			_move_chess(obstacle, new_area, new_tile)
 			shop_handler.buy_chess(obstacle_phantom)
+			phantom_chess_group.append(obstacle_phantom)
 			await get_tree().process_frame
-			obstacle_phantom.queue_free()
+			#obstacle_phantom.queue_free()
 			return	
 
 		_:

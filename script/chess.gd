@@ -2129,3 +2129,9 @@ func dwarf_demolitionist_placebomb(spell_range: int) -> bool:
 
 					return true				
 	return false	
+
+func get_temp_copy() -> Chess:
+	var temp_copy = Chess.new()
+	temp_copy.faction = faction
+	temp_copy.chess_name = chess_name
+	return temp_copy

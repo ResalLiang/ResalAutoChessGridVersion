@@ -20,7 +20,7 @@ var shop_buy_price := 3
 var shop_refresh_price := 1:
 	set(value):
 		shop_refresh_price = value
-		get_parent().shop_refresh_button.text = "Refresh (A): " + str(shop_refresh_price)
+		get_parent().shop_refresh_button.text = "Shop Refresh (D): " + str(shop_refresh_price)
 	get():
 		if get_meta("free_refresh_count", 0) > 0:
 			return 0
@@ -29,7 +29,7 @@ var shop_refresh_price := 1:
 var shop_upgrade_price := 7:
 	set(value):
 		shop_upgrade_price = value
-		get_parent().shop_upgrade_button.text = "Upgrade (F): " + str(shop_upgrade_price)
+		get_parent().shop_upgrade_button.text = "Shop Upgrade (F): " + str(shop_upgrade_price)
 
 var base_income := 10
 

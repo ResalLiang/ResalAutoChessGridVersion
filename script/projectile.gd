@@ -92,7 +92,7 @@ func _on_area_entered(area):
 		var obstacle = area.get_parent()
 		projectile_hit.emit(obstacle, attacker)
 		# 只伤害敌方队伍
-		if obstacle.team != source_team and attacker != null:
+		if (obstacle.team != source_team and attacker != null) and DataManagerSingleton.check_obstacle_valid(obstacle):
 			if animated_sprite_2d.sprite_frames.has_animation("die"):
 				damage_finished = false
 				die_animation = AnimatedSprite2D.new()
