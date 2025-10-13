@@ -356,10 +356,17 @@ func _ready():
 			current_shop_level.text = label_value
 			update_population(true)
 	)
+
 	shop_handler.chess_bought.connect(
 		func(chess: Chess):
 			update_population(true)		
 	)
+
+	shop_handler.chess_sold.connect(
+		func(chess: Chess):
+			update_population(true)	
+	)
+
 	chess_appearance_finished.connect(
 		func(play_area):
 			if play_area == arena:
@@ -381,6 +388,7 @@ func _ready():
 
 				start_new_round()
 	)
+
 	chess_mover.chess_moved.connect(
 		func(chess: Obstacle, play_area: PlayArea, tile: Vector2i):
 			if not is_game_turn_start and not merge_start:
@@ -413,14 +421,65 @@ func _ready():
 				new_material.set_shader_parameter("outline_color", Color(1, 1 ,0, 0))
 				bar_index.frame_texture_rect.material = new_material		
 	)
+
+	chess_mover.villager_released.connect(
+		func(obstacle, release_position):
+			var release_animation = AnimatedSprite2D.new()
+			add_child(release_animation)
+			release_animation.global_position = release_position
+			release_animation.z_index = 80
+
+
+			var path = "res://asset/animation/%s/%s%s.tres" % [obstacle.faction, obstacle.faction, obstacle.chess_name]
+			if ResourceLoader.exists(path):
+				var frames = ResourceLoader.load(path)
+				for i in ["idle", "move", "spell", "jump"]:
+					if frames.has_animation(i):
+						frames.set_animation_loop(i, true if i == "move" or i == "idle" else false)
+						frames.set_animation_speed(i, 8.0)
+				release_animation.sprite_frames = frames
+				release_animation.play("move")
+			else:
+				push_error("Animation resource not found: " + path)
+
+			if release_animation.sprite_frames.has("jump"):
+				release_animation.play("jump")
+				await release_animation.animation_finished
+
+			if release_animation.sprite_frames.has("spell"):
+				release_animation.play("spell")
+				await release_animation.animation_finished
+
+			release_villager(obstacle.chess_name)
+
+			release_animation.play("move")
+
+			var villager_move_tween	
+			if villager_move_tween:
+				villager_move_tween.kill() # Abort the previous animation.
+			villager_move_tween = create_tween()
+			villager_move_tween.connect("finished", 
+				func():
+					release_animation.queue_free()
+			)
+			var tween_new_position: Vector2 = release_animation.global_position
+			if release_animation.global_position.x - 640 > release_animation.global_position.x:
+				tween_new_position.x = 0 - 50
+			else:
+				tween_new_position.x = 640 + 50
+
+			appearance_tween.tween_property(chess_index, "global_position", tween_new_position , 0.8)
+
+	)
 	
 	faction_bonus_button.pressed.connect(
 		func():
-			var skill_tree = skill_tree_scene.instantiate()
-			add_child(skill_tree)
-			await skill_tree.tree_exiting
-			faction_bonus_manager.bonus_refresh()
-			update_population(true)
+			if not game_started:
+				var skill_tree = skill_tree_scene.instantiate()
+				add_child(skill_tree)
+				await skill_tree.tree_exiting
+				faction_bonus_manager.bonus_refresh()
+				update_population(true)
 	)
 
 	player_won_round.connect(DataManagerSingleton.handle_player_won_round)
@@ -1471,8 +1530,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 4,
 			"max_level" : 1,
 			"level_distribution" : [1.0, 0, 0],
-			"min_faction_bonus" : -1,
-			"max_faction_bonus" : 1
+			"min_faction_bonus" : 0,
+			"max_faction_bonus" : 2
 		},
 		2: {
 			"max_shop_level" : 1,
@@ -1480,8 +1539,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 4,
 			"max_level" : 1,
 			"level_distribution" : [1.0, 0, 0],
-			"min_faction_bonus" : -1,
-			"max_faction_bonus" : 1
+			"min_faction_bonus" : 0,
+			"max_faction_bonus" : 2
 		},
 		3: {
 			"max_shop_level" : 2,
@@ -1489,8 +1548,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 5,
 			"max_level" : 1,
 			"level_distribution" : [1.0, 0, 0],
-			"min_faction_bonus" : -1,
-			"max_faction_bonus" : 1
+			"min_faction_bonus" : 0,
+			"max_faction_bonus" : 2
 		},
 		4: {
 			"max_shop_level" : 2,
@@ -1498,8 +1557,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 5,
 			"max_level" : 1,
 			"level_distribution" : [1.0, 0, 0],
-			"min_faction_bonus" : -1,
-			"max_faction_bonus" : 1
+			"min_faction_bonus" : 1,
+			"max_faction_bonus" : 2
 		},
 		5: {
 			"max_shop_level" : 2,
@@ -1507,8 +1566,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 5,
 			"max_level" : 1,
 			"level_distribution" : [1.0, 0, 0],
-			"min_faction_bonus" : -1,
-			"max_faction_bonus" : 1
+			"min_faction_bonus" : 1,
+			"max_faction_bonus" : 2
 		},
 		6: {
 			"max_shop_level" : 3,
@@ -1516,8 +1575,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 6,
 			"max_level" : 2,
 			"level_distribution" : [0.8, 0.2, 0],
-			"min_faction_bonus" : -1,
-			"max_faction_bonus" : 1
+			"min_faction_bonus" : 1,
+			"max_faction_bonus" : 2
 		},
 		7: {
 			"max_shop_level" : 3,
@@ -1525,8 +1584,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 6,
 			"max_level" : 2,
 			"level_distribution" : [0.8, 0.2, 0],
-			"min_faction_bonus" : -1,
-			"max_faction_bonus" : 1
+			"min_faction_bonus" : 1,
+			"max_faction_bonus" : 3
 		},
 		8: {
 			"max_shop_level" : 3,
@@ -1534,8 +1593,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 6,
 			"max_level" : 2,
 			"level_distribution" : [0.7, 0.3, 0],
-			"min_faction_bonus" : -1,
-			"max_faction_bonus" : 1
+			"min_faction_bonus" : 1,
+			"max_faction_bonus" : 3
 		},
 		9: {
 			"max_shop_level" : 4,
@@ -1543,8 +1602,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 7,
 			"max_level" : 2,
 			"level_distribution" : [0.7, 0.3, 0],
-			"min_faction_bonus" : -1,
-			"max_faction_bonus" : 1
+			"min_faction_bonus" : 1,
+			"max_faction_bonus" : 3
 		},
 		10: {
 			"max_shop_level" : 4,
@@ -1552,8 +1611,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 7,
 			"max_level" : 2,
 			"level_distribution" : [0.7, 0.3, 0],
-			"min_faction_bonus" : -1,
-			"max_faction_bonus" : 1
+			"min_faction_bonus" : 1,
+			"max_faction_bonus" : 4
 		},
 		11: {
 			"max_shop_level" : 4,
@@ -1561,8 +1620,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 7,
 			"max_level" : 3,
 			"level_distribution" : [0.7, 0.25, 0.05],
-			"min_faction_bonus" : 0,
-			"max_faction_bonus" : 2
+			"min_faction_bonus" : 1,
+			"max_faction_bonus" : 4
 		},
 		12: {
 			"max_shop_level" : 5,
@@ -1570,8 +1629,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 8,
 			"max_level" : 3,
 			"level_distribution" : [0.7, 0.25, 0.05],
-			"min_faction_bonus" : 0,
-			"max_faction_bonus" : 2
+			"min_faction_bonus" : 1,
+			"max_faction_bonus" : 4
 		},
 		13: {
 			"max_shop_level" : 5,
@@ -1579,8 +1638,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 8,
 			"max_level" : 3,
 			"level_distribution" : [0.7, 0.25, 0.05],
-			"min_faction_bonus" : 0,
-			"max_faction_bonus" : 2
+			"min_faction_bonus" : 2,
+			"max_faction_bonus" : 4
 		},
 		14: {
 			"max_shop_level" : 5,
@@ -1588,8 +1647,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 8,
 			"max_level" : 3,
 			"level_distribution" : [0.7, 0.25, 0.05],
-			"min_faction_bonus" : 0,
-			"max_faction_bonus" : 2
+			"min_faction_bonus" : 2,
+			"max_faction_bonus" : 4
 		},
 		15: {
 			"max_shop_level" : 6,
@@ -1597,8 +1656,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 9,
 			"max_level" : 3,
 			"level_distribution" : [0.7, 0.25, 0.05],
-			"min_faction_bonus" : 0,
-			"max_faction_bonus" : 2
+			"min_faction_bonus" : 2,
+			"max_faction_bonus" : 4
 		},
 		16: {
 			"max_shop_level" : 6,
@@ -1606,8 +1665,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 9,
 			"max_level" : 3,
 			"level_distribution" : [0.65, 0.3, 0.05],
-			"min_faction_bonus" : 0,
-			"max_faction_bonus" : 2
+			"min_faction_bonus" : 3,
+			"max_faction_bonus" : 4
 		},
 		17: {
 			"max_shop_level" : 6,
@@ -1615,8 +1674,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 9,
 			"max_level" : 3,
 			"level_distribution" : [0.65, 0.3, 0.05],
-			"min_faction_bonus" : 0,
-			"max_faction_bonus" : 2
+			"min_faction_bonus" : 3,
+			"max_faction_bonus" : 4
 		},
 		18: {
 			"max_shop_level" : 6,
@@ -1624,8 +1683,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 9,
 			"max_level" : 3,
 			"level_distribution" : [0.65, 0.3, 0.05],
-			"min_faction_bonus" : 0,
-			"max_faction_bonus" : 2
+			"min_faction_bonus" : 3,
+			"max_faction_bonus" : 4
 		},
 		19: {
 			"max_shop_level" : 6,
@@ -1633,8 +1692,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 9,
 			"max_level" : 3,
 			"level_distribution" : [0.6, 0.3, 0.1],
-			"min_faction_bonus" : 0,
-			"max_faction_bonus" : 2
+			"min_faction_bonus" : 3,
+			"max_faction_bonus" : 5
 		},
 		20: {
 			"max_shop_level" : 6,
@@ -1642,8 +1701,8 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			"max_population" : 9,
 			"max_level" : 3,
 			"level_distribution" : [0.6, 0.3, 0.1],
-			"min_faction_bonus" : 0,
-			"max_faction_bonus" : 2
+			"min_faction_bonus" : 3,
+			"max_faction_bonus" : 5
 		}
 	}
 
@@ -1659,12 +1718,13 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 
 	match difficulty:
 		"Easy":
-			current_max_population = current_min_population
+			current_max_population = min(player_population, current_max_population)
 			current_max_faction_bonus = current_min_faction_bonus
 		"Normal":
-			pass
+			current_min_population = max(player_population, current_min_population)
+			current_max_population	= max(player_population, current_max_population)
 		"Hard":
-			current_min_population = current_max_population
+			current_min_population = min(player_population, current_max_population)
 			current_max_faction_bonus += 1
 		_:
 			pass
@@ -1769,7 +1829,7 @@ func check_villager_count(villager_name: String) -> int:
 			villager_count += 1
 	return villager_count
 
-func villager_release(villager_name: String) -> void:
+func release_villager(villager_name: String) -> void:
 	if not DataManagerSingleton.get_chess_data()["villager"].keys().has(villager_name):
 		return
 
