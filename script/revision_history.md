@@ -1,4 +1,29 @@
-# **V1.00.02:**
+# **V1.00.03:**
+2025/10/13
+
+---
+
+
+## **Add:**# 
+- add release villager function and animation
+- disable faction bonus menu when game started
+- add population refresh when sell chess
+
+## **Remove:**
+- remove
+
+## **Modify:**
+- fix dwarf king passive ability cannot trigger issue
+
+## **Balance:**
+- update faction level criteria for enemy generation
+
+## **Plan:**
+
+---
+
+
+**V1.00.02:**
 2025/10/11
 
 ---
