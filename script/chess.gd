@@ -1358,18 +1358,18 @@ func _on_died():
 				current_dwarf_death_count = king_index.get_meta("dwarf_death_count", 0)
 				king_index.set_meta("dwarf_death_count", current_dwarf_death_count + 1)
 
-				current_dwarf_death_count = king_index.get_meta("dwarf_death_count", 0)
-				var effect_instance = ChessEffect.new()
-				king_index.effect_handler.add_child(effect_instance)
-				effect_instance.register_buff("melee_attack_damage_modifier", current_dwarf_death_count * (2 + king_index.chess_level), 999)
-				effect_instance.register_buff("armor_modifier",  current_dwarf_death_count * (4 + king_index.chess_level), 999)
-				effect_instance.effect_name = "Avatar"
-				effect_instance.effect_type = "Buff"
-				effect_instance.effect_description = "Gains damage and armor when allied Dwarves die."
-				effect_instance.effect_applier = "Dwarf King Passive Effect"
-				king_index.effect_handler.add_to_effect_array(effect_instance)
-				await king_index.effect_animation_display("DwarfKingPassive", arena, get_current_tile(king_index)[1], "RightTop")
-				king_index.effect_handler.refresh_effects()	
+			current_dwarf_death_count = king_index.get_meta("dwarf_death_count", 0)
+			var effect_instance = ChessEffect.new()
+			king_index.effect_handler.add_child(effect_instance)
+			effect_instance.register_buff("melee_attack_damage_modifier", current_dwarf_death_count * (2 + king_index.chess_level), 999)
+			effect_instance.register_buff("armor_modifier",  current_dwarf_death_count * (4 + king_index.chess_level), 999)
+			effect_instance.effect_name = "Avatar"
+			effect_instance.effect_type = "Buff"
+			effect_instance.effect_description = "Gains damage and armor when allied Dwarves die."
+			effect_instance.effect_applier = "Dwarf King Passive Effect"
+			king_index.effect_handler.add_to_effect_array(effect_instance)
+			await king_index.effect_animation_display("DwarfKingPassive", arena, get_current_tile(king_index)[1], "RightTop")
+			king_index.effect_handler.refresh_effects()	
 
 	
 	#Placeholder for chess passive ability on died
