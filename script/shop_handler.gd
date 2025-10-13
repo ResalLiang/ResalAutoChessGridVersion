@@ -155,9 +155,17 @@ func shop_refresh(level: int) -> void:
 			var rand_exist_chess = arena.unit_grid.get_all_units().duplicate().pick_random()
 			rand_character_result = [rand_exist_chess.faction, rand_exist_chess.chess_name]
 		else:
-			rand_character_result = get_parent().generate_random_chess_update(min(6, shop_level), "locked")
+			if get_parent().faction_path_upgrade.size() > 0 and get_parent().faction_path_upgrade["human"]["path4"] > 0:
+				rand_character_result = get_parent().generate_random_chess_update(min(6, shop_level), "villager")
+			else:
+				rand_character_result = get_parent().generate_random_chess_update(min(6, shop_level), "locked")
 
 		var character = get_parent().summon_chess(rand_character_result[0], rand_character_result[1], 1, 1, shop, Vector2i(shop_col_index, shop_row_index))
+
+	if get_parent().faction_path_upgrade.size() > 0:
+		get_parent().faction_path_upgrade["human"]["path4"] = 0
+		get_parent().faction_path_upgrade["elf"]["path4"] = 0
+		get_parent().faction_path_upgrade["dwarf"]["path4"] = 0
 
 	if DataManagerSingleton.player_data["debug_mode"]:
 		var debug_chess_faction = ["human", "human", "human", "elf", "elf", "dwarf", "dwarf", "elf"]
@@ -211,9 +219,6 @@ func shop_upgrade() -> void:
 
 func get_shop_upgrade_price():
 	return shop_level + 5 
-
-func get_current_difficulty():
-	return shop_level * 200
 
 func get_max_population():
 	#var max_population = 999 if (shop_level == 7 and DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]) else (shop_level + 2 + get_parent().faction_bonus_manager.get_bonus_level("human", 1))

@@ -196,17 +196,20 @@ var faction_path_upgrade_template = {
 	"elf": {
 		"path1" : 0,
 		"path2" : 0,
-		"path3" : 0
+		"path3" : 0,
+		"path4" : 0
 	},
 	"human": {
 		"path1" : 0,
 		"path2" : 0,
-		"path3" : 0
+		"path3" : 0,
+		"path4" : 0
 	},
 	"dwarf": {
 		"path1" : 0,
 		"path2" : 0,
-		"path3" : 0
+		"path3" : 0,
+		"path4" : 0
 	}	
 }
 var faction_path_upgrade: Dictionary
@@ -423,14 +426,14 @@ func _ready():
 	)
 
 	chess_mover.villager_released.connect(
-		func(obstacle, release_position):
+		func(villager_name, release_position):
 			var release_animation = AnimatedSprite2D.new()
 			add_child(release_animation)
 			release_animation.global_position = release_position
 			release_animation.z_index = 80
 
 
-			var path = "res://asset/animation/%s/%s%s.tres" % [obstacle.faction, obstacle.faction, obstacle.chess_name]
+			var path = "res://asset/animation/%s/%s%s.tres" % ["villager", "villager", villager_name]
 			if ResourceLoader.exists(path):
 				var frames = ResourceLoader.load(path)
 				for i in ["idle", "move", "spell", "jump"]:
@@ -442,15 +445,15 @@ func _ready():
 			else:
 				push_error("Animation resource not found: " + path)
 
-			if release_animation.sprite_frames.has("jump"):
+			if release_animation.sprite_frames.has_animation("jump"):
 				release_animation.play("jump")
 				await release_animation.animation_finished
 
-			if release_animation.sprite_frames.has("spell"):
+			if release_animation.sprite_frames.has_animation("spell"):
 				release_animation.play("spell")
 				await release_animation.animation_finished
 
-			release_villager(obstacle.chess_name)
+			release_villager(villager_name)
 
 			release_animation.play("move")
 
@@ -463,18 +466,18 @@ func _ready():
 					release_animation.queue_free()
 			)
 			var tween_new_position: Vector2 = release_animation.global_position
-			if release_animation.global_position.x - 640 > release_animation.global_position.x:
+			if release_animation.global_position.x - 540 > release_animation.global_position.x:
 				tween_new_position.x = 0 - 50
 			else:
 				tween_new_position.x = 640 + 50
 
-			appearance_tween.tween_property(chess_index, "global_position", tween_new_position , 0.8)
+			villager_move_tween.tween_property(release_animation, "global_position", tween_new_position , 0.8)
 
 	)
 	
 	faction_bonus_button.pressed.connect(
 		func():
-			if not game_started:
+			if not is_game_turn_start:
 				var skill_tree = skill_tree_scene.instantiate()
 				add_child(skill_tree)
 				await skill_tree.tree_exiting

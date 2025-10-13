@@ -167,19 +167,29 @@ func refresh_page():
 		
 		match current_path_level:
 			0:
-				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button1"), false)
-				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button2"), false)
-				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button3"), false)
-				get_node("ui/bonus_button_container/"+ path_index + "_button1").disabled = false
-				get_node("ui/bonus_button_container/"+ path_index + "_button2").disabled = true
-				get_node("ui/bonus_button_container/"+ path_index + "_button3").disabled = true
+				if path_index != "path4":
+					set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button1"), false)
+					set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button2"), false)
+					set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button3"), false)
+					get_node("ui/bonus_button_container/"+ path_index + "_button1").disabled = false
+					get_node("ui/bonus_button_container/"+ path_index + "_button2").disabled = true
+					get_node("ui/bonus_button_container/"+ path_index + "_button3").disabled = true
+				else:
+					set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button1"), false)
+					get_node("ui/bonus_button_container/"+ path_index + "_button1").disabled = false
+					
 			1:
-				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button1"), true)
-				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button2"), false)
-				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button3"), false)
-				get_node("ui/bonus_button_container/"+ path_index + "_button1").disabled = false
-				get_node("ui/bonus_button_container/"+ path_index + "_button2").disabled = false
-				get_node("ui/bonus_button_container/"+ path_index + "_button3").disabled = true
+				if path_index != "path4":
+					set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button1"), true)
+					set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button2"), false)
+					set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button3"), false)
+					get_node("ui/bonus_button_container/"+ path_index + "_button1").disabled = false
+					get_node("ui/bonus_button_container/"+ path_index + "_button2").disabled = false
+					get_node("ui/bonus_button_container/"+ path_index + "_button3").disabled = true
+				else:
+					set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button1"), true)
+					get_node("ui/bonus_button_container/"+ path_index + "_button1").disabled = false
+					
 			2:
 				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button1"), true)
 				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button2"), true)
@@ -193,7 +203,7 @@ func refresh_page():
 				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button3"), true)
 				get_node("ui/bonus_button_container/"+ path_index + "_button1").disabled = false
 				get_node("ui/bonus_button_container/"+ path_index + "_button2").disabled = false
-				get_node("ui/bonus_button_container/"+ path_index + "_button3").disabled = false
+				get_node("ui/bonus_button_container/"+ path_index + "_button3").disabled = false		
 			_:
 				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button1"), false)
 				set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button2"), false)
@@ -250,6 +260,8 @@ func on_path_bonus_pressed(node: TextureButton):
 			faction_bonus_description.text = "Uncommon rarity chess pieces can choose to become their upgraded version when merging"
 		"human Path 3 Level 3": 
 			faction_bonus_description.text = "Rare rarity chess pieces can choose to become their upgraded version when merging"
+		"human Path 4 Level 1": 
+			faction_bonus_description.text = "Fill the shop with villager"
 		"dwarf Path 1 Level 1" :
 			faction_bonus_description.text = "Armor increased by 2 points, increased by 4 points when adjacent to allied Dwarf"
 		"dwarf Path 1 Level 2" :
@@ -284,6 +296,8 @@ func on_path_bonus_pressed(node: TextureButton):
 			faction_path_label.text = "Path2 Village Recruitment"
 		"human Path 3" :
 			faction_path_label.text = "Path3 Evolutionary Merge"
+		"human Path 4" :
+			faction_path_label.text = "Path4 Villager Gathering"
 		"dwarf Path 1" :
 			faction_path_label.text = "Path1 Iron Defense"
 		"dwarf Path 2" :
@@ -343,7 +357,7 @@ func handle_button_actived():
 		consume_won_round.disabled = true
 		just_active.disabled = true
 		return
-	elif current_path_number == 4:
+	elif current_path_number == 4 and current_level_number != 1:
 		consume_remian_lose_round.disabled = true
 		consume_max_lose_round.disabled = true
 		consume_won_round.disabled = true
