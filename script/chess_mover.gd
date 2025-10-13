@@ -16,6 +16,7 @@ var phantom_chess_group : Array = []
 signal chess_moved(obstacle: Obstacle, play_area: PlayArea, tile: Vector2i)
 signal chess_raised(chess_position: Vector2, obstacle: Obstacle)
 signal chess_dropped(obstacle: Obstacle)
+signal villager_released(villager_name: String, release_position: Vector2)
 
 func _ready() -> void:
 	pass
@@ -201,6 +202,14 @@ func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obs
 	var new_area := play_areas[drop_area_index]
 	var new_tile := new_area.get_hovered_tile()
 	
+	if drop_area_index == -1 and obstacle.faction == "villager":
+		var obstacle_phantom = obstacle.get_temp_copy() #as Chess
+		shop_handler.buy_chess(obstacle_phantom)
+		villager_released.emit(obstacle.chess_name, obstacle.get_global_mouse_position())
+		phantom_chess_group.append(obstacle_phantom)
+		await get_tree().process_frame
+		obstacle.queue_free()
+
 	match [old_area_index, drop_area_index]:
 		[0, 0]:
 			# move from arena to arena
