@@ -61,11 +61,23 @@ func show_gallery():
 	AudioManagerSingleton.play_music("menu")
 	await _transition_to_scene("res://scene/gallery.tscn", main_container, true)
 	current_scene.to_menu_scene.connect(show_main_menu)
-	current_scene.to_mini_game_scene.connect(show_mini_game)
+	current_scene.to_tetris_scene.connect(show_tetris_game)
+	current_scene.to_snake_scene.connect(show_tetris_game)
+	current_scene.to_minesweep_scene.connect(show_tetris_game)
 	
-func show_mini_game():
+func show_tetris_game():
 	AudioManagerSingleton.play_music("menu")
 	await _transition_to_scene("res://scene/tetris.tscn", main_container, true)
+	current_scene.to_menu_scene.connect(show_main_menu)
+	
+func show_snake_game():
+	AudioManagerSingleton.play_music("menu")
+	await _transition_to_scene("res://scene/snake.tscn", main_container, true)
+	current_scene.to_menu_scene.connect(show_main_menu)
+	
+func show_minesweep_game():
+	AudioManagerSingleton.play_music("menu")
+	await _transition_to_scene("res://scene/minesweep.tscn", main_container, true)
 	current_scene.to_menu_scene.connect(show_main_menu)
 	
 

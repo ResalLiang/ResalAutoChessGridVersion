@@ -173,7 +173,7 @@ texture = SubResource("AtlasTexture_a4h23")
 flip_h = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="icons"]
-z_index = 4096
+z_index = 40
 position = Vector2(91, 34)
 scale = Vector2(2, 2)
 sprite_frames = ExtResource("4_v35lb")

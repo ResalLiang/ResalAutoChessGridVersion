@@ -31,7 +31,9 @@ const alternative_choice_scene = preload("res://scene/alternative_choice.tscn")
 
 
 signal to_menu_scene
-signal to_mini_game_scene
+signal to_tetris_scene
+signal to_snake_scene
+signal to_minesweep_scene
 
 var current_page := 0
 
@@ -307,6 +309,13 @@ func _on_reset_button_pressed() -> void:
 	
 
 
+func _on_tetris_button_pressed() -> void:
+	to_tetris_scene.emit()
 
-func _on_mini_game_button_pressed() -> void:
-	to_mini_game_scene.emit()
+
+func _on_snake_game_button_pressed() -> void:
+	to_snake_scene.emit()
+
+
+func _on_minesweep_game_button_pressed() -> void:
+	to_minesweep_scene.emit()

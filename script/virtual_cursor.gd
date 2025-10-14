@@ -37,6 +37,7 @@ func _ready():
 	z_index = 999
 	cursor_sprite.z_index = 999
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	set_process_mode(Node.PROCESS_MODE_ALWAYS)
 
 func _process(_delta):
 	if not cursor_sprite:
