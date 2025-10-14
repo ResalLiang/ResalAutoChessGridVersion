@@ -1,3 +1,25 @@
+# **V1.00.04:**
+2025/10/14
+
+---
+
+
+## **Add:**# 
+- add snake game and minesweeper mini game
+
+## **Remove:**
+- remove
+
+## **Modify:**
+- pause the game when skill tree opened
+
+## **Balance:**
+- 
+
+## **Plan:**
+
+---
+
 # **V1.00.03:**
 2025/10/13
 
