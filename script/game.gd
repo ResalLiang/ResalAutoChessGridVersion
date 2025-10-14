@@ -480,7 +480,10 @@ func _ready():
 			if not is_game_turn_start:
 				var skill_tree = skill_tree_scene.instantiate()
 				add_child(skill_tree)
+				skill_tree.set_process_mode(3)
+				get_tree().paused = true
 				await skill_tree.tree_exiting
+				get_tree().paused = false
 				faction_bonus_manager.bonus_refresh()
 				update_population(true)
 	)
