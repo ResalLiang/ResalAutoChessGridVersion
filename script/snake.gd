@@ -1,313 +1,309 @@
 extends Node2D
 
-# =====================================================
-# 1. CONSTANTS AND VARIABLES
-# =====================================================
+# Constants
+const GRID_SIZE := Vector2(16, 16)
+const GAME_WIDTH := 20
+const GAME_HEIGHT := 15
+const MOVE_SPEED := 0.2  # seconds per tile
 
-# Game configuration
-const GRID_SIZE = 20  # Size of each grid cell in pixels
-const GRID_WIDTH = 20  # Number of horizontal cells
-const GRID_HEIGHT = 15  # Number of vertical cells
+# Game variables
+var score := 0
+var high_score := 0
+var is_game_active := false
+var current_direction := Vector2.RIGHT
+var next_direction := Vector2.RIGHT
+var snake_body: Array[Vector2] = []
+var snake_sprites: Array[AnimatedSprite2D] = []
+var chess_position := Vector2.ZERO
+var chess_sprite: AnimatedSprite2D
+var enemy_death_array: Array = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["enemy_death_array"].duplicate(true)
 
-# Directions
-const DIRECTION_RIGHT = Vector2(1, 0)
-const DIRECTION_LEFT = Vector2(-1, 0)
-const DIRECTION_UP = Vector2(0, -1)
-const DIRECTION_DOWN = Vector2(0, 1)
-
-# Game states
-var game_running = false
-var current_direction = DIRECTION_RIGHT
-var next_direction = DIRECTION_RIGHT
-
-# Game data
-var snake_body = []  # Array of Vector2 positions
-var food_position = Vector2.ZERO
-var score = 0
-var high_score = 0
-
-# Configuration
-var move_speed = 0.15  # Time between moves in seconds
-
-var enemy_death_array:= []
-var animation_count:= 0
-var waiting_chess
-
-# Node references
 @onready var game_board: Node2D = $GameBoard
-@onready var background: ColorRect = $GameBoard/Background
+@onready var background: TileMapLayer = $GameBoard/Background
 @onready var game_elements: Node2D = $GameBoard/GameElements
 @onready var ui_container: Control = $UIContainer
 @onready var score_label: Label = $UIContainer/ScoreLabel
 @onready var high_score_label: Label = $UIContainer/HighScoreLabel
-@onready var game_over_panel: Panel = $GameOverPanel
 @onready var start_button: Button = $UIContainer/StartButton
+@onready var game_over_panel: Panel = $GameOverPanel
 @onready var game_timer: Timer = $GameTimer
 
-# =====================================================
-# 2. INITIALIZATION
-# =====================================================
 
-func _ready():
-	# Set up game board size
-	_setup_game_board()
-	
-	# Load high score from file
-	_load_high_score()
-	
-	# Connect UI signals
-	start_button.pressed.connect(_on_start_button_pressed)
-	
-	# Initialize UI
+func _ready() -> void:
+	"""Initialize game state and load high score"""
+	high_score = _load_high_score()
 	_update_ui()
-	game_over_panel.visible = false
+	game_over_panel.hide()
+	_initialize_game_board()
 
-# Set up game board dimensions
-func _setup_game_board():
-	var board_width = GRID_WIDTH * GRID_SIZE
-	var board_height = GRID_HEIGHT * GRID_SIZE
+
+func _initialize_game_board() -> void:
+	"""Set up the game board background"""
+	# Clear existing tiles
+	background.clear()
 	
-	# Set background size
-	background.size = Vector2(board_width, board_height)
-	
-	# Center the game board in the view
-	var viewport_size = get_viewport_rect().size
-	game_board.position = (viewport_size - Vector2(board_width, board_height)) / 2
+	# Fill the game area with background tiles
+	for x in range(GAME_WIDTH):
+		for y in range(GAME_HEIGHT):
+			background.set_cell(Vector2i(x, y), 0, Vector2i(0, 0))
 
-# =====================================================
-# 3. GAME INITIALIZATION
-# =====================================================
 
-# Start a new game
-func start_game():
+func start_game() -> void:
+	"""Start a new game with initial snake and chess"""
 	# Reset game state
-	game_running = true
 	score = 0
-	current_direction = DIRECTION_RIGHT
-	next_direction = DIRECTION_RIGHT
+	is_game_active = true
+	current_direction = Vector2.RIGHT
+	next_direction = Vector2.RIGHT
 	
-	# Clear snake body
+	# Clear existing game elements
+	for child in game_elements.get_children():
+		child.queue_free()
 	snake_body.clear()
+	snake_sprites.clear()
 	
-	# Initialize snake - start with 3 segments in a safe position
-	var start_x = int(GRID_WIDTH / 2)
-	var start_y = int(GRID_HEIGHT / 2)
+	# Initialize snake in the center with two segments
+	var start_pos := Vector2(GAME_WIDTH / 2, GAME_HEIGHT / 2)
+	snake_body = [start_pos, start_pos - Vector2.RIGHT]
 	
-	# Ensure the snake starts in a valid position
-	start_x = clamp(start_x, 3, GRID_WIDTH - 1)
-	start_y = clamp(start_y, 1, GRID_HEIGHT - 2)
+	# Create snake segments using first two pairs from enemy_death_array
+	if enemy_death_array.size() >= 4:
+		for i in range(2):
+			var segment_pos := snake_body[i]
+			var faction: String = enemy_death_array[i * 2]
+			var chess_name: String = enemy_death_array[i * 2 + 1]
+			_create_snake_segment(segment_pos, faction, chess_name)
 	
-	snake_body.append(Vector2(start_x, start_y))
-	snake_body.append(Vector2(start_x - 1, start_y))
-	snake_body.append(Vector2(start_x - 2, start_y))
-	
-	# Generate first food
-	_generate_food()
+	# Generate first chess
+	_generate_chess()
 	
 	# Start game timer
-	game_timer.wait_time = move_speed
+	game_timer.wait_time = MOVE_SPEED
 	game_timer.start()
 	
-	# Update UI
 	_update_ui()
-	game_over_panel.visible = false
-	start_button.visible = false
-	
-	# Force initial redraw
-	queue_redraw()
+	start_button.hide()
 
-# Generate food at random position not occupied by snake
-func _generate_food():
-	var max_attempts = 100
-	var attempts = 0
-	
-	while attempts < max_attempts:
-		var x = randi() % GRID_WIDTH
-		var y = randi() % GRID_HEIGHT
-		var pos = Vector2(x, y)
-		
-		# Check if position is occupied by snake
-		var position_occupied = false
-		for segment in snake_body:
-			if segment == pos:
-				position_occupied = true
-				break
-		
-		if not position_occupied:
-			food_position = pos
-			return
-		
-		attempts += 1
-	
-	# Fallback position if no valid position found
-	food_position = Vector2(0, 0)
 
-# =====================================================
-# 4. INPUT HANDLING
-# =====================================================
+func _create_snake_segment(position: Vector2, faction: String, chess_name: String) -> void:
+	"""Create a visual snake segment at the given position with specific animation"""
+	var animated_sprite := AnimatedSprite2D.new()
+	
+	# Get sprite frame from enemy_death_array
+	var sprite_frame: SpriteFrames = _get_sprite_frame(faction, chess_name)
+	animated_sprite.sprite_frames = sprite_frame
+	
+	animated_sprite.position = position * GRID_SIZE
+	animated_sprite.play("default")
+	
+	# Set initial flip based on direction
+	if snake_sprites.is_empty():  # Head
+		animated_sprite.flip_h = (current_direction == Vector2.LEFT)
+	
+	game_elements.add_child(animated_sprite)
+	snake_sprites.append(animated_sprite)
 
-func _input(event):
-	if not game_running:
+
+func _generate_chess() -> void:
+	"""Generate new chess at random position not occupied by snake"""
+	if snake_body.size() 
+	var valid_positions: Array[Vector2] = []
+	
+	var new_position := Vector2i[randi_range(0, GAME_WIDTH - 1), randi_range(0, GAME_HEIGHT - 1)]
+	while not snake_body.has(new_position):
+		var new_rand_x = randi_range(0, GAME_WIDTH - 1)
+		var new_rand_y = randi_range(0, GAME_HEIGHT - 1)
+		new_position := Vector2i[new_rand_x, rnew_rand_y]
+
+	valid_positions.append(pos)
+	
+	if valid_positions.is_empty():
+		_end_game(true)  # Win condition - board filled
 		return
 	
-	# Handle keyboard input for direction changes
-	if event.is_action_pressed("ui_right") and current_direction != DIRECTION_LEFT:
-		next_direction = DIRECTION_RIGHT
-	elif event.is_action_pressed("ui_left") and current_direction != DIRECTION_RIGHT:
-		next_direction = DIRECTION_LEFT
-	elif event.is_action_pressed("ui_up") and current_direction != DIRECTION_DOWN:
-		next_direction = DIRECTION_UP
-	elif event.is_action_pressed("ui_down") and current_direction != DIRECTION_UP:
-		next_direction = DIRECTION_DOWN
+	# Select random position
+	chess_position = valid_positions.pick_random()
+	
+	# Remove existing chess if any
+	if chess_sprite and is_instance_valid(chess_sprite):
+		chess_sprite.queue_free()
+	
+	# Create chess visual
+	chess_sprite = AnimatedSprite2D.new()
+	
+	# Get random pair from enemy_death_array for chess
+	if enemy_death_array.size() >= 2:
+		var next_faction = enemy_death_array.pop_front()
+		var next_chess_name = enemy_death_array.pop_front()
+		# var random_index := randi() % (enemy_death_array.size() / 2)
+		# var faction: String = enemy_death_array[random_index * 2]
+		# var chess_name: String = enemy_death_array[random_index * 2 + 1]
+		var sprite_frame: SpriteFrames = _get_sprite_frame(next_faction, next_chess_name)
+		chess_sprite.sprite_frames = sprite_frame
+	
+	chess_sprite.position = chess_position * GRID_SIZE
+	chess_sprite.play("default")
+	chess_sprite.name = "Chess"
+	game_elements.add_child(chess_sprite)
 
-# =====================================================
-# 5. GAME LOGIC
-# =====================================================
 
-# Main game update - called by timer
-func _on_game_timer_timeout():
-	if not game_running:
+func _input(event: InputEvent) -> void:
+	"""Handle input for changing snake direction"""
+	if not is_game_active:
 		return
 	
-	# Update current direction
+	if event.is_action_pressed("ui_right") and current_direction != Vector2.LEFT:
+		next_direction = Vector2.RIGHT
+	elif event.is_action_pressed("ui_left") and current_direction != Vector2.RIGHT:
+		next_direction = Vector2.LEFT
+	elif event.is_action_pressed("ui_down") and current_direction != Vector2.UP:
+		next_direction = Vector2.DOWN
+	elif event.is_action_pressed("ui_up") and current_direction != Vector2.DOWN:
+		next_direction = Vector2.UP
+
+
+func _on_game_timer_timeout() -> void:
+	"""Move snake one tile in current direction on timer timeout"""
+	if not is_game_active:
+		return
+	
 	current_direction = next_direction
 	
 	# Calculate new head position
-	var new_head = snake_body[0] + current_direction
+	var new_head_pos: Vector2 = snake_body[0] + current_direction
+	
+	# Wrap around screen edges
+	new_head_pos.x = wrapf(new_head_pos.x, 0, GAME_WIDTH)
+	new_head_pos.y = wrapf(new_head_pos.y, 0, GAME_HEIGHT)
 	
 	# Check for collisions
-	if _check_collision(new_head):
+	if _check_collision(new_head_pos):
 		_end_game(false)
 		return
 	
+	# Check if eating chess
+	var is_eating_chess := (new_head_pos == chess_position)
+	
 	# Move snake
-	snake_body.push_front(new_head)
-	
-	# Check if snake ate food
-	if new_head == food_position:
-		# Increase score
-		score += 10
-		
-		# Generate new food
-		_generate_food()
-		
-		# Update UI
-		_update_ui()
-		
-		# Snake grows by not removing tail
-	else:
-		# Remove tail if no food was eaten
+	snake_body.push_front(new_head_pos)
+	if not is_eating_chess:
 		snake_body.pop_back()
+	else:
+		score += 1
+		# Add new segment to snake using chess animation
+		var tail_pos: Vector2 = snake_body[snake_body.size() - 1]
+		var faction: String = enemy_death_array[0]  # Use first faction for new segment
+		var chess_name: String = enemy_death_array[1]  # Use first chess_name for new segment
+		_create_snake_segment(tail_pos, faction, chess_name)
+		
+		# Generate new chess
+		_generate_chess()
+		_update_ui()
 	
-	# Redraw game
-	queue_redraw()
+	_update_snake()
 
-# Check for collisions with walls or self
+
 func _check_collision(position: Vector2) -> bool:
-	# Check wall collision
-	if position.x < 0 or position.x >= GRID_WIDTH or position.y < 0 or position.y >= GRID_HEIGHT:
-		return true
-	
-	# Check self collision (skip the tail since it will move)
-	for i in range(snake_body.size()):
-		if position == snake_body[i]:
+	"""Check if position collides with snake body (excluding head for movement)"""
+	# Check collision with body (skip head since it's moving to new position)
+	for i in range(1, snake_body.size()):
+		if snake_body[i] == position:
 			return true
-	
 	return false
 
-# End the game
-func _end_game(is_win: bool):
-	game_running = false
+
+func _end_game(is_win: bool) -> void:
+	"""End game and check for high score"""
+	is_game_active = false
 	game_timer.stop()
 	
-	# Update high score if needed
 	if score > high_score:
 		high_score = score
 		_save_high_score()
 	
 	# Show game over panel
-	game_over_panel.visible = true
-	start_button.visible = true
-	
-	# Update UI
-	_update_ui()
+	game_over_panel.show()
+	start_button.show()
+	DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["enemy_death_array"] = enemy_death_array
 
-# =====================================================
-# 6. RENDERING
-# =====================================================
 
-# Draw game elements
-func _draw():
-	# We need to draw relative to the game_elements node
-	var draw_position = game_elements.position
-	
-	# Draw snake
+func _update_snake() -> void:
+	"""Update all snake segments positions and animations with smooth movement"""
+	# Update positions of all snake segments
 	for i in range(snake_body.size()):
-		var segment = snake_body[i]
-		var color = Color.GREEN if i == 0 else Color.DARK_GREEN  # Head is brighter
-		_draw_cell(segment, color, draw_position)
+		if i < snake_sprites.size():
+			var target_position: Vector2 = snake_body[i] * GRID_SIZE
+			
+			# Create tween for smooth movement
+			var tween := create_tween()
+			tween.tween_property(snake_sprites[i], "position", target_position, MOVE_SPEED)
+			
+			# Update flip_h for head based on direction
+			if i == 0:  # Head
+				snake_sprites[i].flip_h = (current_direction == Vector2.LEFT)
+
+
+func _update_ui() -> void:
+	"""Update score and high score display"""
+	score_label.text = "Score: " + str(score)
+	high_score_label.text = "High Score: " + str(high_score)
+
+
+func _save_high_score() -> void:
+	"""Save high score to persistent storage"""
+	var save_file := FileAccess.open("user://high_score.save", FileAccess.WRITE)
+	if save_file:
+		save_file.store_var(high_score)
+		save_file.close()
+
+
+func _load_high_score() -> int:
+	"""Load high score from persistent storage"""
+	var loaded_high_score := 0
 	
-	# Draw food
-	_draw_cell(food_position, Color.RED, draw_position)
-
-# Draw a single grid cell
-func _draw_cell(cell_position: Vector2, color: Color, offset: Vector2):
-	var rect = Rect2(
-		offset + cell_position * GRID_SIZE,
-		Vector2(GRID_SIZE, GRID_SIZE)
-	)
-	game_elements.draw_rect(rect, color)
+	var save_file := FileAccess.open("user://high_score.save", FileAccess.READ)
+	if save_file:
+		loaded_high_score = save_file.get_var()
+		save_file.close()
 	
-	# Add a small border for pixel art style
-	var border_rect = Rect2(
-		offset + cell_position * GRID_SIZE,
-		Vector2(GRID_SIZE - 1, GRID_SIZE - 1)
-	)
-	game_elements.draw_rect(border_rect, Color.BLACK, false)
+	return loaded_high_score
 
-# =====================================================
-# 7. UI MANAGEMENT
-# =====================================================
 
-# Update all UI elements
-func _update_ui():
-	score_label.text = "Score: %d" % score
-	high_score_label.text = "High Score: %d" % high_score
-
-# Save high score to file
-func _save_high_score():
-	var file = FileAccess.open("user://snake_highscore.dat", FileAccess.WRITE)
-	if file:
-		file.store_32(high_score)
-
-# Load high score from file
-func _load_high_score():
-	if FileAccess.file_exists("user://snake_highscore.dat"):
-		var file = FileAccess.open("user://snake_highscore.dat", FileAccess.READ)
-		if file:
-			high_score = file.get_32()
-
-# =====================================================
-# 8. UI SIGNAL HANDLERS
-# =====================================================
-
-func _on_start_button_pressed():
+func _on_start_button_pressed() -> void:
+	"""Start game when start button is pressed"""
+	game_over_panel.hide()
 	start_game()
 
-# =====================================================
-# 9. CONFIGURATION METHODS
-# =====================================================
 
-# Change snake movement speed (can be called from outside)
-func set_move_speed(new_speed: float):
-	move_speed = new_speed
-	if game_running:
-		game_timer.wait_time = move_speed
+func set_move_speed(new_speed: float) -> void:
+	"""Change snake movement speed"""
+	game_timer.wait_time = new_speed
+	if is_game_active:
 		game_timer.start()
 
 
+func _get_sprite_frame(faction: String, chess_name: String) -> SpriteFrames:
+	"""Get sprite frame based on faction and chess name"""
+	# This should be implemented based on your specific sprite frame loading logic
+	# For now, return a placeholder SpriteFrames
+	var path = "res://asset/animation/%s/%s%s.tres" % [faction, faction, chess_name]
+	if ResourceLoader.exists(path):
+		var frames = ResourceLoader.load(path)
+		for anim_name in frames.get_animation_names():
+			if anim_name == "move" or anim_name == "jump" or anim_name == "fly":
+				frames.set_animation_loop(anim_name, true)
+			else:
+				frames.set_animation_loop(anim_name, false)
+			frames.set_animation_speed(anim_name, 8.0)
+			animated_sprite_loaded.emit(self, anim_name)
+	else:
+		push_error("Animation resource not found: " + path)
+	
+	return frames
+
+
 func line_up_chess():
-	enemy_death_array = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["enemy_death_array"].duplicate()
+
 	if enemy_death_array.size() == 0:
 		return
 	 
