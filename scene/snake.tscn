@@ -238,7 +238,7 @@ tile_set = ExtResource("9_rxj55")
 [node name="GameElements" type="Node2D" parent="GameBoard"]
 z_index = 20
 z_as_relative = false
-position = Vector2(192, 48)
+position = Vector2(208, 64)
 
 [node name="UIContainer" type="Control" parent="."]
 layout_mode = 3
