@@ -62,8 +62,8 @@ func show_gallery():
 	await _transition_to_scene("res://scene/gallery.tscn", main_container, true)
 	current_scene.to_menu_scene.connect(show_main_menu)
 	current_scene.to_tetris_scene.connect(show_tetris_game)
-	current_scene.to_snake_scene.connect(show_tetris_game)
-	current_scene.to_minesweep_scene.connect(show_tetris_game)
+	current_scene.to_snake_scene.connect(show_snake_game)
+	current_scene.to_minesweep_scene.connect(show_minesweep_game)
 	
 func show_tetris_game():
 	AudioManagerSingleton.play_music("menu")

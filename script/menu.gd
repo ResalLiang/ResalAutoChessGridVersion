@@ -89,7 +89,7 @@ func _ready() -> void:
 		for node in button_container.get_children():
 			if not node is TextureButton:
 				continue
-			node.diabled = true
+			node.disabled = true
 
 	
 func _process(delta: float) -> void:
