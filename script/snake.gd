@@ -2,6 +2,7 @@ extends Node2D
 
 # Constants
 const GRID_SIZE := Vector2(16, 16)
+const GRID_OFFSET := Vector2(8, 0)
 const GAME_WIDTH := 20
 const GAME_HEIGHT := 16
 const MOVE_SPEED := 0.2  # seconds per tile
@@ -16,9 +17,9 @@ var snake_body: Array[Vector2] = []
 var snake_sprites: Array[AnimatedSprite2D] = []
 var chess_position := Vector2.ZERO
 var chess_sprite: AnimatedSprite2D
-var enemy_death_array: Array
+var ally_death_array: Array
 var current_chess_index := 0  # Track which chess to use next
-
+var chess_on_board := {}
 
 @onready var game_board: Node2D = $GameBoard
 @onready var background: TileMapLayer = $GameBoard/Background
@@ -34,10 +35,11 @@ var current_chess_index := 0  # Track which chess to use next
 var animation_count:= 0
 
 signal to_menu_scene
+signal chess_eaten(faction: String, chess_name: String)
 
 func _ready() -> void:
 	"""Initialize game state and load high score"""
-	enemy_death_array = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["enemy_death_array"].duplicate(true)
+	ally_death_array = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["ally_death_array"].duplicate(true)
 
 	high_score = _load_high_score()
 	_update_ui()
@@ -73,16 +75,20 @@ func start_game() -> void:
 	
 	# Initialize snake in the center with two segments
 	var start_pos := Vector2(GAME_WIDTH / 2, GAME_HEIGHT / 2)
-	snake_body = [start_pos, start_pos - Vector2.RIGHT]
+	snake_body = [start_pos, start_pos + Vector2.LEFT]
 	
-	# Create snake segments using first two pairs from enemy_death_array
-	if enemy_death_array.size() >= 4:
+	# Create snake segments using first two pairs from ally_death_array
+	if ally_death_array.size() >= 4:
 		for i in range(2):
 			var check_in_chess = await waiting_chess_checkin()
 			var segment_pos := snake_body[i]
 			var faction: String = check_in_chess[0]
 			var chess_name: String = check_in_chess[1]
 			_create_snake_segment(segment_pos, faction, chess_name)
+	else:
+		for i in range(2):
+			var segment_pos := snake_body[i]
+			_create_snake_segment(segment_pos, "human", "ShieldMan")
 	
 	
 	# Generate first chess
@@ -100,12 +106,15 @@ func _create_snake_segment(position: Vector2, faction: String, chess_name: Strin
 	"""Create a visual snake segment at the given position with specific animation"""
 	var animated_sprite := AnimatedSprite2D.new()
 	
-	# Get sprite frame from enemy_death_array
+	# Get sprite frame from ally_death_array
 	var sprite_frame: SpriteFrames = _get_sprite_frame(faction, chess_name)
 	animated_sprite.sprite_frames = sprite_frame
 	
-	animated_sprite.position = position * GRID_SIZE
-	animated_sprite.play("default")
+	animated_sprite.position = position * GRID_SIZE + GRID_OFFSET
+	animated_sprite.play("move")
+	animated_sprite.set_meta("faction", faction)
+	animated_sprite.set_meta("chess_name", chess_name)
+
 	
 	# Set initial flip based on direction
 	if snake_sprites.is_empty():  # Head
@@ -127,7 +136,7 @@ func _generate_chess() -> void:
 	for x in range(GAME_WIDTH):
 		for y in range(GAME_HEIGHT):
 			var pos = Vector2(x, y)
-			if not snake_body.has(pos):
+			if not snake_body.has(pos) and not chess_on_board.keys().has(pos):
 				valid_positions.append(pos)
 	
 	# If no valid positions, end game
@@ -136,24 +145,33 @@ func _generate_chess() -> void:
 		return
 	
 	# Select random position
-	chess_position = valid_positions.pick_random()
-	
-	# Remove existing chess if any
-	if chess_sprite and is_instance_valid(chess_sprite):
-		chess_sprite.queue_free()
+	var chess_position = valid_positions.pick_random()
+
+	# # Remove existing chess if any
+	# if chess_sprite and is_instance_valid(chess_sprite):
+	# 	chess_sprite.queue_free()
 	
 	# Create chess visual
-	chess_sprite = AnimatedSprite2D.new()
+	var chess_sprite = AnimatedSprite2D.new()
 	
-	# Get next chess pair from enemy_death_array
-	if enemy_death_array.size() >= 2:
+	# Get next chess pair from ally_death_array
+	if ally_death_array.size() >= 2:
 		var check_in_chess = await waiting_chess_checkin()
 		var faction: String = check_in_chess[0]
 		var chess_name: String = check_in_chess[1]
 		var sprite_frame: SpriteFrames = _get_sprite_frame(faction, chess_name)
 		chess_sprite.sprite_frames = sprite_frame
+
+		var shader_mat = ShaderMaterial.new()
+		shader_mat.shader = load("res://asset/shader/LightweightPixelPerfectOutline.gdshader")
+		chess_sprite.material = shader_mat
+
+		chess_on_board[chess_position] = [faction, chess_name]
+	else:
+		_end_game(true)
+		return
 	
-	chess_sprite.position = chess_position * GRID_SIZE + Vector2(8, 0)
+	chess_sprite.position = chess_position * GRID_SIZE + GRID_OFFSET
 	chess_sprite.play("default")
 	chess_sprite.name = "Chess"
 	chess_sprite.play("jump")
@@ -175,6 +193,11 @@ func _input(event: InputEvent) -> void:
 	elif event.is_action_pressed("ui_up") and current_direction != Vector2.DOWN:
 		next_direction = Vector2.UP
 
+	if event.is_action_pressed("ui_accept"):
+		var human_chess = get_chess("human", "all")
+		if human_chess.size() > 0:
+			var rand_chess = human_chess.pick_random()
+			consume_chess(rand_chess)
 
 func _on_game_timer_timeout() -> void:
 	"""Move snake one tile in current direction on timer timeout"""
@@ -196,7 +219,7 @@ func _on_game_timer_timeout() -> void:
 		return
 	
 	# Check if eating chess
-	var is_eating_chess := (new_head_pos == chess_position)
+	var is_eating_chess := chess_on_board.keys().has(new_head_pos)
 	
 	# Move snake
 	snake_body.push_front(new_head_pos)
@@ -208,11 +231,13 @@ func _on_game_timer_timeout() -> void:
 		# Add new segment to snake using next chess animation
 		var tail_pos: Vector2 = snake_body[snake_body.size() - 1]
 		
-		# Use next chess pair from enemy_death_array
-		if enemy_death_array.size() >= current_chess_index + 2:
-			var faction: String = enemy_death_array[current_chess_index]
-			var chess_name: String = enemy_death_array[current_chess_index + 1]
-			_create_snake_segment(tail_pos, faction, chess_name)
+
+		var eaten_chess = chess_on_board[new_head_pos]
+		var faction: String = eaten_chess[0]
+		var chess_name: String = eaten_chess[1]
+		_create_snake_segment(tail_pos, faction, chess_name)
+		chess_on_board.erase(new_head_pos)
+		chess_eaten.emit(faction, chess_name)
 		
 		# Generate new chess
 		_generate_chess()
@@ -226,6 +251,8 @@ func _check_collision(position: Vector2) -> bool:
 	# Check collision with body (skip head since it's moving to new position)
 	for i in range(1, snake_body.size()):
 		if snake_body[i] == position:
+			return true
+		elif chess_on_board.keys().has(position) and chess_on_board[position] == ["obstacle", "Stone"]:
 			return true
 		else:
 			if position.x < 0:
@@ -251,7 +278,7 @@ func _end_game(is_win: bool) -> void:
 	# Show game over panel
 	game_over_panel.show()
 	start_button.show()
-	DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["enemy_death_array"] = enemy_death_array
+	DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["ally_death_array"] = ally_death_array
 
 
 func _update_snake() -> void:
@@ -260,7 +287,7 @@ func _update_snake() -> void:
 	for i in range(snake_body.size()):
 		if i < snake_sprites.size():
 			snake_sprites[i].play("move")
-			var target_position: Vector2 = snake_body[i] * GRID_SIZE + Vector2(8, 0)
+			var target_position: Vector2 = snake_body[i] * GRID_SIZE + GRID_OFFSET
 			
 			# Create tween for smooth movement
 			var tween := create_tween()
@@ -340,7 +367,7 @@ func _on_restart_button_pressed() -> void:
 	game_over_panel.visible = false
 
 func line_up_chess():
-	if enemy_death_array.size() == 0:
+	if ally_death_array.size() == 0:
 		return
 	 
 	animation_count = 0
@@ -349,8 +376,8 @@ func line_up_chess():
 	var chess_size = Vector2i(20, 20)
 	
 	while animation_count < chess_array_width * chess_array_height:
-		var chess_faction = enemy_death_array.pop_front()
-		var chess_name = enemy_death_array.pop_front()
+		var chess_faction = ally_death_array.pop_front()
+		var chess_name = ally_death_array.pop_front()
 		if DataManagerSingleton.get_chess_data().keys().has(chess_faction) and DataManagerSingleton.get_chess_data()[chess_faction].keys().has(chess_name):
 			var chess_animation = AnimatedSprite2D.new()
 			waiting_chess.add_child(chess_animation) 
@@ -396,6 +423,11 @@ func _load_animations(aniamtion: AnimatedSprite2D, faction: String, chess_name: 
 			frames.set_animation_loop(anim_name, false)
 			frames.set_animation_speed(anim_name, 8.0)
 		aniamtion.sprite_frames = frames
+
+		var shader_mat = ShaderMaterial.new()
+		shader_mat.shader = load("res://asset/shader/LightweightPixelPerfectOutline.gdshader")
+		aniamtion.material = shader_mat
+
 		aniamtion.play("idle")
 	else:
 		push_error("Animation resource not found: " + path)
@@ -463,11 +495,11 @@ func waiting_chess_checkin() -> Array:
 	var chess_animation = AnimatedSprite2D.new()
 	waiting_chess.add_child(chess_animation) 
 	
-	if enemy_death_array.size() <= 0:
+	if ally_death_array.size() <= 0:
 		return [check_in_chess_faction, check_in_chess_name]
 		
-	var chess_faction = enemy_death_array.pop_front()
-	var chess_name = enemy_death_array.pop_front()
+	var chess_faction = ally_death_array.pop_front()
+	var chess_name = ally_death_array.pop_front()
 	
 	if not (DataManagerSingleton.get_chess_data().keys().has(chess_faction) and DataManagerSingleton.get_chess_data()[chess_faction].keys().has(chess_name)):
 		return [check_in_chess_faction, check_in_chess_name]
@@ -488,3 +520,35 @@ func waiting_chess_checkin() -> Array:
 	)
 
 	return [check_in_chess_faction, check_in_chess_name]
+
+func get_chess(faction: String, chess_name: String):
+	var get_chess_result:= []
+	for i in snake_sprites:
+		if not i is AnimatedSprite2D:
+			continue
+		if i.get_meta("faction", "") == faction and (i.get_meta("chess_name", "") == chess_name or chess_name == "all"):
+			get_chess_result.append(i)
+
+	return get_chess_result
+
+func consume_chess(specific_sprite: AnimatedSprite2D):
+	if not snake_sprites.has(specific_sprite):
+		return
+	# var snake_body: Array[Vector2] = []
+	# var snake_sprites: Array[AnimatedSprite2D] = []
+	for i in range(snake_body.size()):
+		if i != specific_sprite:
+			continue
+		snake_sprites.remove_at(i)
+		break
+
+	snake_body.pop_back()
+
+	var fade_tween := create_tween().set_parallel(true)
+	fade_tween.set_ease(Tween.EASE_IN_OUT)
+	fade_tween.set_trans(Tween.TRANS_CUBIC)
+	fade_tween.tween_property(specific_sprite, "scale", Vector2(2.0, 2.0), 1.0)
+	fade_tween.tween_property(specific_sprite, "modulate.a", 0.0, 1.0)
+	await fade_tween.finished
+
+	specific_sprite.queue_free()
