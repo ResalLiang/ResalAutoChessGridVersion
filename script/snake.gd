@@ -78,18 +78,18 @@ func start_game() -> void:
 	snake_body = [start_pos, start_pos + Vector2.LEFT]
 	
 	# Create snake segments using first two pairs from ally_death_array
-	if ally_death_array.size() >= 4:
-		for i in range(2):
-			var check_in_chess = await waiting_chess_checkin()
+
+	for i in range(2):
+		var check_in_chess = await waiting_chess_checkin()
+		if check_in_chess == ["", ""]:
+			var segment_pos := snake_body[i]
+			_create_snake_segment(segment_pos, "human", "ShieldMan")			
+		else:
 			var segment_pos := snake_body[i]
 			var faction: String = check_in_chess[0]
 			var chess_name: String = check_in_chess[1]
 			_create_snake_segment(segment_pos, faction, chess_name)
-	else:
-		for i in range(2):
-			var segment_pos := snake_body[i]
-			_create_snake_segment(segment_pos, "human", "ShieldMan")
-	
+			
 	
 	# Generate first chess
 	_generate_chess()
@@ -155,24 +155,25 @@ func _generate_chess() -> void:
 	var chess_sprite = AnimatedSprite2D.new()
 	
 	# Get next chess pair from ally_death_array
-	if ally_death_array.size() >= 2:
-		var check_in_chess = await waiting_chess_checkin()
-		var faction: String = check_in_chess[0]
-		var chess_name: String = check_in_chess[1]
-		var sprite_frame: SpriteFrames = _get_sprite_frame(faction, chess_name)
-		chess_sprite.sprite_frames = sprite_frame
-
-		var shader_mat = ShaderMaterial.new()
-		shader_mat.shader = load("res://asset/shader/LightweightPixelPerfectOutline.gdshader")
-		chess_sprite.material = shader_mat
-
-		chess_on_board[chess_position] = [faction, chess_name]
-	else:
+	
+	var check_in_chess = await waiting_chess_checkin()
+	
+	if check_in_chess == ["", ""]:
 		_end_game(true)
 		return
+		
+	var faction: String = check_in_chess[0]
+	var chess_name: String = check_in_chess[1]
+	var sprite_frame: SpriteFrames = _get_sprite_frame(faction, chess_name)
+	chess_sprite.sprite_frames = sprite_frame
+
+	var shader_mat = ShaderMaterial.new()
+	shader_mat.shader = load("res://asset/shader/LightweightPixelPerfectOutline.gdshader")
+	chess_sprite.material = shader_mat
+
+	chess_on_board[chess_position] = [faction, chess_name]
 	
 	chess_sprite.position = chess_position * GRID_SIZE + GRID_OFFSET
-	chess_sprite.play("default")
 	chess_sprite.name = "Chess"
 	chess_sprite.play("jump")
 	game_elements.add_child(chess_sprite)
@@ -239,6 +240,10 @@ func _on_game_timer_timeout() -> void:
 		chess_on_board.erase(new_head_pos)
 		chess_eaten.emit(faction, chess_name)
 		
+		for node in game_elements.get_children():
+			if node is AnimatedSprite2D and not snake_sprites.has(node) and node.position == new_head_pos * GRID_SIZE + GRID_OFFSET:
+				node.queue_free()
+		
 		# Generate new chess
 		_generate_chess()
 		_update_ui()
@@ -278,7 +283,7 @@ func _end_game(is_win: bool) -> void:
 	# Show game over panel
 	game_over_panel.show()
 	start_button.show()
-	DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["ally_death_array"] = ally_death_array
+	#DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["ally_death_array"] = ally_death_array
 
 
 func _update_snake() -> void:
@@ -432,6 +437,91 @@ func _load_animations(aniamtion: AnimatedSprite2D, faction: String, chess_name: 
 	else:
 		push_error("Animation resource not found: " + path)
 
+#func waiting_chess_checkin() -> Array:
+	#var chess_array_width := 8
+	#var chess_array_height := 10
+	#var chess_size = Vector2i(20, 20)
+	#var new_position
+	#var check_in_chess_faction: String = ""
+	#var check_in_chess_name: String = ""
+	#
+	#
+	#for node in waiting_chess.get_children():
+		#if (not is_instance_valid(node)) or (not node is AnimatedSprite2D):
+			#continue
+		#node.stop()
+	#
+		#if node.position == Vector2(7 * 20, 0):
+			#var move_tween1
+			#if move_tween1:
+				#move_tween1.kill()
+			#new_position = node.position + Vector2(40, 0)
+			#move_tween1 = create_tween()
+			#move_tween1.set_trans(Tween.TRANS_LINEAR)
+			#move_tween1.tween_property(node, "position", new_position, 0.1)
+			#check_in_chess_faction = node.get_meta("faction", "")
+			#check_in_chess_name = node.get_meta("chess_name", "")
+			#await move_tween1.finished
+			#node.queue_free()
+			#await get_tree().process_frame
+			#continue
+#
+		#var move_tween				
+		#node.play("move")
+		#var chess_current_tile = Vector2i(floor(node.position.x / chess_size.x), floor(node.position.y / chess_size.y))
+		#if chess_current_tile.x == 7 and chess_current_tile.y % 2 != 0:
+			#new_position = node.position + Vector2(-20, 0)
+		#elif chess_current_tile.x == 7 and chess_current_tile.y % 2 == 0:
+			#new_position = node.position + Vector2(0, -20)
+		#elif chess_current_tile.x == 0 and chess_current_tile.y % 2 != 0:
+			#new_position = node.position + Vector2(0, -20)
+		#elif chess_current_tile.x == 0 and chess_current_tile.y % 2 == 0:
+			#new_position = node.position + Vector2(20, 0)
+		#elif chess_current_tile.y % 2 != 0:
+			#new_position = node.position + Vector2(-20, 0)
+		#elif chess_current_tile.y % 2 == 0:
+			#new_position = node.position + Vector2(20, 0)
+		#
+		#if move_tween:
+			#move_tween.kill()
+		#move_tween = create_tween()
+		#move_tween.set_trans(Tween.TRANS_LINEAR)
+		#move_tween.tween_property(node, "position", new_position, 0.02)
+		##await move_tween.finished
+				#
+		#chess_current_tile = Vector2i(floor(new_position.x / chess_size.x), floor(new_position.y / chess_size.y))
+		#if chess_current_tile.y % 2 != 0:
+			#node.flip_h = true
+		#else:
+			#node.flip_h = false				
+		#
+		#node.play("idle")
+		#
+	#var chess_faction = ally_death_array.pop_front()
+	#var chess_name = ally_death_array.pop_front()
+	#
+	#if DataManagerSingleton.get_chess_data().keys().has(chess_faction) and DataManagerSingleton.get_chess_data()[chess_faction].keys().has(chess_name):
+#
+		#var chess_animation = AnimatedSprite2D.new()
+		#waiting_chess.add_child(chess_animation) 		
+#
+		#chess_animation.flip_h = true				
+		#chess_animation.position = Vector2((chess_array_width - 1) * chess_size.x, (chess_array_height - 1) * chess_size.y)
+		#chess_animation.z_index = 30
+		#_load_animations(chess_animation, chess_faction, chess_name)
+		#chess_animation.animation_finished.connect(
+			#func():
+				##var rand_anim_index = randi_range(0, chess_animation.sprite_frames.get_animation_names().size() - 1)
+				##var rand_anim_name = chess_animation.sprite_frames.get_animation_names()[rand_anim_index]
+				##chess_animation.play(rand_anim_name)
+				#var rand_wait_time = randf_range(1.5, 3.5)
+				#await get_tree().create_timer(rand_wait_time).timeout
+				#if is_instance_valid(chess_animation) and not chess_animation.is_queued_for_deletion():
+					#chess_animation.play("idle")
+		#)
+#
+	#return [check_in_chess_faction, check_in_chess_name]
+
 func waiting_chess_checkin() -> Array:
 	var chess_array_width := 8
 	var chess_array_height := 10
@@ -440,87 +530,84 @@ func waiting_chess_checkin() -> Array:
 	var check_in_chess_faction: String = ""
 	var check_in_chess_name: String = ""
 	
-	
+	# 首先检查是否有棋子已经在检查点 (7,0)
 	for node in waiting_chess.get_children():
-		if (not is_instance_valid(node)) or (not node is AnimatedSprite2D):
+		if not is_instance_valid(node) or not node is AnimatedSprite2D:
 			continue
-		node.stop()
-	
-		if node.position == Vector2(7 * 20, 0):
-			var move_tween1
-			if move_tween1:
-				move_tween1.kill()
-			new_position = node.position + Vector2(40, 0)
-			move_tween1 = create_tween()
-			move_tween1.set_trans(Tween.TRANS_LINEAR)
-			move_tween1.tween_property(node, "position", new_position, 0.1)
+			
+		var current_tile = Vector2i(floor(node.position.x / chess_size.x), floor(node.position.y / chess_size.y))
+		
+		# 如果棋子已经在检查点，直接取出
+		if current_tile == Vector2i(7, 0):
 			check_in_chess_faction = node.get_meta("faction", "")
 			check_in_chess_name = node.get_meta("chess_name", "")
-			await move_tween1.finished
 			node.queue_free()
-			await get_tree().process_frame
-			continue
-
-		var move_tween				
-		node.play("move")
-		var chess_current_tile = Vector2i(floor(node.position.x / chess_size.x), floor(node.position.y / chess_size.y))
-		if chess_current_tile.x == 7 and chess_current_tile.y % 2 != 0:
-			new_position = node.position + Vector2(-20, 0)
-		elif chess_current_tile.x == 7 and chess_current_tile.y % 2 == 0:
-			new_position = node.position + Vector2(0, -20)
-		elif chess_current_tile.x == 0 and chess_current_tile.y % 2 != 0:
-			new_position = node.position + Vector2(0, -20)
-		elif chess_current_tile.x == 0 and chess_current_tile.y % 2 == 0:
-			new_position = node.position + Vector2(20, 0)
-		elif chess_current_tile.y % 2 != 0:
-			new_position = node.position + Vector2(-20, 0)
-		elif chess_current_tile.y % 2 == 0:
-			new_position = node.position + Vector2(20, 0)
-		
-		if move_tween:
-			move_tween.kill()
-		move_tween = create_tween()
-		move_tween.set_trans(Tween.TRANS_LINEAR)
-		move_tween.tween_property(node, "position", new_position, 0.02)
-		#await move_tween.finished
+			break
+	
+	# 如果没有找到在检查点的棋子，则移动所有棋子
+	if check_in_chess_faction == "":
+		for node in waiting_chess.get_children():
+			if not is_instance_valid(node) or not node is AnimatedSprite2D:
+				continue
 				
-		chess_current_tile = Vector2i(floor(new_position.x / chess_size.x), floor(new_position.y / chess_size.y))
-		if chess_current_tile.y % 2 != 0:
-			node.flip_h = true
-		else:
-			node.flip_h = false				
-		
-		node.play("idle")
-		
-	var chess_animation = AnimatedSprite2D.new()
-	waiting_chess.add_child(chess_animation) 
+			node.stop()
+			var chess_current_tile = Vector2i(floor(node.position.x / chess_size.x), floor(node.position.y / chess_size.y))
+			
+			# 简化的移动逻辑，确保棋子能到达检查点
+			if chess_current_tile.y == 0:  # 在第一行
+				if chess_current_tile.x < 7:
+					new_position = node.position + Vector2(20, 0)  # 向右移动
+				else:
+					# 已经在最右边，这个棋子应该被取出
+					check_in_chess_faction = node.get_meta("faction", "")
+					check_in_chess_name = node.get_meta("chess_name", "")
+					node.queue_free()
+					continue
+			else:  # 在其他行
+				if chess_current_tile.x == 0 and chess_current_tile.y % 2 == 0:
+					new_position = node.position + Vector2(0, -20)  # 向上移动
+				elif chess_current_tile.x == 7 and chess_current_tile.y % 2 != 0:
+					new_position = node.position + Vector2(0, -20)  # 向上移动
+				elif chess_current_tile.y % 2 == 0:  # 偶数行向右移动
+					new_position = node.position + Vector2(20, 0)
+				else:  # 奇数行向左移动
+					new_position = node.position + Vector2(-20, 0)
+			
+			# 应用移动
+			var move_tween = create_tween()
+			move_tween.set_trans(Tween.TRANS_LINEAR)
+			move_tween.tween_property(node, "position", new_position, 0.02)
+			
+			# 更新翻转状态
+			var new_tile = Vector2i(floor(new_position.x / chess_size.x), floor(new_position.y / chess_size.y))
+			node.flip_h = (new_tile.y % 2 != 0)
+			
+			node.play("idle")
 	
-	if ally_death_array.size() <= 0:
-		return [check_in_chess_faction, check_in_chess_name]
+	# 添加新棋子（如果还有可用的）
+	if ally_death_array.size() >= 2:
+		var chess_faction = ally_death_array.pop_front()
+		var chess_name = ally_death_array.pop_front()
 		
-	var chess_faction = ally_death_array.pop_front()
-	var chess_name = ally_death_array.pop_front()
+		if DataManagerSingleton.get_chess_data().has(chess_faction) and DataManagerSingleton.get_chess_data()[chess_faction].has(chess_name):
+			var chess_animation = AnimatedSprite2D.new()
+			waiting_chess.add_child(chess_animation)
+			
+			chess_animation.flip_h = true
+			chess_animation.position = Vector2((chess_array_width - 1) * chess_size.x, (chess_array_height - 1) * chess_size.y)
+			chess_animation.z_index = 30
+			_load_animations(chess_animation, chess_faction, chess_name)
+			
+			chess_animation.animation_finished.connect(
+				func():
+					var rand_wait_time = randf_range(1.5, 3.5)
+					await get_tree().create_timer(rand_wait_time).timeout
+					if is_instance_valid(chess_animation) and not chess_animation.is_queued_for_deletion():
+						chess_animation.play("idle")
+			)
 	
-	if not (DataManagerSingleton.get_chess_data().keys().has(chess_faction) and DataManagerSingleton.get_chess_data()[chess_faction].keys().has(chess_name)):
-		return [check_in_chess_faction, check_in_chess_name]
-		
-	chess_animation.flip_h = true				
-	chess_animation.position = Vector2((chess_array_width - 1) * chess_size.x, (chess_array_height - 1) * chess_size.y)
-	chess_animation.z_index = 30
-	_load_animations(chess_animation, chess_faction, chess_name)
-	chess_animation.animation_finished.connect(
-		func():
-			#var rand_anim_index = randi_range(0, chess_animation.sprite_frames.get_animation_names().size() - 1)
-			#var rand_anim_name = chess_animation.sprite_frames.get_animation_names()[rand_anim_index]
-			#chess_animation.play(rand_anim_name)
-			var rand_wait_time = randf_range(1.5, 3.5)
-			await get_tree().create_timer(rand_wait_time).timeout
-			if is_instance_valid(chess_animation) and not chess_animation.is_queued_for_deletion():
-				chess_animation.play("idle")
-	)
-
 	return [check_in_chess_faction, check_in_chess_name]
-
+	
 func get_chess(faction: String, chess_name: String):
 	var get_chess_result:= []
 	for i in snake_sprites:
@@ -537,7 +624,7 @@ func consume_chess(specific_sprite: AnimatedSprite2D):
 	# var snake_body: Array[Vector2] = []
 	# var snake_sprites: Array[AnimatedSprite2D] = []
 	for i in range(snake_body.size()):
-		if i != specific_sprite:
+		if snake_sprites[i] != specific_sprite:
 			continue
 		snake_sprites.remove_at(i)
 		break
