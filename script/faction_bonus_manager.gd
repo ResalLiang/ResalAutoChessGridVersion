@@ -327,8 +327,15 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 
 
 		"forestProtector":
+				
 			if friendly_chess.size() <= 0:
 				return
+				
+			var path2_bonus_level: int
+			if applier_team == 1:
+				path3_bonus_level = min(bonus_level, get_parent().faction_path_upgrade[faction]["path2"])
+			elif applier_team == 2:
+				path3_bonus_level = bonus_level
 
 			for chess_index in friendly_chess:
 				var effect_instance = ChessEffect.new()
@@ -340,7 +347,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				# effect_instance.max_hp_modifier_duration = 999
 				effect_instance.effect_name = "Strong - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
-				effect_instance.effect_applier = "Forest Protector Faction Bonus"
+				effect_instance.effect_applier = "Forest Protector path2 Faction Bonus"
 				effect_instance.effect_description = "Friendly faction chesses gain Max HP boost."
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
