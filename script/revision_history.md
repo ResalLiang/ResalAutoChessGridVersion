@@ -1,3 +1,28 @@
+# **V1.00.06:**
+2025/10/20
+
+---
+
+
+## **Add:**# 
+- Add forestProtector chess stats
+- Add forestProtectot faction bonus
+
+## **Remove:**
+- 
+
+## **Modify:**
+- only human path3 upgrade can use kill count for merge
+- after chess merge, unused kill count will add to merged chess
+
+## **Balance:**
+- 
+
+## **Plan:**
+
+---
+
+# **V1.00.04:**
 # **V1.00.05:**
 2025/10/15
 
