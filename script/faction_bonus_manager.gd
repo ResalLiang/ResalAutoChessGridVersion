@@ -333,9 +333,9 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				
 			var path2_bonus_level: int
 			if applier_team == 1:
-				path3_bonus_level = min(bonus_level, get_parent().faction_path_upgrade[faction]["path2"])
+				path2_bonus_level = min(bonus_level, get_parent().faction_path_upgrade[faction]["path2"])
 			elif applier_team == 2:
-				path3_bonus_level = bonus_level
+				path2_bonus_level = bonus_level
 
 			for chess_index in friendly_chess:
 				var effect_instance = ChessEffect.new()

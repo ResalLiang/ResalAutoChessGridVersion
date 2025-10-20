@@ -439,8 +439,8 @@ func _load_animations(aniamtion: AnimatedSprite2D, faction: String, chess_name: 
 			func():
 				var rand_wait_time = randf_range(1.5, 3.5)
 				await get_tree().create_timer(rand_wait_time).timeout
-				if is_instance_valid(aniamtion) and not aniamtion.is_queued_for_deletion() and aniamtion.has_animation("idle"):
-					chess_animation.play("idle")
+				if is_instance_valid(aniamtion) and not aniamtion.is_queued_for_deletion() and aniamtion.sprite_frames.has_animation("idle"):
+					aniamtion.play("idle")
 		)
 		aniamtion.play("jump")
 	else:
@@ -449,7 +449,7 @@ func _load_animations(aniamtion: AnimatedSprite2D, faction: String, chess_name: 
 func waiting_chess_checkin() -> Array:
 	var chess_array_width := 8
 	var chess_array_height := 10
-	var chess_size = Vector2i(20, 20)
+	var chess_size = Vector2(20, 20)
 	var new_position
 	var check_in_chess_faction: String = ""
 	var check_in_chess_name: String = ""
@@ -458,18 +458,18 @@ func waiting_chess_checkin() -> Array:
 		return ["", ""]
 
 	var sprite_node = line_up_sprite[0]
-	var sprite_position = line_up_position[0]
+	var sprite_position = line_up_position[0] as Vector2
 
-	if sprite_node.position != sprite_position:
+	if sprite_node.position != sprite_position * chess_size:
 		var quick_align_tween = create_tween()
 		quick_align_tween.tween_property(sprite_node, "position", sprite_position, 0.02)
 		await quick_align_tween.finished
 	var move_tween = create_tween()
-	new_position = node.position + Vector2(40, 0)
+	new_position = sprite_node.position + Vector2(40, 0)
 	move_tween.set_trans(Tween.TRANS_LINEAR)
-	move_tween.tween_property(node, "position", new_position, 0.1)
-	check_in_chess_faction = node.get_meta("faction", "human")
-	check_in_chess_name = node.get_meta("chess_name", "ShieldMan")
+	move_tween.tween_property(sprite_node, "position", new_position, 0.1)
+	check_in_chess_faction = sprite_node.get_meta("faction", "human")
+	check_in_chess_name = sprite_node.get_meta("chess_name", "ShieldMan")
 	await move_tween.finished
 	line_up_sprite.pop_front()
 	sprite_node.queue_free()
@@ -480,25 +480,24 @@ func waiting_chess_checkin() -> Array:
 		sprite_position = line_up_position[i]
 		if (not is_instance_valid(sprite_node)) or (not sprite_node is AnimatedSprite2D):
 			continue
-		node.stop()
-
-		var move_tween				
-		node.play("move")
+		sprite_node.stop()
+		
+		sprite_node.play("move")
 
 		move_tween = create_tween()
-		new_position = sprite_position * chess_size
+		new_position = sprite_position as Vector2 * chess_size
 		move_tween.set_trans(Tween.TRANS_LINEAR)
-		move_tween.tween_property(node, "position", new_position, 0.02)
+		move_tween.tween_property(sprite_node, "position", new_position, 0.02)
 		#await move_tween.finished
 				
 		if sprite_position.y % 2 != 0:
-			node.flip_h = true
+			sprite_node.flip_h = true
 		else:
-			node.flip_h = false				
+			sprite_node.flip_h = false				
 		
-		node.play("idle")
+		sprite_node.play("idle")
 
-		if i = line_up_sprite.size() - 1:
+		if i == line_up_sprite.size() - 1:
 			await move_tween.finished
 		
 	var chess_faction = ally_death_array.pop_front()
@@ -509,8 +508,8 @@ func waiting_chess_checkin() -> Array:
 		var chess_animation = AnimatedSprite2D.new()
 		waiting_chess.add_child(chess_animation) 		
 
-		var chess_array_width := 8
-		var chess_array_height := 10
+		#var chess_array_width := 8
+		#var chess_array_height := 10
 
 		chess_animation.flip_h = true				
 		chess_animation.position = Vector2(chess_array_width - 1, chess_array_height - 1) * chess_size

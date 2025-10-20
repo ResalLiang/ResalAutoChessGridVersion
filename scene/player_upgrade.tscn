@@ -376,5 +376,4 @@ offset_bottom = 34.0
 theme_override_fonts/font = ExtResource("13_hbppc")
 theme_override_font_sizes/font_size = 8
 
-[connection signal="toggled" from="faction_lock_container/holy_lock_container/holy_faction_lock" to="." method="_on_holy_faction_lock_toggled"]
 [connection signal="pressed" from="back_button" to="." method="_on_back_button_pressed"]

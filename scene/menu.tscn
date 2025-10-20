@@ -208,7 +208,7 @@ offset_top = 234.0
 offset_right = 412.0
 offset_bottom = 262.1111
 theme_override_fonts/font = ExtResource("7_pgh6j")
-text = "qwe"
+text = "Start Game"
 horizontal_alignment = 1
 vertical_alignment = 1
 

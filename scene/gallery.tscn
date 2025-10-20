@@ -399,7 +399,7 @@ offset_bottom = 118.0
 theme_override_fonts/font = ExtResource("3_l8qdg")
 theme_override_font_sizes/font_size = 8
 theme_override_styles/focus = SubResource("StyleBoxEmpty_ghqgj")
-text = "Tetrix"
+text = "Snake"
 flat = true
 
 [node name="minesweep_game_button" type="Button" parent="menu_container"]

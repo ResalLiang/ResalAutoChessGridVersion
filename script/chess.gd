@@ -317,7 +317,7 @@ func _ready():
 						attacker.take_heal(target.max_hp * 0.2 * attacker.chess_level,self)
 					_:
 						pass
-			elif attacker.faction == "forestProtector" and min(game_root_scene.faction.get_bonus_level("forestProtector", 1), game_root_scene.faction_path_upgrade["forestProtector"]["path2"]) > 1:
+			elif attacker.faction == "forestProtector" and min(game_root_scene.faction_bonus_manager.get_bonus_level("forestProtector", 1), game_root_scene.faction_path_upgrade["forestProtector"]["path2"]) > 1:
 				var current_bonus_level = min(game_root_scene.faction.get_bonus_level("forestProtector", 1), game_root_scene.faction_path_upgrade["forestProtector"]["path2"])
 				var forestProtector_path2_effect
 

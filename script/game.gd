@@ -210,6 +210,12 @@ var faction_path_upgrade_template = {
 		"path2" : 0,
 		"path3" : 0,
 		"path4" : 0
+	}	,
+	"forestProtector": {
+		"path1" : 0,
+		"path2" : 0,
+		"path3" : 0,
+		"path4" : 0
 	}	
 }
 var faction_path_upgrade: Dictionary
@@ -1404,12 +1410,12 @@ func check_chess_merge():
 
 					var merge_criteria:= 3
 
-					if other_node.faction == "forestProtector" and min(faction_path_upgrade["forestProtector"]["path1"], faction.get_bonus_level("forestProtector", 1)) > 1:
+					if other_node.faction == "forestProtector" and min(faction_path_upgrade["forestProtector"]["path1"], faction_bonus_manager.get_bonus_level("forestProtector", 1)) > 1:
 						merge_criteria = 2
-					elif other_node.faction == "forestProtector" and min(faction_path_upgrade["forestProtector"]["path1"], faction.get_bonus_level("forestProtector", 1)) == 1 and merge_level == 1:
+					elif other_node.faction == "forestProtector" and min(faction_path_upgrade["forestProtector"]["path1"], faction_bonus_manager.get_bonus_level("forestProtector", 1)) == 1 and merge_level == 1:
 						merge_criteria = 2
 
-					if merge_count >= merge_criterial:
+					if merge_count >= merge_criteria:
 						var merged_chess_faction = other_node.faction
 						var merged_chess_name = other_node.chess_name
 						var merged_play_area = other_node.get_current_tile(other_node)[0]
