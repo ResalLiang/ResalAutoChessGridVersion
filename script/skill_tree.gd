@@ -33,7 +33,7 @@ const alternative_choice_scene = preload("res://scene/alternative_choice.tscn")
 @onready var remain_won_rounds_template: TextureRect = $ui/won_lose_round_container/won_round_container/remain_won_rounds_template
 
 var current_page := 0
-var faction_array := ["elf", "human", "dwarf"]
+var faction_array := ["elf", "human", "dwarf", "forestProtector"]
 var game_faction_path_upgrade
 
 var current_path_number := 0
@@ -242,6 +242,8 @@ func on_path_bonus_pressed(node: TextureButton):
 			faction_bonus_description.text = "Damage reduced by 60% (minimum 2 damage), gain +2 additional attacks"
 		"elf Path 3 Level 3" :
 			faction_bonus_description.text = "Damage reduced by 70% (minimum 3 damage), gain +3 additional attacks"
+		"elf Path 4 Level 1" :
+			faction_bonus_description.text = "Place holder"
 		"human Path 1 Level 1" :
 			faction_bonus_description.text = "Maximum population capacity increased by 1"
 		"human Path 1 Level 2" :
@@ -280,6 +282,28 @@ func on_path_bonus_pressed(node: TextureButton):
 			faction_bonus_description.text = "Movement speed increased by 2 points during first turn"
 		"dwarf Path 3 Level 3" :
 			faction_bonus_description.text = "Movement speed increased by 3 points during first turn"
+		"dwarf Path 4 Level 1" :
+			faction_bonus_description.text = "Place holder"
+		"forestProtector Path 1 Level 1" :
+			faction_bonus_description.text = "The number required to merge level 1 forestProtector pieces is reduced from 3 to 2"
+		"forestProtector Path 1 Level 2" :
+			faction_bonus_description.text = "The number required to merge all forestProtector pieces is reduced from 3 to 2"
+		"forestProtector Path 1 Level 3" :
+			faction_bonus_description.text = "The number required to merge all pieces is reduced from 3 to 2"
+		"forestProtector Path 2 Level 1" :
+			faction_bonus_description.text = "forestProtector pieces gain maximum health and health regeneration bonus"
+		"forestProtector Path 2 Level 2" :
+			faction_bonus_description.text = "forestProtector pieces gain maximum health and health regeneration bonus, and after killing a piece, they gain a small permanent stat increase"
+		"forestProtector Path 2 Level 3" :
+			faction_bonus_description.text = "forestProtector pieces gain maximum health and health regeneration bonus, and after killing a piece, they gain a permanent stat increase"
+		"forestProtector Path 3 Level 1" :
+			faction_bonus_description.text = "forestProtector gains a small damage reduction and damage increase against the piece faction that killed it in the previous round"
+		"forestProtector Path 3 Level 2" :
+			faction_bonus_description.text = "forestProtector gains damage reduction and damage increase against the piece faction that killed it in the previous round"
+		"forestProtector Path 3 Level 3" :
+			faction_bonus_description.text = "forestProtector gains a large damage reduction and damage increase against the piece faction that killed it in the previous round"
+		"forestProtector Path 4 Level 1" :
+			faction_bonus_description.text = "Placeholder"
 		_:
 			faction_bonus_description.text = "place holder"
 			
@@ -290,6 +314,8 @@ func on_path_bonus_pressed(node: TextureButton):
 			faction_path_label.text = "Path2 Evasion Mastery"
 		"elf Path 3" :
 			faction_path_label.text = "Path3 Multi-Strike Mastery"
+		"elf Path 4" :
+			faction_path_label.text = "Path4 Placeholder"
 		"human Path 1" :
 			faction_path_label.text = "Path1 Population Expansion"
 		"human Path 2" :
@@ -304,6 +330,16 @@ func on_path_bonus_pressed(node: TextureButton):
 			faction_path_label.text = "Path2 Berserker Rage"
 		"dwarf Path 3" :
 			faction_path_label.text = "Path3 Battle Momentum"
+		"dwarf Path 4" :
+			faction_path_label.text = "Path4 Placeholder"
+		"forestProtector Path 1" :
+			faction_path_label.text = "Path1 Streamlined Fusion"
+		"forestProtector Path 2" :
+			faction_path_label.text = "Path2 Sylvan Resilience"
+		"forestProtector Path 3" :
+			faction_path_label.text = "Path3 Echoing Vengeance"
+		"forestProtector Path 4" :
+			faction_path_label.text = "Path4 Placeholder"
 		_:
 			faction_path_label.text = "place holder"	
 		
