@@ -307,6 +307,8 @@ func _ready():
 
 	kill_chess.connect(
 		func(attacker: Obstacle, target: Obstacle):
+			if attacker == target:
+				return
 			if attacker.faction == "dwarf":
 				match attacker.chess_name:
 					"BearRider":
@@ -315,10 +317,25 @@ func _ready():
 						attacker.take_heal(target.max_hp * 0.2 * attacker.chess_level,self)
 					_:
 						pass
-			#elif attacker.faction == "human" and attacker.faction == "CrossBowMan":
-				#if attacker != target:
-					#remain_attack_count += 1
-	)
+			elif attacker.faction == "forestProtector" and min(game_root_scene.faction.get_bonus_level("forestProtector", 1), game_root_scene.faction_path_upgrade["forestProtector"]["path2"]) > 1:
+				var current_bonus_level = min(game_root_scene.faction.get_bonus_level("forestProtector", 1), game_root_scene.faction_path_upgrade["forestProtector"]["path2"])
+				var forestProtector_path2_effect
+
+				for effect_index in effect_handler.effect_list:
+					if effect_index.effect_applier == "Forest Protector path2 Faction Bonus":
+						forestProtector_path2_effect = effect_index
+						break
+
+				match current_bonus_level:
+					2:
+						forestProtector_path2_effect.buff_dict["continuous_hp_modifier"] += 5
+						forestProtector_path2_effect.buff_dict["max_hp_modifier"] += 20
+					3:
+						forestProtector_path2_effect.buff_dict["continuous_hp_modifier"] += 10
+						forestProtector_path2_effect.buff_dict["max_hp_modifier"] += 35
+					_:
+						pass
+	)			
 
 	
 	# Initialize random number generator
