@@ -1393,18 +1393,29 @@ func check_chess_merge():
 					continue
 
 				if node.faction == other_node.faction and node.chess_name == other_node.chess_name:
-					var extra_merge_count = 0
 					
-					extra_merge_count = 1 if other_node.total_kill_count >= 5 else 0
+					if other_node.faction == "human" and min(faction_path_upgrade["human"]["path3"], faction_bonus_manager.get_bonus_level("human", 1)) > 1:
+						if other_node.total_kill_count >= 5:
+							var extra_merge_count = 1
+							merge_count += (1 + extra_merge_count)
+							other_node.total_kill_count -= 5
 
-					merge_count += (1 + extra_merge_count)
 					wait_merge.append(other_node)
-					if merge_count >= 3:
+
+					var merge_criteria:= 3
+
+					if other_node.faction == "forestProtector" and min(faction_path_upgrade["forestProtector"]["path1"], faction.get_bonus_level("forestProtector", 1)) > 1:
+						merge_criteria = 2
+					elif other_node.faction == "forestProtector" and min(faction_path_upgrade["forestProtector"]["path1"], faction.get_bonus_level("forestProtector", 1)) == 1 and merge_level == 1:
+						merge_criteria = 2
+
+					if merge_count >= merge_criterial:
 						var merged_chess_faction = other_node.faction
 						var merged_chess_name = other_node.chess_name
 						var merged_play_area = other_node.get_current_tile(other_node)[0]
 						var merged_tile = other_node.get_current_tile(other_node)[1]
 
+						var total_kill_count_sum := 0
 						for removed_chess in wait_merge:
 							var removed_chess_faction = removed_chess.faction
 							var removed_chess_name = removed_chess.chess_name
@@ -1412,7 +1423,7 @@ func check_chess_merge():
 							var removed_chess_tile = removed_chess.get_current_tile(removed_chess)[1]
 
 							#removed_chess_play_area.unit_grid.remove_unit(removed_chess_tile)
-
+							total_kill_count_sum += removed_chess.total_kill_count
 							removed_chess.visible = false
 
 						var upgrade_chess 
@@ -1458,12 +1469,12 @@ func check_chess_merge():
 							elif alternative_choice.get_meta("choice") == 2:
 								pass
 							upgrade_chess= summon_chess(merged_chess_faction, merged_chess_name, merged_level, 1, merged_play_area, merged_tile)
-							
 							alternative_choice.queue_free()
 						else:
 							upgrade_chess= summon_chess(merged_chess_faction, merged_chess_name, merged_level, 1, merged_play_area, merged_tile)
 						# TODO add animation name
 						await upgrade_chess.effect_animation_display("ChessMerge", arena, merged_tile, "Center")
+						upgrade_chess.total_kill_count = total_kill_count_sum
 						merge_count = 0
 						merge_result[merge_level - 1] = true
 						merge_checked.append([other_node.faction, other_node.chess_name])
