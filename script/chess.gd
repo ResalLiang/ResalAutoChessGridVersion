@@ -872,7 +872,8 @@ func _handle_action():
 		await _handle_attack()
 
 func _handle_attack():
-
+	var rotate_tween = create_tween()
+	
 	if status == STATUS.DIE:
 		action_timer.set_wait_time(action_timer_wait_time)
 		action_timer.start()
@@ -899,7 +900,10 @@ func _handle_attack():
 	var current_distance_to_target = global_position.distance_to(chess_target.global_position)
 	remain_attack_count -= 1
 	if current_distance_to_target <= attack_range and (not effect_handler.is_stunned and not effect_handler.is_disarmed):
-
+		var rotate_vector = chess_target.global_position - global_position
+		var rotate_degree = PI - atan2(rotate_vector.y, rotate_vector.x) if animated_sprite_2d.flip_h else atan2(rotate_vector.y, rotate_vector.x)
+		rotate_tween.tween_property(animated_sprite_2d, "rotation", rotate_degree, 0.2)
+		await rotate_tween.finished		
 		if not has_melee_target() and current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
 			status = STATUS.RANGED_ATTACK
 			damage = ranged_damage
@@ -994,7 +998,11 @@ func _handle_attack():
 			status = STATUS.IDLE
 			action_timer.set_wait_time(action_timer_wait_time)
 			action_timer.start()
-
+		
+		rotate_tween.tween_property(animated_sprite_2d, "rotation", atan2(0, 0), 0.2)	
+		await get_tree().create_timer(0.2).timeout
+		rotate_tween.kill()
+		
 	else:
 		# Out of attack range
 		status = STATUS.IDLE
