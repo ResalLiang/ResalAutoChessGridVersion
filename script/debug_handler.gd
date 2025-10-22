@@ -40,10 +40,10 @@ func write_log(log_type: String, message: String):
 func connect_to_chess_signal(obstacle: Obstacle):
 	if obstacle.has_signal("is_died"):
 		obstacle.is_died.connect(
-			func(obstacle, attacker):
-				write_log("LOG", obstacle.chess_name + " died, killed by " + attacker.chess_name + ".")
+			func():
+				write_log("LOG", obstacle.chess_name + " died.")
 				if debug_mode:
-					print(obstacle.chess_name + " died, killed by " + attacker.chess_name + ".")
+					print(obstacle.chess_name + " died.")
 		)
 	if obstacle.has_signal("move_started"):
 		obstacle.move_started.connect(
