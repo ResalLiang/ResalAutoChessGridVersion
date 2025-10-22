@@ -77,7 +77,8 @@ func _ready():
 	# Connect difficulty buttons
 	for button in difficulty_buttons.get_children():
 		if button is Button:
-			button.pressed.connect(_on_difficulty_button_pressed.bind(button.name.to_lower()))
+			if button.pressed.connect(_on_difficulty_button_pressed.bind(button.name.to_lower())) != OK:
+				print("button.pressed connect fail!")
 
 # =====================================================
 # 3. INPUT HANDLING
