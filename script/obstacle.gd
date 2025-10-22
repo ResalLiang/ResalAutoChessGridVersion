@@ -8,7 +8,7 @@ extends Node2D
 # ========================
 # Character states
 enum STATUS {IDLE, MOVE, MELEE_ATTACK, RANGED_ATTACK, JUMP, HIT, DIE, SPELL}
-enum play_areas {playarea_arena, playarea_bench, playarea_shop}
+enum play_areas {playarea_arena, playarea_bench, playarea_shop, playarea_grave}
 
 const MAX_SEARCH_RADIUS = 3
 const projectile_scene = preload("res://scene/projectile.tscn")
@@ -92,6 +92,7 @@ var effect_handler
 var arena: PlayArea
 var bench: PlayArea
 var shop: PlayArea
+var grave: PlayArea
 
 var current_play_area = play_areas.playarea_arena
 
@@ -198,27 +199,42 @@ func _ready():
 	
 	
 	# Connect signals
-	idle_timer.timeout.connect(_on_idle_timeout)
+	if idle_timer.timeout.connect(_on_idle_timeout) != OK:
+		print("idle_timer.timeout connect fail!")
 	#move_timer.timeout.connect(_handle_action)
-	action_timer.timeout.connect(_handle_action_timeout)
+	if action_timer.timeout.connect(_handle_action_timeout) != OK:
+		print("action_timer.timeout connect fail!")
 	
-	drag_handler.drag_started.connect(_handle_dragging_state)
+	if drag_handler.drag_started.connect(_handle_dragging_state) != OK:
+		print("drag_handler.drag_started connect fail!")
 
-	drag_handler.drag_canceled.connect(_handle_dragging_state)
-	drag_handler.drag_dropped.connect(_handle_dragging_state)
-	damage_taken.connect(take_damage)
+	if drag_handler.drag_canceled.connect(_handle_dragging_state) != OK:
+		print("drag_handler.drag_canceled connect fail!")
+	if drag_handler.drag_dropped.connect(_handle_dragging_state) != OK:
+		print("drag_handler.drag_dropped connect fail!")
+	if damage_taken.connect(take_damage) != OK:
+		print("damage_taken connect fail!")
 
-	is_died.connect(_on_died)
+	if is_died.connect(_on_died) != OK:
+		print("is_died connect fail!")
 
-	spell_casted.connect(AudioManagerSingleton.play_sfx.bind("spell_casted"))
-	projectile_lauched.connect(AudioManagerSingleton.play_sfx.bind("projectile_lauched"))
-	damage_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("damage_taken"))
-	critical_damage_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("critical_damage_taken"))
-	heal_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("heal_taken"))
-	is_died.connect(AudioManagerSingleton.play_sfx.unbind(1).bind("is_died"))
+	if spell_casted.connect(AudioManagerSingleton.play_sfx.bind("spell_casted")) != OK:
+		print("spell_casted connect fail!")
+	if projectile_lauched.connect(AudioManagerSingleton.play_sfx.bind("projectile_lauched")) != OK:
+		print("projectile_lauched connect fail!")
+	if damage_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("damage_taken")) != OK:
+		print("damage_taken connect fail!")
+	if critical_damage_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("critical_damage_taken")) != OK:
+		print("critical_damage_taken connect fail!")
+	if heal_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("heal_taken")) != OK:
+		print("heal_taken connect fail!")
+	if is_died.connect(AudioManagerSingleton.play_sfx.bind(self, "is_died")) != OK:
+		print("is_died connect fail!")
 
-	is_died.connect(DataManagerSingleton.record_death_chess.unbind(1))
-	kill_chess.connect(DataManagerSingleton.handle_chess_kill)
+	if is_died.connect(DataManagerSingleton.record_death_chess.bind(self)) != OK:
+		print("is_died connect fail!")
+	if kill_chess.connect(DataManagerSingleton.handle_chess_kill) != OK:
+		print("kill_chess connect fail!")
 
 	
 	# Initialize random number generator
@@ -517,7 +533,7 @@ func take_damage(target:Obstacle, attacker: Obstacle, damage_value: float):
 		target.animated_sprite_2d.play("die")
 		await target.animated_sprite_2d.animation_finished
 		target.visible = false
-		target.is_died.emit(target, attacker)
+		target.is_died.emit()
 		attacker.kill_chess.emit(attacker, target)
 				
 	else:
@@ -691,5 +707,5 @@ func dwarf_bomb_boom():
 	animated_sprite_2d.play("die")
 	await animated_sprite_2d.animation_finished
 	visible = false
-	is_died.emit(self, self)		
+	is_died.emit()		
 	action_finished.emit(self)
