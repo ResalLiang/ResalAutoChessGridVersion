@@ -24,8 +24,10 @@ func _ready() -> void:
 	DataManagerSingleton.record_game(final_score, DataManagerSingleton.current_chess_array)
 	DataManagerSingleton.save_game_json()
 	
-	restart_button.pressed.connect(_on_restart_button_pressed)
-	back_button.pressed.connect(_on_back_button_pressed)
+	if restart_button.pressed.connect(_on_restart_button_pressed) != OK:
+		print("restart_button.pressed connect fail!")
+	if back_button.pressed.connect(_on_back_button_pressed) != OK:
+		print("back_button.pressed connect fail!")
 	
 	#debug_button_state(restart_button)
 	#debug_button_state(back_button)
@@ -195,13 +197,16 @@ func debug_button_state(debug_button: Button):
 func setup_debug_signals(debug_button: Button):
 	# 连接所有有用的调试信号
 	if not debug_button.is_connected("pressed", _on_Debug_pressed):
-		debug_button.connect("pressed", _on_Debug_pressed)
+		if debug_button.connect("pressed", _on_Debug_pressed) != OK:
+			print("debug_button connect fail!")
 	
 	if not debug_button.is_connected("button_down", _on_Debug_button_down):
-		debug_button.connect("button_down", _on_Debug_button_down)
+		if debug_button.connect("button_down", _on_Debug_button_down) != OK:
+			print("debug_button connect fail!")
 	
 	if not debug_button.is_connected("mouse_entered", _on_Debug_mouse_entered):
-		debug_button.connect("mouse_entered", _on_Debug_mouse_entered)
+		if debug_button.connect("mouse_entered", _on_Debug_mouse_entered) != OK:
+			print("debug_button connect fail!")
 
 func _on_Debug_pressed():
 	print("🎉 按钮点击成功！")
