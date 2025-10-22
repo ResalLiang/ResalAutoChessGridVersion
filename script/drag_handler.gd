@@ -39,7 +39,8 @@ func _ready() -> void:
 	drop_timer.start()
 
 	# Connect signals
-	area_2d.input_event.connect(_on_target_input_event)
+	if area_2d.input_event.connect(_on_target_input_event) != OK:
+		print("area_2d.input_event connect fail!")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
