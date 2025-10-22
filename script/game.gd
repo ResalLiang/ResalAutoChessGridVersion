@@ -767,22 +767,15 @@ func start_new_round():
 	print("Start new round.")
 	var team1_alive_cnt = 0
 	var team2_alive_cnt = 0
-	# for chess_index in team_dict[Team.TEAM1_FULL]:
-	# 	if is_instance_valid(chess_index):
-	# 		if chess_index.status != chess_class.STATUS.DIE:
-	# 			team_dict[Team.TEAM1].append(chess_index)
-	# 			team1_alive_cnt += 1
-	# for chess_index in team_dict[Team.TEAM2_FULL]:
-	# 	if is_instance_valid(chess_index):
-	# 		if chess_index.status != chess_class.STATUS.DIE:
-	# 			team_dict[Team.TEAM2].append(chess_index)
-	# 			team2_alive_cnt += 1
+	for chess_index in team_dict[Team.TEAM1_FULL] + team_dict[Team.TEAM2_FULL]:
+		if DataManagerSingleton.check_obstacle_valid(chess_index[0]):
+			chess_index[1] = false
 	
-	team_dict[TEAM1_FULL] = sort_characters(TEAM1_FULL, current_chess_active_order)
-	team_dict[TEAM2_FULL] = sort_characters(TEAM2_FULL, current_chess_active_order)
+	team_dict[Team.TEAM1_FULL] = sort_characters(Team.TEAM1_FULL, current_chess_active_order)
+	team_dict[Team.TEAM2_FULL] = sort_characters(Team.TEAM2_FULL, current_chess_active_order)
 
-	team1_alive_cnt = team_dict[TEAM1_FULL].reduce(array_alive_sum, 0)	
-	team2_alive_cnt = team_dict[TEAM2_FULL].reduce(array_alive_sum, 0)	
+	team1_alive_cnt = team_dict[Team.TEAM1_FULL].reduce(array_alive_sum, 0)	
+	team2_alive_cnt = team_dict[Team.TEAM2_FULL].reduce(array_alive_sum, 0)	
 	# update_population(true)
 			
 			
@@ -828,7 +821,14 @@ func process_character_turn(chess: Obstacle):
 
 func array_alive_sum(accum, node):
 	var result := 0
-	if DataManagerSingleton.check_obstacle_valid(node):
+	if DataManagerSingleton.check_obstacle_valid(node[0]):
+		result = 1
+
+	return accum + result
+	
+func array_available_sum(accum, node):
+	var result := 0
+	if DataManagerSingleton.check_obstacle_valid(node[0]) and not node[1]:
 		result = 1
 
 	return accum + result
@@ -856,24 +856,24 @@ func handle_character_action_finished():
 	# 			chess_index.queue_free()
 	# 	team_dict[team_index] = new_team_dict[team_index]
 
-	if current_team == Team.TEAM1_FULL and team_dict[Team.TEAM2_FULL].reduce(array_alive_sum, 0)) != 0:
+	if current_team == Team.TEAM1_FULL and team_dict[Team.TEAM2_FULL].reduce(array_available_sum, 0) != 0:
 		current_team = Team.TEAM2_FULL
 		start_chess_turn(current_team)
 		
-	elif current_team == Team.TEAM2_FULL and team_dict[Team.TEAM1_FULL].reduce(array_alive_sum, 0)) != 0:
+	elif current_team == Team.TEAM2_FULL and team_dict[Team.TEAM1_FULL].reduce(array_available_sum, 0) != 0:
 		current_team = Team.TEAM1_FULL
 		start_chess_turn(current_team)
+
+	elif team_dict[Team.TEAM1_FULL].reduce(array_available_sum, 0) != 0 or team_dict[Team.TEAM2_FULL].reduce(array_available_sum, 0) != 0:
+		start_chess_turn(current_team)
 		
-	# elif team_dict[Team.TEAM2].size() != 0 or team_dict[Team.TEAM1].size() != 0:
-	# 	start_chess_turn(current_team)
-		
-	elif team_dict[Team.TEAM2_FULL].reduce(array_alive_sum, 0)) == 0 and team_dict[Team.TEAM1_FULL].reduce(array_alive_sum, 0)) == 0:
+	elif team_dict[Team.TEAM2_FULL].reduce(array_alive_sum, 0) == 0 and team_dict[Team.TEAM1_FULL].reduce(array_alive_sum, 0) == 0:
 		round_finished.emit("draw")
 		
-	elif team_dict[Team.TEAM1_FULL].reduce(array_alive_sum, 0)) == 0:
+	elif team_dict[Team.TEAM1_FULL].reduce(array_alive_sum, 0) == 0:
 		round_finished.emit("team2")
 		
-	elif team_dict[Team.TEAM2_FULL].reduce(array_alive_sum, 0)) == 0:
+	elif team_dict[Team.TEAM2_FULL].reduce(array_alive_sum, 0) == 0:
 		round_finished.emit("team1")
 
 	else:
@@ -939,19 +939,19 @@ func sort_characters(team: Team, mode: ChessActiveOrder) -> Array:
 	var chesses_team = team_dict[team]
 	match mode:
 		ChessActiveOrder.HIGH_HP:
-			chesses_team.sort_custom(func(a, b): return a.max_hp > b.max_hp)
+			chesses_team.sort_custom(func(a, b): return (not a[1] and b[1]) or (a[0].max_hp > b[0].max_hp))
 		ChessActiveOrder.LOW_HP:
-			chesses_team.sort_custom(func(a, b): return a.max_hp < b.max_hp)
+			chesses_team.sort_custom(func(a, b): return (not a[1] and b[1]) or (a[0].max_hp < b[0].max_hp))
 		ChessActiveOrder.NEAR_CENTER:
 			chesses_team.sort_custom(func(a, b): 
-				return a.position.distance_to(center_point) < b.position.distance_to(center_point))
+				return (not a[1] and b[1]) or (a[0].position.distance_to(center_point) < b[0].position.distance_to(center_point)))
 		ChessActiveOrder.FAR_CENTER:
 			chesses_team.sort_custom(func(a, b): 
-				return a.position.distance_to(center_point) > b.position.distance_to(center_point))
+				return (not a[1] and b[1]) or (a[0].position.distance_to(center_point) > b[0].position.distance_to(center_point)))
 		ChessActiveOrder.BUY_SEQ:
-			chesses_team.sort_custom(func(a, b): return a.chess_serial < b.chess_serial)
+			chesses_team.sort_custom(func(a, b): return (not a[1] and b[1]) or (a[0].chess_serial < b[0].chess_serial))
 		ChessActiveOrder.RE_BUY_SEQ:
-			chesses_team.sort_custom(func(a, b): return a.chess_serial > b.chess_serial)
+			chesses_team.sort_custom(func(a, b): return (not a[1] and b[1]) or (a[0].chess_serial > b[0].chess_serial))
 	return chesses_team
 
 func clear_play_area(play_area_to_clear: PlayArea):
@@ -1147,10 +1147,10 @@ func chess_appearance(play_area: PlayArea):
 
 	for chess_index in team_dict[Team.TEAM1_FULL]:
 		area_chess_count += 1
-		chess_index.visible = false
+		chess_index[0].visible = false
 	for chess_index in team_dict[Team.TEAM2_FULL]:
 		area_chess_count += 1
-		chess_index.visible = false
+		chess_index[0].visible = false
 
 
 	if appearance_tween:
@@ -1201,6 +1201,7 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, chess
 	summoned_character.arena = arena
 	summoned_character.bench = bench
 	summoned_character.shop = shop
+	summoned_character.grave = grave
 	summoned_character.chess_serial = get_next_serial()
 	summoned_character.chess_level = chess_level
 	add_child(summoned_character)
@@ -1229,7 +1230,7 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, chess
 	if summoned_character.is_died.connect(battle_value_display.bind(summoned_character, 0, "is_died")) != OK:
 		print("summoned_character.is_died connect fail!")
 
-	if summoned_character.is_died.connect(chess_death_handle.ubind(summoned_character)) != OK:
+	if summoned_character.is_died.connect(chess_death_handle.bind(summoned_character)) != OK:
 		print("summoned_character.is_died connect fail!")
 	
 	if summoned_character is Chess:
@@ -1244,9 +1245,9 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, chess
 		)
 
 	if team == 1 and summon_arena != shop:
-		team_dict[Team.TEAM1_FULL].append(summoned_character, false)
+		team_dict[Team.TEAM1_FULL].append([summoned_character, false])
 	elif team == 2 and summon_arena != shop:
-		team_dict[Team.TEAM2_FULL].append(summoned_character, false)
+		team_dict[Team.TEAM2_FULL].append([summoned_character, false])
 		
 	return summoned_character
 

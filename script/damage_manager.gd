@@ -62,14 +62,14 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 		var faction_bonus_level := 0
 		match target.team:
 			1:
-				faction_bonus_level = min(target.faction_bonus_manager.get_bonus_level("forestProtector", target.team), get_parent.faction_path_upgrade["forestProtector"])
+				faction_bonus_level = min(target.faction_bonus_manager.get_bonus_level("forestProtector", target.team), get_parent().faction_path_upgrade["forestProtector"]["path3"])
 			2:
 				faction_bonus_level = target.faction_bonus_manager.get_bonus_level("forestProtector", target.team)
 
 		var vengeance_faction := ""
-		for effect_index in target.effect_manager.effect_list:
+		for effect_index in target.effect_handler.effect_list:
 			if effect_index.effect_applier == "ForestProtector path3 Faction Bonus":
-				vengeance_faction = rsplit(effect_index.effect_name, " ", true, 1)[1]
+				vengeance_faction = effect_index.effect_name.rsplit(" ", true, 1)[1]
 				break
 
 		if faction_bonus_level != 0 and attacker.faction == vengeance_faction:

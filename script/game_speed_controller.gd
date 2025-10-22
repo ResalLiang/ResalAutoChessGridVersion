@@ -29,12 +29,12 @@ func _ready():
 	# 连接信号
 	if speed_slider.value_changed.connect(_on_speed_slider_changed) != OK:
 		print("speed_slider.value_changed connect fail!")
-	if slow_button.pressed.connect(func() != OK:
-		print("slow_button.pressed connect fail!"): _set_preset_speed(0.5))
-	if normal_button.pressed.connect(func() != OK:
-		print("normal_button.pressed connect fail!"): _set_preset_speed(1.0))
-	if fast_button.pressed.connect(func() != OK:
-		print("fast_button.pressed connect fail!"): _set_preset_speed(5.0))
+	if slow_button.pressed.connect(func(): _set_preset_speed(0.5)) != OK:
+		print("slow_button.pressed connect fail!")
+	if normal_button.pressed.connect(func(): _set_preset_speed(1.0)) != OK:
+		print("normal_button.pressed connect fail!")
+	if fast_button.pressed.connect(func(): _set_preset_speed(5.0)) != OK:
+		print("fast_button.pressed connect fail!")
 	
 	_update_speed_label(1.0)
 

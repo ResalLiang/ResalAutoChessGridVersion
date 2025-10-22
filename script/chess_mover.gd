@@ -33,7 +33,7 @@ func setup_before_turn_start():
 		
 func setup_chess(obstacle: Obstacle) -> void:
 	if obstacle.drag_handler.drag_started.connect(_on_chess_drag_started.bind(obstacle)) != OK:
-		print("obstacle.drag_handler.drag_started connect fail!")
+		print("1obstacle.drag_handler.drag_started connect fail!" + str(obstacle.drag_handler.drag_started.connect(_on_chess_drag_started.bind(obstacle))))
 	if obstacle.drag_handler.drag_canceled.connect(_on_chess_drag_canceled.bind(obstacle)) != OK:
 		print("obstacle.drag_handler.drag_canceled connect fail!")
 	if obstacle.drag_handler.drag_dropped.connect(_on_chess_dropped.bind(obstacle)) != OK:

@@ -79,7 +79,7 @@ func _process(delta: float) -> void:
 
 func setup_chess(obstacle: Obstacle) -> void:
 	if obstacle.drag_handler.drag_started.connect(show_chess_information.bind(obstacle)) != OK:
-		print("obstacle.drag_handler.drag_started connect fail!")
+		print("2obstacle.drag_handler.drag_started connect fail!")
 	if obstacle.drag_handler.is_clicked.connect(show_chess_information.bind(obstacle)) != OK:
 		print("obstacle.drag_handler.is_clicked connect fail!")
 	if obstacle.drag_handler.drag_canceled.connect(_on_chess_drag_canceled.bind(obstacle)) != OK:

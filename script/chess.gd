@@ -278,7 +278,7 @@ func _ready():
 	
 	# Connect signals
 	if idle_timer.timeout.connect(_on_idle_timeout) != OK:
-		print("idle_timer.timeout connect fail!")
+		print("idle_timer.timeout connect fail: " + str(idle_timer.timeout.connect(_on_idle_timeout)))
 	if move_timer.timeout.connect(_handle_action) != OK:
 		print("move_timer.timeout connect fail!")
 	if action_timer.timeout.connect(_handle_action_timeout) != OK:
@@ -354,9 +354,9 @@ func _ready():
 
 				var current_bonus_level
 				if attacker.team == 1:
-					current_bonus_level = min(game_root_scene.faction.get_bonus_level("forestProtector", 1), game_root_scene.faction_path_upgrade["forestProtector"]["path2"])
+					current_bonus_level = min(game_root_scene.faction_bonus_manager.get_bonus_level("forestProtector", 1), game_root_scene.faction_path_upgrade["forestProtector"]["path2"])
 				elif attacker.team == 2:
-					current_bonus_level = game_root_scene.faction.get_bonus_level("forestProtector", 2)
+					current_bonus_level = game_root_scene.faction_bonus_manager.get_bonus_level("forestProtector", 2)
 
 				if current_bonus_level < 2:
 					return
@@ -1041,6 +1041,7 @@ func _handle_attack():
 			action_timer.set_wait_time(action_timer_wait_time)
 			action_timer.start()
 		
+		rotate_tween = create_tween()
 		rotate_tween.tween_property(animated_sprite_2d, "rotation", atan2(0, 0), 0.2)	
 		await get_tree().create_timer(0.2).timeout
 		rotate_tween.kill()
@@ -1303,7 +1304,7 @@ func take_damage(target:Obstacle, attacker: Obstacle, damage_value: float):
 		target.animated_sprite_2d.play("die")
 		await target.animated_sprite_2d.animation_finished
 		target.visible = false
-		_move_chess(target, grave, grave.get_first_empty_tile())
+		game_root_scene.chess_mover._move_chess(target, grave, grave.unit_grid.get_first_empty_tile())
 		target.is_died.emit()
 		attacker.kill_chess.emit(attacker, target)
 				

@@ -7684,6 +7684,43 @@ tile = Vector2i(0, 1)
 z_index = 9
 tile_set = SubResource("TileSet_ll5lq")
 
+[node name="grave" type="TileMapLayer" parent="tilemap" node_paths=PackedStringArray("unit_grid", "tile_highlighter")]
+unique_name_in_owner = true
+z_index = 9
+position = Vector2(560, 32)
+tile_map_data = PackedByteArray("AAAAAAAAAAABAAAAAAAAAAEAAAADAAEAAAABAAAAAAADAAEAAAABAAEAAAABAAAAAAAAAAIAAAABAAAAAAAAAAMAAAADAAAAAAABAAIAAAABAAAAAAABAAMAAAABAAAAAAA=")
+tile_set = ExtResource("2_dbls1")
+script = ExtResource("3_xwcet")
+unit_grid = NodePath("ShopUnitGrid")
+tile_highlighter = NodePath("tile_highlighter")
+
+[node name="shop_bound" type="NinePatchRect" parent="tilemap/grave"]
+z_index = 9
+offset_left = -3.0
+offset_top = -3.0
+offset_right = 35.0
+offset_bottom = 67.0
+texture = ExtResource("9_58qvq")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 6
+
+[node name="ShopUnitGrid" type="Node2D" parent="tilemap/grave"]
+z_index = 9
+script = ExtResource("3_33cqm")
+size = Vector2i(16, 16)
+
+[node name="tile_highlighter" type="Node" parent="tilemap/grave" node_paths=PackedStringArray("play_area", "highlight_layer")]
+script = ExtResource("4_p1ry8")
+play_area = NodePath("..")
+highlight_layer = NodePath("../highlight")
+tile = Vector2i(0, 1)
+
+[node name="highlight" type="TileMapLayer" parent="tilemap/grave"]
+z_index = 9
+tile_set = SubResource("TileSet_ll5lq")
+
 [node name="ui" type="TileMapLayer" parent="tilemap"]
 z_index = 20
 tile_set = SubResource("TileSet_ll3i0")
@@ -7901,7 +7938,7 @@ flat = true
 
 [node name="decoration" type="TileMapLayer" parent="tilemap"]
 z_index = 10
-tile_map_data = PackedByteArray("AAAYAAEABAAGAA8AAAAYAAUAAQANABYAAAASAAMABAAHAAkAAAARAA8ABAALAAsAAAAAABAAAwADABEAAAADAA8AAwANAAEAAAADABEAAwALAA4AAAACABEAAwARAAAAAAAEAAkAAwANAAgAAAABAAgAAwAIAAoAAAABAAEAAwAQABMAAAAjAAYAAwAIAAQAAAAOAA4AAwABAAwAAAAPABAAAwAFAAwAAAATABAAAwAKAAsAAAARAAQAAwACAAQAAAAKAAIAAwARAAwAAAAJAAQAAwAGAAYAAAAPAAMAAwARAAEAAAAPAAIAAwADAAIAAAAMAAMAAwADAAQAAAAdAAoAAwAGABMAAAAgAAoAAwARABMAAAAWAAMAAwARABMAAAAAAAoAAwAHAAMAAAADAAsAAwANAA4AAAAEABEAAwAGABEAAAACABAAAwADAAkAAAAIABEAAwAHAAYAAAAPAA4AAwAAAA0AAAANABAAAwAQAAkAAAAWAAUAAQANABYAAAAIAAkAAwAGAAEAAAAIAA0AAQALABYAAAANAAoAAwAGAAQAAAANAA0AAwATAA0AAAARAAcABAASAAEAAAARAAoAAwADAAAAAAATAAwAAwAIAA0AAAAVAAwAAwABAAQAAAAWAAcAAQANABcAAAAXAAcAAQAUABoAAAAYAAcAAQANABcAAAAIAA4AAQALABcAAAA=")
+tile_map_data = PackedByteArray("AAAYAAEABAAGAA8AAAAYAAUAAQANABYAAAASAAMABAAHAAkAAAARAA8ABAALAAsAAAAAABAAAwADABEAAAADAA8AAwANAAEAAAADABEAAwALAA4AAAACABEAAwARAAAAAAAEAAkAAwANAAgAAAABAAgAAwAIAAoAAAABAAEAAwAQABMAAAAOAA4AAwABAAwAAAAPABAAAwAFAAwAAAATABAAAwAKAAsAAAARAAQAAwACAAQAAAAKAAIAAwARAAwAAAAJAAQAAwAGAAYAAAAPAAMAAwARAAEAAAAPAAIAAwADAAIAAAAMAAMAAwADAAQAAAAdAAoAAwAGABMAAAAgAAoAAwARABMAAAAWAAMAAwARABMAAAAAAAoAAwAHAAMAAAADAAsAAwANAA4AAAAEABEAAwAGABEAAAACABAAAwADAAkAAAAIABEAAwAHAAYAAAAPAA4AAwAAAA0AAAANABAAAwAQAAkAAAAWAAUAAQANABYAAAAIAAkAAwAGAAEAAAAIAA0AAQALABYAAAANAAoAAwAGAAQAAAANAA0AAwATAA0AAAARAAcABAASAAEAAAARAAoAAwADAAAAAAATAAwAAwAIAA0AAAAVAAwAAwABAAQAAAAWAAcAAQANABcAAAAXAAcAAQAUABoAAAAYAAcAAQANABcAAAAIAA4AAQALABcAAAA=")
 tile_set = ExtResource("2_dbls1")
 
 [node name="game_button_container" type="Node2D" parent="."]
@@ -8343,9 +8380,10 @@ layout_mode = 2
 visible = false
 layout_mode = 2
 
-[node name="chess_mover" type="Node2D" parent="."]
+[node name="chess_mover" type="Node2D" parent="." node_paths=PackedStringArray("play_areas")]
 unique_name_in_owner = true
 script = ExtResource("15_ve786")
+play_areas = [NodePath("../tilemap/arena"), NodePath("../tilemap/bench"), NodePath("../tilemap/shop"), NodePath("../tilemap/grave")]
 
 [node name="chess_information" parent="." instance=ExtResource("8_ve786")]
 offset_left = 417.0
