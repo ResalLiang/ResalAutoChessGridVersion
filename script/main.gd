@@ -18,17 +18,23 @@ func _ready():
 func show_main_menu():
 	AudioManagerSingleton.play_music("menu")
 	await _transition_to_scene("res://scene/menu.tscn", main_container, true)
-	current_scene.to_game_scene.connect(show_game)
-	current_scene.to_gallery_scene.connect(show_gallery)
-	current_scene.to_upgrade_scene.connect(show_player_upgrade)
+	if current_scene.to_game_scene.connect(show_game) != OK:
+		print("current_scene.to_game_scene connect fail!")
+	if current_scene.to_gallery_scene.connect(show_gallery) != OK:
+		print("current_scene.to_gallery_scene connect fail!")
+	if current_scene.to_upgrade_scene.connect(show_player_upgrade) != OK:
+		print("current_scene.to_upgrade_scene connect fail!")
 	
 # 显示游戏场景
 func show_game():
 	AudioManagerSingleton.play_music("battle")
 	await _transition_to_scene("res://scene/game.tscn", main_container, true)
-	current_scene.to_menu_scene.connect(show_main_menu)
-	current_scene.add_round_finish_scene.connect(show_round_finish)
-	current_scene.to_game_finish_scene.connect(show_game_finish)
+	if current_scene.to_menu_scene.connect(show_main_menu) != OK:
+		print("current_scene.to_menu_scene connect fail!")
+	if current_scene.add_round_finish_scene.connect(show_round_finish) != OK:
+		print("current_scene.add_round_finish_scene connect fail!")
+	if current_scene.to_game_finish_scene.connect(show_game_finish) != OK:
+		print("current_scene.to_game_finish_scene connect fail!")
 
 # 显示设置菜单
 func show_settings():
@@ -48,37 +54,47 @@ func show_round_finish(result: String):
 func show_player_upgrade():
 	AudioManagerSingleton.play_music("menu")
 	await _transition_to_scene("res://scene/player_upgrade.tscn", main_container, true)
-	current_scene.to_menu_scene.connect(show_main_menu)
+	if current_scene.to_menu_scene.connect(show_main_menu) != OK:
+		print("current_scene.to_menu_scene connect fail!")
 	
 # 显示设置菜单
 func show_game_finish():
 	await _transition_to_scene("res://scene/game_finish.tscn", main_container, false)
 	current_scene.load_animation()
-	current_scene.to_menu_scene.connect(show_main_menu)
-	current_scene.to_game_scene.connect(show_game)
+	if current_scene.to_menu_scene.connect(show_main_menu) != OK:
+		print("current_scene.to_menu_scene connect fail!")
+	if current_scene.to_game_scene.connect(show_game) != OK:
+		print("current_scene.to_game_scene connect fail!")
 
 func show_gallery():
 	AudioManagerSingleton.play_music("menu")
 	await _transition_to_scene("res://scene/gallery.tscn", main_container, true)
-	current_scene.to_menu_scene.connect(show_main_menu)
-	current_scene.to_tetris_scene.connect(show_tetris_game)
-	current_scene.to_snake_scene.connect(show_snake_game)
-	current_scene.to_minesweep_scene.connect(show_minesweep_game)
+	if current_scene.to_menu_scene.connect(show_main_menu) != OK:
+		print("current_scene.to_menu_scene connect fail!")
+	if current_scene.to_tetris_scene.connect(show_tetris_game) != OK:
+		print("current_scene.to_tetris_scene connect fail!")
+	if current_scene.to_snake_scene.connect(show_snake_game) != OK:
+		print("current_scene.to_snake_scene connect fail!")
+	if current_scene.to_minesweep_scene.connect(show_minesweep_game) != OK:
+		print("current_scene.to_minesweep_scene connect fail!")
 	
 func show_tetris_game():
 	AudioManagerSingleton.play_music("menu")
 	await _transition_to_scene("res://scene/tetris.tscn", main_container, true)
-	current_scene.to_menu_scene.connect(show_main_menu)
+	if current_scene.to_menu_scene.connect(show_main_menu) != OK:
+		print("current_scene.to_menu_scene connect fail!")
 	
 func show_snake_game():
 	AudioManagerSingleton.play_music("menu")
 	await _transition_to_scene("res://scene/snake.tscn", main_container, true)
-	current_scene.to_menu_scene.connect(show_main_menu)
+	if current_scene.to_menu_scene.connect(show_main_menu) != OK:
+		print("current_scene.to_menu_scene connect fail!")
 	
 func show_minesweep_game():
 	AudioManagerSingleton.play_music("menu")
 	await _transition_to_scene("res://scene/minesweep.tscn", main_container, true)
-	current_scene.to_menu_scene.connect(show_main_menu)
+	if current_scene.to_menu_scene.connect(show_main_menu) != OK:
+		print("current_scene.to_menu_scene connect fail!")
 	
 
 # 场景切换核心方法 - 这是自定义方法
