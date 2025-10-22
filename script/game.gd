@@ -12,14 +12,13 @@ const faction_bonus_bar_scene = preload("res://scene/faction_bonus_bar.tscn")
 @onready var arena: PlayArea = %arena
 @onready var bench: PlayArea = %bench
 @onready var shop: PlayArea = %shop
-@onready var arena_unit_grid: UnitGrid = $ArenaUnitGrid
-@onready var bench_unit_grid: UnitGrid = $BenchUnitGrid
+@onready var grave: PlayArea = %grave
+# @onready var arena_unit_grid: UnitGrid = $ArenaUnitGrid
+# @onready var bench_unit_grid: UnitGrid = $BenchUnitGrid
 
 @onready var arena_bound: NinePatchRect = $tilemap/arena/arena_bound
 @onready var bench_bound: NinePatchRect = $tilemap/bench/bench_bound
 @onready var shop_bound: NinePatchRect = $tilemap/shop/shop_bound
-
-
 
 @onready var debug_handler: DebugHandler = %debug_handler
 @onready var chess_mover: ChessMover = %chess_mover
@@ -59,14 +58,12 @@ const faction_bonus_bar_scene = preload("res://scene/faction_bonus_bar.tscn")
 @onready var faction_bonus_button: Button = $tilemap/ui/faction_bonus_button
 @onready var enemy_faction_container: VBoxContainer = $enemy_faction_container
 
-enum Team { TEAM1, TEAM2, TEAM1_FULL, TEAM2_FULL}
+enum Team { TEAM1_FULL, TEAM2_FULL}
 enum ChessActiveOrder { HIGH_HP, LOW_HP, NEAR_CENTER, FAR_CENTER, BUY_SEQ, RE_BUY_SEQ }
 var current_team: Team
 var active_chess
 var team_chars
 var team_dict: Dictionary = {
-	Team.TEAM1: [],
-	Team.TEAM2: [],
 	Team.TEAM1_FULL: [],
 	Team.TEAM2_FULL: []
 }
@@ -243,7 +240,8 @@ func _ready():
 
 	var tile_size = arena.unit_grid.size
 	
-	round_finished.connect(handle_round_finished)
+	if round_finished.connect(handle_round_finished) != OK:
+		print("round_finished connect fail!")
 	game_turn_started.connect(
 		func():
 			game_start_button.disabled = true
@@ -270,7 +268,8 @@ func _ready():
 				if node is Obstacle:
 					node.dragging_enabled =  true
 	)
-	game_start_button.pressed.connect(new_round_prepare_end)
+	if game_start_button.pressed.connect(new_round_prepare_end) != OK:
+		print("game_start_button.pressed connect fail!")
 	game_restart_button.pressed.connect(
 		func():
 			var alternative_choice = alternative_choice_scene.instantiate()
@@ -286,9 +285,12 @@ func _ready():
 				pass
 			alternative_choice.queue_free()		
 	)
-	shop_refresh_button.pressed.connect(shop_handler.shop_manual_refresh)
-	shop_freeze_button.pressed.connect(shop_handler.shop_freeze)
-	shop_upgrade_button.pressed.connect(shop_handler.shop_upgrade)
+	if shop_refresh_button.pressed.connect(shop_handler.shop_manual_refresh) != OK:
+		print("shop_refresh_button.pressed connect fail!")
+	if shop_freeze_button.pressed.connect(shop_handler.shop_freeze) != OK:
+		print("shop_freeze_button.pressed connect fail!")
+	if shop_upgrade_button.pressed.connect(shop_handler.shop_upgrade) != OK:
+		print("shop_upgrade_button.pressed connect fail!")
 	chess_order_hp_high.pressed.connect(
 		func():
 			current_chess_active_order = ChessActiveOrder.HIGH_HP
@@ -324,7 +326,8 @@ func _ready():
 				shop_upgrade_button.global_position.x = -40
 				
 	)
-	shop_handler.coins_decreased.connect(DataManagerSingleton.handle_coin_spend)
+	if shop_handler.coins_decreased.connect(DataManagerSingleton.handle_coin_spend) != OK:
+		print("shop_handler.coins_decreased connect fail!")
 	shop_handler.coins_decreased.connect(
 		func(value, reason):
 			remain_coins_label.text = "Remaining Coins   : " + str(shop_handler.remain_coins)
@@ -494,10 +497,14 @@ func _ready():
 				update_population(true)
 	)
 
-	player_won_round.connect(DataManagerSingleton.handle_player_won_round)
-	player_lose_round.connect(DataManagerSingleton.handle_player_lose_round)
-	player_won_game.connect(DataManagerSingleton.handle_player_won_game)
-	player_lose_game.connect(DataManagerSingleton.handle_player_lose_game)
+	if player_won_round.connect(DataManagerSingleton.handle_player_won_round) != OK:
+		print("player_won_round connect fail!")
+	if player_lose_round.connect(DataManagerSingleton.handle_player_lose_round) != OK:
+		print("player_lose_round connect fail!")
+	if player_won_game.connect(DataManagerSingleton.handle_player_won_game) != OK:
+		print("player_won_game connect fail!")
+	if player_lose_game.connect(DataManagerSingleton.handle_player_lose_game) != OK:
+		print("player_lose_game connect fail!")
 
 	chess_mover.play_areas = [arena, bench, shop]
 	#arena.bounds = Rect2i(0, 0, 6, 12)
@@ -556,13 +563,12 @@ func start_new_game() -> void:
 	await clear_play_area(arena)
 	await clear_play_area(shop)
 	await clear_play_area(bench)
+	await clear_play_area(grave)
 
 	saved_arena_team = {}
 	
 	faction_path_upgrade = faction_path_upgrade_template.duplicate(true)
 
-	team_dict[Team.TEAM1] = []
-	team_dict[Team.TEAM2] = []
 	team_dict[Team.TEAM1_FULL] = []
 	team_dict[Team.TEAM2_FULL] = []
 
@@ -647,10 +653,16 @@ func new_round_prepare_start():
 			if enemy[0] == faction:
 				current_faction_count += 1
 
-		if check_villager_count("NobleMan") > 0:
-			add_bonus_bar_to_enemy_container(faction, current_faction_count)
-		else:
-			add_bonus_bar_to_enemy_container(faction, 6)
+		var current_faction_level := 0
+		for i in faction_bonus_manager.bonus_level_list[faction]:
+			if current_faction_count >= i:
+				current_faction_level += 1
+
+		if current_faction_level > 0:
+			if check_villager_count("NobleMan") > 0:
+				add_bonus_bar_to_enemy_container(faction, faction_bonus_manager.bonus_level_list[faction][current_faction_level])
+			else:
+				add_bonus_bar_to_enemy_container(faction, 6)
 
 	# Count factions from role
 	for chess_index in enemey_array:
@@ -663,11 +675,17 @@ func new_round_prepare_start():
 		for enemy in enemey_array:
 			if enemy[2] == role:
 				current_role_count += 1
+
+		var current_role_level := 0
+		for i in faction_bonus_manager.bonus_level_list[role]:
+			if current_role_count >= i:
+				current_role_level += 1
 		
-		if check_villager_count("NobleMan") > 0:
-			add_bonus_bar_to_enemy_container(role, current_role_count)
-		else:
-			add_bonus_bar_to_enemy_container(role, 6)
+		if current_role_level > 0:
+			if check_villager_count("NobleMan") > 0:
+				add_bonus_bar_to_enemy_container(role, faction_bonus_manager.bonus_level_list[role][current_role_level])
+			else:
+				add_bonus_bar_to_enemy_container(role, 6)
 
 
 	if check_villager_count("Miner") > 0:
@@ -705,10 +723,11 @@ func new_round_prepare_end():
 	# 		player_max_hp_sum += node.max_hp
 	for chess_index in arena.unit_grid.get_all_units():
 		if chess_index is Chess and chess_index.team == 1:
-			team_dict[Team.TEAM1_FULL].append(chess_index)
+			team_dict[Team.TEAM1_FULL].append([chess_index, false])
 			player_max_hp_sum += chess_index.max_hp			
 	save_arena_team()
 
+	# blacksmith can temparily change chess to its upgrade version for 1 round
 	if get_meta("blacksmith_turn", 0) > 0:
 		var current_blacksmith_turn = max(get_meta("blacksmith_turn", 0) - 1, 0)
 		set_meta("blacksmith_turn", current_blacksmith_turn)
@@ -748,19 +767,22 @@ func start_new_round():
 	print("Start new round.")
 	var team1_alive_cnt = 0
 	var team2_alive_cnt = 0
-	team_dict[Team.TEAM1] = []
-	team_dict[Team.TEAM2] = []
-	for chess_index in team_dict[Team.TEAM1_FULL]:
-		if is_instance_valid(chess_index):
-			if chess_index.status != chess_class.STATUS.DIE:
-				team_dict[Team.TEAM1].append(chess_index)
-				team1_alive_cnt += 1
-	for chess_index in team_dict[Team.TEAM2_FULL]:
-		if is_instance_valid(chess_index):
-			if chess_index.status != chess_class.STATUS.DIE:
-				team_dict[Team.TEAM2].append(chess_index)
-				team2_alive_cnt += 1
-				
+	# for chess_index in team_dict[Team.TEAM1_FULL]:
+	# 	if is_instance_valid(chess_index):
+	# 		if chess_index.status != chess_class.STATUS.DIE:
+	# 			team_dict[Team.TEAM1].append(chess_index)
+	# 			team1_alive_cnt += 1
+	# for chess_index in team_dict[Team.TEAM2_FULL]:
+	# 	if is_instance_valid(chess_index):
+	# 		if chess_index.status != chess_class.STATUS.DIE:
+	# 			team_dict[Team.TEAM2].append(chess_index)
+	# 			team2_alive_cnt += 1
+	
+	team_dict[TEAM1_FULL] = sort_characters(TEAM1_FULL, current_chess_active_order)
+	team_dict[TEAM2_FULL] = sort_characters(TEAM2_FULL, current_chess_active_order)
+
+	team1_alive_cnt = team_dict[TEAM1_FULL].reduce(array_alive_sum, 0)	
+	team2_alive_cnt = team_dict[TEAM2_FULL].reduce(array_alive_sum, 0)	
 	# update_population(true)
 			
 			
@@ -777,29 +799,22 @@ func start_new_round():
 	# current_team = [Team.TEAM1, Team.TEAM2][randi() % 2]
 
 	
-	current_team = Team.TEAM1
+	current_team = Team.TEAM1_FULL
 
 	start_chess_turn(current_team)
 
-func start_chess_turn(team: Team) -> bool:
-	while team_dict[team].size() > 0:
-		team_chars = sort_characters(team, current_chess_active_order)
-		var current_chess = team_chars.pop_front()
-		if is_instance_valid(current_chess) and current_chess is Obstacle and current_chess.status != current_chess.STATUS.DIE:
-			if chess_mover._get_play_area_for_position(current_chess.global_position) == 0:
-				process_character_turn(current_chess)
-				return true
-			elif chess_mover._get_play_area_for_position(current_chess.global_position) == 1:
-				active_chess = current_chess
-				active_chess.is_active = true
-				#active_chess.start_turn()
-				# 连接信号等待行动完成
-				#active_chess.action_finished.connect(handle_character_action_finished)
-				handle_character_action_finished()
-				return true
-	active_chess = null
-	handle_character_action_finished()
-	return false
+func start_chess_turn(team: Team) -> void:
+	var current_chess
+	for chess_index in team_dict[team]:
+		if not DataManagerSingleton.check_obstacle_valid(chess_index[0]) or chess_index[1]:
+			continue
+		current_chess = chess_index[0]
+		chess_index[1] = true
+		break
+
+	if chess_mover._get_play_area_for_position(current_chess.global_position) == 0:
+		process_character_turn(current_chess)
+
 
 func process_character_turn(chess: Obstacle):
 	active_chess = chess
@@ -810,6 +825,15 @@ func process_character_turn(chess: Obstacle):
 	
 	handle_character_action_finished()
 
+
+func array_alive_sum(accum, node):
+	var result := 0
+	if DataManagerSingleton.check_obstacle_valid(node):
+		result = 1
+
+	return accum + result
+
+
 func handle_character_action_finished():
 	if active_chess:
 		active_chess.is_active = false
@@ -817,39 +841,39 @@ func handle_character_action_finished():
 
 	#refresh chess status
 
-	var new_team_dict: Dictionary = {
-		Team.TEAM1: [],
-		Team.TEAM2: [],
-		Team.TEAM1_FULL: [],
-		Team.TEAM2_FULL: []
-	}
+	# var new_team_dict: Dictionary = {
+	# 	# Team.TEAM1: [],
+	# 	# Team.TEAM2: [],
+	# 	Team.TEAM1_FULL: [],
+	# 	Team.TEAM2_FULL: []
+	# }
 
-	for team_index in team_dict.keys():
-		for chess_index in team_dict[team_index]:
-			if DataManagerSingleton.check_obstacle_valid(chess_index):
-				new_team_dict[team_index].append(chess_index)
-			else:
-				chess_index.queue_free()
-		team_dict[team_index] = new_team_dict[team_index]
+	# for team_index in team_dict.keys():
+	# 	for chess_index in team_dict[team_index]:
+	# 		if DataManagerSingleton.check_obstacle_valid(chess_index):
+	# 			new_team_dict[team_index].append(chess_index)
+	# 		else:
+	# 			chess_index.queue_free()
+	# 	team_dict[team_index] = new_team_dict[team_index]
 
-	if current_team == Team.TEAM1 and team_dict[Team.TEAM2].size() != 0:
-		current_team = Team.TEAM2
+	if current_team == Team.TEAM1_FULL and team_dict[Team.TEAM2_FULL].reduce(array_alive_sum, 0)) != 0:
+		current_team = Team.TEAM2_FULL
 		start_chess_turn(current_team)
 		
-	elif current_team == Team.TEAM2 and team_dict[Team.TEAM1].size() != 0:
-		current_team = Team.TEAM1
+	elif current_team == Team.TEAM2_FULL and team_dict[Team.TEAM1_FULL].reduce(array_alive_sum, 0)) != 0:
+		current_team = Team.TEAM1_FULL
 		start_chess_turn(current_team)
 		
 	# elif team_dict[Team.TEAM2].size() != 0 or team_dict[Team.TEAM1].size() != 0:
 	# 	start_chess_turn(current_team)
 		
-	elif team_dict[Team.TEAM2_FULL].size() == 0 and team_dict[Team.TEAM1_FULL].size() == 0:
+	elif team_dict[Team.TEAM2_FULL].reduce(array_alive_sum, 0)) == 0 and team_dict[Team.TEAM1_FULL].reduce(array_alive_sum, 0)) == 0:
 		round_finished.emit("draw")
 		
-	elif team_dict[Team.TEAM1_FULL].size() == 0:
+	elif team_dict[Team.TEAM1_FULL].reduce(array_alive_sum, 0)) == 0:
 		round_finished.emit("team2")
 		
-	elif team_dict[Team.TEAM2_FULL].size() == 0:
+	elif team_dict[Team.TEAM2_FULL].reduce(array_alive_sum, 0)) == 0:
 		round_finished.emit("team1")
 
 	else:
@@ -929,26 +953,6 @@ func sort_characters(team: Team, mode: ChessActiveOrder) -> Array:
 		ChessActiveOrder.RE_BUY_SEQ:
 			chesses_team.sort_custom(func(a, b): return a.chess_serial > b.chess_serial)
 	return chesses_team
-	
-func generate_enemy(difficulty : int) -> void:
-	team_dict[Team.TEAM2_FULL] = []
-	for node in get_tree().get_nodes_in_group("obstacle_group"):
-		if node is Obstacle and node.current_play_area == node.play_areas.playarea_arena and node.team != 1:
-			node.queue_free()
-	var current_difficulty := 0
-	var current_enemy_cnt := 0
-
-	while current_difficulty < difficulty and current_enemy_cnt <= arena.unit_grid.size.x * arena.unit_grid.size.y / 2:
-		var rand_x = randi_range(arena.unit_grid.size.x / 2, arena.unit_grid.size.x - 1)
-		var rand_y = randi_range(0, arena.unit_grid.size.y - 1)
-		if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
-			var rand_character_result = generate_random_chess(shop_handler.shop_level, "all")
-
-			var character = summon_chess(rand_character_result[0], rand_character_result[1], 1, 2, arena, Vector2i(rand_x, rand_y))
-
-			current_difficulty += character.max_hp
-			current_enemy_cnt += 1
-			
 
 func clear_play_area(play_area_to_clear: PlayArea):
 	await get_tree().process_frame
@@ -1104,7 +1108,10 @@ func generate_random_chess_update(generate_level: int, specific_faction: String)
 
 		for chess_index in DataManagerSingleton.get_chess_data()[faction_index].keys():
 			var current_chess = DataManagerSingleton.get_chess_data()[faction_index][chess_index]
+
 			if current_chess["speed"] == 0 and faction_index != "villager":
+				continue
+			if chess_index == "Anvil" and faction_index == "villager":
 				continue
 
 			var composite_key = "%s_%s" % [faction_index, chess_index]
@@ -1157,15 +1164,15 @@ func chess_appearance(play_area: PlayArea):
 
 	for chess_index in team_dict[Team.TEAM1_FULL]:
 		current_chess_count += 1
-		chess_index.global_position.y -= before_appreance_height
-		chess_index.visible = true
-		appearance_tween.tween_property(chess_index, "global_position", chess_index.global_position + Vector2(0, before_appreance_height) , 0.5)
+		chess_index[0].global_position.y -= before_appreance_height
+		chess_index[0].visible = true
+		appearance_tween.tween_property(chess_index[0], "global_position", chess_index[0].global_position + Vector2(0, before_appreance_height) , 0.5)
 
 	for chess_index in team_dict[Team.TEAM2_FULL]:
 		current_chess_count += 1
-		chess_index.global_position.y -= before_appreance_height
-		chess_index.visible = true
-		appearance_tween.tween_property(chess_index, "global_position", chess_index.global_position + Vector2(0, before_appreance_height) , 0.5)
+		chess_index[0].global_position.y -= before_appreance_height
+		chess_index[0].visible = true
+		appearance_tween.tween_property(chess_index[0], "global_position", chess_index[0].global_position + Vector2(0, before_appreance_height) , 0.5)
 
 	# position_tween.tween_property(self, "global_position", target_pos, 0.1)
 
@@ -1199,22 +1206,31 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, chess
 	add_child(summoned_character)
 	summoned_character._load_chess_stats()
 
-	debug_handler.connect_to_chess_signal(summoned_character)
+	if debug_handler.connect_to_chess_signal(summoned_character) != OK:
+		print("debug_handler connect fail!")
 	chess_mover.setup_chess(summoned_character)
 	chess_mover._move_chess(summoned_character, summon_arena, summon_position)
 	chess_information.setup_chess(summoned_character)
 
-	summoned_character.damage_taken.connect(battle_meter.get_damage_data)
+	if summoned_character.damage_taken.connect(battle_meter.get_damage_data) != OK:
+		print("summoned_character.damage_taken connect fail!")
 	
-	summoned_character.deal_damage.connect(damage_manager.damage_handler)
+	if summoned_character.deal_damage.connect(damage_manager.damage_handler) != OK:
+		print("summoned_character.deal_damage connect fail!")
 
-	summoned_character.damage_applied.connect(battle_value_display.bind("damage_applied"))
-	summoned_character.critical_damage_applied.connect(battle_value_display.bind("critical_damage_applied"))
-	summoned_character.heal_taken.connect(battle_value_display.bind("heal_taken"))
-	summoned_character.attack_evased.connect(battle_value_display.bind(0, "attack_evased"))
-	summoned_character.is_died.connect(battle_value_display.unbind(1).bind(0, "is_died"))
+	if summoned_character.damage_applied.connect(battle_value_display.bind("damage_applied")) != OK:
+		print("summoned_character.damage_applied connect fail!")
+	if summoned_character.critical_damage_applied.connect(battle_value_display.bind("critical_damage_applied")) != OK:
+		print("summoned_character.critical_damage_applied connect fail!")
+	if summoned_character.heal_taken.connect(battle_value_display.bind("heal_taken")) != OK:
+		print("summoned_character.heal_taken connect fail!")
+	if summoned_character.attack_evased.connect(battle_value_display.bind(0, "attack_evased")) != OK:
+		print("summoned_character.attack_evased connect fail!")
+	if summoned_character.is_died.connect(battle_value_display.bind(summoned_character, 0, "is_died")) != OK:
+		print("summoned_character.is_died connect fail!")
 
-	summoned_character.is_died.connect(chess_death_handle.unbind(1))
+	if summoned_character.is_died.connect(chess_death_handle.ubind(summoned_character)) != OK:
+		print("summoned_character.is_died connect fail!")
 	
 	if summoned_character is Chess:
 		summoned_character.kill_chess.connect(
@@ -1228,11 +1244,9 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, chess
 		)
 
 	if team == 1 and summon_arena != shop:
-		team_dict[Team.TEAM1_FULL].append(summoned_character)
-		team_dict[Team.TEAM1].append(summoned_character)
+		team_dict[Team.TEAM1_FULL].append(summoned_character, false)
 	elif team == 2 and summon_arena != shop:
-		team_dict[Team.TEAM2_FULL].append(summoned_character)
-		team_dict[Team.TEAM2].append(summoned_character)
+		team_dict[Team.TEAM2_FULL].append(summoned_character, false)
 		
 	return summoned_character
 
@@ -1272,14 +1286,10 @@ func update_population(forced_update: bool):
 
 func chess_death_handle(obstacle: Obstacle):
 
-	arena.unit_grid.remove_unit(obstacle.get_current_tile(obstacle)[1])
-	obstacle.visible = false
+	# arena.unit_grid.remove_unit(obstacle.get_current_tile(obstacle)[1])
+	# obstacle.visible = false
 	if obstacle.is_active:
 		obstacle.action_finished.emit(obstacle)
-		
-	for team_index in team_dict.values():
-		if team_index.has(obstacle):
-			team_index.erase(obstacle)
 
 func control_shaker(control: Control):
 	var old_position = control.global_position
@@ -1386,7 +1396,7 @@ func check_chess_merge():
 				continue
 				
 			if merge_result[merge_level - 1]:
-				break
+				continue
 
 			var merge_count := 0
 			var wait_merge := []
@@ -1400,19 +1410,22 @@ func check_chess_merge():
 
 				if node.faction == other_node.faction and node.chess_name == other_node.chess_name:
 					
-					if other_node.faction == "human" and min(faction_path_upgrade["human"]["path3"], faction_bonus_manager.get_bonus_level("human", 1)) > 1:
-						if other_node.total_kill_count >= 5:
-							var extra_merge_count = 1
-							merge_count += (1 + extra_merge_count)
-							other_node.total_kill_count -= 5
+					if other_node.faction == "human" and min(faction_path_upgrade["human"]["path3"], faction_bonus_manager.get_bonus_level("human", 1)) > 1 and other_node.total_kill_count >= 5:
+						var extra_merge_count = 1
+						merge_count += (1 + extra_merge_count)
+						other_node.total_kill_count -= 5
+					else:
+						merge_count += 1
 
 					wait_merge.append(other_node)
 
 					var merge_criteria:= 3
 
-					if other_node.faction == "forestProtector" and min(faction_path_upgrade["forestProtector"]["path1"], faction_bonus_manager.get_bonus_level("forestProtector", 1)) > 1:
+					if other_node.faction == "forestProtector" and min(faction_path_upgrade["forestProtector"]["path1"], faction_bonus_manager.get_bonus_level("forestProtector", 1)) >= 2:
 						merge_criteria = 2
 					elif other_node.faction == "forestProtector" and min(faction_path_upgrade["forestProtector"]["path1"], faction_bonus_manager.get_bonus_level("forestProtector", 1)) == 1 and merge_level == 1:
+						merge_criteria = 2
+					elif min(faction_path_upgrade["forestProtector"]["path1"], faction_bonus_manager.get_bonus_level("forestProtector", 1)) == 3 and merge_level == 1:
 						merge_criteria = 2
 
 					if merge_count >= merge_criteria:
@@ -1810,7 +1823,15 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			
 		print("Total " + str(current_try_count) + " times try fail.")
 		
-	print("Generate enemy fail.")		
+	print("Generate enemy fail.")
+	print("current_max_shop_level : " + str(current_max_shop_level))
+	print("current_min_population : " + str(current_min_population))
+	print("current_max_population : " + str(current_max_population))
+	print("current_max_level : " + str(current_max_level))
+	print("current_level_distribution : " + str(current_level_distribution))
+	print("current_min_faction_bonus : " + str(current_min_faction_bonus))
+	print("current_max_faction_bonus : " + str(current_max_faction_bonus))
+
 	return []
 	
 
