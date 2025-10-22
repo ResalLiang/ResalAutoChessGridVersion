@@ -20,7 +20,8 @@ func _ready() -> void:
 	lose_health_pic =	load(AssetPathManagerSingleton.get_asset_path("battle_result", "lose_health"))
 	trophy_pic =		load(AssetPathManagerSingleton.get_asset_path("battle_result", "winning_trophy"))
 	
-	close_button.pressed.connect(close_window)
+	if close_button.pressed.connect(close_window) != OK:
+		print("close_button.pressed connect fail!")
 	
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().paused = true
