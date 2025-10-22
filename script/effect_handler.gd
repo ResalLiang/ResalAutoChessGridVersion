@@ -32,7 +32,8 @@ var reflect_damage_modifier := 0.0
 signal effect_list_updated
 
 func _ready() -> void:
-	effect_list_updated.connect(refresh_effects)
+	if effect_list_updated.connect(refresh_effects) != OK:
+		print("effect_list_updated connect fail!")
 
 func search_effect(search_effect_name: String):
 	if effect_list.size() > 0:
