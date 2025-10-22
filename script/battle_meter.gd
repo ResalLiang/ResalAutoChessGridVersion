@@ -13,7 +13,8 @@ var battle_array: Array = []
 signal update_round_end_data
 
 func _ready() -> void:
-	update_round_end_data.connect(DataManagerSingleton.battle_meter_data_update)
+	if update_round_end_data.connect(DataManagerSingleton.battle_meter_data_update) != OK:
+		print("update_round_end_data connect fail!")
 
 func get_damage_data(obstacle: Obstacle, attacker: Obstacle, value: float):
 	var attacker_index = [attacker.faction, attacker.chess_name, attacker.chess_serial, attacker.team]
