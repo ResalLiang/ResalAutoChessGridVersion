@@ -8,6 +8,7 @@ extends Node
 @onready var arena: PlayArea = %arena
 @onready var bench: PlayArea = %bench
 @onready var shop: PlayArea = %shop
+@onready var grave: PlayArea = %grave
 
 @export var play_areas: Array[PlayArea]
 
@@ -31,9 +32,12 @@ func setup_before_turn_start():
 				setup_chess(chess_index)
 		
 func setup_chess(obstacle: Obstacle) -> void:
-	obstacle.drag_handler.drag_started.connect(_on_chess_drag_started.bind(obstacle))
-	obstacle.drag_handler.drag_canceled.connect(_on_chess_drag_canceled.bind(obstacle))
-	obstacle.drag_handler.drag_dropped.connect(_on_chess_dropped.bind(obstacle))
+	if obstacle.drag_handler.drag_started.connect(_on_chess_drag_started.bind(obstacle)) != OK:
+		print("obstacle.drag_handler.drag_started connect fail!")
+	if obstacle.drag_handler.drag_canceled.connect(_on_chess_drag_canceled.bind(obstacle)) != OK:
+		print("obstacle.drag_handler.drag_canceled connect fail!")
+	if obstacle.drag_handler.drag_dropped.connect(_on_chess_dropped.bind(obstacle)) != OK:
+		print("obstacle.drag_handler.drag_dropped connect fail!")
 	
 func _set_highlighters(enabled: bool) -> void:
 	for play_area: PlayArea in play_areas:
@@ -75,6 +79,8 @@ func _move_chess(obstacle: Obstacle, play_area: PlayArea, tile: Vector2i) -> voi
 		obstacle.current_play_area = obstacle.play_areas.playarea_bench
 	elif _get_play_area_for_position(obstacle.global_position) == 2:
 		obstacle.current_play_area = obstacle.play_areas.playarea_shop
+	elif _get_play_area_for_position(obstacle.global_position) == 3:
+		obstacle.current_play_area = obstacle.play_areas.playarea_grave
 	obstacle.global_position = play_area.global_position + play_area.to_local(play_area.get_global_from_tile(tile))
 	chess_moved.emit(obstacle, play_area, tile)
 	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
@@ -103,6 +109,8 @@ func tween_move_chess(obstacle: Obstacle, play_area: PlayArea, chess_position: V
 		obstacle.current_play_area = obstacle.play_areas.playarea_bench
 	elif _get_play_area_for_position(obstacle.global_position) == 2:
 		obstacle.current_play_area = obstacle.play_areas.playarea_shop
+	elif _get_play_area_for_position(obstacle.global_position) == 3:
+		obstacle.current_play_area = obstacle.play_areas.playarea_grave
 
 	var new_tile = play_areas[i].get_tile_from_global(obstacle.global_position)
 
