@@ -230,6 +230,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 
 			for chess_index in friendly_faction_chess:
 				var effect_instance
+				var effect_instance2
 				
 				var path2_bonus_level: int
 				if applier_team == 1:
@@ -268,14 +269,14 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 					path3_bonus_level = bonus_level
 				
 				if path3_bonus_level > 0:
-					effect_instance = ChessEffect.new()
-					effect_instance.register_buff("evasion_rate_modifier", bonus_level * 0.1, 999)
-					effect_instance.effect_name = "Gentle - Level " + str(path3_bonus_level)
-					effect_instance.effect_type = "Faction Bonus"
-					effect_instance.effect_applier = "Elf path3 Faction Bonus"
-					effect_instance.effect_description = "Friendly elf chesses gain critical rate boost."
-					chess_index.effect_handler.add_to_effect_array(effect_instance)
-					chess_index.effect_handler.add_child(effect_instance)
+					effect_instance2 = ChessEffect.new()
+					effect_instance2.register_buff("evasion_rate_modifier", bonus_level * 0.1, 999)
+					effect_instance2.effect_name = "Gentle - Level " + str(path3_bonus_level)
+					effect_instance2.effect_type = "Faction Bonus"
+					effect_instance2.effect_applier = "Elf path3 Faction Bonus"
+					effect_instance2.effect_description = "Friendly elf chesses gain critical rate boost."
+					chess_index.effect_handler.add_to_effect_array(effect_instance2)
+					chess_index.effect_handler.add_child(effect_instance2)
 
 		"human":
 			pass
@@ -335,22 +336,25 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 			if applier_team == 1:
 				path2_bonus_level = min(bonus_level, get_parent().faction_path_upgrade[faction]["path2"])
 			elif applier_team == 2:
-				path2_bonus_level = bonus_level
 
-			for chess_index in friendly_chess:
-				var effect_instance = ChessEffect.new()
-				effect_instance.register_buff("continuous_hp_modifier", 20 * bonus_level, 999)
-				# effect_instance.continuous_hp_modifier = 20 * bonus_level
-				# effect_instance.continuous_hp_modifier_duration = 999
-				effect_instance.register_buff("max_hp_modifier", 30 * bonus_level, 999)
-				# effect_instance.max_hp_modifier = 30 * bonus_level
-				# effect_instance.max_hp_modifier_duration = 999
-				effect_instance.effect_name = "Strong - Level " + str(bonus_level)
-				effect_instance.effect_type = "Faction Bonus"
-				effect_instance.effect_applier = "Forest Protector path2 Faction Bonus"
-				effect_instance.effect_description = "Friendly faction chesses gain Max HP boost."
-				chess_index.effect_handler.add_to_effect_array(effect_instance)
-				chess_index.effect_handler.add_child(effect_instance)
+				path2_bonus_level = bonus_level
+			
+			if path2_bonus_level > 0:
+				var effect_instance
+				for chess_index in friendly_chess:
+					effect_instance = ChessEffect.new()
+					effect_instance.register_buff("continuous_hp_modifier", 20 * path2_bonus_level, 999)
+					# effect_instance.continuous_hp_modifier = 20 * bonus_level
+					# effect_instance.continuous_hp_modifier_duration = 999
+					effect_instance.register_buff("max_hp_modifier", 30 * path2_bonus_level, 999)
+					# effect_instance.max_hp_modifier = 30 * bonus_level
+					# effect_instance.max_hp_modifier_duration = 999
+					effect_instance.effect_name = "Strong - Level " + str(path2_bonus_level)
+					effect_instance.effect_type = "Faction Bonus"
+					effect_instance.effect_applier = "Forest Protector path2 Faction Bonus"
+					effect_instance.effect_description = "Friendly faction chesses gain Max HP boost."
+					chess_index.effect_handler.add_to_effect_array(effect_instance)
+					chess_index.effect_handler.add_child(effect_instance)
 
 		"demon":
 			if enemy_chess.size() <= 0:
