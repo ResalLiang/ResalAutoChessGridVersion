@@ -78,10 +78,14 @@ func _process(delta: float) -> void:
 		refresh_chess_information()
 
 func setup_chess(obstacle: Obstacle) -> void:
-	obstacle.drag_handler.drag_started.connect(show_chess_information.bind(obstacle))
-	obstacle.drag_handler.is_clicked.connect(show_chess_information.bind(obstacle))
-	obstacle.drag_handler.drag_canceled.connect(_on_chess_drag_canceled.bind(obstacle))
-	obstacle.drag_handler.drag_dropped.connect(_on_chess_dropped.bind(obstacle))
+	if obstacle.drag_handler.drag_started.connect(show_chess_information.bind(obstacle)) != OK:
+		print("obstacle.drag_handler.drag_started connect fail!")
+	if obstacle.drag_handler.is_clicked.connect(show_chess_information.bind(obstacle)) != OK:
+		print("obstacle.drag_handler.is_clicked connect fail!")
+	if obstacle.drag_handler.drag_canceled.connect(_on_chess_drag_canceled.bind(obstacle)) != OK:
+		print("obstacle.drag_handler.drag_canceled connect fail!")
+	if obstacle.drag_handler.drag_dropped.connect(_on_chess_dropped.bind(obstacle)) != OK:
+		print("obstacle.drag_handler.drag_dropped connect fail!")
 	
 		
 func show_chess_information(starting_position: Vector2, status: String, obstacle: Obstacle) -> void:
