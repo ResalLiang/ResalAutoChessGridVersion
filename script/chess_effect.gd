@@ -22,7 +22,8 @@ func _init() -> void:
 			buff_dict["is_" + buff_type_index] = false
 			buff_dict[buff_type_index + "duration"] = 0
 
-	extra_func_called.connect(extra_func)
+	if extra_func_called.connect(extra_func) != OK:
+		print("extra_func_called connect fail!")
 
 func check_effect_timeout() -> bool:
 	if effect_type == "PermanentBuff" or effect_type == "PermanentDebuff":
