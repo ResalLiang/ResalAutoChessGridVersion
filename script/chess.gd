@@ -9,7 +9,7 @@ const emoji_bubble_scene = preload("res://scene/emoji_bubble.tscn")
 #enum STATUS {IDLE, MOVE, MELEE_ATTACK, RANGED_ATTACK, JUMP, HIT, DIE, SPELL}
 enum TARGET_CHOICE {CLOSE, FAR, STRONG, WEAK, ALLY, SELF}
 
-#enum play_areas {playarea_arena, playarea_bench, playarea_shop}
+#enum play_areas {playarea_arena, playarea_bench, playarea_shop, playarea_grave}
 
 #const MAX_SEARCH_RADIUS = 3
 #const projectile_scene = preload("res://scene/projectile.tscn")
@@ -131,7 +131,8 @@ var chess_spell_target: Obstacle # Current spell target
 #var arena: PlayArea
 #var bench: PlayArea
 #var shop: PlayArea
-#
+#var grave: PlayArea
+
 #var current_play_area = play_areas.playarea_arena
 
 #============================================
@@ -276,33 +277,60 @@ func _ready():
 	#effect_handler.add_child(effect_instance)
 	
 	# Connect signals
-	idle_timer.timeout.connect(_on_idle_timeout)
-	move_timer.timeout.connect(_handle_action)
-	action_timer.timeout.connect(_handle_action_timeout)
+	if idle_timer.timeout.connect(_on_idle_timeout) != OK:
+		print("idle_timer.timeout connect fail!")
+	if move_timer.timeout.connect(_handle_action) != OK:
+		print("move_timer.timeout connect fail!")
+	if action_timer.timeout.connect(_handle_action_timeout) != OK:
+		print("action_timer.timeout connect fail!")
 	
-	drag_handler.drag_started.connect(_handle_dragging_state)
+	if drag_handler.drag_started.connect(_handle_dragging_state) != OK:
+		print("drag_handler.drag_started connect fail!")
 
-	drag_handler.drag_canceled.connect(_handle_dragging_state)
-	drag_handler.drag_dropped.connect(_handle_dragging_state)
-	damage_taken.connect(take_damage)
+	if drag_handler.drag_canceled.connect(_handle_dragging_state) != OK:
+		print("drag_handler.drag_canceled connect fail!")
+	if drag_handler.drag_dropped.connect(_handle_dragging_state) != OK:
+		print("drag_handler.drag_dropped connect fail!")
+	if damage_taken.connect(take_damage) != OK:
+		print("damage_taken connect fail!")
 
-	is_died.connect(_on_died)
+	if is_died.connect(_on_died) != OK:
+		print("is_died connect fail!")
 
-	spell_casted.connect(AudioManagerSingleton.play_sfx.bind("spell_casted"))
-	ranged_attack_started.connect(AudioManagerSingleton.play_sfx.bind("ranged_attack_started"))
-	melee_attack_started.connect(AudioManagerSingleton.play_sfx.bind("melee_attack_started"))
-	projectile_lauched.connect(AudioManagerSingleton.play_sfx.bind("projectile_lauched"))
-	damage_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("damage_taken"))
-	critical_damage_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("critical_damage_taken"))
-	heal_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("heal_taken"))
-	attack_evased.connect(AudioManagerSingleton.play_sfx.unbind(1).bind("attack_evased"))
-	is_died.connect(AudioManagerSingleton.play_sfx.unbind(1).bind("is_died"))
+	if spell_casted.connect(AudioManagerSingleton.play_sfx.bind("spell_casted")) != OK:
+		print("spell_casted connect fail!")
+	if ranged_attack_started.connect(AudioManagerSingleton.play_sfx.bind("ranged_attack_started")) != OK:
+		print("ranged_attack_started connect fail!")
+	if melee_attack_started.connect(AudioManagerSingleton.play_sfx.bind("melee_attack_started")) != OK:
+		print("melee_attack_started connect fail!")
+	if projectile_lauched.connect(AudioManagerSingleton.play_sfx.bind("projectile_lauched")) != OK:
+		print("projectile_lauched connect fail!")
+	if damage_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("damage_taken")) != OK:
+		print("damage_taken connect fail!")
+	if critical_damage_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("critical_damage_taken")) != OK:
+		print("critical_damage_taken connect fail!")
+	if heal_taken.connect(AudioManagerSingleton.play_sfx.unbind(2).bind("heal_taken")) != OK:
+		print("heal_taken connect fail!")
+	if attack_evased.connect(AudioManagerSingleton.play_sfx.unbind(1).bind("attack_evased")) != OK:
+		print("attack_evased connect fail!")
+	if is_died.connect(AudioManagerSingleton.play_sfx.bind(self, "is_died")) != OK:
+		print("is_died connect fail!")
 	
 	kill_chess.connect(
 		func(attacker, target):
 			if attacker == target:
 				return
 			total_kill_count += 1
+			if target is Chess and target.faction == "forestProtector":
+
+				var effect_instance = ChessEffect.new()
+				effect_instance.register_buff("duration_only", 0, 999)
+				effect_instance.effect_name = "Vengeance - "+ str(attacker.faction)
+				effect_instance.effect_type = "PermanentBuff"
+				effect_instance.effect_applier = "ForestProtector path3 Faction Bonus"
+				effect_instance.effect_description = "ForestProtector gain damage and resistance againt who kills them."
+				effect_handler.add_to_effect_array(effect_instance)
+				effect_handler.add_child(effect_instance)
 	)
 
 	kill_chess.connect(
@@ -317,11 +345,25 @@ func _ready():
 						attacker.take_heal(target.max_hp * 0.2 * attacker.chess_level,self)
 					_:
 						pass
-			elif attacker.faction == "forestProtector" and min(game_root_scene.faction_bonus_manager.get_bonus_level("forestProtector", 1), game_root_scene.faction_path_upgrade["forestProtector"]["path2"]) > 1:
-				var current_bonus_level = min(game_root_scene.faction.get_bonus_level("forestProtector", 1), game_root_scene.faction_path_upgrade["forestProtector"]["path2"])
+			elif attacker.faction == "forestProtector":
+				if min(game_root_scene.faction_bonus_manager.get_bonus_level("forestProtector", 1), game_root_scene.faction_path_upgrade["forestProtector"]["path2"]) == 0 and attacker.team == 1:
+					return
+
+				if game_root_scene.faction_bonus_manager.get_bonus_level("forestProtector", 2) == 0 and attacker.team == 2:
+					return
+
+				var current_bonus_level
+				if attacker.team == 1:
+					current_bonus_level = min(game_root_scene.faction.get_bonus_level("forestProtector", 1), game_root_scene.faction_path_upgrade["forestProtector"]["path2"])
+				elif attacker.team == 2:
+					current_bonus_level = game_root_scene.faction.get_bonus_level("forestProtector", 2)
+
+				if current_bonus_level < 2:
+					return
+
 				var forestProtector_path2_effect
 
-				for effect_index in effect_handler.effect_list:
+				for effect_index in attacker.effect_handler.effect_list:
 					if effect_index.effect_applier == "Forest Protector path2 Faction Bonus":
 						forestProtector_path2_effect = effect_index
 						break
@@ -872,7 +914,7 @@ func _handle_action():
 		await _handle_attack()
 
 func _handle_attack():
-	var rotate_tween = create_tween()
+	var rotate_tween = create_tween().set_parallel(false)
 	
 	if status == STATUS.DIE:
 		action_timer.set_wait_time(action_timer_wait_time)
@@ -1100,9 +1142,11 @@ func change_target_to(target: Obstacle):
 	if DataManagerSingleton.check_obstacle_valid(target):
 		chess_target = target
 		if chess_target.has_signal("is_died"):
-			chess_target.is_died.connect(handle_target_death)
+			if chess_target.is_died.connect(handle_target_death) != OK:
+				print("chess_target.is_died connect fail!")
 		if chess_target.has_signal("attack_evased"):
-			chess_target.attack_evased.connect(handle_target_evased_attack)
+			if chess_target.attack_evased.connect(handle_target_evased_attack) != OK:
+				print("chess_target.attack_evased connect fail!")
 	else:
 		chess_target = null
 	
@@ -1259,7 +1303,8 @@ func take_damage(target:Obstacle, attacker: Obstacle, damage_value: float):
 		target.animated_sprite_2d.play("die")
 		await target.animated_sprite_2d.animation_finished
 		target.visible = false
-		target.is_died.emit(target, attacker)
+		_move_chess(target, grave, grave.get_first_empty_tile())
+		target.is_died.emit()
 		attacker.kill_chess.emit(attacker, target)
 				
 	else:
@@ -1466,7 +1511,7 @@ func handle_projectile_hit(chess:Obstacle, attacker:Obstacle):
 	#Placeholder for chess passive ability on projectile hit
 	pass
 
-func handle_target_death(chess: Obstacle):
+func handle_target_death():
 	if status == STATUS.RANGED_ATTACK or status == STATUS.MELEE_ATTACK:
 		chess_target = null
 		attack_target_line.visible = false
@@ -1477,7 +1522,8 @@ func handle_target_death(chess: Obstacle):
 		chess_target = _find_new_target(chess_target_choice)
 
 	if chess_target:
-		chess_target.is_died.connect(handle_target_death)
+		if chess_target.is_died.connect(handle_target_death) != OK:
+			print("chess_target.is_died connect fail!")
 		if line_visible:
 			attack_target_line.visible = true
 
@@ -1585,8 +1631,10 @@ func connect_to_data_manager():
 				DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "cast_spell_count"], 1)
 	)
 
-	is_died.connect(DataManagerSingleton.record_death_chess.unbind(1))
-	kill_chess.connect(DataManagerSingleton.handle_chess_kill)
+	if is_died.connect(DataManagerSingleton.record_death_chess.bind(self)) != OK:
+		print("is_died connect fail!")
+	if kill_chess.connect(DataManagerSingleton.handle_chess_kill) != OK:
+		print("kill_chess connect fail!")
 
 func get_current_tile(obstacle : Obstacle):
 	force_update_transform()
