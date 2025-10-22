@@ -91,7 +91,8 @@ var animation_count:= 0
 func _ready():
 	reset_game()
 	
-	restart_button.pressed.connect(_on_restart_button_pressed)
+	if restart_button.pressed.connect(_on_restart_button_pressed) != OK:
+		print("restart_button connect fail!")
 	update_drop_interval_label()
 	left_button.pressed.connect(
 		func():
@@ -346,8 +347,8 @@ func lock_piece():
 	if lines_cleared > 0:
 		score += lines_cleared * 100
 		score_label.text = "Score: " + str(score)
-	
-	# Update board and spawn new piece
+
+		# Update board and spawn new piece
 	draw_board()
 	spawn_new_piece()
 
