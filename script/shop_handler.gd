@@ -67,13 +67,15 @@ func _ready():
 		func(chess):
 			debug_handler.write_log("LOG", chess.chess_name + " is bought.")
 	)
-	chess_bought.connect(DataManagerSingleton.handle_chess_bought)
+	if chess_bought.connect(DataManagerSingleton.handle_chess_bought) != OK:
+		print("chess_bought connect fail!")
 	chess_sold.connect(
 		func(chess):
 			debug_handler.write_log("LOG", chess.chess_name + " is sold.")
 			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess.faction, chess.chess_name, "sell_count"], 1)
 	)
-	chess_sold.connect(DataManagerSingleton.handle_chess_sold)
+	if chess_sold.connect(DataManagerSingleton.handle_chess_sold) != OK:
+		print("chess_sold connect fail!")
 	coins_increased.connect(
 		func(value, reason):
 			debug_handler.write_log("LOG", "Coins increase by " + str(value) + " because of " + reason + ".")
@@ -86,7 +88,8 @@ func _ready():
 		func(value):
 			debug_handler.write_log("LOG", "Shop upgrade to level: " + str(value) + ".")
 	)
-	chess_refreshed.connect(DataManagerSingleton.handle_chess_refreshed)
+	if chess_refreshed.connect(DataManagerSingleton.handle_chess_refreshed) != OK:
+		print("chess_refreshed connect fail!")
 
 	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player].has("debug_mode"):
 		base_income = 999 if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] else 10
