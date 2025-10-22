@@ -34,7 +34,8 @@ func _ready():
 
 	debug_mode_button.set_pressed(DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"])
 	# 修复：使用 toggled 信号而不是 pressed 信号
-	debug_mode_button.toggled.connect(faction_lock_button_pressed.bind(debug_mode_button))
+	if debug_mode_button.toggled.connect(faction_lock_button_pressed.bind(debug_mode_button)) != OK:
+		print("debug_mode_button.toggled connect fail!")
 
 	var faction_lock_array := [forestProtector_faction_lock, holy_faction_lock, undead_faction_lock, demon_faction_lock]
 	
@@ -42,7 +43,8 @@ func _ready():
 		var faction_name = button_index.get_name().replace("_faction_lock", "")
 		button_index.set_pressed(current_player_upgrade["faction_locked"][faction_name])
 		# 修复：使用 toggled 信号而不是 pressed 信号
-		button_index.toggled.connect(faction_lock_button_pressed.bind(button_index))
+		if button_index.toggled.connect(faction_lock_button_pressed.bind(button_index)) != OK:
+			print("button_index.toggled connect fail!")
 	
 	current_difficulty = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["difficulty"]
 	if difficulty_array.has(current_difficulty):
