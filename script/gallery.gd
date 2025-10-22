@@ -211,7 +211,8 @@ func create_chess_button(faction_index: String, chess_index: String, current_pla
 				chess_button.set_meta("faction", faction_index)
 				chess_button.set_meta("chess_name", chess_index)
 				chess_button.z_index = 25
-				chess_button.pressed.connect(_on_chess_button_pressed.bind(chess_button))
+				if chess_button.pressed.connect(_on_chess_button_pressed.bind(chess_button)) != OK:
+					print("chess_button.pressed connect fail!")
 				chess_button.set_stretch_mode(0)
 				chess_button.visible = true
 				chess_button.mouse_filter = Control.MOUSE_FILTER_PASS
