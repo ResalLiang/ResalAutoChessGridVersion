@@ -64,14 +64,16 @@ func _ready() -> void:
 	game_faction_path_upgrade = get_parent().faction_path_upgrade
 	#game_faction_path_upgrade = faction_path_upgrade_template.duplicate(true)
 	
-	button_actived.connect(handle_button_actived)
+	if button_actived.connect(handle_button_actived) != OK:
+		print("button_actived connect fail!")
 	
 	var total_page = faction_array.size()
 	
 	for node in bonus_button_container.get_children():
 		if not node is TextureButton:
 			continue
-		node.pressed.connect(on_path_bonus_pressed.bind(node))
+		if node.pressed.connect(on_path_bonus_pressed.bind(node)) != OK:
+			print("node.pressed connect fail!")
 	
 	
 	handle_button_actived()
