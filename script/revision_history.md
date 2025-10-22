@@ -1,3 +1,27 @@
+# **V1.00.07:**
+2025/10/22
+
+---
+
+
+## **Add:**
+- chess rotate animation before attack
+
+## **Remove:**
+- 
+
+## **Modify:**
+- correct merge function
+- correct forestProtector path2 bonus
+- implement connect check for all signals
+
+## **Balance:**
+- 
+
+## **Plan:**
+
+---
+
 # **V1.00.06:**
 2025/10/20
 
@@ -22,7 +46,6 @@
 
 ---
 
-# **V1.00.04:**
 # **V1.00.05:**
 2025/10/15
 
