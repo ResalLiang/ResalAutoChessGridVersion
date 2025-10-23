@@ -35,7 +35,7 @@ func _ready() -> void:
 	if effect_list_updated.connect(refresh_effects) != OK:
 		print("effect_list_updated connect fail!")
 
-func search_effect(search_effect_name: String):
+func search_effect(search_effect_name: String) -> ChessEffect:
 	if effect_list.size() > 0:
 		for effect_index in effect_list:
 			if effect_index.effect_name == search_effect_name:
@@ -45,7 +45,7 @@ func search_effect(search_effect_name: String):
 	else:
 		return null
 
-func add_to_effect_array(chess_effect: ChessEffect):
+func add_to_effect_array(chess_effect: ChessEffect) -> void:
 	if not chess_effect.check_effect_timeout():
 		return
 		
@@ -57,7 +57,7 @@ func add_to_effect_array(chess_effect: ChessEffect):
 	effect_list.append(chess_effect)
 	effect_list_updated.emit()
 
-func turn_start_timeout_check():
+func turn_start_timeout_check() -> void:
 	if effect_list.size() != 0:
 		var new_effect_list = effect_list.duplicate()
 		effect_list = []
@@ -71,7 +71,7 @@ func turn_start_timeout_check():
 
 	refresh_effects()
 
-func refresh_effects():
+func refresh_effects() -> void:
 
 	is_immunity = false
 	is_spell_immunity = false
@@ -106,7 +106,7 @@ func refresh_effects():
 
 		active_single_effect(effect_index)
 
-func effect_clean():
+func effect_clean() -> void:
 
 	var new_effect_list := []
 	if effect_list.size() != 0:
@@ -118,7 +118,7 @@ func effect_clean():
 
 	refresh_effects()
 
-func active_single_effect(chess_effect: ChessEffect):
+func active_single_effect(chess_effect: ChessEffect) -> void:
 
 	is_immunity = is_immunity or chess_effect.buff_dict["is_immunity"]
 	is_spell_immunity = is_spell_immunity or chess_effect.buff_dict["is_spell_immunity"]
