@@ -81,8 +81,8 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 
 	damage_result = max(damage_result, min_damage_value)
 
-	if attacker is Chess:
-		life_steal_result = attacker.life_steal_rate * damage_result
+	if (attacker is Chess and attacker.life_steal_rate > 0) or (attacker.faction == "forestProtector" and attacker.chess_name == "SatyrWarrior"):
+		life_steal_result = (attacker.life_steal_rate * damage_result) if attacker.life_steal_rate > 0 else (damage_result * 0.2 * attacker.chess_level)
 
 	if critical_damage:
 		attacker.critical_damage_applied.emit(attacker, target, damage_result)
@@ -95,7 +95,8 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 		attacker.damage_taken.emit(attacker, target, target.reflect_damage)
 	
 	if life_steal_result > 0:
-		attacker.take_heal(life_steal_result, attacker)
+		attacker._apply_heal(attacker, life_steal_result)
+		# attacker.take_heal(life_steal_result, attacker)
 		
 	#if attacker != target and damage_type != "Magic_attack" and attacker is Chess:
 		#attacker.gain_mp(damage_result)
