@@ -22,14 +22,14 @@ signal villager_released(villager_name: String, release_position: Vector2)
 func _ready() -> void:
 	pass
 	
-func setup_before_turn_start():
-	# var chesses := get_tree().get_nodes_in_group("chess_group")
-	# for obstacle: Obstacle in chesses:
-	# 	setup_chess(obstacle)
-	for area_index in play_areas:
-		for chess_index in area_index.unit_grid.get_all_units():
-			if is_instance_valid(chess_index) and chess_index is Chess and chess_index.status != chess_index.STATUS.DIE:
-				setup_chess(chess_index)
+# func setup_before_turn_start():
+# 	# var chesses := get_tree().get_nodes_in_group("chess_group")
+# 	# for obstacle: Obstacle in chesses:
+# 	# 	setup_chess(obstacle)
+# 	for area_index in play_areas:
+# 		for chess_index in area_index.unit_grid.get_all_units():
+# 			if is_instance_valid(chess_index) and chess_index is Chess and chess_index.status != chess_index.STATUS.DIE:
+# 				setup_chess(chess_index)
 		
 func setup_chess(obstacle: Obstacle) -> void:
 	if obstacle.drag_handler.drag_started.connect(_on_chess_drag_started.bind(obstacle)) != OK:
