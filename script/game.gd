@@ -405,7 +405,7 @@ func _ready():
 		func(chess: Obstacle, play_area: PlayArea, tile: Vector2i):
 			if not is_game_turn_start and not merge_start:
 				await check_chess_merge()
-				faction_bonus_manager.bonus_refresh()
+				# faction_bonus_manager.bonus_refresh()
 				update_population(true)
 	)
 	
@@ -493,7 +493,7 @@ func _ready():
 				get_tree().paused = true
 				await skill_tree.tree_exiting
 				get_tree().paused = false
-				faction_bonus_manager.bonus_refresh()
+				# faction_bonus_manager.bonus_refresh()
 				update_population(true)
 	)
 
@@ -708,23 +708,15 @@ func new_round_prepare_start():
 		load_arena_team()
 		
 	update_population(true)
-	chess_mover.setup_before_turn_start()
+	# chess_mover.setup_before_turn_start()
 	shop_handler.turn_start_income(current_round)
 
 func new_round_prepare_end():
 	game_turn_started.emit()
 	battle_meter.battle_data = {}
-	#if saved_arena_team.size() == 0:
+
 	team_dict[Team.TEAM1_FULL] = []
-	var player_max_hp_sum = 0
-	# for node in get_tree().get_nodes_in_group("chess_group"):
-	# 	if node is Obstacle and node.current_play_area == node.play_areas.playarea_arena and node.team == 1:
-	# 		team_dict[Team.TEAM1_FULL].append(node)
-	# 		player_max_hp_sum += node.max_hp
-	for chess_index in arena.unit_grid.get_all_units():
-		if chess_index is Chess and chess_index.team == 1:
-			team_dict[Team.TEAM1_FULL].append([chess_index, false])
-			player_max_hp_sum += chess_index.max_hp			
+		
 	save_arena_team()
 
 	# blacksmith can temparily change chess to its upgrade version for 1 round
@@ -837,24 +829,6 @@ func array_available_sum(accum, node):
 func handle_character_action_finished():
 	if active_chess:
 		active_chess.is_active = false
-		#active_chess.action_finished.disconnect(handle_character_action_finished)
-
-	#refresh chess status
-
-	# var new_team_dict: Dictionary = {
-	# 	# Team.TEAM1: [],
-	# 	# Team.TEAM2: [],
-	# 	Team.TEAM1_FULL: [],
-	# 	Team.TEAM2_FULL: []
-	# }
-
-	# for team_index in team_dict.keys():
-	# 	for chess_index in team_dict[team_index]:
-	# 		if DataManagerSingleton.check_obstacle_valid(chess_index):
-	# 			new_team_dict[team_index].append(chess_index)
-	# 		else:
-	# 			chess_index.queue_free()
-	# 	team_dict[team_index] = new_team_dict[team_index]
 
 	if current_team == Team.TEAM1_FULL and team_dict[Team.TEAM2_FULL].reduce(array_available_sum, 0) != 0:
 		current_team = Team.TEAM2_FULL
@@ -1245,8 +1219,10 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, chess
 		)
 
 	if team == 1 and summon_arena != shop:
+		add_to_group("ally")
 		team_dict[Team.TEAM1_FULL].append([summoned_character, false])
 	elif team == 2 and summon_arena != shop:
+		add_to_group("enemy")
 		team_dict[Team.TEAM2_FULL].append([summoned_character, false])
 		
 	return summoned_character
