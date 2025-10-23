@@ -246,8 +246,6 @@ var game_root_scene
 func _ready():
 	
 	chess_mover = arena.get_parent().get_parent().chess_mover
-	
-	faction_bonus_manager = arena.get_parent().get_parent().faction_bonus_manager
 		
 	drag_handler.dragging_enabled = dragging_enabled
 	
@@ -255,6 +253,8 @@ func _ready():
 	add_child(effect_handler)
 	
 	game_root_scene = arena.get_parent().get_parent()
+	
+	faction_bonus_manager = game_root_scene.faction_bonus_manager
 	
 	# Load animations
 	_load_animations()
@@ -293,9 +293,6 @@ func _ready():
 		print("drag_handler.drag_dropped connect fail!")
 	if damage_taken.connect(take_damage) != OK:
 		print("damage_taken connect fail!")
-
-	if is_died.connect(_on_died) != OK:
-		print("is_died connect fail!")
 
 	if spell_casted.connect(AudioManagerSingleton.play_sfx.bind("spell_casted")) != OK:
 		print("spell_casted connect fail!")
@@ -346,17 +343,17 @@ func _ready():
 					_:
 						pass
 			elif attacker.faction == "forestProtector":
-				if min(game_root_scene.faction_bonus_manager.get_bonus_level("forestProtector", 1), game_root_scene.faction_path_upgrade["forestProtector"]["path2"]) == 0 and attacker.team == 1:
+				if min(faction_bonus_manager.get_bonus_level("forestProtector", 1), game_root_scene.faction_path_upgrade["forestProtector"]["path2"]) == 0 and attacker.team == 1:
 					return
 
-				if game_root_scene.faction_bonus_manager.get_bonus_level("forestProtector", 2) == 0 and attacker.team == 2:
+				if faction_bonus_manager.get_bonus_level("forestProtector", 2) == 0 and attacker.team == 2:
 					return
 
 				var current_bonus_level
 				if attacker.team == 1:
-					current_bonus_level = min(game_root_scene.faction_bonus_manager.get_bonus_level("forestProtector", 1), game_root_scene.faction_path_upgrade["forestProtector"]["path2"])
+					current_bonus_level = min(faction_bonus_manager.get_bonus_level("forestProtector", 1), game_root_scene.faction_path_upgrade["forestProtector"]["path2"])
 				elif attacker.team == 2:
-					current_bonus_level = game_root_scene.faction_bonus_manager.get_bonus_level("forestProtector", 2)
+					current_bonus_level = faction_bonus_manager.get_bonus_level("forestProtector", 2)
 
 				if current_bonus_level < 2:
 					return
@@ -751,7 +748,7 @@ func _handle_movement():
 	if faction_bonus_manager.get_bonus_level("dwarf", team) > 0:
 		astar_grid.diagonal_mode = 0
 	else:
-		astar_grid.diagonal_mode = 2
+		astar_grid.diagonal_mode = 1
 
 	move_started.emit(self, current_tile)
 	
@@ -803,6 +800,10 @@ func _handle_movement():
 
 		remain_step = move_steps
 		for current_step in range(move_steps):
+			if remain_step >= 2 and (move_path[current_step + 1] - move_path[current_step] AND move_path[current_step + 1] - move_path[current_step]) = Vector2.ZERO:
+				remain_step -= 1
+				total_movement += 1
+				continue
 			var target_pos = move_path[current_step + 1] + grid_offset
 			var target_tile = arena.get_tile_from_global(target_pos + get_parent().global_position)
 			if arena.unit_grid.is_tile_occupied(target_tile) or astar_grid.is_point_solid(target_pos) or remain_step <= 0 or global_position.distance_to(chess_target.global_position) <= attack_range:
@@ -943,7 +944,14 @@ func _handle_attack():
 	remain_attack_count -= 1
 	if current_distance_to_target <= attack_range and (not effect_handler.is_stunned and not effect_handler.is_disarmed):
 		var rotate_vector = chess_target.global_position - global_position
-		var rotate_degree = PI - atan2(rotate_vector.y, rotate_vector.x) if animated_sprite_2d.flip_h else atan2(rotate_vector.y, rotate_vector.x)
+		var rotate_degree := 0.0
+		if not animated_sprite_2d.flip_h:
+			rotate_degree = atan2(rotate_vector.y, rotate_vector.x)
+		elif atan2(rotate_vector.y, rotate_vector.x) < 0:
+			rotate_degree = atan2(rotate_vector.y, rotate_vector.x) + PI
+		elif atan2(rotate_vector.y, rotate_vector.x) >= 0:
+			rotate_degree = atan2(rotate_vector.y, rotate_vector.x) - PI
+
 		rotate_tween.tween_property(animated_sprite_2d, "rotation", rotate_degree, 0.2)
 		await rotate_tween.finished		
 		if not has_melee_target() and current_distance_to_target >= ranged_attack_threshold and animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
@@ -1042,8 +1050,9 @@ func _handle_attack():
 			action_timer.start()
 		
 		rotate_tween = create_tween()
-		rotate_tween.tween_property(animated_sprite_2d, "rotation", atan2(0, 0), 0.2)	
+		rotate_tween.tween_property(animated_sprite_2d, "rotation", atan2(0, 0), 0.15)	
 		await get_tree().create_timer(0.2).timeout
+		rotation = 0.0
 		rotate_tween.kill()
 		
 	else:
@@ -1055,7 +1064,7 @@ func _handle_attack():
 	if not DataManagerSingleton.check_obstacle_valid(chess_target) and chess_name == "CrossBowMan" and faction == "human":
 		remain_attack_count += 1
 				
-	if remain_attack_count > 0:
+	if remain_attack_count > 0 and chess_target.faction != "forestProtector" and chess_target.chess_name != "DryadDeer":
 		await get_tree().create_timer(0.2).timeout
 		await _handle_attack()
 	else:
@@ -1092,6 +1101,14 @@ func _find_new_target(target_choice) -> Obstacle:
 	var ally_chesses = all_chesses.filter(
 		func(chess): return chess != self and DataManagerSingleton.check_obstacle_valid(chess) and chess.team == team
 	)
+
+	if chess_name == "Pixie" and faction == "forestProtector":
+		var enemy_spellers = enemy_chesses.filter(
+			func(chess):
+				return chess.role == "speller"
+		)
+		if enemy_spellers.size() > 0:
+			enemy_chesses = enemy_spellers
 	
 	# Select target based on strategy
 	match target_choice:
@@ -1304,8 +1321,9 @@ func take_damage(target:Obstacle, attacker: Obstacle, damage_value: float):
 		target.animated_sprite_2d.play("die")
 		await target.animated_sprite_2d.animation_finished
 		target.visible = false
-		game_root_scene.chess_mover._move_chess(target, grave, grave.unit_grid.get_first_empty_tile())
+		_on_died()
 		target.is_died.emit()
+		game_root_scene.chess_mover._move_chess(target, grave, grave.unit_grid.get_first_empty_tile())
 		attacker.kill_chess.emit(attacker, target)
 				
 	else:
@@ -1322,6 +1340,27 @@ func take_heal(heal_value: float, healer: Obstacle):
 	if heal_value <= 0:
 		return
 
+	var satyr_bonus_level = faction_bonus_manager.get_bonus_level("satyr", team)
+	if satyr_bonus_level > 0:
+		var satyr_array
+		match team:
+			1:
+				satyr_array = get_nodes_in_group("ally").filter(func(node): return node.role == "satyr" and DataManagerSingleton.check_obstacle_valid(node))
+			2:
+				satyr_array = get_nodes_in_group("enemy").filter(func(node): return node.role == "satyr" and DataManagerSingleton.check_obstacle_valid(node))
+
+		var averaged_heal_value = heal_value * 0.3 * satyr_bonus_level
+		for node in satyr_array:
+			if node == self:
+				node.hp += heal_value
+			else:			
+				node.hp += averaged_heal_value
+
+			if healer != node:
+				healer.mp += averaged_heal_value
+				heal_taken.emit(node, healer, averaged_heal_value)
+		return
+
 	hp += max(0, heal_value)
 
 	if healer != self:
@@ -1331,6 +1370,19 @@ func take_heal(heal_value: float, healer: Obstacle):
 func gain_mp(mp_value: float):
 	if mp_value <= 0:
 		return
+	if faction == "forestProtector" and ["Satyr", "SatyrWarrior"].has(chess_name):
+		var satyr_druid_array = get_nodes_in_group("ally") if team == 1 else get_nodes_in_group("enemy")
+		
+		satyr_druid_array = satyr_druid_array.filter(
+			func(node):
+				if DataManagerSingleton.check_obstacle_valid(node) and node.faction == "forestProtector" and node.chess_name == "SatyrDruid":
+					return true
+				return false
+		)
+		if satyr_druid_array.size() > 0:
+			satyr_druid_array.pick_random().mp += mp_value
+			return
+
 	mp += mp_value
 
 func _cast_spell(spell_tgt: Obstacle) -> bool:
@@ -1373,8 +1425,9 @@ func chess_apply_damage(): # for animation player only
 		deal_damage.emit(self, chess_target, damage, "Melee_attack", [])
 
 func _apply_heal(heal_target: Obstacle = chess_spell_target, heal_value: float = damage):
-	if heal_target and heal_value > 0:
+	if DataManagerSingleton.check_obstacle_valid(heal_target) and heal_value > 0:
 		#Placeholder for chess passive ability on apply heal
+
 		heal_target.take_heal(heal_value, self)
 		if heal_target != self:
 			heal_applied.emit(self, heal_target, heal_value)
@@ -1442,6 +1495,17 @@ func _on_died():
 			await king_index.effect_animation_display("DwarfKingPassive", arena, get_current_tile(king_index)[1], "RightTop")
 			king_index.effect_handler.refresh_effects()	
 
+	elif chess_name == "Pixie" and faction == "forestProtector":
+		var enemy_spellers = arena.unit_grid.get_all_units().filter(
+			func(obstacle):
+				if DataManagerSingleton.check_chess_valid(obstacle) and obstacle.role == "speller" and obstacle.team != team:
+					if global_position.distance_to(obstacle.global_position) <= 50:
+						return true
+				return false
+		}
+		if enemy_spellers.size() > 0:
+			for chess_index in enemy_spellers:
+				obstacle.mp *= (1 - 0.3 * chess_level)
 	
 	#Placeholder for chess passive ability on died
 
@@ -1611,6 +1675,18 @@ func handle_special_effect(target: Obstacle, attacker: Obstacle):
 			await target.effect_animation_display("ShieldBreakerKnock", arena, get_current_tile(target)[1], "RightTop")
 			#target.effect_handler.refresh_effects()			
 
+	elif attacker.faction == "forestProtector" and attacker.chess_name == "DryadHuntress":
+		var target_buff_list = target.effect_handler.effect_list.filter(
+			func(effect_index):
+				if effect_index.effect_type == "Buff":
+					return true
+				return false
+		)
+		if target_buff_list.size() > 0:
+			var random_buff = target_buff_list.pick_random()
+			target.effect_handler.effect_list.erase(random_buff)
+			target.effect_handler.refresh_effects()
+			await target.effect_animation_display("ShieldBreakerKnock", arena, get_current_tile(target)[1], "Center")
 
 func connect_to_data_manager():
 	# DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["XX"], value)
