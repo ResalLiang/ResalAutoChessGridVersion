@@ -8501,4 +8501,47 @@ offset_top = 142.0
 offset_right = 99.0
 offset_bottom = 216.0
 
+[node name="debug_add_chess" type="Node2D" parent="."]
+z_index = 50
+position = Vector2(412, 86)
+
+[node name="chess_faction_option" type="OptionButton" parent="debug_add_chess"]
+z_index = 50
+offset_right = 32.0
+offset_bottom = 20.0
+theme_override_fonts/font = ExtResource("42_l2xpq")
+theme_override_font_sizes/font_size = 8
+metadata/_edit_use_anchors_ = true
+
+[node name="chess_name_option" type="OptionButton" parent="debug_add_chess"]
+z_index = 50
+offset_top = 27.0
+offset_right = 32.0
+offset_bottom = 47.0
+theme_override_fonts/font = ExtResource("42_l2xpq")
+theme_override_font_sizes/font_size = 8
+metadata/_edit_use_anchors_ = true
+
+[node name="add_to_ally" type="Button" parent="debug_add_chess"]
+z_index = 50
+offset_left = -1.0
+offset_top = 53.0
+offset_right = 43.0
+offset_bottom = 84.0
+theme_override_fonts/font = ExtResource("42_l2xpq")
+theme_override_font_sizes/font_size = 8
+text = "ally"
+metadata/_edit_use_anchors_ = true
+
+[node name="add_to_enemy" type="Button" parent="debug_add_chess"]
+z_index = 50
+offset_left = 56.0
+offset_top = 54.0
+offset_right = 118.0
+offset_bottom = 85.0
+theme_override_fonts/font = ExtResource("42_l2xpq")
+theme_override_font_sizes/font_size = 8
+text = "enemy"
+metadata/_edit_use_anchors_ = true
+
 [connection signal="pressed" from="back_button" to="." method="_on_back_button_pressed"]

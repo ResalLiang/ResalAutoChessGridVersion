@@ -1959,3 +1959,17 @@ func release_villager(villager_name: String) -> void:
 		"Blacksmith":
 			var current_blacksmith_turn = get_meta("blacksmith_turn", 0) + 1
 			set_meta("blacksmith_turn", current_blacksmith_turn)
+
+func add_debug_chess(chess_side: String) -> void:
+	var chess_faction_option_index := chess_faction_option.selected
+	var debug_chess_faction := chess_faction_option.get_item_text(chess_faction_option_index)
+	var chess_name_option_index := chess_name_option.selected
+	var debug_chess_name := chess_name_option.get_item_text(chess_name_option_index)
+
+# summon_chess(summon_chess_faction: String, summon_chess_name: String, chess_level: int, team: int, summon_arena: PlayArea, summon_position: Vector2i):
+	if arena.unit_grid.is_grid_full():
+		return
+
+	var debug_chess_tile = arena.unit_grid.get_left_rand_empty_tile() if chess_side == "ally" else arena.unit_grid.get_right_rand_empty_tile()
+	var debug_chess_team = 1 if chess_side == "ally" else 2
+	summon_chess(debug_chess_faction, debug_chess_name, 1, debug_chess_team, arena, debug_chess_tile)

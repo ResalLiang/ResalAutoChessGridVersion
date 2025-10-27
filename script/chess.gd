@@ -1602,7 +1602,7 @@ func handle_projectile_hit(obstacle:Obstacle, projectile: Projectile):
 			damage_finished = true
 				
 		# await obstacle.take_damage(damage, attacker)
-		attacker.deal_damage.emit(self, obstacle, projectile.damage, damage_type, [])
+		deal_damage.emit(self, obstacle, projectile.damage, damage_type, [])
 
 func handle_target_death():
 	if status == STATUS.RANGED_ATTACK or status == STATUS.MELEE_ATTACK:
@@ -2214,18 +2214,19 @@ func shadow_wave(spell_target: Obstacle) -> bool:
 							return false
 						return true
 				)
-				var new_target := all_chesses.pick_random()
+				var new_target = all_chesses.pick_random()
 				spell_projectile.direction = (new_target - obstacle).normalized()
 	)
+	return true
 
-func entangling_roots() -> void:
+func entangling_roots() -> bool:
 	var all_chesses = arena.unit_grid.get_all_units()
 	var all_enemy = all_chesses.filter(func(obstacle): return (DataManagerSingleton.check_chess_valid(obstacle) and obstacle.team != team))
 	var enemy_nearby = all_enemy.filter(
 		func(node):
 			return node.global_position.distance_to(global_position) < 50 * chess_level
 	)
-	if enemy_chesses.size() <= 0:
+	if enemy_nearby.size() <= 0:
 		return false
 	for chess_index in enemy_nearby:
 		var effect_instance = ChessEffect.new()

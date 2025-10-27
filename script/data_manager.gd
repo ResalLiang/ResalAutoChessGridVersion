@@ -74,8 +74,8 @@ var version := "V1.00.06"
 
 var expiration_date := Time.get_unix_time_from_datetime_dict({
 		"year": 2025,
-		"month": 10,
-		"day": 25,
+		"month": 11,
+		"day": 30,
 		"hour": 0,
 		"minute": 0,
 		"second": 0

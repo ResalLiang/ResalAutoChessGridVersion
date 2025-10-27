@@ -604,7 +604,7 @@ func update_effect():
 	max_hp = base_max_hp + effect_handler.max_hp_modifier
 	max_mp = base_max_mp + effect_handler.max_mp_modifier
 
-func handle_projectile_hit(chess:Obstacle, attacker:Obstacle):
+func handle_projectile_hit(obstacle:Obstacle, projectile: Projectile):
 	#Placeholder for chess passive ability on projectile hit
 	pass
 
