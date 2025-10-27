@@ -58,6 +58,13 @@ const faction_bonus_bar_scene = preload("res://scene/faction_bonus_bar.tscn")
 @onready var faction_bonus_button: Button = $tilemap/ui/faction_bonus_button
 @onready var enemy_faction_container: VBoxContainer = $enemy_faction_container
 
+@onready var debug_add_chess: Node2D = $debug_add_chess
+@onready var chess_faction_option: OptionButton = $debug_add_chess/chess_faction_option
+@onready var chess_name_option: OptionButton = $debug_add_chess/chess_name_option
+@onready var add_to_ally: Button = $debug_add_chess/add_to_ally
+@onready var add_to_enemy: Button = $debug_add_chess/add_to_enemy
+
+
 enum Team { TEAM1_FULL, TEAM2_FULL}
 enum ChessActiveOrder { HIGH_HP, LOW_HP, NEAR_CENTER, FAR_CENTER, BUY_SEQ, RE_BUY_SEQ }
 var current_team: Team
@@ -242,6 +249,7 @@ func _ready():
 	
 	if round_finished.connect(handle_round_finished) != OK:
 		print("round_finished connect fail!")
+
 	game_turn_started.connect(
 		func():
 			game_start_button.disabled = true
@@ -268,8 +276,10 @@ func _ready():
 				if node is Obstacle:
 					node.dragging_enabled =  true
 	)
+
 	if game_start_button.pressed.connect(new_round_prepare_end) != OK:
 		print("game_start_button.pressed connect fail!")
+
 	game_restart_button.pressed.connect(
 		func():
 			var alternative_choice = alternative_choice_scene.instantiate()
@@ -285,12 +295,14 @@ func _ready():
 				pass
 			alternative_choice.queue_free()		
 	)
+
 	if shop_refresh_button.pressed.connect(shop_handler.shop_manual_refresh) != OK:
 		print("shop_refresh_button.pressed connect fail!")
 	if shop_freeze_button.pressed.connect(shop_handler.shop_freeze) != OK:
 		print("shop_freeze_button.pressed connect fail!")
 	if shop_upgrade_button.pressed.connect(shop_handler.shop_upgrade) != OK:
 		print("shop_upgrade_button.pressed connect fail!")
+
 	chess_order_hp_high.pressed.connect(
 		func():
 			current_chess_active_order = ChessActiveOrder.HIGH_HP
@@ -326,8 +338,10 @@ func _ready():
 				shop_upgrade_button.global_position.x = -40
 				
 	)
+
 	if shop_handler.coins_decreased.connect(DataManagerSingleton.handle_coin_spend) != OK:
 		print("shop_handler.coins_decreased connect fail!")
+
 	shop_handler.coins_decreased.connect(
 		func(value, reason):
 			remain_coins_label.text = "Remaining Coins   : " + str(shop_handler.remain_coins)
@@ -512,6 +526,31 @@ func _ready():
 	center_point = Vector2(tile_size.x * 16 / 2, tile_size.y * 16 / 2)
 	
 	debug_label.visible = DataManagerSingleton.player_data["debug_mode"]
+
+	debug_add_chess.visible = DataManagerSingleton.player_data["debug_mode"]
+	var option_index := 0
+	chess_faction_option.clear()
+	for faction_index in DataManagerSingleton.get_chess_data().keys():
+		chess_faction_option.add_item(faction_index, option_index)
+		option_index += 1
+	option_index = 0
+	chess_name_option.clear()
+	for chess_index in DataManagerSingleton.get_chess_data()["human"].keys():
+		chess_name_option.add_item(chess_index, option_index)
+		option_index += 1
+	chess_faction_option.item_selected.connect(
+		func(index):
+			var selected_faction = DataManagerSingleton.get_chess_data().keys()[index]
+			var chess_option_index = 0
+			chess_name_option.clear()
+			for chess_index in DataManagerSingleton.get_chess_data()[selected_faction].keys():
+				chess_name_option.add_item(chess_index, chess_option_index)
+				chess_option_index += 1
+	)
+
+	add_to_ally.pressed.connect(add_debug_chess.bind("ally"))
+	add_to_enemy.pressed.connect(add_debug_chess.bind("enemy"))
+
 	tips_label.visible = false
 	
 	shop_handler.shop_refresh(shop_handler.shop_level)
@@ -710,6 +749,7 @@ func new_round_prepare_start():
 	update_population(true)
 	# chess_mover.setup_before_turn_start()
 	shop_handler.turn_start_income(current_round)
+	team_dict[Team.TEAM2_FULL] = []
 
 func new_round_prepare_end():
 	game_turn_started.emit()
@@ -734,16 +774,16 @@ func new_round_prepare_end():
 				chess_index.queue_free()
 				summon_chess(current_chess_faction, upgrade_chess_name, current_chess_level, 1, arena, current_chess_tile)
 		
-	team_dict[Team.TEAM2_FULL] = []
-	for node in get_tree().get_nodes_in_group("obstacle_group"):
-		if node is Obstacle and node.current_play_area == node.play_areas.playarea_arena and node.team != 1:
-			node.queue_free()
-	for chess_index in enemey_array:
-		var rand_x = randi_range(arena.unit_grid.size.x / 2, arena.unit_grid.size.x - 1)
-		var rand_y = randi_range(0, arena.unit_grid.size.y - 1)
-		if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
+	if team_dict[Team.TEAM2_FULL] == []:
+		for node in get_tree().get_nodes_in_group("obstacle_group"):
+			if node is Obstacle and node.current_play_area == node.play_areas.playarea_arena and node.team != 1:
+				node.queue_free()
+		for chess_index in enemey_array:
+			var rand_x = randi_range(arena.unit_grid.size.x / 2, arena.unit_grid.size.x - 1)
+			var rand_y = randi_range(0, arena.unit_grid.size.y - 1)
+			if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
 
-			var character = summon_chess(chess_index[0], chess_index[1], chess_index[3], 2, arena, Vector2i(rand_x, rand_y))
+				var character = summon_chess(chess_index[0], chess_index[1], chess_index[3], 2, arena, Vector2i(rand_x, rand_y))
 
 	for chess_index in chess_mover.phantom_chess_group:
 		if chess_index:
@@ -1735,12 +1775,14 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 			current_max_faction_bonus = current_min_faction_bonus
 		"Normal":
 			current_min_population = max(player_population, current_min_population)
-			current_max_population	= max(player_population, current_max_population)
+			current_max_population = max(player_population, current_max_population)
 		"Hard":
-			current_min_population = min(player_population, current_max_population)
+			current_min_population = max(player_population, current_min_population)
 			current_max_faction_bonus += 1
 		_:
 			pass
+
+	current_min_population = min(current_min_population, current_max_population)
 
 	while current_try_count <= max_try_count:
 		current_try_count += 1
@@ -1765,6 +1807,7 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 					generate_chess_level = j + 1
 					break
 
+			generate_chess_level = min(generate_chess_level, current_max_level)
 			enemy_array.append([generate_chess_faction, generate_chess_name, generate_chess_role, generate_chess_level])
 
 		# [chess_index.faction, chess_index.chess_name, chess_index.role, chess_index.chess_level]
@@ -1794,22 +1837,31 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 					break
 			enemy_faction_sum += faction_level
 
-		if (enemy_population >= current_min_population and enemy_population <= current_max_population and enemy_max_level <= current_max_level and enemy_faction_sum >= current_min_faction_bonus + player_faction_sum and enemy_faction_sum <= current_max_faction_bonus + player_faction_sum):
-			print("Success to generate enemy.")
-			return enemy_array
-			
+		if (enemy_population >= current_min_population and 
+			enemy_population <= current_max_population and 
+			enemy_max_level <= current_max_level and 
+			enemy_faction_sum >= current_min_faction_bonus + player_faction_sum and 
+			enemy_faction_sum <= current_max_faction_bonus + player_faction_sum):
+			break
+						
 		print("Total " + str(current_try_count) + " times try fail.")
-		
-	print("Generate enemy fail.")
-	print("current_max_shop_level : " + str(current_max_shop_level))
-	print("current_min_population : " + str(current_min_population))
-	print("current_max_population : " + str(current_max_population))
-	print("current_max_level : " + str(current_max_level))
-	print("current_level_distribution : " + str(current_level_distribution))
-	print("current_min_faction_bonus : " + str(current_min_faction_bonus))
-	print("current_max_faction_bonus : " + str(current_max_faction_bonus))
+	
+	if enemy_array == []:	
+		print("Generate enemy fail, use player last turn instead.")
+		print("current_max_shop_level : " + str(current_max_shop_level))
+		print("current_min_population : " + str(current_min_population))
+		print("current_max_population : " + str(current_max_population))
+		print("current_max_level : " + str(current_max_level))
+		print("current_level_distribution : " + str(current_level_distribution))
+		print("current_min_faction_bonus : " + str(current_min_faction_bonus))
+		print("current_max_faction_bonus : " + str(current_max_faction_bonus))
+		if team_dict[Team.TEAM1_FULL].size() != 0:
+			for node in team_dict[Team.TEAM1_FULL]:
+				enemy_array.append([node[0].faction, node[0].chess_name, node[0].role, node[0].chess_level])
+	else:
+		print("Generate enemy success.")
 
-	return []
+	return enemy_array
 	
 
 func add_bonus_bar_to_enemy_container(faction: String, count: int):
@@ -1829,8 +1881,32 @@ func add_bonus_bar_to_enemy_container(faction: String, count: int):
 		"dwarf":
 			faction_bonus_bar.bar_color = Color.RED
 			faction_bonus_bar.frame_color = "Copper"
-		_:
+		"forestProtector":
+			faction_bonus_bar.bar_color = Color.GREEN
+			faction_bonus_bar.frame_color = "Iron"
+		"warrior":
+			faction_bonus_bar.bar_color = Color.YELLOW
+			faction_bonus_bar.frame_color = "Copper"
+		"ranger":
+			faction_bonus_bar.bar_color = Color.GREEN
+			faction_bonus_bar.frame_color = "Copper"
+		"speller":
+			faction_bonus_bar.bar_color = Color.BLUE
+			faction_bonus_bar.frame_color = "Silver"
+		"pikeman":
 			faction_bonus_bar.bar_color = Color.RED
+			faction_bonus_bar.frame_color = "Silver"
+		"satyr":
+			faction_bonus_bar.bar_color = Color.BLUE
+			faction_bonus_bar.frame_color = "Copper"
+		"placeholder1":
+			faction_bonus_bar.bar_color = Color.RED
+			faction_bonus_bar.frame_color = "Iron"
+		"placeholder2":
+			faction_bonus_bar.bar_color = Color.YELLOW
+			faction_bonus_bar.frame_color = "Silver"
+		_:
+			faction_bonus_bar.bar_color = Color.YELLOW
 			faction_bonus_bar.frame_color = "Iron"
 			
 	faction_bonus_bar.bar_value = count

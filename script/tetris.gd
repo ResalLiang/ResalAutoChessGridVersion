@@ -14,6 +14,9 @@ const BOARD_WIDTH = 8
 const BOARD_HEIGHT = 16
 const CELL_SIZE = 16
 
+var chess_array_width := 8
+var chess_array_height := 10
+
 # Tetromino shape definitions
 const SHAPES = {
 	"I": [Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1)],
@@ -68,6 +71,9 @@ var rarity_index := 0:
 		line_up_chess()
 
 var game_started:= false
+var line_up_position: Array
+var line_up_sprite: Array
+var chess_size = Vector2i(20, 20)
 
 # Node references
 @onready var board_tilemap: TileMapLayer = $Board/TileMapLayer
@@ -93,10 +99,6 @@ var enemy_death_array
 var animation_count:= 0
 
 func _ready():
-	var chess_array_width := 8
-	var chess_array_height := 10
-	var chess_size = Vector2i(20, 20)
-
 
 	for y in range(chess_array_height):
 		for x in range(chess_array_width):
@@ -130,14 +132,14 @@ func _ready():
 		func():
 			rarity_index -= 1
 			rarity_index = max(0, rarity_index)
-			update_rarity_label()
+			# update_rarity_label()
 		
 	)
 	right_button2.pressed.connect(
 		func():
 			rarity_index += 1
 			rarity_index = min(4, rarity_index)
-			update_rarity_label()
+			# update_rarity_label()
 		
 	)
 	game_start_button.pressed.connect(
@@ -154,6 +156,7 @@ func _ready():
 
 	enemy_death_array = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["enemy_death_array"]
 
+	update_rarity_label()
 	line_up_chess()
 	
 func reset_game():
@@ -420,21 +423,19 @@ func line_up_chess():
 			node.queue_free()
 
 	line_up_sprite = []
-
-
-	enemy_death_array = enemy_death_array.filter(
-		func(node):
-			var node_faction = node[0]
-			var node_chess_name = node[1]
-			if not (DataManagerSingleton.get_chess_data().keys().has(node_faction) and DataManagerSingleton.get_chess_data()[node_faction].keys().has(node_chess_name)):
-				return false
-
+	
+	var new_enemy_death_array = []
+	while enemy_death_array.size() >= 2:
+		var node_faction = enemy_death_array.pop_front()
+		var node_chess_name = enemy_death_array.pop_front()
+		if DataManagerSingleton.get_chess_data().keys().has(node_faction) and DataManagerSingleton.get_chess_data()[node_faction].keys().has(node_chess_name):
 			# const RARITY_ARRY = ["Common", "Uncommon", "Rare", "Epic", "Legenadry"]
-			if RARITY_ARRY.slice(0, rarity_index).has(DataManagerSingleton.get_chess_data()[node_faction][node_chess_name]["rarity"]):
-				return true
-			return false
-	)
-	if enemy_death_array.size() == 0:
+			if RARITY_ARRY.slice(0, rarity_index + 1).has(DataManagerSingleton.get_chess_data()[node_faction][node_chess_name]["rarity"]):		
+				new_enemy_death_array += [node_faction, node_chess_name]
+
+	if new_enemy_death_array.size() != 0:
+		enemy_death_array = new_enemy_death_array
+	else:
 		return
 	 
 	animation_count = 0

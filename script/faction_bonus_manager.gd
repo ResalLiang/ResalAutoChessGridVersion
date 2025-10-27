@@ -47,7 +47,8 @@ var player_faction_count_template : Dictionary = {
 		"pikeman" : [],
 		"ranger" : [],
 		"knight" : [],
-		"speller" : []
+		"speller" : [],
+		"satyr" : []
 	},
 	2 : {
 		"elf" : [],
@@ -62,7 +63,8 @@ var player_faction_count_template : Dictionary = {
 		"pikeman" : [],
 		"ranger" : [],
 		"knight" : [],
-		"speller" : []
+		"speller" : [],
+		"satyr" : []
 	}
 }
 
@@ -83,7 +85,8 @@ var player_bonus_level_dict_template : Dictionary = {
 		"pikeman" : 0,
 		"ranger" : 0,
 		"knight" : 0,
-		"speller" : 0
+		"speller" : 0,
+		"satyr" : 0
 	},
 	2 : {
 		"elf" : 0,
@@ -98,7 +101,8 @@ var player_bonus_level_dict_template : Dictionary = {
 		"pikeman" : 0,
 		"ranger" : 0,
 		"knight" : 0,
-		"speller" : 0
+		"speller" : 0,
+		"satyr" : 0
 	}
 }
 
@@ -181,8 +185,32 @@ func add_bonus_bar_to_container(faction: String, level: int, bonus_count: int):
 		"dwarf":
 			faction_bonus_bar.bar_color = Color.RED
 			faction_bonus_bar.frame_color = "Copper"
-		_:
+		"forestProtector":
+			faction_bonus_bar.bar_color = Color.GREEN
+			faction_bonus_bar.frame_color = "Iron"
+		"warrior":
+			faction_bonus_bar.bar_color = Color.YELLOW
+			faction_bonus_bar.frame_color = "Copper"
+		"ranger":
+			faction_bonus_bar.bar_color = Color.GREEN
+			faction_bonus_bar.frame_color = "Copper"
+		"speller":
+			faction_bonus_bar.bar_color = Color.BLUE
+			faction_bonus_bar.frame_color = "Silver"
+		"pikeman":
 			faction_bonus_bar.bar_color = Color.RED
+			faction_bonus_bar.frame_color = "Silver"
+		"satyr":
+			faction_bonus_bar.bar_color = Color.BLUE
+			faction_bonus_bar.frame_color = "Copper"
+		"placeholder1":
+			faction_bonus_bar.bar_color = Color.RED
+			faction_bonus_bar.frame_color = "Iron"
+		"placeholder2":
+			faction_bonus_bar.bar_color = Color.YELLOW
+			faction_bonus_bar.frame_color = "Silver"
+		_:
+			faction_bonus_bar.bar_color = Color.YELLOW
 			faction_bonus_bar.frame_color = "Iron"
 			
 	faction_bonus_bar.bar_value = bonus_level_list[faction][level - 1]

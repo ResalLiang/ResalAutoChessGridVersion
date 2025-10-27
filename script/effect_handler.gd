@@ -35,7 +35,7 @@ func _ready() -> void:
 	if effect_list_updated.connect(refresh_effects) != OK:
 		print("effect_list_updated connect fail!")
 
-func search_effect(search_effect_name: String) -> ChessEffect:
+func search_effect(search_effect_name: String):
 	if effect_list.size() > 0:
 		for effect_index in effect_list:
 			if effect_index.effect_name == search_effect_name:

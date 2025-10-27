@@ -800,7 +800,7 @@ func _handle_movement():
 
 		remain_step = move_steps
 		for current_step in range(move_steps):
-			if remain_step >= 2 and (move_path[current_step + 1] - move_path[current_step] AND move_path[current_step + 1] - move_path[current_step]) = Vector2.ZERO:
+			if (remain_step >= 2) and (move_path[current_step + 1] - move_path[current_step]).dot(move_path[current_step + 1] - move_path[current_step]) == 0:
 				remain_step -= 1
 				total_movement += 1
 				continue
@@ -969,8 +969,8 @@ func _handle_attack():
 					func(attacker_name):
 						debug_handler.write_log("LOG", attacker_name + "'s projectile has vanished.")
 				)
-				chess_projectile.projectile_hit.emit(handle_special_effect)
-
+				chess_projectile.projectile_hit.connect(handle_projectile_hit)
+				chess_projectile.projectile_hit.connect(handle_special_effect.unbind(1))
 				await chess_projectile.projectile_vanished
 				
 
@@ -980,7 +980,7 @@ func _handle_attack():
 				ranged_attack_started.emit(self)
 				deal_damage.emit(self, chess_target, damage, "Ranged_attack", [])
 				if not target_evased_attack:
-					await handle_special_effect(chess_target, self)
+					await handle_special_effect(chess_target)
 					
 				animated_sprite_2d.set_animation("idle")
 				
@@ -1010,7 +1010,7 @@ func _handle_attack():
 				await melee_attack_animation.animation_finished
 				
 				if not target_evased_attack:
-					await handle_special_effect(chess_target, self)
+					await handle_special_effect(chess_target)
 				
 				if faction_bonus_manager.get_bonus_level("elf", team) > 1 and target_evased_attack and chess_target.faction == "elf" :
 					await elf_path3_bonus()
@@ -1030,7 +1030,7 @@ func _handle_attack():
 				deal_damage.emit(self, chess_target, damage, "melee_attack", [])	
 
 				if not target_evased_attack:
-					await handle_special_effect(chess_target, self)
+					await handle_special_effect(chess_target)
 				
 				if faction_bonus_manager.get_bonus_level("elf", chess_target.team) > 1 and chess_target.faction == "elf" :
 					await elf_path3_bonus()
@@ -1345,9 +1345,9 @@ func take_heal(heal_value: float, healer: Obstacle):
 		var satyr_array
 		match team:
 			1:
-				satyr_array = get_nodes_in_group("ally").filter(func(node): return node.role == "satyr" and DataManagerSingleton.check_obstacle_valid(node))
+				satyr_array = get_tree().get_nodes_in_group("ally").filter(func(node): return node.role == "satyr" and DataManagerSingleton.check_obstacle_valid(node))
 			2:
-				satyr_array = get_nodes_in_group("enemy").filter(func(node): return node.role == "satyr" and DataManagerSingleton.check_obstacle_valid(node))
+				satyr_array = get_tree().get_nodes_in_group("enemy").filter(func(node): return node.role == "satyr" and DataManagerSingleton.check_obstacle_valid(node))
 
 		var averaged_heal_value = heal_value * 0.3 * satyr_bonus_level
 		for node in satyr_array:
@@ -1371,7 +1371,7 @@ func gain_mp(mp_value: float):
 	if mp_value <= 0:
 		return
 	if faction == "forestProtector" and ["Satyr", "SatyrWarrior"].has(chess_name):
-		var satyr_druid_array = get_nodes_in_group("ally") if team == 1 else get_nodes_in_group("enemy")
+		var satyr_druid_array = get_tree().get_nodes_in_group("ally") if team == 1 else get_tree().get_nodes_in_group("enemy")
 		
 		satyr_druid_array = satyr_druid_array.filter(
 			func(node):
@@ -1405,6 +1405,12 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 		cast_spell_result = dwarf_demolitionist_placebomb(100)
 	elif chess_name == "SpellSword" and faction == "elf":
 		cast_spell_result = mana_transfer()
+	elif chess_name == "Satyr" and faction == "forestProtector":
+		cast_spell_result = await powerful_heal()
+	elif chess_name == "SatyrDruid" and faction == "forestProtector":
+		cast_spell_result = await shadow_wave(spell_tgt)
+	elif chess_name == "TreantGuard" and faction == "forestProtector":
+		cast_spell_result = await entangling_roots()
 	elif spell_tgt !=  self:
 		cast_spell_result = true
 
@@ -1502,10 +1508,10 @@ func _on_died():
 					if global_position.distance_to(obstacle.global_position) <= 50:
 						return true
 				return false
-		}
+		)
 		if enemy_spellers.size() > 0:
 			for chess_index in enemy_spellers:
-				obstacle.mp *= (1 - 0.3 * chess_level)
+				chess_index.mp *= (1 - 0.3 * chess_level)
 	
 	#Placeholder for chess passive ability on died
 
@@ -1572,9 +1578,31 @@ func update_effect():
 
 		
 
-func handle_projectile_hit(chess:Obstacle, attacker:Obstacle):
-	#Placeholder for chess passive ability on projectile hit
-	pass
+func handle_projectile_hit(obstacle:Obstacle, projectile: Projectile):
+
+	var damage_type := "Ranged_attack"
+	if obstacle.team != team  and DataManagerSingleton.check_obstacle_valid(obstacle):
+		if projectile.animated_sprite_2d.sprite_frames.has_animation("die"):
+			var damage_finished = false
+			var die_animation = AnimatedSprite2D.new()
+			obstacle.add_child(die_animation)
+			die_animation.z_index = 60
+			die_animation.global_position = obstacle.global_position
+			die_animation.sprite_frames = projectile.animated_sprite_2d.sprite_frames.duplicate()
+			die_animation.play("die")
+		
+			var obstacle_tile = obstacle.get_current_tile(obstacle)[1]
+			for pos_offset in [Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(1, 1)]:
+				if obstacle.arena.unit_grid.units.has(obstacle_tile + pos_offset) and obstacle.arena.unit_grid.units[obstacle_tile + pos_offset] is Obstacle:
+					var indirect_obstacle = obstacle.arena.unit_grid.units[obstacle_tile + pos_offset]
+					if indirect_obstacle.status == indirect_obstacle.STATUS.DIE or indirect_obstacle.visible == false:
+						continue
+					# await indirect_obstacle.take_damage(damage, attacker)
+					deal_damage.emit(self, indirect_obstacle, projectile.damage, damage_type, [])
+			damage_finished = true
+				
+		# await obstacle.take_damage(damage, attacker)
+		attacker.deal_damage.emit(self, obstacle, projectile.damage, damage_type, [])
 
 func handle_target_death():
 	if status == STATUS.RANGED_ATTACK or status == STATUS.MELEE_ATTACK:
@@ -1596,22 +1624,22 @@ func handle_spell_target_death():
 	chess_spell_target = null
 	spell_target_line.visible = false
 
-func handle_special_effect(target: Obstacle, attacker: Obstacle):
+func handle_special_effect(target: Obstacle):
 	#Placeholder for chess passive ability on special attack effect
 	if is_phantom:
 		return
 		
-	if attacker.chess_name == "KingMan" and attacker.faction == "human" and attacker.is_active and not target.is_phantom:
+	if chess_name == "KingMan" and faction == "human" and is_active and not target.is_phantom:
 		var max_attempt_summon_count := 10
 		var attempt_summon_count := 0
 		var current_summon_count := 0
-		while current_summon_count < attacker.chess_level and attempt_summon_count < max_attempt_summon_count:
+		while current_summon_count < chess_level and attempt_summon_count < max_attempt_summon_count:
 			var tile_offset_array = [Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 1), Vector2i(-1, 0), Vector2i(0, -1), Vector2i(1, -1)]
 			tile_offset_array.shuffle()
 			var tile_offset_index = tile_offset_array.front()
-			var current_tile = get_current_tile(attacker)[1]
+			var current_tile = get_current_tile(self)[1]
 			if arena.is_tile_in_bounds(current_tile + tile_offset_index) and not arena.unit_grid.is_tile_occupied(current_tile + tile_offset_index):					
-				var summoned_character = game_root_scene.summon_chess(attacker.faction, attacker.chess_name, 1, team, arena, current_tile + tile_offset_index)
+				var summoned_character = game_root_scene.summon_chess(faction, chess_name, 1, team, arena, current_tile + tile_offset_index)
 
 				summoned_character.is_phantom = true
 
@@ -1626,15 +1654,15 @@ func handle_special_effect(target: Obstacle, attacker: Obstacle):
 			attempt_summon_count += 1
 
 
-	elif attacker.chess_name == "PrinceMan" and attacker.faction == "human" and attacker.is_active and target is Chess and not target.is_phantom:
+	elif chess_name == "PrinceMan" and faction == "human" and is_active and target is Chess and not target.is_phantom:
 		var max_attempt_summon_count := 10
 		var attempt_summon_count := 0
 		var current_summon_count := 0
-		while current_summon_count < attacker.chess_level and attempt_summon_count < max_attempt_summon_count:
+		while current_summon_count < chess_level and attempt_summon_count < max_attempt_summon_count:
 			var tile_offset_array = [Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 1), Vector2i(-1, 0), Vector2i(0, -1), Vector2i(1, -1)]
 			tile_offset_array.shuffle()
 			var tile_offset_index = tile_offset_array.front()
-			var current_tile = get_current_tile(attacker)[1]
+			var current_tile = get_current_tile(self)[1]
 			if arena.is_tile_in_bounds(current_tile + tile_offset_index) and not arena.unit_grid.is_tile_occupied(current_tile + tile_offset_index):					
 				var summoned_character = game_root_scene.summon_chess(target.faction, target.chess_name, 1, team, arena, current_tile + tile_offset_index)
 
@@ -1650,32 +1678,32 @@ func handle_special_effect(target: Obstacle, attacker: Obstacle):
 				current_summon_count += 1
 			attempt_summon_count += 1
 
-	elif attacker.chess_name == "Hunter" and attacker.faction == "dwarf":
+	elif chess_name == "Hunter" and faction == "dwarf":
 		var effect_instance = ChessEffect.new()
 		target.effect_handler.add_child(effect_instance)
-		effect_instance.register_buff("duration_only", 0, attacker.chess_level)
+		effect_instance.register_buff("duration_only", 0, chess_level)
 		effect_instance.effect_name = "HunterMark"
 		effect_instance.effect_type = "Debuff"
-		effect_instance.effect_applier = attacker.chess_name
+		effect_instance.effect_applier = chess_name
 		effect_instance.effect_description = "Hunter's Mark increases move speed by 1/2/3 towards marked targets."
 		target.effect_handler.add_to_effect_array(effect_instance)
 		await target.effect_animation_display("DwarfHunterMark", arena, get_current_tile(target)[1], "Center")
 		#target.effect_handler.refresh_effects()
 		
-	elif attacker.chess_name == "ShieldBreaker" and attacker.faction == "dwarf":
-		if randf() <= 0.15 * attacker.chess_level:
+	elif chess_name == "ShieldBreaker" and faction == "dwarf":
+		if randf() <= 0.15 * chess_level:
 			var effect_instance = ChessEffect.new()
 			target.effect_handler.add_child(effect_instance)
 			effect_instance.register_buff("stunned_duration", 0, 1)
 			effect_instance.effect_name = "ShieldBreakerKnock"
 			effect_instance.effect_type = "Debuff"
-			effect_instance.effect_applier = attacker.chess_name
+			effect_instance.effect_applier = chess_name
 			effect_instance.effect_description = "Cannot move, attck or cast spell while stunned."
 			target.effect_handler.add_to_effect_array(effect_instance)
 			await target.effect_animation_display("ShieldBreakerKnock", arena, get_current_tile(target)[1], "RightTop")
 			#target.effect_handler.refresh_effects()			
 
-	elif attacker.faction == "forestProtector" and attacker.chess_name == "DryadHuntress":
+	elif faction == "forestProtector" and chess_name == "DryadHuntress":
 		var target_buff_list = target.effect_handler.effect_list.filter(
 			func(effect_index):
 				if effect_index.effect_type == "Buff":
@@ -1773,7 +1801,7 @@ func handle_free_strike(target: Obstacle):
 			melee_attack_started.emit(self)
 			await melee_attack_animation.animation_finished
 			if DataManagerSingleton.check_obstacle_valid(target):
-				await handle_special_effect(target, self)
+				await handle_special_effect(target)
 
 		elif animated_sprite_2d.sprite_frames.has_animation("attack"):
 			status = STATUS.MELEE_ATTACK
@@ -1782,7 +1810,7 @@ func handle_free_strike(target: Obstacle):
 			deal_damage.emit(self, target, damage, "Melee_attack", [])	
 
 			if DataManagerSingleton.check_obstacle_valid(target):
-				await handle_special_effect(target, self)
+				await handle_special_effect(target)
 
 		else:
 			# No required attack animation
@@ -2090,20 +2118,22 @@ func freezing_field(arrow_count: int) -> bool:
 		spell_projectile.damage = 5 + 5 * chess_level
 		spell_projectile.damage_type = "Magic_attack"
 		spell_projectile.projectile_hit.connect(
-			func(obstacle, attacker):
-				var effect_instance = ChessEffect.new()
-				obstacle.effect_handler.add_child(effect_instance)
-				effect_instance.register_buff("speed_modifier", -1, 2)
-				# effect_instance.speed_modifier = -1
-				# effect_instance.speed_modifier_duration = 2
-				effect_instance.register_buff("armor_modifier", -3, 2)
-				# effect_instance.armor_modifier = -3
-				# effect_instance.armor_modifier_duration = 2
-				effect_instance.effect_name = "SpellFreezing"
-				effect_instance.effect_type = "Debuff"
-				effect_instance.effect_applier = "Human ArchMage Spell Freezing"
-				effect_instance.effect_description = "Chess hit speed and armor will reduced."
-				obstacle.effect_handler.add_to_effect_array(effect_instance)
+			func(obstacle, projectile):
+				deal_damage.emit(self, obstacle, spell_projectile.damage, "Magic_attack", [])
+				if DataManagerSingleton.check_obstacle_valid(obstacle):
+					var effect_instance = ChessEffect.new()
+					obstacle.effect_handler.add_child(effect_instance)
+					effect_instance.register_buff("speed_modifier", -1, 2)
+					# effect_instance.speed_modifier = -1
+					# effect_instance.speed_modifier_duration = 2
+					effect_instance.register_buff("armor_modifier", -3, 2)
+					# effect_instance.armor_modifier = -3
+					# effect_instance.armor_modifier_duration = 2
+					effect_instance.effect_name = "SpellFreezing"
+					effect_instance.effect_type = "Debuff"
+					effect_instance.effect_applier = "Human ArchMage Spell Freezing"
+					effect_instance.effect_description = "Chess hit speed and armor will reduced."
+					obstacle.effect_handler.add_to_effect_array(effect_instance)
 		)
 		arraow_degree += arraow_degree_interval
 
@@ -2136,6 +2166,81 @@ func random_heal(value: float, healer: Obstacle):
 		return	
 	all_ally.shuffle()
 	all_ally.front().take_heal(value * 0.3 * healer.chess_level, healer)
+
+func powerful_heal():
+	if not (chess_name == "Satyr" and faction == "forestProtector"):
+		return
+	var all_chesses = arena.unit_grid.get_all_units()
+	var all_ally = all_chesses.filter(func(obstacle): return (DataManagerSingleton.check_chess_valid(obstacle) and obstacle.team == team))
+	all_ally.sort_custom(
+		func(a, b):
+			return (a.max_hp - a.hp) >= (b.max_hp - b.hp)
+	)
+	if all_ally.size() < 0:
+		return false
+	var heal_target = all_ally.pop_front()
+	_apply_heal(heal_target, (25 + 25 * chess_level) * (2 if heal_target.role == "satyr" else 1))
+	return true
+
+func shadow_wave(spell_target: Obstacle) -> bool:
+	var spell_projectile = _launch_projectile_to_target(spell_target)
+	spell_projectile.projectile_animation = "Ice"
+	spell_projectile.penetration = 999
+	spell_projectile.damage = 999
+	spell_projectile.max_distance = 999000
+	var max_jump_count := 2 + chess_level
+	var current_jump_count = max_jump_count
+	var obstacle_affect := []
+	spell_projectile.projectile_hit.connect(
+		func(obstacle, projectile):
+			if obstacle_affect.has(obstacle):
+				return
+			if obstacle.team == team:
+				_apply_heal(obstacle, 5 * chess_level)
+			else:
+				deal_damage.emit(self, obstacle, 5 * chess_level, "Magic_attack", [])
+			obstacle_affect.append(obstacle)
+			current_jump_count -= 1
+			if current_jump_count <= 0:
+				await get_tree().create_timer(0.5).timeout
+				projectile.queue_free()
+				return
+			else:
+				var all_chesses = arena.unit_grid.get_all_units().filter(
+					func(obstacle1): 
+						if obstacle_affect.has(obstacle1):
+							return false
+						if obstacle1.global_position.distance_to(obstacle.global_position) > 100:
+							return false
+						return true
+				)
+				var new_target := all_chesses.pick_random()
+				spell_projectile.direction = (new_target - obstacle).normalized()
+	)
+
+func entangling_roots() -> void:
+	var all_chesses = arena.unit_grid.get_all_units()
+	var all_enemy = all_chesses.filter(func(obstacle): return (DataManagerSingleton.check_chess_valid(obstacle) and obstacle.team != team))
+	var enemy_nearby = all_enemy.filter(
+		func(node):
+			return node.global_position.distance_to(global_position) < 50 * chess_level
+	)
+	if enemy_chesses.size() <= 0:
+		return false
+	for chess_index in enemy_nearby:
+		var effect_instance = ChessEffect.new()
+		chess_index.effect_handler.add_child(effect_instance)
+		effect_instance.register_buff("speed_modifier", -2, 2)
+		effect_instance.effect_name = "EntaglingRoots"
+		effect_instance.effect_type = "Debuff"
+		effect_instance.effect_applier = "ForestProtector TreantGuard Spell EntaglingRoots"
+		effect_instance.effect_description = "The Treant's roots erupt, snaring nearby enemies and slowing their movement."
+		chess_index.effect_handler.add_to_effect_array(effect_instance)	
+		chess_index.damage_taken.connect(
+			func(target, attacker):
+				target._apply_heal(self, target.max_hp * 0.05 * chess_level)
+		)
+	return true
 
 func human_mage_taunt(spell_duration: int) -> bool:
 	var chess_affected := true

@@ -1,4 +1,5 @@
 extends Area2D
+class_name Projectile
 
 @export var speed: float = 600.0
 @export var damage: float = 20.0
@@ -48,6 +49,10 @@ var die_animation
 
 var damage_type := "Ranged_attack"
 
+var hit_record := []
+var projectile_disabled := false
+var affect_ally := false
+
 signal projectile_vanished
 signal projectile_hit
 
@@ -83,46 +88,32 @@ func _physics_process(delta):
 		traveled_distance += movement.length()
 		
 		# 超出最大距离或穿透次数耗尽时消失
-		if traveled_distance > max_distance or (damage_finished and (current_penetration <= 0 or damage < 5)):
+		if traveled_distance > max_distance:
 			projectile_vanished.emit()
 			queue_free()
 
 func _on_area_entered(area):
-	if area.get_parent().is_in_group("obstacle_group"):
-		var obstacle = area.get_parent()
-		projectile_hit.emit(obstacle, attacker)
-		# 只伤害敌方队伍
-		if (obstacle.team != source_team and attacker != null) and DataManagerSingleton.check_obstacle_valid(obstacle):
-			if animated_sprite_2d.sprite_frames.has_animation("die"):
-				damage_finished = false
-				die_animation = AnimatedSprite2D.new()
-				obstacle.add_child(die_animation)
-				die_animation.z_index = 60
-				die_animation.global_position = obstacle.global_position
-				die_animation.sprite_frames = animated_sprite_2d.sprite_frames.duplicate()
-				die_animation.play("die")
-			
-				var obstacle_tile = obstacle.get_current_tile(obstacle)[1]
-				for pos_offset in [Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(1, 1)]:
-					if obstacle.arena.unit_grid.units.has(obstacle_tile + pos_offset) and obstacle.arena.unit_grid.units[obstacle_tile + pos_offset] is Obstacle:
-						var indirect_obstacle = obstacle.arena.unit_grid.units[obstacle_tile + pos_offset]
-						if indirect_obstacle.status == indirect_obstacle.STATUS.DIE or indirect_obstacle.visible == false:
-							continue
-						# await indirect_obstacle.take_damage(damage, attacker)
-						attacker.deal_damage.emit(attacker, indirect_obstacle, damage, damage_type, [])
-				damage_finished = true
-					
-			# await obstacle.take_damage(damage, attacker)
-			attacker.deal_damage.emit(attacker, obstacle, damage, damage_type, [])
+	var obstacle = area.get_parent()
+	if DataManagerSingleton.check_obstacle_valid(obstacle) and not projectile_disabled:
+		
+		if obstacle == attacker:
+			return
+		if not affect_ally and attacker.team == obstacle.team:
+			return
+		if hit_record.has(obstacle):
+			return
+		projectile_hit.emit(obstacle, self)
+		hit_record.append(obstacle)
 
-			damage_finished = true
-			current_penetration -= 1  # 减少穿透计数
-			damage /= decline_ratio
+		current_penetration -= 1  # 减少穿透计数
+		damage /= decline_ratio
 		
 		# 穿透次数耗尽时消失
 		if current_penetration <= 0 or damage < 5:
-			projectile_vanished.emit()
-			queue_free()
+			projectile_disabled = true
+			visible = false
+			# projectile_vanished.emit()
+			# queue_free()
 
 # 处理离开屏幕
 func _on_visibility_notifier_screen_exited():

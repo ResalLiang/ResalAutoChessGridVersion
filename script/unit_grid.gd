@@ -43,6 +43,38 @@ func get_first_empty_tile() -> Vector2i:
 		if units[tile] == null:
 			return tile
 	return Vector2i(-1, -1)
+	
+func get_left_rand_empty_tile() -> Vector2i:
+	var empty_tiles = units.keys().filter(func(tile) return (tile.x < size.x) and (tile != null))
+	if empty_tiles.size() == 0:
+		return Vector2i(-1, -1)
+	return empty_tiles.pick_random()
+	
+func get_right_rand_empty_tile() -> Vector2i:
+	var empty_tiles = units.keys().filter(func(tile) return (tile.x >= size.x) and (tile != null))
+	if empty_tiles.size() == 0:
+		return Vector2i(-1, -1)
+	return empty_tiles.pick_random()
+
+func get_empty_tile_in_radius(tile: Vector2i, radius: int) -> Array:
+	var result := []
+	for x in range(tile.x - radius, tile.x + radius):
+		for y in range(tile.y - radius, tile.y + radius):
+			if abs(x) and abs(y) > radius:
+				continue
+			if units.keys().has(Vector2i(x, y)) and (units[Vector2i(x, y)] is null or not DataManagerSingleton.check_obstacle_valid(units[Vector2i(x, y)])):
+				result.append(units[Vector2i(x, y))
+	return result	
+
+func get_valid_obstacle_in_radius(tile: Vector2i, radius: int) -> Array:
+	var result := []
+	for x in range(tile.x - radius, tile.x + radius):
+		for y in range(tile.y - radius, tile.y + radius):
+			if abs(x) and abs(y) > radius:
+				continue
+			if units.keys().has(Vector2i(x, y)) and (units[Vector2i(x, y)] and DataManagerSingleton.check_obstacle_valid(units[Vector2i(x, y)])):
+				result.append(units[Vector2i(x, y))
+	return result	
 
 func get_all_units() -> Array[Obstacle]:
 	refresh_units()

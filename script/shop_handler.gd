@@ -247,7 +247,8 @@ func buy_chess(chess: Obstacle):
 	chess_bought.emit(chess)
 	remain_coins -= get_chess_buy_price(chess)
 	coins_decreased.emit(get_chess_buy_price(chess), "buyinging chess")
-
+	get_parent().team_dict[get_parent().Team.TEAM1_FULL].append([chess, false])
+	
 	var human_bonus_level = get_parent().faction_bonus_manager.get_bonus_level("human", 1)
 	human_bonus_level = min(human_bonus_level, get_parent().faction_path_upgrade["human"]["path2"])
 	
@@ -274,6 +275,10 @@ func buy_chess(chess: Obstacle):
 func sell_chess(chess: Chess):
 	chess_sold.emit(chess)
 	remain_coins += get_chess_sell_price(chess)
+	#get_parent().team_dict[get_parent().Team.TEAM1_FULL].erase(chess)
+	for node in get_parent().team_dict[get_parent().Team.TEAM1_FULL]:
+		if node[0] == chess:
+			get_parent().team_dict[get_parent().Team.TEAM1_FULL].erase(node)
 	coins_increased.emit(get_chess_sell_price(chess), "selling chess")
 	chess.queue_free()
 
