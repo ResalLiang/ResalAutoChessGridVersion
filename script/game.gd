@@ -755,7 +755,7 @@ func new_round_prepare_end():
 	game_turn_started.emit()
 	battle_meter.battle_data = {}
 
-	team_dict[Team.TEAM1_FULL] = []
+	#team_dict[Team.TEAM1_FULL] = []
 		
 	save_arena_team()
 
