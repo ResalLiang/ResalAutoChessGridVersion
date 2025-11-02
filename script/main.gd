@@ -7,16 +7,23 @@ class_name Main
 # 当前活跃的场景
 var current_scene: Node2D = null
 var added_scene: Node2D = null
+var current_bgm: String
 var tween
 
 func _ready():
 	# 初始化显示主菜单
-	AudioManagerSingleton.play_music("menu")
+	current_bgm = "menu"
+	AudioManagerSingleton.play_music(current_bgm)
+	AudioManagerSingleton.bgm_player.finished.connect(
+		func():
+			AudioManagerSingleton.play_music(current_bgm)			
+	)
 	show_main_menu()
 
 # 显示主菜单
 func show_main_menu():
-	AudioManagerSingleton.play_music("menu")
+	current_bgm = "menu"
+	AudioManagerSingleton.play_music(current_bgm)
 	await _transition_to_scene("res://scene/menu.tscn", main_container, true)
 	if current_scene.to_game_scene.connect(show_game) != OK:
 		print("current_scene.to_game_scene connect fail!")
@@ -27,7 +34,8 @@ func show_main_menu():
 	
 # 显示游戏场景
 func show_game():
-	AudioManagerSingleton.play_music("battle")
+	current_bgm = "battle"
+	AudioManagerSingleton.play_music(current_bgm)
 	await _transition_to_scene("res://scene/game.tscn", main_container, true)
 	if current_scene.to_menu_scene.connect(show_main_menu) != OK:
 		print("current_scene.to_menu_scene connect fail!")
@@ -38,7 +46,8 @@ func show_game():
 
 # 显示设置菜单
 func show_settings():
-	AudioManagerSingleton.play_music("menu")
+	current_bgm = "menu"
+	AudioManagerSingleton.play_music(current_bgm)
 	await _transition_to_scene("res://scene/setting.tscn", main_container, true)
 	
 # 显示设置菜单
@@ -52,7 +61,7 @@ func show_round_finish(result: String):
 		added_scene.label.text = "Just Draw This Round..."
 
 func show_player_upgrade():
-	AudioManagerSingleton.play_music("menu")
+	AudioManagerSingleton.play_music(current_bgm)
 	await _transition_to_scene("res://scene/player_upgrade.tscn", main_container, true)
 	if current_scene.to_menu_scene.connect(show_main_menu) != OK:
 		print("current_scene.to_menu_scene connect fail!")
@@ -67,7 +76,8 @@ func show_game_finish():
 		print("current_scene.to_game_scene connect fail!")
 
 func show_gallery():
-	AudioManagerSingleton.play_music("menu")
+	current_bgm = "menu"
+	AudioManagerSingleton.play_music(current_bgm)
 	await _transition_to_scene("res://scene/gallery.tscn", main_container, true)
 	if current_scene.to_menu_scene.connect(show_main_menu) != OK:
 		print("current_scene.to_menu_scene connect fail!")
@@ -79,19 +89,22 @@ func show_gallery():
 		print("current_scene.to_minesweep_scene connect fail!")
 	
 func show_tetris_game():
-	AudioManagerSingleton.play_music("menu")
+	current_bgm = "menu"
+	AudioManagerSingleton.play_music(current_bgm)
 	await _transition_to_scene("res://scene/tetris.tscn", main_container, true)
 	if current_scene.to_menu_scene.connect(show_main_menu) != OK:
 		print("current_scene.to_menu_scene connect fail!")
 	
 func show_snake_game():
-	AudioManagerSingleton.play_music("menu")
+	current_bgm = "menu"
+	AudioManagerSingleton.play_music(current_bgm)
 	await _transition_to_scene("res://scene/snake.tscn", main_container, true)
 	if current_scene.to_menu_scene.connect(show_main_menu) != OK:
 		print("current_scene.to_menu_scene connect fail!")
 	
 func show_minesweep_game():
-	AudioManagerSingleton.play_music("menu")
+	current_bgm = "menu"
+	AudioManagerSingleton.play_music(current_bgm)
 	await _transition_to_scene("res://scene/minesweep.tscn", main_container, true)
 	if current_scene.to_menu_scene.connect(show_main_menu) != OK:
 		print("current_scene.to_menu_scene connect fail!")

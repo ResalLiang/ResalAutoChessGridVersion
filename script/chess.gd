@@ -412,7 +412,7 @@ func _ready():
 	
 	# Initialize character properties
 	hp = max_hp
-	mp = max_mp if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] else 0
+	mp = max_mp if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug" else 0
 
 	hp_bar.min_value = 0
 	hp_bar.max_value = max_hp
@@ -433,7 +433,7 @@ func _ready():
 
 	connect_to_data_manager()
 	
-	line_visible = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]
+	line_visible = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug"
 # ========================
 # Process Functions
 # ========================
@@ -582,7 +582,7 @@ func _process(delta: float) -> void:
 				emoji_offset = Vector2(-15, -43)
 		emoji_bubble.position += emoji_offset
 		
-	reference_rect.visible = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]
+	reference_rect.visible = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug"
 # ========================
 # Private Functions
 # ========================
@@ -1362,10 +1362,11 @@ func take_heal(heal_value: float, healer: Obstacle):
 		return
 
 	hp += max(0, heal_value)
-
+	heal_taken.emit(self, healer, heal_value)
+	
 	if healer != self:
 		healer.mp += heal_value
-		heal_taken.emit(self, healer, heal_value)
+		
 
 func gain_mp(mp_value: float):
 	if mp_value <= 0:
@@ -2215,7 +2216,7 @@ func shadow_wave(spell_target: Obstacle) -> bool:
 						return true
 				)
 				var new_target = all_chesses.pick_random()
-				spell_projectile.direction = (new_target - obstacle).normalized()
+				spell_projectile.direction = (new_target.global_position - obstacle.global_position).normalized()
 	)
 	return true
 

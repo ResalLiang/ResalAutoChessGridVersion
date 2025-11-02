@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://b7cvnrosji64a"
+path="res://.godot/imported/MAINMENU.MP3-89f49d6d2962fe75c511d3afd73f4b3e.mp3str"
+
+[deps]
+
+source_file="res://asset/audio/Heroes of Might and Magic III/Mp3/MAINMENU.MP3"
+dest_files=["res://.godot/imported/MAINMENU.MP3-89f49d6d2962fe75c511d3afd73f4b3e.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

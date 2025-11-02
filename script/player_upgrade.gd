@@ -32,7 +32,7 @@ var current_difficulty
 func _ready():
 	current_player_upgrade = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]
 
-	debug_mode_button.set_pressed(DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"])
+	debug_mode_button.set_pressed(DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug")
 	# 修复：使用 toggled 信号而不是 pressed 信号
 	if debug_mode_button.toggled.connect(faction_lock_button_pressed.bind(debug_mode_button)) != OK:
 		print("debug_mode_button.toggled connect fail!")

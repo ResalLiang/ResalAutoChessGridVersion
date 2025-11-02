@@ -303,7 +303,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 					effect_instance2.effect_name = "Gentle - Level " + str(path3_bonus_level)
 					effect_instance2.effect_type = "Faction Bonus"
 					effect_instance2.effect_applier = "Elf path3 Faction Bonus"
-					effect_instance2.effect_description = "Friendly elf chesses gain critical rate boost."
+					effect_instance2.effect_description = "Friendly elf chesses gain evasion rate boost."
 					chess_index.effect_handler.add_to_effect_array(effect_instance2)
 					chess_index.effect_handler.add_child(effect_instance2)
 

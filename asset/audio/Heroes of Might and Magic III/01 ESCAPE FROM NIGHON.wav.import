@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dkrehgy2guu7x"
+path="res://.godot/imported/01 ESCAPE FROM NIGHON.wav-b1a2512480ce5c5d0d625ec0c07f4d9e.sample"
+
+[deps]
+
+source_file="res://asset/audio/Heroes of Might and Magic III/01 ESCAPE FROM NIGHON.wav"
+dest_files=["res://.godot/imported/01 ESCAPE FROM NIGHON.wav-b1a2512480ce5c5d0d625ec0c07f4d9e.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

@@ -83,7 +83,7 @@ func _move_chess(obstacle: Obstacle, play_area: PlayArea, tile: Vector2i) -> voi
 		obstacle.current_play_area = obstacle.play_areas.playarea_grave
 	obstacle.global_position = play_area.global_position + play_area.to_local(play_area.get_global_from_tile(tile))
 	chess_moved.emit(obstacle, play_area, tile)
-	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug":
 		print("=".repeat(20))
 		print("moving" + obstacle.chess_name + " to " + str(tile) + ", global_position = " + str(obstacle.global_position))
 		print("current area : " + obstacle.get_current_tile(obstacle)[0].name + ", current_tile : " + str(obstacle.get_current_tile(obstacle)[1]))
@@ -158,7 +158,7 @@ func _on_chess_drag_started(starting_position: Vector2, status: String, obstacle
 				bench.get_node("bench_bound").visible = true	
 				shop.get_node("shop_bound").visible = false		
 				
-	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug":
 		print("=".repeat(20))
 		print("start moving " + obstacle.chess_name + ", global_position = " + str(obstacle.global_position))
 		print("current area : " + obstacle.get_current_tile(obstacle)[0].name + ", current_tile : " + str(obstacle.get_current_tile(obstacle)[1]))

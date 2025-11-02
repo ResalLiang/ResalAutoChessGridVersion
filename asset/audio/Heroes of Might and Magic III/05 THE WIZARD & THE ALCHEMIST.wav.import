@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bsiylget4204e"
+path="res://.godot/imported/05 THE WIZARD & THE ALCHEMIST.wav-005f877c2a2c2318b128daf06d1f5c7a.sample"
+
+[deps]
+
+source_file="res://asset/audio/Heroes of Might and Magic III/05 THE WIZARD & THE ALCHEMIST.wav"
+dest_files=["res://.godot/imported/05 THE WIZARD & THE ALCHEMIST.wav-005f877c2a2c2318b128daf06d1f5c7a.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dbshvkkalt1tn"
+path="res://.godot/imported/GoodTheme.mp3-9040c9dc0a75a96807320594a3a17f68.mp3str"
+
+[deps]
+
+source_file="res://asset/audio/Heroes of Might and Magic III/Mp3/GoodTheme.mp3"
+dest_files=["res://.godot/imported/GoodTheme.mp3-9040c9dc0a75a96807320594a3a17f68.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

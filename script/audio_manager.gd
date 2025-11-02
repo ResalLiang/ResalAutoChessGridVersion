@@ -8,8 +8,8 @@ extends Node
 
 # Dictionaries to store the preloaded audio resources.
 @export var bgm_resources: Dictionary = {
-	"menu": preload("res://asset/audio/RPG-Music-Pack/02-Home_Town.wav"),
-	"battle": preload("res://asset/audio/RPG-Music-Pack/06-Battle.wav")
+	"menu": preload("res://asset/audio/Heroes of Might and Magic III/01 THE PRIDE OF ERATHIA.wav"),
+	"battle": preload("res://asset/audio/Heroes of Might and Magic III/03 FOR BLOOD & HONOR.wav")
 }
 
 @export var sfx_resources: Dictionary = {
@@ -67,7 +67,7 @@ func _ready():
 		sfx_player.set_bus("SFX")
 		add_child(sfx_player)
 		sfx_player_pool.append(sfx_player)
-	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug":
 		print("AudioManager (Singleton) is ready. Created ", sfx_pool_size, " SFX players.")
 
 # --- Public Methods ---
@@ -89,8 +89,8 @@ func play_music(music_key: String):
 
 	bgm_player.stop()
 	bgm_player.stream = music_stream
-	bgm_player.play()
-	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
+	bgm_player.play(2.0)
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug":
 		print("Playing BGM with key: ", music_key)
 
 #summoned_character.spell_casted.connect(AudioManagerSingleton.play_sfx.bind("spell_casted"))
@@ -117,7 +117,7 @@ func play_sfx(obstacle: Obstacle, action: String):
 		if not player.is_playing():
 			player.stream = sfx_stream
 			player.play()
-			if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
+			if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug":
 				print("Playing SFX for: ", str(keys), " on player ", player.name)
 			return
 	

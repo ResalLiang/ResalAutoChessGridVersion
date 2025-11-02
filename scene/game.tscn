@@ -7794,7 +7794,7 @@ axis_stretch_vertical = 1
 offset_left = 400.0
 offset_top = 192.0
 offset_right = 540.0
-offset_bottom = 342.0
+offset_bottom = 349.0
 texture = ExtResource("35_oqkxr")
 region_rect = Rect2(0, 0, 96, 96)
 patch_margin_left = 29
@@ -8502,11 +8502,11 @@ offset_right = 99.0
 offset_bottom = 216.0
 
 [node name="debug_add_chess" type="Node2D" parent="."]
-z_index = 50
+z_index = 100
 position = Vector2(412, 86)
 
 [node name="chess_faction_option" type="OptionButton" parent="debug_add_chess"]
-z_index = 50
+z_index = 100
 offset_right = 32.0
 offset_bottom = 20.0
 theme_override_fonts/font = ExtResource("42_l2xpq")
@@ -8514,7 +8514,7 @@ theme_override_font_sizes/font_size = 8
 metadata/_edit_use_anchors_ = true
 
 [node name="chess_name_option" type="OptionButton" parent="debug_add_chess"]
-z_index = 50
+z_index = 100
 offset_top = 27.0
 offset_right = 32.0
 offset_bottom = 47.0
@@ -8523,7 +8523,7 @@ theme_override_font_sizes/font_size = 8
 metadata/_edit_use_anchors_ = true
 
 [node name="add_to_ally" type="Button" parent="debug_add_chess"]
-z_index = 50
+z_index = 100
 offset_left = -1.0
 offset_top = 53.0
 offset_right = 43.0
@@ -8534,7 +8534,7 @@ text = "ally"
 metadata/_edit_use_anchors_ = true
 
 [node name="add_to_enemy" type="Button" parent="debug_add_chess"]
-z_index = 50
+z_index = 100
 offset_left = 56.0
 offset_top = 54.0
 offset_right = 118.0

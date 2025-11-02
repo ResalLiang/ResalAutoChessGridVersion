@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://chpt2k6fhjfcq"
+path="res://.godot/imported/05 QUEST TO FREE KING ROLAND.wav-723bc884e682ca99eb6705950b672a9d.sample"
+
+[deps]
+
+source_file="res://asset/audio/Heroes of Might and Magic III/05 QUEST TO FREE KING ROLAND.wav"
+dest_files=["res://.godot/imported/05 QUEST TO FREE KING ROLAND.wav-723bc884e682ca99eb6705950b672a9d.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

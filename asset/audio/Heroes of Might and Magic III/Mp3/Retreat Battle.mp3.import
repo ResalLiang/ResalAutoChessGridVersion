@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bqbnmis5xegqq"
+path="res://.godot/imported/Retreat Battle.mp3-a2051acc21bb4e8a35aec2cbee287686.mp3str"
+
+[deps]
+
+source_file="res://asset/audio/Heroes of Might and Magic III/Mp3/Retreat Battle.mp3"
+dest_files=["res://.godot/imported/Retreat Battle.mp3-a2051acc21bb4e8a35aec2cbee287686.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

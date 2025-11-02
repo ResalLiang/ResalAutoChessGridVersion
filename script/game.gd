@@ -525,9 +525,9 @@ func _ready():
 
 	center_point = Vector2(tile_size.x * 16 / 2, tile_size.y * 16 / 2)
 	
-	debug_label.visible = DataManagerSingleton.player_data["debug_mode"]
+	debug_label.visible = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug"
 
-	debug_add_chess.visible = DataManagerSingleton.player_data["debug_mode"]
+	debug_add_chess.visible = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug"
 	var option_index := 0
 	chess_faction_option.clear()
 	for faction_index in DataManagerSingleton.get_chess_data().keys():
@@ -617,7 +617,7 @@ func start_new_game() -> void:
 
 	current_round = 0
 	DataManagerSingleton.win_lose_round_init()
-	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug":
 		remain_upgrade_count = 99
 	else:
 		remain_upgrade_count = 0
@@ -990,7 +990,7 @@ func save_arena_team():
 	for chess_index in arena.unit_grid.units.keys():
 		if not is_instance_valid(arena.unit_grid.units[chess_index]):
 			arena.unit_grid.remove_unit(chess_index)
-		elif arena.unit_grid.units[chess_index] is Chess:
+		elif arena.unit_grid.units[chess_index] is Chess and arena.unit_grid.units[chess_index].team == 1:
 			var current_obstacle = arena.unit_grid.units[chess_index]
 			saved_arena_team[chess_index] = [current_obstacle.faction, current_obstacle.chess_name, current_obstacle.chess_level, current_obstacle.total_kill_count, current_obstacle.chess_serial]
 
@@ -1520,6 +1520,16 @@ func check_chess_merge():
 
 	for node in arena.unit_grid.get_children() + bench.unit_grid.get_children():
 		if node is Chess and node.visible == false:
+			match node.team:
+				1:
+					for i in team_dict[Team.TEAM1_FULL]:
+						if i[0] == node:
+							team_dict[Team.TEAM1_FULL].erase(i)
+				2:
+					for i in team_dict[Team.TEAM2_FULL]:
+						if i[0] == node:
+							team_dict[Team.TEAM1_FULL].erase(i)
+			
 			if node.is_queued_for_deletion():
 				pass
 			else:

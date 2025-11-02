@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cw6li6esq6y0b"
+path="res://.godot/imported/CampainMusic08.mp3-2e36854153c8fc54368745ff31ace14c.mp3str"
+
+[deps]
+
+source_file="res://asset/audio/Heroes of Might and Magic III/Mp3/CampainMusic08.mp3"
+dest_files=["res://.godot/imported/CampainMusic08.mp3-2e36854153c8fc54368745ff31ace14c.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

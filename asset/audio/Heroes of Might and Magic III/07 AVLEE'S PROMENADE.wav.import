@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bcaoseelic2pv"
+path="res://.godot/imported/07 AVLEE'S PROMENADE.wav-2fa564f936d7fedfc42fc8da527fc4f9.sample"
+
+[deps]
+
+source_file="res://asset/audio/Heroes of Might and Magic III/07 AVLEE'S PROMENADE.wav"
+dest_files=["res://.godot/imported/07 AVLEE'S PROMENADE.wav-2fa564f936d7fedfc42fc8da527fc4f9.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

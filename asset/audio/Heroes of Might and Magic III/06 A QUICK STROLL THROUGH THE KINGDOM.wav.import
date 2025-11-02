@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bh7vq1saggx1o"
+path="res://.godot/imported/06 A QUICK STROLL THROUGH THE KINGDOM.wav-aec7034a160288b72c3224b441fb2deb.sample"
+
+[deps]
+
+source_file="res://asset/audio/Heroes of Might and Magic III/06 A QUICK STROLL THROUGH THE KINGDOM.wav"
+dest_files=["res://.godot/imported/06 A QUICK STROLL THROUGH THE KINGDOM.wav-aec7034a160288b72c3224b441fb2deb.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

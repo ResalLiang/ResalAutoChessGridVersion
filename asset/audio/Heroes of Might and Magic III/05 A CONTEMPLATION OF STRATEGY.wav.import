@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://n61nais4p8pr"
+path="res://.godot/imported/05 A CONTEMPLATION OF STRATEGY.wav-090a21ae4e386d1c6b36256ac95627a9.sample"
+
+[deps]
+
+source_file="res://asset/audio/Heroes of Might and Magic III/05 A CONTEMPLATION OF STRATEGY.wav"
+dest_files=["res://.godot/imported/05 A CONTEMPLATION OF STRATEGY.wav-090a21ae4e386d1c6b36256ac95627a9.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

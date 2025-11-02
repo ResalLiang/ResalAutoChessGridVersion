@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://b48r3pspy7xfn"
+path="res://.godot/imported/COMBAT03.MP3-3f12347e5a36907312b81f26530aef97.mp3str"
+
+[deps]
+
+source_file="res://asset/audio/Heroes of Might and Magic III/Mp3/COMBAT03.MP3"
+dest_files=["res://.godot/imported/COMBAT03.MP3-3f12347e5a36907312b81f26530aef97.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

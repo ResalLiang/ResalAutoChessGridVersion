@@ -36,7 +36,7 @@ func is_tile_occupied(tile: Vector2i) -> bool:
 	return DataManagerSingleton.check_obstacle_valid(units[tile])
 	
 func is_grid_full() -> bool:
-	return units.key.all(is_tile_occupied)
+	return units.keys().all(is_tile_occupied)
 	
 func get_first_empty_tile() -> Vector2i:
 	for tile in units.keys():
@@ -45,13 +45,13 @@ func get_first_empty_tile() -> Vector2i:
 	return Vector2i(-1, -1)
 	
 func get_left_rand_empty_tile() -> Vector2i:
-	var empty_tiles = units.keys().filter(func(tile): return (tile.x < size.x) and (tile != null))
+	var empty_tiles = units.keys().filter(func(tile): return (tile.x < size.x / 2) and (tile != null))
 	if empty_tiles.size() == 0:
 		return Vector2i(-1, -1)
 	return empty_tiles.pick_random()
 	
 func get_right_rand_empty_tile() -> Vector2i:
-	var empty_tiles = units.keys().filter(func(tile): return (tile.x >= size.x) and (tile != null))
+	var empty_tiles = units.keys().filter(func(tile): return (tile.x >= size.x / 2) and (tile != null))
 	if empty_tiles.size() == 0:
 		return Vector2i(-1, -1)
 	return empty_tiles.pick_random()

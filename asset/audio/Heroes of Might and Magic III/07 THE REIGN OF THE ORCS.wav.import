@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://d2w665d1kxyc6"
+path="res://.godot/imported/07 THE REIGN OF THE ORCS.wav-4f2dbad264b6ac81559dea4367bbbdbe.sample"
+
+[deps]
+
+source_file="res://asset/audio/Heroes of Might and Magic III/07 THE REIGN OF THE ORCS.wav"
+dest_files=["res://.godot/imported/07 THE REIGN OF THE ORCS.wav-4f2dbad264b6ac81559dea4367bbbdbe.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

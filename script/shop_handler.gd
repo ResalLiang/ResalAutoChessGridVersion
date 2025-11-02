@@ -91,8 +91,8 @@ func _ready():
 	if chess_refreshed.connect(DataManagerSingleton.handle_chess_refreshed) != OK:
 		print("chess_refreshed connect fail!")
 
-	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player].has("debug_mode"):
-		base_income = 999 if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] else 10
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player].has("debug_mode") or DataManagerSingleton.current_player == "debug":
+		base_income = 999 if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug" else 10
 	else:
 		base_income = 10
 		
@@ -100,13 +100,13 @@ func _ready():
 		for x in shop.unit_grid.size.x:
 			freeze_dict[Vector2i(x,y)] = false
 			
-	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug":
 		shop_level = 7
 
 
 func shop_init():
 	remain_coins = 0 #game_start_coins
-	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
+	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug":
 		shop_level = 7
 	else:
 		shop_level = 1
@@ -170,7 +170,7 @@ func shop_refresh(level: int) -> void:
 		get_parent().faction_path_upgrade["elf"]["path4"] = 0
 		get_parent().faction_path_upgrade["dwarf"]["path4"] = 0
 
-	if DataManagerSingleton.player_data["debug_mode"]:
+	if DataManagerSingleton.player_data["debug_mode"] or DataManagerSingleton.current_player == "debug":
 		var debug_chess_faction = ["human", "human", "human", "elf", "elf", "dwarf", "dwarf", "elf"]
 		var debug_chess_name = ["CrossBowMan", "Mage", "ArchMage", "Queen", "Mage", "Demolitionist", "Grenadier", "PegasusRider"]
 		for debug_index in range(debug_chess_faction.size()):
@@ -209,7 +209,7 @@ func shop_freeze() -> void:
 
 
 func shop_upgrade() -> void:
-	if remain_coins >= shop_upgrade_price and shop_level < (7 if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] else max_shop_level):
+	if remain_coins >= shop_upgrade_price and shop_level < (7 if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug" else max_shop_level):
 		remain_coins -= shop_upgrade_price
 		coins_decreased.emit(shop_upgrade_price, "upgrading shop")
 		shop_level += 1
@@ -217,7 +217,7 @@ func shop_upgrade() -> void:
 		shop_upgrade_price = get_shop_upgrade_price()
 	elif remain_coins < shop_upgrade_price:
 		get_parent().control_shaker(get_parent().remain_coins_label)
-	elif shop_level >= (7 if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] else max_shop_level):
+	elif shop_level >= (7 if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug" else max_shop_level):
 		get_parent().control_shaker(get_parent().current_shop_level)
 
 func get_shop_upgrade_price():
@@ -227,7 +227,7 @@ func get_max_population():
 	#var max_population = 999 if (shop_level == 7 and DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]) else (shop_level + 2 + get_parent().faction_bonus_manager.get_bonus_level("human", 1))
 	var max_population: int
 	var extra_max_population := 0
-	if shop_level == 7 and DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]:
+	if shop_level == 7 and DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug":
 		max_population = 999
 	else:	
 		max_population = shop_level + 2

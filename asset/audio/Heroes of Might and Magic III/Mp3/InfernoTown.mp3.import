@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://ce7gomsnm5cga"
+path="res://.godot/imported/InfernoTown.mp3-1382fcd88689a286ee5a74a82e3973a5.mp3str"
+
+[deps]
+
+source_file="res://asset/audio/Heroes of Might and Magic III/Mp3/InfernoTown.mp3"
+dest_files=["res://.godot/imported/InfernoTown.mp3-1382fcd88689a286ee5a74a82e3973a5.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

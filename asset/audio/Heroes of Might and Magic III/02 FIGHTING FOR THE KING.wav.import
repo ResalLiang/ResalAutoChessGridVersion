@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cfjxv0r2yg4b5"
+path="res://.godot/imported/02 FIGHTING FOR THE KING.wav-4ee67af76361251b6bd041b582945cf6.sample"
+
+[deps]
+
+source_file="res://asset/audio/Heroes of Might and Magic III/02 FIGHTING FOR THE KING.wav"
+dest_files=["res://.godot/imported/02 FIGHTING FOR THE KING.wav-4ee67af76361251b6bd041b582945cf6.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

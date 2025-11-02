@@ -11,6 +11,8 @@ func _ready():
 	_init_log_file()
 	if DataManagerSingleton.player_datas[DataManagerSingleton.current_player].keys().has("debug_mode"):
 		debug_mode = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]
+	elif DataManagerSingleton.current_player == "debug":
+		debug_mode = true
 	else:
 		DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] = false
 		debug_mode = false

@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://m3nkpc85s4kj"
+path="res://.godot/imported/CstleTown.mp3-4358b9a28288a84010c4cbf38491aff2.mp3str"
+
+[deps]
+
+source_file="res://asset/audio/Heroes of Might and Magic III/Mp3/CstleTown.mp3"
+dest_files=["res://.godot/imported/CstleTown.mp3-4358b9a28288a84010c4cbf38491aff2.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

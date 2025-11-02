@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dhrikefyqj5gt"
+path="res://.godot/imported/SAND.MP3-b4cee279613919a329e0983b78f3179a.mp3str"
+
+[deps]
+
+source_file="res://asset/audio/Heroes of Might and Magic III/Mp3/SAND.MP3"
+dest_files=["res://.godot/imported/SAND.MP3-b4cee279613919a329e0983b78f3179a.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

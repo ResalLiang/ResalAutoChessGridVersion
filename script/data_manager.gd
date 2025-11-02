@@ -112,7 +112,7 @@ func load_player(player_name: String):
 	current_player = player_name
 	player_data = player_datas[current_player]
 	
-	if not player_datas[current_player].has("debug_mode"):
+	if not player_datas[current_player].has("debug_mode") and DataManagerSingleton.current_player != "debug":
 		player_datas[current_player]["debug_mode"] = false
 		
 	if not player_datas[current_player].has("player_upgrade") or player_datas[current_player]["player_upgrade"].keys().size() == 0:
