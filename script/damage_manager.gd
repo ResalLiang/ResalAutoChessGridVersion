@@ -57,24 +57,44 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 	if attacker is Chess and attacker.is_phantom:
 		damage_result /= 2.5
 
+	var forest_bonus_level := 0
+	var vengeance_faction := ""
+
 
 	if target.faction == "forestProtector":
-		var faction_bonus_level := 0
+		forest_bonus_level = 0
 		match target.team:
 			1:
-				faction_bonus_level = min(target.faction_bonus_manager.get_bonus_level("forestProtector", target.team), get_parent().faction_path_upgrade["forestProtector"]["path3"])
+				forest_bonus_level = min(target.faction_bonus_manager.get_bonus_level("forestProtector", target.team), get_parent().faction_path_upgrade["forestProtector"]["path3"])
 			2:
-				faction_bonus_level = target.faction_bonus_manager.get_bonus_level("forestProtector", target.team)
+				forest_bonus_level = target.faction_bonus_manager.get_bonus_level("forestProtector", target.team)
 
-		var vengeance_faction := ""
+		vengeance_faction = ""
 		for effect_index in target.effect_handler.effect_list:
 			if effect_index.effect_applier == "ForestProtector path3 Faction Bonus":
 				vengeance_faction = effect_index.effect_name.rsplit(" ", true, 1)[1]
 				break
 
-		if faction_bonus_level != 0 and attacker.faction == vengeance_faction:
-			damage_result *= (1 - 0.1 * faction_bonus_level)
-	
+		if forest_bonus_level != 0 and attacker.faction == vengeance_faction:
+			damage_result *= (1 - 0.1 * forest_bonus_level)
+
+	if attacker.faction == "forestProtector":
+		forest_bonus_level = 0
+		match attacker.team:
+			1:
+				forest_bonus_level = min(attacker.faction_bonus_manager.get_bonus_level("forestProtector", attacker.team), get_parent().faction_path_upgrade["forestProtector"]["path3"])
+			2:
+				forest_bonus_level = attacker.faction_bonus_manager.get_bonus_level("forestProtector", attacker.team)
+
+		vengeance_faction = ""
+		for effect_index in attacker.effect_handler.effect_list:
+			if effect_index.effect_applier == "ForestProtector path3 Faction Bonus":
+				vengeance_faction = effect_index.effect_name.rsplit(" ", true, 1)[1]
+				break
+
+		if forest_bonus_level != 0 and target.faction == vengeance_faction:
+			damage_result *= (1 + 0.1 * forest_bonus_level)
+
 	damage_result = floor(damage_result)
 		
 	#====================do not modify damage_result after============================
