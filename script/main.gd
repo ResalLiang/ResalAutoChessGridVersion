@@ -35,7 +35,7 @@ func show_main_menu():
 # 显示游戏场景
 func show_game():
 	current_bgm = "battle"
-	AudioManagerSingleton.play_music(current_bgm)
+	AudioManagerSingleton.play_music("random")
 	await _transition_to_scene("res://scene/game.tscn", main_container, true)
 	if current_scene.to_menu_scene.connect(show_main_menu) != OK:
 		print("current_scene.to_menu_scene connect fail!")

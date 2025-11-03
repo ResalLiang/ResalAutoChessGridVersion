@@ -119,9 +119,9 @@ func _ready():
 
 func play_music(music_key: String):
 	var music_stream: AudioStream
-	if music_key = "random":
+	if music_key == "random":
 		var bgm_index: int = randi_range(0, 40)
-		music_key = String(bgm_index)
+		music_key = str(bgm_index)
 	if bgm_resources.has(music_key):
 		music_stream = bgm_resources[music_key]
 	else:

@@ -551,7 +551,7 @@ func _ready():
 			for chess_index in DataManagerSingleton.get_chess_data()[selected_faction].keys():
 				chess_name_option.add_item(chess_index, chess_option_index)
 				chess_option_index += 1
-			if index == "human":
+			if selected_faction == "human":
 				chess_name_option.add_item("WeakDummy", chess_option_index)
 				chess_option_index += 1			
 				chess_name_option.add_item("HeavyDummy", chess_option_index)
