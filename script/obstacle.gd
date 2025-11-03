@@ -132,7 +132,7 @@ var taunt_range := 70
 var projectile_speed: float = 300.0  # Projectile speed
 var projectile_damage: int = 15  # Projectile damage
 var projectile_penetration: int = 3  # Number of enemies projectile can penetrate
-var ranged_attack_threshold: float = 32.0  # Minimum distance for ranged attack
+var ranged_attack_threshold: float = 40.0  # Minimum distance for ranged attack
 var projectile
 var target_evased_attack := false
 
