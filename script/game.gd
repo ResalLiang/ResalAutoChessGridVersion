@@ -520,6 +520,11 @@ func _ready():
 	if player_lose_game.connect(DataManagerSingleton.handle_player_lose_game) != OK:
 		print("player_lose_game connect fail!")
 
+	# player_won_round.connect(func(): AudioManagerSingleton.play_music("round_win"))
+	# player_lose_round.connect(func(): AudioManagerSingleton.play_music("round_lose"))
+	# player_won_game.connect(func(): AudioManagerSingleton.play_music("game_win"))
+	# player_lose_game.connect(func(): AudioManagerSingleton.play_music("game_lose"))
+
 	chess_mover.play_areas = [arena, bench, shop]
 	#arena.bounds = Rect2i(0, 0, 6, 12)
 
@@ -546,6 +551,11 @@ func _ready():
 			for chess_index in DataManagerSingleton.get_chess_data()[selected_faction].keys():
 				chess_name_option.add_item(chess_index, chess_option_index)
 				chess_option_index += 1
+			if index == "human":
+				chess_name_option.add_item("WeakDummy", chess_option_index)
+				chess_option_index += 1			
+				chess_name_option.add_item("HeavyDummy", chess_option_index)
+				chess_option_index += 1				
 	)
 
 	add_to_ally.pressed.connect(add_debug_chess.bind("ally"))
@@ -627,6 +637,9 @@ func start_new_game() -> void:
 	new_round_prepare_start()
 
 func new_round_prepare_start():
+
+	var bgm_index: int = randi_range(0, 40)
+	# AudioManagerSingleton.play_music(bgm_index)
 	# start shopping
 	var label_value = ""
 	match shop_handler.shop_level:
@@ -795,7 +808,8 @@ func new_round_prepare_end():
 	chess_appearance(arena)
 
 func start_new_round():
-	# if start new turn, it will bef ully auto.
+	# if start new turn, it will be fully auto.
+	AudioManagerSingleton.play_music("battle")
 	print("Start new round.")
 	var team1_alive_cnt = 0
 	var team2_alive_cnt = 0
@@ -1975,6 +1989,8 @@ func add_debug_chess(chess_side: String) -> void:
 	var debug_chess_faction := chess_faction_option.get_item_text(chess_faction_option_index)
 	var chess_name_option_index := chess_name_option.selected
 	var debug_chess_name := chess_name_option.get_item_text(chess_name_option_index)
+	if ["WeakDummy", "HeavyDummy"].has(debug_chess_name):
+		debug_chess_name = "ShieldMan"
 
 # summon_chess(summon_chess_faction: String, summon_chess_name: String, chess_level: int, team: int, summon_arena: PlayArea, summon_position: Vector2i):
 	if arena.unit_grid.is_grid_full():
@@ -1982,4 +1998,8 @@ func add_debug_chess(chess_side: String) -> void:
 
 	var debug_chess_tile = arena.unit_grid.get_left_rand_empty_tile() if chess_side == "ally" else arena.unit_grid.get_right_rand_empty_tile()
 	var debug_chess_team = 1 if chess_side == "ally" else 2
-	summon_chess(debug_chess_faction, debug_chess_name, 1, debug_chess_team, arena, debug_chess_tile)
+	var summoned_debug_chess = summon_chess(debug_chess_faction, debug_chess_name, 1, debug_chess_team, arena, debug_chess_tile)
+	if chess_name_option.get_item_text(chess_name_option_index) == "WeakDummy":
+		summoned_debug_chess.set_meta("WeakDummy", true)
+	elif chess_name_option.get_item_text(chess_name_option_index) == "HeavyDummy":
+		summoned_debug_chess.set_meta("HeavyDummy", true)
