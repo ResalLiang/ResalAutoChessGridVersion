@@ -53,12 +53,16 @@ func show_settings():
 # 显示设置菜单
 func show_round_finish(result: String):
 	add_scene("res://scene/round_finish.tscn", main_container, false)
+	added_scene.tree_exiting.connect(func(): AudioManagerSingleton.play_music("random"))
 	if result == "WON":
 		added_scene.label.text = "You Won This Round!"
+		AudioManagerSingleton.play_music("round_win")
 	elif result == "LOSE":
 		added_scene.label.text = "You Lose This Round..."
+		AudioManagerSingleton.play_music("round_lose")
 	elif result == "DRAW":
 		added_scene.label.text = "Just Draw This Round..."
+		AudioManagerSingleton.play_music("round_lose")
 
 func show_player_upgrade():
 	AudioManagerSingleton.play_music(current_bgm)
@@ -68,6 +72,10 @@ func show_player_upgrade():
 	
 # 显示设置菜单
 func show_game_finish():
+	if DataManagerSingleton.in_game_data["total_won_game"] > 0:
+		AudioManagerSingleton.play_music("game_won")
+	else:
+		AudioManagerSingleton.play_music("game_lose")
 	await _transition_to_scene("res://scene/game_finish.tscn", main_container, false)
 	current_scene.load_animation()
 	if current_scene.to_menu_scene.connect(show_main_menu) != OK:
