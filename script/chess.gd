@@ -686,6 +686,11 @@ func _load_chess_stats():
 				base_melee_damage *= 1.5
 				base_ranged_damage *= 1.5
 			
+		if get_meta("WeakDummy", false):
+			base_max_hp = 1
+		elif get_meta("HeavyDummy", false):
+			base_max_hp = 9999
+
 		if stats.keys().has("skill_name"):
 			skill_name = stats["skill_name"]
 			skill_description = stats["skill_description"]
@@ -1376,7 +1381,7 @@ func gain_mp(mp_value: float):
 		
 		satyr_druid_array = satyr_druid_array.filter(
 			func(node):
-				if DataManagerSingleton.check_obstacle_valid(node) and node.faction == "forestProtector" and node.chess_name == "SatyrDruid":
+				if DataManagerSingleton.check_obstacle_valid(node) and node.faction == "forestProtector" and node.chess_name == "SatyrDruid" and node.mp < node.max_mp:
 					return true
 				return false
 		)
