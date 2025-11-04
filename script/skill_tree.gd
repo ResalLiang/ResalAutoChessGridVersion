@@ -167,6 +167,26 @@ func refresh_page():
 	for path_index in game_faction_path_upgrade[faction_array[current_page]].keys():
 		var current_path_level =  game_faction_path_upgrade[faction_array[current_page]][path_index]
 		
+		var disable_third_path:= false
+		match path_index:
+			"path1":
+				disable_third_path = game_faction_path_upgrade[faction_array[current_page]]["path2"] > 0 and game_faction_path_upgrade[faction_array[current_page]]["path3"] > 0
+			"path2":
+				disable_third_path = game_faction_path_upgrade[faction_array[current_page]]["path1"] > 0 and game_faction_path_upgrade[faction_array[current_page]]["path3"] > 0
+			"path3":
+				disable_third_path = game_faction_path_upgrade[faction_array[current_page]]["path1"] > 0 and game_faction_path_upgrade[faction_array[current_page]]["path2"] > 0
+			_:
+				pass
+
+		if disable_third_path:
+			set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button1"), false)
+			set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button2"), false)
+			set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button3"), false)
+			get_node("ui/bonus_button_container/"+ path_index + "_button1").disabled = true
+			get_node("ui/bonus_button_container/"+ path_index + "_button2").disabled = true
+			get_node("ui/bonus_button_container/"+ path_index + "_button3").disabled = true		
+			continue	
+
 		match current_path_level:
 			0:
 				if path_index != "path4":
