@@ -659,6 +659,7 @@ func _load_chess_stats():
 		elif (not animated_sprite_2d.sprite_frames.has_animation("melee_attack") and not animated_sprite_2d.sprite_frames.has_animation("attack")) or not stats.keys().has("melee_attack_damage"):
 			base_melee_damage = 0
 		elif base_attack_range <= 32 or not animated_sprite_2d.sprite_frames.has_animation("ranged_attack") or not stats.keys().has("ranged_attack_damage"):
+			base_melee_damage = stats["melee_attack_damage"]
 			base_ranged_damage = 0
 			decline_ratio = 100.0
 			projectile_penetration = 1
@@ -819,30 +820,33 @@ func _handle_movement():
 			var previous_tile = get_current_tile(self)[1]
 
 			var neighbor_chess
-			for tile_offset_index in [Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 1), Vector2i(-1, 0), Vector2i(0, -1), Vector2i(1, -1)]:
 
-				if not arena.is_tile_in_bounds(previous_tile + tile_offset_index):
-					continue
+			for x in range(-3, 4):
+				for y in range(-3, 4):
+					var tile_offset_index = Vector2i(x, y)
+					
+					if not arena.is_tile_in_bounds(previous_tile + tile_offset_index):
+						continue
 
-				if not DataManagerSingleton.check_chess_valid(arena.unit_grid.units[previous_tile + tile_offset_index]):
-					continue
+					if not DataManagerSingleton.check_chess_valid(arena.unit_grid.units[previous_tile + tile_offset_index]):
+						continue
 
-				neighbor_chess = arena.unit_grid.units[previous_tile + tile_offset_index]
+					neighbor_chess = arena.unit_grid.units[previous_tile + tile_offset_index]
 
-				if neighbor_chess.team == team:
-					continue
+					if neighbor_chess.team == team:
+						continue
 
-				if not neighbor_chess.animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
-					continue
+					if not neighbor_chess.animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
+						continue
 
-				if position.distance_to(neighbor_chess.position) <= min(neighbor_chess.attack_range, ranged_attack_threshold) and target_pos.distance_to(neighbor_chess.position) > min(neighbor_chess.attack_range, ranged_attack_threshold):
-					if DataManagerSingleton.check_chess_valid(neighbor_chess):
-						await neighbor_chess.handle_free_strike(self) #leave attack range free strike
-
-				if neighbor_chess.role == "pikeman" and faction_bonus_manager.get_bonus_level("pikeman", neighbor_chess.team) > 0:
-					if position.distance_to(neighbor_chess.position) > min(neighbor_chess.attack_range, ranged_attack_threshold) and target_pos.distance_to(neighbor_chess.position) <= min(neighbor_chess.attack_range, ranged_attack_threshold):
+					if position.distance_to(neighbor_chess.position) <= min(neighbor_chess.attack_range, ranged_attack_threshold) and target_pos.distance_to(neighbor_chess.position) > min(neighbor_chess.attack_range, ranged_attack_threshold):
 						if DataManagerSingleton.check_chess_valid(neighbor_chess):
-							await neighbor_chess.handle_free_strike(self) #enter attack range free strike
+							await neighbor_chess.handle_free_strike(self) #leave attack range free strike
+
+					if neighbor_chess.role == "pikeman" and faction_bonus_manager.get_bonus_level("pikeman", neighbor_chess.team) > 0:
+						if position.distance_to(neighbor_chess.position) > min(neighbor_chess.attack_range, ranged_attack_threshold) and target_pos.distance_to(neighbor_chess.position) <= min(neighbor_chess.attack_range, ranged_attack_threshold):
+							if DataManagerSingleton.check_chess_valid(neighbor_chess):
+								await neighbor_chess.handle_free_strike(self) #enter attack range free strike
 
 			if DataManagerSingleton.check_obstacle_valid(self):
 				await chess_mover.tween_move_chess(self, arena, target_pos)
@@ -930,19 +934,19 @@ func _handle_attack():
 		return
 
 	#if !chess_target or !is_instance_valid(chess_target) or chess_target.status == STATUS.DIE:
-	if not DataManagerSingleton.check_obstacle_valid(chess_target) and chess_name != "CrossBowMan":
+	if not DataManagerSingleton.check_obstacle_valid(chess_target):
 		target_lost.emit(self)
 		action_timer.set_wait_time(action_timer_wait_time)
 		action_timer.start()
 		return
-	elif not DataManagerSingleton.check_obstacle_valid(chess_target) and chess_name == "CrossBowMan" and faction == "human":
-		target_lost.emit(self)
-		_handle_targeting()
-		if not DataManagerSingleton.check_obstacle_valid(chess_target):
-			target_lost.emit(self)
-			action_timer.set_wait_time(action_timer_wait_time)
-			action_timer.start()
-			return
+	#elif not DataManagerSingleton.check_obstacle_valid(chess_target) and chess_name == "CrossBowMan" and faction == "human":
+		#target_lost.emit(self)
+		#change_target_to(_find_new_target(TARGET_CHOICE.CLOSE))
+		#if not DataManagerSingleton.check_obstacle_valid(chess_target):
+			#target_lost.emit(self)
+			#action_timer.set_wait_time(action_timer_wait_time)
+			#action_timer.start()
+			#return
 
 	warrior_bonus()
 
@@ -1071,11 +1075,10 @@ func _handle_attack():
 	if not DataManagerSingleton.check_obstacle_valid(chess_target) and chess_name == "CrossBowMan" and faction == "human":
 		remain_attack_count += 1
 				
-	if remain_attack_count > 0 and chess_target.faction != "forestProtector" and chess_target.chess_name != "DryadDeer":
+	if remain_attack_count > 0:
 		await get_tree().create_timer(0.2).timeout
 		await _handle_attack()
 	else:
-		
 		animated_sprite_2d.set_animation("idle")
 		status = STATUS.IDLE
 		action_timer.set_wait_time(action_timer_wait_time)
@@ -1312,9 +1315,10 @@ func _launch_projectile_to_degree(direction_degree: float):
 func take_damage(target:Obstacle, attacker: Obstacle, damage_value: float):
 	#Placeholder for chess passive ability on take damage
 
-	if (-1.0 if animated_sprite_2d.flip_h else 1.0) * (attacker.position - target.position).x > 0 and target.faction == "human" and target.chess_name == "SwordMan":
+	if (-1.0 if animated_sprite_2d.flip_h else 1.0) * (attacker.position - target.position).x > 0 and target.faction == "human" and target.chess_name == "ShieldMan":
 		if randf() <= target.chess_level * 0.1:
 			target.animated_sprite_2d.play("block")
+			await target.animated_sprite_2d.animation_finished
 			target.animated_sprite_2d.set_animation("idle")
 			target.status = STATUS.IDLE
 			return
@@ -1614,6 +1618,8 @@ func handle_projectile_hit(obstacle:Obstacle, projectile: Projectile):
 
 func handle_target_death():
 	if status == STATUS.RANGED_ATTACK or status == STATUS.MELEE_ATTACK:
+		if chess_name == "CrossBowMan" and faction == "human":
+			remain_attack_count += 1
 		chess_target = null
 		attack_target_line.visible = false
 		chess_target = _find_new_target(TARGET_CHOICE.CLOSE)
