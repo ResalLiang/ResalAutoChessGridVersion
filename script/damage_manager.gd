@@ -20,7 +20,7 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 		return
 
 	if target is Chess:
-		if (target.get("evasion_rate") != null and randf() <= target.evasion_rate and not affix_array.has("ignore_evasion")) or (damage_type == "Free_strike" and target.effect_handler.is_parry):
+		if (target.get("evasion_rate") != null and randf() <= target.evasion_rate and not affix_array.has("ignore_evasion") and damage_type != "Magic_attack") or (damage_type == "Free_strike" and target.effect_handler.is_parry):
 			target.attack_evased.emit(target, attacker)
 			return
 
