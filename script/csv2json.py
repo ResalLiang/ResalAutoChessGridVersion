@@ -5,23 +5,33 @@ from collections import defaultdict
 def csv_to_json(csv_file_path, json_file_path):
     """
     将CSV文件转换为JSON格式
-    按faction分组，每个faction包含其下所有chess_name的数据
+    第一级key是faction，第二级key是chess_name，其他列在第三级
     """
     # 使用defaultdict来自动创建嵌套结构
     faction_data = defaultdict(dict)
     
     try:
         with open(csv_file_path, 'r', encoding='utf-8') as csvfile:
-            # 自动检测CSV方言（分隔符等）
+            # 读取CSV文件
             csv_reader = csv.reader(csvfile)
             
             # 读取表头
-            headers = next(csv_reader)
+            headers = [header.strip() for header in next(csv_reader)]
             print(f"检测到的列名: {headers}")
             
-            # 确保至少有faction和chess_name两列
-            if len(headers) < 2:
-                raise ValueError("CSV文件至少需要包含faction和chess_name两列")
+            # 确保有足够的列
+            if len(headers) < 3:
+                raise ValueError("CSV文件需要至少包含faction、chess_name和其他数据列")
+            
+            # 重新映射表头：假设第一列是faction，第二列是chess_name，其他列是数据
+            faction_col = 0  # 第一列是faction
+            chess_name_col = 1  # 第二列是chess_name
+            data_start_col = 2  # 从第三列开始是数据
+            
+            print(f"识别列结构:")
+            print(f"  - faction列: 第{faction_col + 1}列 ('{headers[faction_col]}')")
+            print(f"  - chess_name列: 第{chess_name_col + 1}列 ('{headers[chess_name_col]}')")
+            print(f"  - 数据列: 第{data_start_col + 1}列到第{len(headers)}列")
             
             # 处理数据行
             for row_num, row in enumerate(csv_reader, start=2):
@@ -33,43 +43,40 @@ def csv_to_json(csv_file_path, json_file_path):
                 while len(row) < len(headers):
                     row.append('')
                 
-                faction = row[0].strip()
-                chess_name = row[1].strip()
+                # 提取faction和chess_name
+                faction = row[faction_col].strip()
+                chess_name = row[chess_name_col].strip()
                 
                 # 跳过faction或chess_name为空的行
                 if not faction or not chess_name:
                     print(f"跳过第{row_num}行: faction或chess_name为空")
                     continue
                 
-                # 构建该棋子的数据对象（从第3列开始）
+                # 构建该棋子的数据对象（从数据列开始）
                 chess_data = {}
-                has_data = False
                 
-                for i in range(2, len(headers)):
-                    column_name = headers[i].strip()
-                    cell_value = row[i].strip() if i < len(row) else ''
-                    
-                    # 如果单元格不为空，添加到数据中
-                    if cell_value:
-                        # 尝试转换数字类型
-                        try:
-                            # 尝试转换为整数
-                            if '.' not in cell_value:
-                                chess_data[column_name] = int(cell_value)
-                            else:
-                                # 尝试转换为浮点数
-                                chess_data[column_name] = float(cell_value)
-                        except ValueError:
-                            # 保持字符串格式
-                            chess_data[column_name] = cell_value
-                        has_data = True
+                for i in range(data_start_col, len(headers)):
+                    if i < len(headers):
+                        column_name = headers[i].strip()
+                        cell_value = row[i].strip() if i < len(row) else ''
+                        
+                        # 如果单元格不为空，添加到数据中
+                        if cell_value:
+                            # 尝试转换数字类型
+                            try:
+                                # 尝试转换为整数
+                                if '.' not in cell_value:
+                                    chess_data[column_name] = int(cell_value)
+                                else:
+                                    # 尝试转换为浮点数
+                                    chess_data[column_name] = float(cell_value)
+                            except ValueError:
+                                # 保持字符串格式
+                                chess_data[column_name] = cell_value
                 
-                # 只有当有数据时才添加到结果中
-                if has_data:
-                    faction_data[faction][chess_name] = chess_data
-                    print(f"处理: {faction} -> {chess_name}")
-                else:
-                    print(f"跳过第{row_num}行: {faction}.{chess_name} (无有效数据)")
+                # 添加到结果中（即使chess_data为空也添加）
+                faction_data[faction][chess_name] = chess_data
+                print(f"处理: {faction} -> {chess_name} -> {chess_data}")
     
     except FileNotFoundError:
         print(f"错误: 找不到文件 '{csv_file_path}'")
@@ -104,7 +111,7 @@ def csv_to_json(csv_file_path, json_file_path):
         print(f"写入JSON文件时出错: {e}")
         return False
 
-def preview_json_structure(json_file_path, max_items=3):
+def preview_json_structure(json_file_path, max_factions=2, max_chess=2):
     """
     预览JSON文件结构
     """
@@ -115,19 +122,76 @@ def preview_json_structure(json_file_path, max_items=3):
         print(f"\n📋 JSON文件结构预览:")
         print("=" * 50)
         
-        for faction_name, chess_dict in list(data.items())[:max_items]:
-            print(f"🏛️  {faction_name}:")
-            for chess_name, chess_data in list(chess_dict.items())[:2]:
-                print(f"   ♟️  {chess_name}: {chess_data}")
-            if len(chess_dict) > 2:
-                print(f"   ... 还有 {len(chess_dict) - 2} 个棋子")
+        faction_count = 0
+        for faction_name, chess_dict in data.items():
+            if faction_count >= max_factions:
+                break
+                
+            print(f"🏛️  第一级 - faction: '{faction_name}'")
+            chess_count = 0
+            
+            for chess_name, chess_data in chess_dict.items():
+                if chess_count >= max_chess:
+                    break
+                    
+                print(f"   ♟️  第二级 - chess_name: '{chess_name}'")
+                if chess_data:
+                    for key, value in chess_data.items():
+                        print(f"      📊 第三级 - {key}: {value}")
+                else:
+                    print(f"      ⚠ 第三级: 无额外数据")
+                print()
+                chess_count += 1
+            
+            if len(chess_dict) > max_chess:
+                print(f"   ... 还有 {len(chess_dict) - max_chess} 个棋子")
             print()
+            faction_count += 1
         
-        if len(data) > max_items:
-            print(f"... 还有 {len(data) - max_items} 个faction")
+        if len(data) > max_factions:
+            print(f"... 还有 {len(data) - max_factions} 个faction")
             
     except Exception as e:
         print(f"预览JSON文件时出错: {e}")
+
+def validate_json_structure(json_file_path):
+    """
+    验证JSON结构是否符合要求
+    """
+    try:
+        with open(json_file_path, 'r', encoding='utf-8') as jsonfile:
+            data = json.load(jsonfile)
+        
+        print(f"\n🔍 验证JSON结构:")
+        print("=" * 30)
+        
+        structure_ok = True
+        total_factions = len(data)
+        total_chess = 0
+        
+        for faction, chess_dict in data.items():
+            print(f"✓ 第一级: faction = '{faction}'")
+            total_chess += len(chess_dict)
+            
+            for chess_name, chess_data in chess_dict.items():
+                print(f"  ✓ 第二级: chess_name = '{chess_name}'")
+                
+                # 检查第三级是否包含其他列
+                if chess_data:
+                    for key, value in chess_data.items():
+                        print(f"    ✓ 第三级: {key} = {value}")
+                else:
+                    print(f"    ⚠ 第三级: 无额外数据")
+        
+        print(f"\n📊 统计:")
+        print(f"  - 总faction数: {total_factions}")
+        print(f"  - 总棋子数: {total_chess}")
+        print(f"✅ JSON结构验证通过!")
+        return True
+        
+    except Exception as e:
+        print(f"❌ JSON结构验证失败: {e}")
+        return False
 
 # 主程序
 if __name__ == "__main__":
@@ -145,19 +209,29 @@ if __name__ == "__main__":
         # 预览结果
         preview_json_structure(json_file_path)
         
+        # 验证结构
+        validate_json_structure(json_file_path)
+        
         print("\n" + "=" * 50)
         print("✨ 转换完成! 可以查看生成的JSON文件了。")
+        
+        # 显示最终的文件结构说明
+        print(f"\n📁 最终JSON结构:")
+        print("第一级: faction (派系)")
+        print("第二级: chess_name (棋子名称)") 
+        print("第三级: 其他所有数据列")
+        
     else:
         print("❌ 转换失败，请检查错误信息。")
 
-# 如果你想要自定义文件路径，可以取消下面的注释
+# 命令行用法
 if __name__ == "__main__":
     import sys
     
-    if len(sys.argv) != 3:
-        print("使用方法: python script.py <输入CSV文件> <输出JSON文件>")
-        print("例如: python script.py data.csv output.json")
-    else:
+    if len(sys.argv) == 3:
         csv_file = sys.argv[1]
         json_file = sys.argv[2]
         csv_to_json(csv_file, json_file)
+    elif len(sys.argv) > 1:
+        print("使用方法: python script.py <输入CSV文件> <输出JSON文件>")
+        print("例如: python script.py data.csv output.json")
