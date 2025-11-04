@@ -688,8 +688,10 @@ func _load_chess_stats():
 			
 		if get_meta("WeakDummy", false):
 			base_max_hp = 1
+			max_hp = 1
 		elif get_meta("HeavyDummy", false):
 			base_max_hp = 9999
+			max_hp = 9999
 
 		if stats.keys().has("skill_name"):
 			skill_name = stats["skill_name"]
