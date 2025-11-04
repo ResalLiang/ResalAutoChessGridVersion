@@ -200,24 +200,24 @@ var faction_path_upgrade_template = {
 	"elf": {
 		"path1" : 0,
 		"path2" : 0,
-		"path3" : 0,
+		"path3" : 1,
 		"path4" : 0
 	},
 	"human": {
-		"path1" : 0,
+		"path1" : 1,
 		"path2" : 0,
 		"path3" : 0,
 		"path4" : 0
 	},
 	"dwarf": {
-		"path1" : 0,
+		"path1" : 1,
 		"path2" : 0,
 		"path3" : 0,
 		"path4" : 0
 	}	,
 	"forestProtector": {
 		"path1" : 0,
-		"path2" : 0,
+		"path2" : 1,
 		"path3" : 0,
 		"path4" : 0
 	}	
@@ -1937,7 +1937,6 @@ func add_bonus_bar_to_enemy_container(faction: String, count: int):
 	faction_bonus_bar.label.text = faction
 
 
-
 func check_villager_count(villager_name: String) -> int:
 	if not DataManagerSingleton.get_chess_data()["villager"].keys().has(villager_name):
 		return 0
@@ -1992,7 +1991,7 @@ func add_debug_chess(chess_side: String) -> void:
 	if ["WeakDummy", "HeavyDummy"].has(debug_chess_name):
 		debug_chess_name = "ShieldMan"
 
-# summon_chess(summon_chess_faction: String, summon_chess_name: String, chess_level: int, team: int, summon_arena: PlayArea, summon_position: Vector2i):
+	# summon_chess(summon_chess_faction: String, summon_chess_name: String, chess_level: int, team: int, summon_arena: PlayArea, summon_position: Vector2i):
 	if arena.unit_grid.is_grid_full():
 		return
 
