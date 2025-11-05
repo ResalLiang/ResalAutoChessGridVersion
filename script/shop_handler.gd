@@ -165,8 +165,9 @@ func shop_refresh(level: int) -> void:
 				rand_character_result = get_parent().generate_random_chess_update(min(6, shop_level), "locked")
 
 		var character = get_parent().summon_chess(rand_character_result[0], rand_character_result[1], 1, 1, shop, Vector2i(shop_col_index, shop_row_index))
-	
-	get_parent().faction_path_upgrade["human"]["path4"] = 0
+
+	if get_parent().faction_path_upgrade.size() > 0:
+		get_parent().faction_path_upgrade["human"]["path4"] = 0
 	# if get_parent().faction_path_upgrade.size() > 0:
 		
 	# 	get_parent().faction_path_upgrade["elf"]["path4"] = 0
@@ -175,8 +176,8 @@ func shop_refresh(level: int) -> void:
 	# 	get_parent().faction_path_upgrade["undead"]["path4"] = 0
 
 	if DataManagerSingleton.player_data["debug_mode"] or DataManagerSingleton.current_player == "debug":
-		var debug_chess_faction = ["human", "human", "human", "elf", "elf", "dwarf", "dwarf", "elf"]
-		var debug_chess_name = ["CrossBowMan", "Mage", "ArchMage", "Queen", "Mage", "Demolitionist", "Grenadier", "PegasusRider"]
+		var debug_chess_faction = ["human", "human", "human", "undead", "elf", "dwarf", "dwarf", "elf"]
+		var debug_chess_name = ["CrossBowMan", "Mage", "ArchMage", "Necromancer", "Mage", "Demolitionist", "Grenadier", "PegasusRider"]
 		for debug_index in range(debug_chess_faction.size()):
 
 			var shop_col_index = debug_index % min(2, shop.unit_grid.size.x) + 2

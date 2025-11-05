@@ -8380,10 +8380,9 @@ layout_mode = 2
 visible = false
 layout_mode = 2
 
-[node name="chess_mover" type="Node2D" parent="." node_paths=PackedStringArray("play_areas")]
+[node name="chess_mover" type="Node2D" parent="."]
 unique_name_in_owner = true
 script = ExtResource("15_ve786")
-play_areas = [NodePath("../tilemap/arena"), NodePath("../tilemap/bench"), NodePath("../tilemap/shop"), NodePath("../tilemap/grave")]
 
 [node name="chess_information" parent="." instance=ExtResource("8_ve786")]
 offset_left = 417.0

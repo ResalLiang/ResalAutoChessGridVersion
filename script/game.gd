@@ -198,9 +198,9 @@ var population_record : Array = []
 
 var faction_path_upgrade_template = {
 	"elf": {
-		"path1" : 0,
+		"path1" : 1,
 		"path2" : 0,
-		"path3" : 1,
+		"path3" : 0,
 		"path4" : 0
 	},
 	"human": {
@@ -549,10 +549,10 @@ func _ready():
 	for chess_index in DataManagerSingleton.get_chess_data()["human"].keys():
 		chess_name_option.add_item(chess_index, option_index)
 		option_index += 1
-		chess_name_option.add_item("WeakDummy", chess_option_index)
-		chess_option_index += 1			
-		chess_name_option.add_item("HeavyDummy", chess_option_index)
-		chess_option_index += 1		
+		chess_name_option.add_item("WeakDummy", option_index)
+		option_index += 1			
+		chess_name_option.add_item("HeavyDummy", option_index)
+		option_index += 1		
 
 	chess_faction_option.item_selected.connect(
 		func(index):
@@ -1074,7 +1074,7 @@ func generate_random_chess(generate_level: int, specific_faction: String):
 			if (chess_attributes["speed"] == 0 and specific_faction != "villager") or chess_attributes["rarity"] != selected_rarity:
 				continue
 
-			if specific_faction == "undead" and (chess_name.contains("Zombie") or chess_name.contains("Skeleton")):
+			if faction == "undead" and (chess_name.contains("Zombie") or chess_name.contains("Skeleton")):
 				continue
 				
 			# Calculate dynamic weight with duplicate penalty
@@ -1154,7 +1154,11 @@ func generate_random_chess_update(generate_level: int, specific_faction: String)
 
 			if current_chess["speed"] == 0 and faction_index != "villager":
 				continue
+				
 			if chess_index == "Anvil" and faction_index == "villager":
+				continue
+				
+			if faction_index == "undead" and (chess_index.contains("Zombie") or chess_index.contains("Skeleton")):
 				continue
 
 			var composite_key = "%s_%s" % [faction_index, chess_index]

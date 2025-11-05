@@ -262,23 +262,23 @@ func on_path_bonus_pressed(node: TextureButton):
 	
 	match faction_array[current_page] + " Path " + str(current_path_number) + " Level " + str(current_level_number):
 		"elf Path 1 Level 1" :
-			faction_bonus_description.text = "Critical strike chance increased by 10%"
-		"elf Path 1 Level 2" :
-			faction_bonus_description.text = "Critical strike chance increased by 10%, critical damage multiplier increased by 100%"
-		"elf Path 1 Level 3" :
-			faction_bonus_description.text = "Critical strike chance increased by 20%, critical damage multiplier increased by 250%"
-		"elf Path 2 Level 1" :
-			faction_bonus_description.text = "Dodge chance increased by 10%"
-		"elf Path 2 Level 2" :
-			faction_bonus_description.text = "Dodge chance increased by 20%, 50% chance to counterattack when dodging"
-		"elf Path 2 Level 3" :
-			faction_bonus_description.text = "Dodge chance increased by 30%, 50% chance to counterattack when being attacked"
-		"elf Path 3 Level 1" :
 			faction_bonus_description.text = "Damage reduced by 50% (minimum 1 damage), gain +1 additional attack"
-		"elf Path 3 Level 2" :
+		"elf Path 1 Level 2" :
 			faction_bonus_description.text = "Damage reduced by 60% (minimum 2 damage), gain +2 additional attacks"
-		"elf Path 3 Level 3" :
+		"elf Path 1 Level 3" :
 			faction_bonus_description.text = "Damage reduced by 70% (minimum 3 damage), gain +3 additional attacks"
+		"elf Path 2 Level 1" :
+			faction_bonus_description.text = "Critical strike chance increased by 10%"
+		"elf Path 2 Level 2" :
+			faction_bonus_description.text = "Critical strike chance increased by 10%, critical damage multiplier increased by 100%"
+		"elf Path 2 Level 3" :
+			faction_bonus_description.text = "Critical strike chance increased by 20%, critical damage multiplier increased by 250%"
+		"elf Path 3 Level 1" :
+			faction_bonus_description.text = "Dodge chance increased by 10%"
+		"elf Path 3 Level 2" :
+			faction_bonus_description.text = "Dodge chance increased by 20%, 50% chance to counterattack when dodging"
+		"elf Path 3 Level 3" :
+			faction_bonus_description.text = "Dodge chance increased by 30%, 50% chance to counterattack when being attacked"
 		"elf Path 4 Level 1" :
 			faction_bonus_description.text = "Place holder"
 		"human Path 1 Level 1" :

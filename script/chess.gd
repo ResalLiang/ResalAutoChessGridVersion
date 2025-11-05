@@ -731,7 +731,7 @@ func start_turn():
 	remain_attack_count = attack_speed
 
 	var corpse_list: Array
-	if DataManagerSingleton.player_data["debug_mode"] or DataManagerSingleton.current_player == "debug" and team == 1:
+	if (DataManagerSingleton.player_data["debug_mode"] or DataManagerSingleton.current_player == "debug") and team == 1:
 		if chess_name == "Necromancer" or chess_name == "DeathLord":
 			if min(faction_bonus_manager.get_bonus_level("undead", team), game_root_scene.faction_path_upgrade["undead"]["path2"]) > 0:
 				corpse_list = [["human", "ArcherMan"], ["human", "Mage"], ["human", "HorseMan"], ["human", "KingMan"]]
@@ -1548,11 +1548,11 @@ func _on_died():
 				if position.distance_to(chess.position) <= 100:
 					is_soul_collector = false
 
-				if chess.faction != "undead" or not ["ArchLich", "DeathKnight", "DreadKnight", "Lich"].contains(chess.chess_name):
+				if chess.faction != "undead" or not ["ArchLich", "DeathKnight", "DreadKnight", "Lich"].has(chess.chess_name):
 					is_soul_collector = false
 
 				return is_soul_collector
-			)
+		)
 		if all_soul_collector.size() > 0:
 			all_soul_collector.sort_custom(
 				func(a, b):
@@ -1576,11 +1576,11 @@ func _on_died():
 				if position.distance_to(chess.position) <= 100:
 					is_corpse_collector = false
 
-				if chess.faction != "undead" or not ["Necromancer", "DeathLord"].contains(chess.chess_name):
+				if chess.faction != "undead" or not ["Necromancer", "DeathLord"].has(chess.chess_name):
 					is_corpse_collector = false
 
 				return is_corpse_collector
-			)
+		)
 		if all_necromancer.size() > 0:
 			all_necromancer.sort_custom(
 				func(a, b):
@@ -1589,7 +1589,7 @@ func _on_died():
 			var chosen_necromancer = all_necromancer.pop_front()
 			var soul_list = chosen_necromancer.get_meta("corpse_list", [])
 			soul_list.append([faction, chess_name])
-			chosen_necromancer.set_meta("corpse_list", corpse_list)
+			chosen_necromancer.set_meta("corpse_list", soul_list)
 	#Placeholder for chess passive ability on died
 
 func update_solid_map():
@@ -2501,7 +2501,8 @@ func control_corpse() -> bool:
 						summoned_character.animated_sprite_2d.play_backwards("die")
 						await summoned_character.animated_sprite_2d.animation_finished
 					break
-
+	return true
+	
 func dwarf_demolitionist_placebomb(spell_range: int) -> bool:
 	# var chess_affected := false
 	var attempt_summon_count := 10

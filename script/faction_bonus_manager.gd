@@ -29,7 +29,8 @@ var bonus_level_list : Dictionary = {
 	"speller" : [2, 4, 6],
 	"satyr" : [1, 2, 3],
 	"skeleton" : [1, 2, 3],
-	"zombie" : [1, 2, 3]
+	"zombie" : [1, 2, 3],
+	"warlock" : [1, 2, 3]
 }
 
 # player_faction_count for storing players chess name
@@ -52,7 +53,8 @@ var player_faction_count_template : Dictionary = {
 		"speller" : [],
 		"satyr" : [],
 		"skeleton" : [],
-		"zombie" : []
+		"zombie" : [],
+		"warlock" : []
 	},
 	2 : {
 		"elf" : [],
@@ -70,7 +72,8 @@ var player_faction_count_template : Dictionary = {
 		"speller" : [],
 		"satyr" : [],
 		"skeleton" : [],
-		"zombie" : []
+		"zombie" : [],
+		"warlock" : []
 	}
 }
 
@@ -94,7 +97,8 @@ var player_bonus_level_dict_template : Dictionary = {
 		"speller" : 0,
 		"satyr" : 0,
 		"skeleton" : 0,
-		"zombie" : 0
+		"zombie" : 0,
+		"warlock" : 0
 	},
 	2 : {
 		"elf" : 0,
@@ -112,7 +116,8 @@ var player_bonus_level_dict_template : Dictionary = {
 		"speller" : 0,
 		"satyr" : 0,
 		"skeleton" : 0,
-		"zombie" : 0
+		"zombie" : 0,
+		"warlock" : 0
 	}
 }
 
@@ -213,7 +218,7 @@ func add_bonus_bar_to_container(faction: String, level: int, bonus_count: int):
 		"satyr":
 			faction_bonus_bar.bar_color = Color.BLUE
 			faction_bonus_bar.frame_color = "Copper"
-		"placeholder1":
+		"warlock":
 			faction_bonus_bar.bar_color = Color.RED
 			faction_bonus_bar.frame_color = "Iron"
 		"placeholder2":
