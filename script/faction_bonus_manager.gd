@@ -27,7 +27,9 @@ var bonus_level_list : Dictionary = {
 	"ranger" : [2, 4, 6],
 	"knight" : [2, 4, 6],
 	"speller" : [2, 4, 6],
-	"satyr" : [1, 2, 3]
+	"satyr" : [1, 2, 3],
+	"skeleton" : [1, 2, 3],
+	"zombie" : [1, 2, 3]
 }
 
 # player_faction_count for storing players chess name
@@ -48,7 +50,9 @@ var player_faction_count_template : Dictionary = {
 		"ranger" : [],
 		"knight" : [],
 		"speller" : [],
-		"satyr" : []
+		"satyr" : [],
+		"skeleton" : [],
+		"zombie" : []
 	},
 	2 : {
 		"elf" : [],
@@ -64,7 +68,9 @@ var player_faction_count_template : Dictionary = {
 		"ranger" : [],
 		"knight" : [],
 		"speller" : [],
-		"satyr" : []
+		"satyr" : [],
+		"skeleton" : [],
+		"zombie" : []
 	}
 }
 
@@ -86,7 +92,9 @@ var player_bonus_level_dict_template : Dictionary = {
 		"ranger" : 0,
 		"knight" : 0,
 		"speller" : 0,
-		"satyr" : 0
+		"satyr" : 0,
+		"skeleton" : 0,
+		"zombie" : 0
 	},
 	2 : {
 		"elf" : 0,
@@ -102,7 +110,9 @@ var player_bonus_level_dict_template : Dictionary = {
 		"ranger" : 0,
 		"knight" : 0,
 		"speller" : 0,
-		"satyr" : 0
+		"satyr" : 0,
+		"skeleton" : 0,
+		"zombie" : 0
 	}
 }
 
@@ -276,10 +286,10 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 							critical_damage_bonus = 0
 							critical_rate_bonus = 0.1
 						2:
-							critical_damage_bonus = 1.0
+							critical_damage_bonus = 1
 							critical_rate_bonus = 0.2
 						3:
-							critical_damage_bonus = 2.5
+							critical_damage_bonus = 3
 							critical_rate_bonus = 0.2
 
 					effect_instance.register_buff("critical_rate_modifier", critical_damage_bonus, 999)
@@ -309,36 +319,9 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 
 		"human":
 			pass
-			# if friendly_chess.size() <= 0:
-			# 	return
-
-			# for chess_index in friendly_chess:
-			# 	var effect_instance = ChessEffect.new()
-			# 	effect_instance.register_buff("duration_only", 0, 999)
-			# 	# effect_instance.effect_duration = 999
-			# 	effect_instance.effect_name = "Wisdom - Level " + str(bonus_level)
-			# 	effect_instance.effect_type = "Faction Bonus"
-			# 	effect_instance.effect_applier = "Human Faction Bonus"
-			# 	effect_instance.effect_description = "Every 2 times buy human chess, shop will add a villager chess."
-			# 	chess_index.effect_handler.add_to_effect_array(effect_instance)
-			# 	chess_index.effect_handler.add_child(effect_instance)
 
 		"dwarf":
 			pass
-			# if friendly_chess.size() <= 0:
-			# 	return
-
-			# for chess_index in friendly_chess:
-			# 	var effect_instance = ChessEffect.new()
-			# 	effect_instance.register_buff("armor_modifier", 5 * bonus_level, 999)
-			# 	# effect_instance.armor_modifier = 5 * bonus_level
-			# 	# effect_instance.armor_modifier_duration = 999
-			# 	effect_instance.effect_name = "Fortress - Level " + str(bonus_level)
-			# 	effect_instance.effect_type = "Faction Bonus"
-			# 	effect_instance.effect_applier = "Dwarf Faction Bonus"
-			# 	effect_instance.effect_description = "Friendly chesses continuously gain armor boost."
-			# 	chess_index.effect_handler.add_to_effect_array(effect_instance)
-			# 	chess_index.effect_handler.add_child(effect_instance)
 
 		"holy":
 			if friendly_faction_chess.size() <= 0:
@@ -372,10 +355,10 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				var effect_instance
 				for chess_index in friendly_chess:
 					effect_instance = ChessEffect.new()
-					effect_instance.register_buff("continuous_hp_modifier", 20 * path2_bonus_level, 999)
+					effect_instance.register_buff("continuous_hp_modifier", path2_bonus_level, 999)
 					# effect_instance.continuous_hp_modifier = 20 * bonus_level
 					# effect_instance.continuous_hp_modifier_duration = 999
-					effect_instance.register_buff("max_hp_modifier", 30 * path2_bonus_level, 999)
+					effect_instance.register_buff("max_hp_modifier", path2_bonus_level, 999)
 					# effect_instance.max_hp_modifier = 30 * bonus_level
 					# effect_instance.max_hp_modifier_duration = 999
 					effect_instance.effect_name = "Strong - Level " + str(path2_bonus_level)
@@ -391,7 +374,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 
 			for chess_index in enemy_chess:
 				var effect_instance = ChessEffect.new()
-				effect_instance.register_buff("continuous_hp_modifier", -5 * bonus_level, bonus_level)
+				effect_instance.register_buff("continuous_hp_modifier", -bonus_level, bonus_level)
 				# effect_instance.continuous_hp_modifier = -5 * bonus_level
 				# effect_instance.continuous_hp_modifier_duration = bonus_level
 				effect_instance.register_buff("silenced", 0, bonus_level)
@@ -409,15 +392,11 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 
 			for chess_index in enemy_chess:
 				var effect_instance = ChessEffect.new()
-				effect_instance.register_buff("armor_modifier", -5 * bonus_level, 999)
-				# effect_instance.armor_modifier = -5 * bonus_level
-				# effect_instance.armor_modifier_duration = 999
+				effect_instance.register_buff("armor_modifier", -bonus_level, 999)
 				effect_instance.register_buff("speed_modifier", -2, bonus_level)
-				# effect_instance.speed_modifier = -2
-				# effect_instance.speed_modifier_duration = bonus_level
 				effect_instance.effect_name = "Weak - Level " + str(bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
-				effect_instance.effect_applier = "Undead Faction Bonus"
+				effect_instance.effect_applier = "Undead path1 Faction Bonus"
 				effect_instance.effect_description = "Enemy chesses suffer speed and armor loss."
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
@@ -524,6 +503,9 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
 
+		_:
+			pass
+			
 func clean_chess_faction_bonus(chess: Obstacle) -> void:
 	var chess_effect_list = chess.effect_handler.effect_list.duplicate()
 	if chess_effect_list.size() == 0:
