@@ -1,7 +1,7 @@
 extends Node
 class_name DamageManager
 
-func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, damage_type: String, affix_array: Array):
+func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: int, damage_type: String, affix_array: Array):
 
 	var damage_result = damage_value
 	var critical_damage := false
@@ -35,27 +35,22 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 				damage_result *= attacker.critical_damage
 				critical_damage = true				
 
-			
 	var elf_bonus_level = attacker.faction_bonus_manager.get_bonus_level("elf", attacker.team) if attacker is Chess else 0
 	var pikeman_bonus_level = attacker.faction_bonus_manager.get_bonus_level("pikeman", attacker.team) if attacker is Chess else 0
 
 	var min_damage_value = elf_bonus_level if elf_bonus_level > 0 else 1
 
 	if pikeman_bonus_level > 0 and target is Chess and target.role == "knight" and attacker is Chess and attacker.role == "pikeman":
-		damage_result += (5 * pikeman_bonus_level)
+		damage_result += pikeman_bonus_level
 
-	if not affix_array.has("ignore_armor") and damage_type != "Magic_attack":
-		damage_result -= target.armor
-		if damage_result < 0:
-			return
 
 	if target is Chess and target.is_phantom and damage_type != "Magic_attack":
-		damage_result *= 2.5
+		damage_result *= 2
 	elif target is Chess and target.is_phantom and damage_type == "Magic_attack":
-		damage_result *= 10.0
+		damage_result *= 10
 
 	if attacker is Chess and attacker.is_phantom:
-		damage_result /= 2.5
+		damage_result = floor(damage_result / 2)
 
 	var forest_bonus_level := 0
 	var vengeance_faction := ""
@@ -76,7 +71,7 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 				break
 
 		if forest_bonus_level != 0 and attacker.faction == vengeance_faction:
-			damage_result *= (1 - 0.1 * forest_bonus_level)
+			damage_result -= forest_bonus_level
 
 	if attacker.faction == "forestProtector":
 		forest_bonus_level = 0
@@ -93,7 +88,12 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 				break
 
 		if forest_bonus_level != 0 and target.faction == vengeance_faction:
-			damage_result *= (1 + 0.1 * forest_bonus_level)
+			damage_result += forest_bonus_level
+
+	if not affix_array.has("ignore_armor") and damage_type != "Magic_attack":
+		damage_result -= target.armor
+		if damage_result < 0:
+			return
 
 	damage_result = floor(damage_result)
 		
@@ -102,7 +102,7 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 	damage_result = max(damage_result, min_damage_value)
 
 	if (attacker is Chess and attacker.life_steal_rate > 0) or (attacker.faction == "forestProtector" and attacker.chess_name == "SatyrWarrior"):
-		life_steal_result = (attacker.life_steal_rate * damage_result) if attacker.life_steal_rate > 0 else (damage_result * 0.2 * attacker.chess_level)
+		life_steal_result = floor(attacker.life_steal_rate * damage_result) if attacker.life_steal_rate > 0 else floor(damage_result * 0.2 * attacker.chess_level)
 
 	if critical_damage:
 		attacker.critical_damage_applied.emit(attacker, target, damage_result)
@@ -126,7 +126,7 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: float, d
 	if attacker != target and damage_type != "Magic_attack" and attacker is Chess:
 		attacker.gain_mp(damage_result)
 	elif attacker != target and damage_type == "Magic_attack" and attacker is Chess and attacker.chess_name == "ArchMage" and attacker.faction == "human":
-		attacker.gain_mp(damage_result * 0.3 * attacker.chess_level)
+		attacker.gain_mp(floor(damage_result * 0.3 * attacker.chess_level))
 		
 	if attacker != target and target is Chess:
 		target.gain_mp(damage_result)
