@@ -55,16 +55,16 @@ enum TARGET_CHOICE {CLOSE, FAR, STRONG, WEAK, ALLY, SELF}
 #var obstacle_counter := 0
 #var obstacle_level := 0
 #
-#var base_max_hp := 100  # Maximum health points
-#var base_max_mp := 50   # Maximum magic points
+#var base_max_hp := 10  # Maximum health points
+#var base_max_mp := 10   # Maximum magic points
 #var base_speed := 8
-var base_melee_damage := 20.0   # Attack damage
-var base_ranged_damage := 20.0   # Attack damage
+var base_melee_damage := 2   # Attack damage
+var base_ranged_damage := 2   # Attack damage
 var base_attack_speed := 1 # Attack speed (attacks per turn)
 var base_attack_range := 20.0 # Attack range (pixels)
 var base_evasion_rate := 0.10
 var base_critical_rate := 0.10
-var base_critical_damage := 2.0
+var base_critical_damage := 2
 var base_life_steal_rate := 0.0
 var base_reflect_damage := 0.0
 #var base_armor := 0
@@ -98,7 +98,7 @@ var attack_speed = base_attack_speed
 var attack_range = base_attack_range
 var evasion_rate := 0.10
 var critical_rate := 0.10
-var critical_damage := 2.0
+var critical_damage := 2
 var life_steal_rate := 0.0
 var reflect_damage := base_reflect_damage
 #var armor := 0
@@ -337,9 +337,9 @@ func _ready():
 			if attacker.faction == "dwarf":
 				match attacker.chess_name:
 					"BearRider":
-						attacker.take_heal(target.max_hp * 0.1 * attacker.chess_level,self)
+						attacker.take_heal(floor(target.max_hp * 0.1 * attacker.chess_level),self)
 					"ArmoredBearRider":
-						attacker.take_heal(target.max_hp * 0.2 * attacker.chess_level,self)
+						attacker.take_heal(floor(target.max_hp * 0.1 * attacker.chess_level),self)
 					_:
 						pass
 			elif attacker.faction == "forestProtector":
@@ -367,11 +367,11 @@ func _ready():
 
 				match current_bonus_level:
 					2:
-						forestProtector_path2_effect.buff_dict["continuous_hp_modifier"] += 5
-						forestProtector_path2_effect.buff_dict["max_hp_modifier"] += 20
+						forestProtector_path2_effect.buff_dict["continuous_hp_modifier"] += 1
+						forestProtector_path2_effect.buff_dict["max_hp_modifier"] += 1
 					3:
-						forestProtector_path2_effect.buff_dict["continuous_hp_modifier"] += 10
-						forestProtector_path2_effect.buff_dict["max_hp_modifier"] += 35
+						forestProtector_path2_effect.buff_dict["continuous_hp_modifier"] += 2
+						forestProtector_path2_effect.buff_dict["max_hp_modifier"] += 2
 					_:
 						pass
 	)			
@@ -678,21 +678,21 @@ func _load_chess_stats():
 			1:
 				pass
 			2:
-				base_max_hp *= 1.2
-				base_melee_damage *= 1.2
-				base_ranged_damage *= 1.2
+				base_max_hp += 2
+				base_melee_damage += 1
+				base_ranged_damage += 1
 			3:
 				base_speed += 1
-				base_max_hp *= 1.5
-				base_melee_damage *= 1.5
-				base_ranged_damage *= 1.5
+				base_max_hp += 4
+				base_melee_damage += 2
+				base_ranged_damage += 2
 			
 		if get_meta("WeakDummy", false):
 			base_max_hp = 1
 			max_hp = 1
 		elif get_meta("HeavyDummy", false):
-			base_max_hp = 9999
-			max_hp = 9999
+			base_max_hp = 99
+			max_hp = 99
 
 		if stats.keys().has("skill_name"):
 			skill_name = stats["skill_name"]
@@ -729,6 +729,17 @@ func start_turn():
 	update_effect()
 
 	remain_attack_count = attack_speed
+
+	var corpse_list: Array
+	if DataManagerSingleton.player_data["debug_mode"] or DataManagerSingleton.current_player == "debug" and team == 1:
+		if chess_name == "Necromancer" or chess_name == "DeathLord":
+			if min(faction_bonus_manager.get_bonus_level("undead", team), game_root_scene.faction_path_upgrade["undead"]["path2"]) > 0:
+				corpse_list = [["human", "ArcherMan"], ["human", "Mage"], ["human", "HorseMan"], ["human", "KingMan"]]
+			elif min(faction_bonus_manager.get_bonus_level("undead", team), game_root_scene.faction_path_upgrade["undead"]["path3"]) > 0:
+				corpse_list = [["human", "CavalierMan"], ["forestProtector", "TreantGuard"], ["elf", "PegasusRider"], ["dwarf", "Shieldbreaker"], ["forestProtector", "Pixie"]]
+			else:
+				corpse_list = []
+			set_meta("corpse_list", corpse_list)
 
 	#if not chess_target or not is_instance_valid(chess_target) or chess_target.status == STATUS.DIE:
 	if not DataManagerSingleton.check_obstacle_valid(chess_target):
@@ -1360,7 +1371,7 @@ func take_heal(heal_value: float, healer: Obstacle):
 			2:
 				satyr_array = get_tree().get_nodes_in_group("enemy").filter(func(node): return node.role == "satyr" and DataManagerSingleton.check_obstacle_valid(node))
 
-		var averaged_heal_value = heal_value * 0.3 * satyr_bonus_level
+		var averaged_heal_value = satyr_bonus_level
 		for node in satyr_array:
 			if node == self:
 				node.hp += heal_value
@@ -1411,8 +1422,8 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 	elif chess_name == "Queen" and faction == "elf":
 		cast_spell_result = freezing_field(20)
 		# cast_spell_result = elf_queen_stun(2, 5)
-	elif chess_name == "Necromancer" and faction == "undead":
-		cast_spell_result = await undead_necromancer_summon("Skeleton", 3)
+	elif (chess_name == "Necromancer" or chess_name == "DeathLord") and faction == "undead":
+		cast_spell_result = await control_corpse()
 	elif chess_name == "Demolitionist" and faction == "dwarf":
 		cast_spell_result = dwarf_demolitionist_placebomb(100)
 	elif chess_name == "SpellSword" and faction == "elf":
@@ -1503,8 +1514,8 @@ func _on_died():
 			current_dwarf_death_count = king_index.get_meta("dwarf_death_count", 0)
 			var effect_instance = ChessEffect.new()
 			king_index.effect_handler.add_child(effect_instance)
-			effect_instance.register_buff("melee_attack_damage_modifier", current_dwarf_death_count * (2 + king_index.chess_level), 999)
-			effect_instance.register_buff("armor_modifier",  current_dwarf_death_count * (4 + king_index.chess_level), 999)
+			effect_instance.register_buff("melee_attack_damage_modifier", current_dwarf_death_count * king_index.chess_level, 999)
+			effect_instance.register_buff("armor_modifier",  current_dwarf_death_count * king_index.chess_level, 999)
 			effect_instance.effect_name = "Avatar"
 			effect_instance.effect_type = "Buff"
 			effect_instance.effect_description = "Gains damage and armor when allied Dwarves die."
@@ -1523,8 +1534,62 @@ func _on_died():
 		)
 		if enemy_spellers.size() > 0:
 			for chess_index in enemy_spellers:
-				chess_index.mp *= (1 - 0.3 * chess_level)
+				chess_index.mp -= chess_level
 	
+	#soul collection
+	if not chess_name.contains("Skeleton") and not chess_name.contains("Zombie") and not is_phantom:
+		var all_soul_collector = arena.unit_grid.get_all_units().filter(
+			func(chess): 
+				var is_soul_collector := true
+
+				if DataManagerSingleton.check_chess_valid(chess):
+					is_soul_collector = false
+
+				if position.distance_to(chess.position) <= 100:
+					is_soul_collector = false
+
+				if chess.faction != "undead" or not ["ArchLich", "DeathKnight", "DreadKnight", "Lich"].contains(chess.chess_name):
+					is_soul_collector = false
+
+				return is_soul_collector
+			)
+		if all_soul_collector.size() > 0:
+			all_soul_collector.sort_custom(
+				func(a, b):
+					return self.position.distance_to(a.position) <= self.position.distance_to(a.position)
+			)
+			var chosen_soul_collector = all_soul_collector.pop_front()
+			var soul_list = chosen_soul_collector.get_meta("soul_list", [])
+			soul_list.append([faction, chess_name])
+			chosen_soul_collector.set_meta("soul_list", soul_list)
+
+	
+	#corpse collection
+	if not chess_name.contains("Treant") and not is_phantom:
+		var all_necromancer = arena.unit_grid.get_all_units().filter(
+			func(chess): 
+				var is_corpse_collector := true
+				
+				if DataManagerSingleton.check_chess_valid(chess):
+					is_corpse_collector = false
+
+				if position.distance_to(chess.position) <= 100:
+					is_corpse_collector = false
+
+				if chess.faction != "undead" or not ["Necromancer", "DeathLord"].contains(chess.chess_name):
+					is_corpse_collector = false
+
+				return is_corpse_collector
+			)
+		if all_necromancer.size() > 0:
+			all_necromancer.sort_custom(
+				func(a, b):
+					return self.position.distance_to(a.position) <= self.position.distance_to(a.position)
+			)
+			var chosen_necromancer = all_necromancer.pop_front()
+			var soul_list = chosen_necromancer.get_meta("corpse_list", [])
+			soul_list.append([faction, chess_name])
+			chosen_necromancer.set_meta("corpse_list", corpse_list)
 	#Placeholder for chess passive ability on died
 
 func update_solid_map():
@@ -1850,8 +1915,8 @@ func elf_path1_bonus():
 
 		var effect_instance = ChessEffect.new()
 		effect_handler.add_child(effect_instance)
-		effect_instance.register_buff("melee_attack_damage_modifier", -1.0 * (base_melee_damage/(bonus_level + 1)), 999)
-		effect_instance.register_buff("ranged_attack_damage_modifier", -1.0 * (base_ranged_damage/(bonus_level + 1)), 999)
+		effect_instance.register_buff("melee_attack_damage_modifier", -(base_melee_damage - bonus_level), 999)
+		effect_instance.register_buff("ranged_attack_damage_modifier", -(base_melee_damage - bonus_level), 999)
 		effect_instance.register_buff("attack_speed_modifier", bonus_level, 999)
 		effect_instance.effect_name = "Swift - Level " + str(bonus_level)
 		effect_instance.effect_type = "Faction Bonus"
@@ -1901,17 +1966,17 @@ func dwarf_path1_bonus():
 				b2b_ally_dwarf = true
 				break
 	var armor_bonus = 0
-	armor_bonus += (2 * bonus_level)
+	armor_bonus += bonus_level
 
 	if b2b_ally_dwarf:
-		armor_bonus += 2
+		armor_bonus += 1
 
 	if total_movement == 0:
-		armor_bonus += 2
+		armor_bonus += 1
 
 	var effect_instance = ChessEffect.new()
 	effect_instance.register_buff("armor_modifier", armor_bonus , 1)
-	effect_instance.register_buff("refelect_damage_modifier", (bonus_level * 5 if bonus_level > 1 else 0) , 1)
+	effect_instance.register_buff("refelect_damage_modifier", (bonus_level if bonus_level > 1 else 0) , 1)
 	effect_instance.effect_name = "Fortress - Level " + str(bonus_level)
 	effect_instance.effect_type = "Faction Bonus"
 	effect_instance.effect_applier = "Dwarf path1 Faction Bonus"
@@ -1944,11 +2009,11 @@ func dwarf_path2_bonus():
 	if hp <= 0.33 * max_hp:
 		match bonus_level:
 			2:
-				damage_bonus += (armor * 0.5)
-				armor_bonus = -(armor * 0.5)
+				damage_bonus += armor
+				armor_bonus = -armor
 				life_steal_bonus = 0.5
 			3:
-				damage_bonus += armor
+				damage_bonus += (armor + 2)
 				armor_bonus = -armor
 				life_steal_bonus = 1.0
 
@@ -2000,7 +2065,7 @@ func warrior_bonus():
 		set_meta("warrior_damage_bonus", 0)
 	else:
 		var current_warrior_damage_bonus = get_meta("warrior_damage_bonus", 0)
-		current_warrior_damage_bonus += bonus_level
+		current_warrior_damage_bonus =  min(bonus_level + 1, current_warrior_damage_bonus + bonus_level)
 		set_meta("warrior_damage_bonus", current_warrior_damage_bonus)
 
 	melee_damage += get_meta("warrior_damage_bonus")
@@ -2013,7 +2078,7 @@ func knight_bonus():
 		return
 
 	if total_movement >=5:
-		melee_damage *= (1 + 0.15 * bonus_level)
+		melee_damage += bonus_level * 2
 
 func pegasus_rider_movement():
 	var fly_result := false
@@ -2106,7 +2171,7 @@ func sun_strike(strike_count: int) -> bool:
 				
 			if DataManagerSingleton.check_obstacle_valid(arena.unit_grid.units[current_tile]):
 				var current_spell_target = arena.unit_grid.units[current_tile]
-				deal_damage.emit(self, current_spell_target, 15 + 5 * chess_level, "Magic_attack", [])
+				deal_damage.emit(self, current_spell_target, chess_level, "Magic_attack", [])
 
 		
 	#var current_strike
@@ -2129,7 +2194,7 @@ func freezing_field(arrow_count: int) -> bool:
 	for i in range(arrow_count):
 		var spell_projectile = _launch_projectile_to_degree(arraow_degree)
 		spell_projectile.projectile_animation = "Ice"
-		spell_projectile.damage = 5 + 5 * chess_level
+		spell_projectile.damage = chess_level
 		spell_projectile.damage_type = "Magic_attack"
 		spell_projectile.projectile_hit.connect(
 			func(obstacle, projectile):
@@ -2160,14 +2225,14 @@ func mana_transfer() -> bool:
 	if all_ally.size() == 0:
 		chess_affected = false
 	elif all_ally.size() == 1:
-		all_ally[0].gain_mp(mp * 0.3 * chess_level)
+		all_ally[0].gain_mp(floor(mp * 0.3 * chess_level))
 		chess_affected =  true
 	else:
 		all_ally.sort_custom(
 			func(a, b):
 				return a.mp >= b.mp			
 		)
-		all_ally.front().gain_mp(mp * 0.2 * chess_level)
+		all_ally.front().gain_mp(floor(mp * 0.3 * chess_level))
 		chess_affected =  true
 	return chess_affected
 	
@@ -2179,7 +2244,7 @@ func random_heal(value: float, healer: Obstacle):
 	if all_ally.size() == 0:
 		return	
 	all_ally.shuffle()
-	all_ally.front().take_heal(value * 0.3 * healer.chess_level, healer)
+	all_ally.front().take_heal(floor(value * 0.3 * healer.chess_level), healer)
 
 func powerful_heal():
 	if not (chess_name == "Satyr" and faction == "forestProtector"):
@@ -2193,7 +2258,7 @@ func powerful_heal():
 	if all_ally.size() < 0:
 		return false
 	var heal_target = all_ally.pop_front()
-	_apply_heal(heal_target, (25 + 25 * chess_level) * (2 if heal_target.role == "satyr" else 1))
+	_apply_heal(heal_target, chess_level + (1 if heal_target.role == "satyr" else 0))
 	return true
 
 func shadow_wave(spell_target: Obstacle) -> bool:
@@ -2210,9 +2275,9 @@ func shadow_wave(spell_target: Obstacle) -> bool:
 			if obstacle_affect.has(obstacle):
 				return
 			if obstacle.team == team:
-				_apply_heal(obstacle, 5 * chess_level)
+				_apply_heal(obstacle, 1 + chess_level)
 			else:
-				deal_damage.emit(self, obstacle, 5 * chess_level, "Magic_attack", [])
+				deal_damage.emit(self, obstacle, 1 + chess_level, "Magic_attack", [])
 			obstacle_affect.append(obstacle)
 			current_jump_count -= 1
 			if current_jump_count <= 0:
@@ -2253,7 +2318,7 @@ func entangling_roots() -> bool:
 		chess_index.effect_handler.add_to_effect_array(effect_instance)	
 		chess_index.damage_taken.connect(
 			func(target, attacker):
-				target._apply_heal(self, target.max_hp * 0.05 * chess_level)
+				target._apply_heal(self, chess_level)
 		)
 	return true
 
@@ -2356,19 +2421,78 @@ func elf_mage_damage(spell_target:Obstacle, damage_threshold: float, min_damage_
 
 	return chess_affected
 
-func undead_necromancer_summon(summoned_chess_name: String, summon_unit_count: int) -> bool:
-	var chess_affected := false
-	var attempt_summon_count := 30
-	var summoned_chess_count := 0
-	if summoned_chess_name in chess_data["undead"].keys():
-		while attempt_summon_count > 0 and summoned_chess_count < summon_unit_count:
+func control_corpse() -> bool:
+	var corpse_list = get_meta("corpse_list", [["human", "SwordMan"]])
+
+	var undead_path2_bonus_level := 0
+	var undead_path3_bonus_level := 0
+
+	if team == 1:
+		undead_path2_bonus_level = min(faction_bonus_manager.get_bonus_level("undead", team), game_root_scene.faction_path_upgrade["undead"]["path2"])
+		undead_path3_bonus_level = min(faction_bonus_manager.get_bonus_level("undead", team), game_root_scene.faction_path_upgrade["undead"]["path3"])
+	else:
+		undead_path2_bonus_level = faction_bonus_manager.get_bonus_level("undead", team)
+		undead_path3_bonus_level = faction_bonus_manager.get_bonus_level("undead", team)
+
+	var remain_summon_count = chess_level + 1
+	for i in range(remain_summon_count):
+		if remain_summon_count < 0 or corpse_list.size() <= 0:
+			set_meta("corpse_list", corpse_list)
+			return true
+
+		var corpse_chess = corpse_list.pop_front()
+		var corpse_chess_faction = corpse_chess[0]
+		var corpse_chess_name = corpse_chess[1]
+		var summon_chess_name := ""
+
+		if corpse_chess_name.contains("Zombie") or corpse_chess_name.contains("Skeleton"):
+			continue
+
+		if game_root_scene.faction_path_upgrade["undead"]["path2"] >= 0 and game_root_scene.faction_path_upgrade["undead"]["path3"] == 0:
+			#summon skeleton
+			match DataManagerSingleton.get_chess_data()[corpse_chess_faction][corpse_chess_name]["role"]:
+				"warrior":
+					summon_chess_name = "SkeletonWarrior" if undead_path2_bonus_level >= 2 else "Skeleton"
+				"pikeman":
+					summon_chess_name = "SkeletonWarrior" if undead_path2_bonus_level >= 2 else "Skeleton"
+				"speller":
+					summon_chess_name = "SkeletonMage" if undead_path2_bonus_level >= 3 else "Skeleton"
+				"ranger":
+					summon_chess_name = "SkeletonArcher" if undead_path2_bonus_level >= 2 else "Skeleton"
+				"knight":
+					summon_chess_name = "SkeletonHorseman" if undead_path2_bonus_level >= 3 else "Skeleton"
+				_:
+					summon_chess_name = "Skeleton" if undead_path2_bonus_level == 1 else "SkeletonWarrior"
+
+		elif game_root_scene.faction_path_upgrade["undead"]["path3"] > 0:
+			#summon zombie
+			if undead_path2_bonus_level == 1:
+				summon_chess_name = "Zombie"
+			elif DataManagerSingleton.get_chess_data()[corpse_chess_faction][corpse_chess_name]["melee_attack_damage"] > 2 and undead_path2_bonus_level >=3:
+				summon_chess_name = "ZombieCrusher"
+			elif DataManagerSingleton.get_chess_data()[corpse_chess_faction][corpse_chess_name]["max_health"] > 15 and undead_path2_bonus_level >= 3:
+				summon_chess_name = "ZombieButcher"
+			elif DataManagerSingleton.get_chess_data()[corpse_chess_faction][corpse_chess_name]["speed"] > 5:
+				summon_chess_name = "ZombieRunner"
+			elif DataManagerSingleton.get_chess_data()[corpse_chess_faction][corpse_chess_name]["armor"] >= 2:
+				summon_chess_name = "ZombieWarrior"
+			elif DataManagerSingleton.get_chess_data()[corpse_chess_faction][corpse_chess_name]["max_health"] <= 5:
+				summon_chess_name = "ZombieDog"
+			else:
+				summon_chess_name = "Zombie" if undead_path3_bonus_level == 1 else "ZombieWarrior"
+
+		var attempt_summon_count := 30
+		if not summon_chess_name in chess_data["undead"].keys():
+			continue
+			
+		while attempt_summon_count > 0:
 			var current_tile = get_current_tile(self)[1]
 			var rand_x = randi_range(current_tile.x - 2, current_tile.x + 2)
 			var rand_y = randi_range(current_tile.y - 2, current_tile.y + 2)
 			if rand_x >=0 and rand_x < arena.unit_grid.size.x and rand_y >=0 and rand_y < arena.unit_grid.size.y:
 				attempt_summon_count -= 1
 				if not arena.unit_grid.is_tile_occupied(Vector2(rand_x, rand_y)):
-					var summoned_character = game_root_scene.summon_chess("undead", summoned_chess_name, 1, team, arena, Vector2i(rand_x, rand_y))
+					var summoned_character = game_root_scene.summon_chess("undead", summon_chess_name, (2 if chess_name == "DeathLord" else 1), team, arena, Vector2i(rand_x, rand_y))
 
 					if summoned_character.animated_sprite_2d.sprite_frames.has_animation("rise") :
 						summoned_character.animated_sprite_2d.play("rise")
@@ -2376,10 +2500,7 @@ func undead_necromancer_summon(summoned_chess_name: String, summon_unit_count: i
 					else:
 						summoned_character.animated_sprite_2d.play_backwards("die")
 						await summoned_character.animated_sprite_2d.animation_finished
-
-					summoned_chess_count += 1
-					chess_affected = true
-	return chess_affected
+					break
 
 func dwarf_demolitionist_placebomb(spell_range: int) -> bool:
 	# var chess_affected := false
