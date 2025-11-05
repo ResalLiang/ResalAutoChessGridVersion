@@ -214,10 +214,16 @@ var faction_path_upgrade_template = {
 		"path2" : 0,
 		"path3" : 0,
 		"path4" : 0
-	}	,
+	},
 	"forestProtector": {
 		"path1" : 0,
 		"path2" : 1,
+		"path3" : 0,
+		"path4" : 0
+	} ,
+	"undead": {
+		"path1" : 1,
+		"path2" : 0,
 		"path3" : 0,
 		"path4" : 0
 	}	
@@ -543,6 +549,11 @@ func _ready():
 	for chess_index in DataManagerSingleton.get_chess_data()["human"].keys():
 		chess_name_option.add_item(chess_index, option_index)
 		option_index += 1
+		chess_name_option.add_item("WeakDummy", chess_option_index)
+		chess_option_index += 1			
+		chess_name_option.add_item("HeavyDummy", chess_option_index)
+		chess_option_index += 1		
+
 	chess_faction_option.item_selected.connect(
 		func(index):
 			var selected_faction = DataManagerSingleton.get_chess_data().keys()[index]
@@ -805,11 +816,12 @@ func new_round_prepare_end():
 	
 	faction_bonus_manager.bonus_refresh()
 
+	AudioManagerSingleton.play_music("battle")
+
 	chess_appearance(arena)
 
 func start_new_round():
 	# if start new turn, it will be fully auto.
-	AudioManagerSingleton.play_music("battle")
 	print("Start new round.")
 	var team1_alive_cnt = 0
 	var team2_alive_cnt = 0
@@ -1061,6 +1073,9 @@ func generate_random_chess(generate_level: int, specific_faction: String):
 			# Validation checks
 			if (chess_attributes["speed"] == 0 and specific_faction != "villager") or chess_attributes["rarity"] != selected_rarity:
 				continue
+
+			if specific_faction == "undead" and (chess_name.contains("Zombie") or chess_name.contains("Skeleton")):
+				continue
 				
 			# Calculate dynamic weight with duplicate penalty
 			var chess_identifier = "%s_%s" % [faction, chess_name]
@@ -1194,13 +1209,13 @@ func chess_appearance(play_area: PlayArea):
 		current_chess_count += 1
 		chess_index[0].global_position.y -= before_appreance_height
 		chess_index[0].visible = true
-		appearance_tween.tween_property(chess_index[0], "global_position", chess_index[0].global_position + Vector2(0, before_appreance_height) , 0.5)
+		appearance_tween.tween_property(chess_index[0], "global_position", chess_index[0].global_position + Vector2(0, before_appreance_height) , 0.2)
 
 	for chess_index in team_dict[Team.TEAM2_FULL]:
 		current_chess_count += 1
 		chess_index[0].global_position.y -= before_appreance_height
 		chess_index[0].visible = true
-		appearance_tween.tween_property(chess_index[0], "global_position", chess_index[0].global_position + Vector2(0, before_appreance_height) , 0.5)
+		appearance_tween.tween_property(chess_index[0], "global_position", chess_index[0].global_position + Vector2(0, before_appreance_height) , 0.2)
 
 	# position_tween.tween_property(self, "global_position", target_pos, 0.1)
 
