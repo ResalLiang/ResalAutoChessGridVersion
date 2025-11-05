@@ -53,8 +53,8 @@ var obstacle_level := 1
 
 var chess_level := 1
 
-var base_max_hp := 100.0  # Maximum health points
-var base_max_mp := 50.0   # Maximum magic points
+var base_max_hp := 10  # Maximum health points
+var base_max_mp := 10   # Maximum magic points
 var base_speed := 0
 var base_armor := 0
 
@@ -69,12 +69,12 @@ var mp: float = 0:
 
 var max_hp = base_max_hp:
 	set(value):
-		var update_hp = value * (1.0 * hp / max_hp)
+		var update_hp = max(1, hp + value - max_hp)
 		max_hp = value
 		hp = update_hp
 var max_mp = base_max_mp:
 	set(value):
-		var update_mp = value * (1.0 * mp / max_mp)
+		var update_mp = max(1, mp + value - max_mp)
 		max_mp = value
 		mp = update_mp
 
@@ -130,7 +130,7 @@ var taunt_range := 70
 
 # Projectile Related
 var projectile_speed: float = 300.0  # Projectile speed
-var projectile_damage: int = 15  # Projectile damage
+var projectile_damage: int = 1  # Projectile damage
 var projectile_penetration: int = 3  # Number of enemies projectile can penetrate
 var ranged_attack_threshold: float = 40.0  # Minimum distance for ranged attack
 var projectile
@@ -172,7 +172,7 @@ signal heal_taken(obstacle: Obstacle, healer: Obstacle, heal_value: float) # for
 signal attack_evased(obstacle: Obstacle, attacker: Obstacle) # for audio player and display
 
 signal is_died(obstacle: Obstacle, attacker: Obstacle) # for audio player and display
-signal deal_damage(attacker: Obstacle, target: Obstacle, damage_value: float, damage_type: String, affix_array: Array[String])
+signal deal_damage(attacker: Obstacle, target: Obstacle, damage_value: int, damage_type: String, affix_array: Array[String])
 
 signal kill_chess(obstacle: Obstacle, target: Obstacle)
 
@@ -700,7 +700,7 @@ func dwarf_bomb_boom():
 					var target_area_chess = arena.unit_grid.units[get_current_tile(self)[1] + Vector2i(x, y)]
 					if DataManagerSingleton.check_obstacle_valid(target_area_chess):
 						# _apply_damage(target_area_chess, 50 * obstacle_level)
-						deal_damage.emit(self, target_area_chess, 50 * obstacle_level, "Ranged_attack", [])
+						deal_damage.emit(self, target_area_chess, 2 * obstacle_level, "Ranged_attack", [])
 					
 	status = STATUS.DIE
 	animated_sprite_2d.stop()
