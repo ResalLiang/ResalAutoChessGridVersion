@@ -160,15 +160,19 @@ func shop_refresh(level: int) -> void:
 		else:
 			if get_parent().faction_path_upgrade.size() > 0 and get_parent().faction_path_upgrade["human"]["path4"] > 0:
 				rand_character_result = get_parent().generate_random_chess_update(min(6, shop_level), "villager")
+
 			else:
 				rand_character_result = get_parent().generate_random_chess_update(min(6, shop_level), "locked")
 
 		var character = get_parent().summon_chess(rand_character_result[0], rand_character_result[1], 1, 1, shop, Vector2i(shop_col_index, shop_row_index))
-
-	if get_parent().faction_path_upgrade.size() > 0:
-		get_parent().faction_path_upgrade["human"]["path4"] = 0
-		get_parent().faction_path_upgrade["elf"]["path4"] = 0
-		get_parent().faction_path_upgrade["dwarf"]["path4"] = 0
+	
+	get_parent().faction_path_upgrade["human"]["path4"] = 0
+	# if get_parent().faction_path_upgrade.size() > 0:
+		
+	# 	get_parent().faction_path_upgrade["elf"]["path4"] = 0
+	# 	get_parent().faction_path_upgrade["dwarf"]["path4"] = 0
+	# 	get_parent().faction_path_upgrade["forestProtector"]["path4"] = 0
+	# 	get_parent().faction_path_upgrade["undead"]["path4"] = 0
 
 	if DataManagerSingleton.player_data["debug_mode"] or DataManagerSingleton.current_player == "debug":
 		var debug_chess_faction = ["human", "human", "human", "elf", "elf", "dwarf", "dwarf", "elf"]
