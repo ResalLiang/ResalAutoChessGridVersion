@@ -33,7 +33,7 @@ const alternative_choice_scene = preload("res://scene/alternative_choice.tscn")
 @onready var remain_won_rounds_template: TextureRect = $ui/won_lose_round_container/won_round_container/remain_won_rounds_template
 
 var current_page := 0
-var faction_array := ["elf", "human", "dwarf", "forestProtector"]
+var faction_array := ["elf", "human", "dwarf", "forestProtector", "undead"]
 var game_faction_path_upgrade
 
 var current_path_number := 0
@@ -54,10 +54,21 @@ var faction_path_upgrade_template = {
 		"path1" : 0,
 		"path2" : 0,
 		"path3" : 0
+	}	,
+	"forestProtector": {
+		"path1" : 0,
+		"path2" : 0,
+		"path3" : 0
+	}	,
+	"undead": {
+		"path1" : 0,
+		"path2" : 0,
+		"path3" : 0
 	}	
 }
 
 signal button_actived
+signal path_actived(faction: String, path:String, level: int)
 
 func _ready() -> void:
 	
@@ -126,6 +137,7 @@ func _ready() -> void:
 			if current_level_number == 0 or current_path_number == 0:
 				return
 			game_faction_path_upgrade[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
+			path_actived.emit(faction_array[current_page], current_path_number, current_level_number)
 			refresh_page()
 	)
 	consume_max_lose_round.pressed.connect(
@@ -137,6 +149,7 @@ func _ready() -> void:
 			if current_level_number == 0 or current_path_number == 0:
 				return
 			game_faction_path_upgrade[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
+			path_actived.emit(faction_array[current_page], current_path_number, current_level_number)
 			refresh_page()		
 	)
 	consume_won_round.pressed.connect(
@@ -146,6 +159,7 @@ func _ready() -> void:
 			if current_level_number == 0 or current_path_number == 0:
 				return
 			game_faction_path_upgrade[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
+			path_actived.emit(faction_array[current_page], current_path_number, current_level_number)
 			refresh_page()
 	)
 	just_active.pressed.connect(
@@ -155,6 +169,7 @@ func _ready() -> void:
 			if current_level_number == 0 or current_path_number == 0:
 				return
 			game_faction_path_upgrade[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
+			path_actived.emit(faction_array[current_page], current_path_number, current_level_number)
 			refresh_page()
 	)
 	
@@ -326,6 +341,26 @@ func on_path_bonus_pressed(node: TextureButton):
 			faction_bonus_description.text = "forestProtector gains a large damage reduction and damage increase against the piece faction that killed it in the previous round"
 		"forestProtector Path 4 Level 1" :
 			faction_bonus_description.text = "Placeholder"
+		"undead Path 1 Level 1" :
+			faction_bonus_description.text = "Enemies gain small armor and speed debuff"
+		"undead Path 1 Level 2" :
+			faction_bonus_description.text = "Enemies gain armor and speed debuff"
+		"undead Path 1 Level 3" :
+			faction_bonus_description.text = "Enemies gain large armor and speed debuff"
+		"undead Path 2 Level 1" :
+			faction_bonus_description.text = "Necromancer and deathlord can summon skeleton from corpse base on its role"
+		"undead Path 2 Level 2" :
+			faction_bonus_description.text = "Necromancer and deathlord can summon skeleton from corpse base on its role, unlock SkeletonArcher and SkeletonWarrior"
+		"undead Path 2 Level 3" :
+			faction_bonus_description.text = "Necromancer and deathlord can summon skeleton from corpse base on its role, unlock SkeletonHorseman and SkeletonMage"
+		"undead Path 3 Level 1" :
+			faction_bonus_description.text = "Necromancer and deathlord can summon zombie from corpse base on its stats"
+		"undead Path 3 Level 2" :
+			faction_bonus_description.text = "Necromancer and deathlord can summon zombie from corpse base on its stats, unlock ZombieDog, ZombieRunner and ZombieWarrior"
+		"undead Path 3 Level 3" :
+			faction_bonus_description.text = "Necromancer and deathlord can summon zombie from corpse base on its stats, unlock ZombieCrusher and ZombieButcher"
+		"undead Path 4 Level 1" :
+			faction_bonus_description.text = "Placeholder"
 		_:
 			faction_bonus_description.text = "place holder"
 			
@@ -361,6 +396,14 @@ func on_path_bonus_pressed(node: TextureButton):
 		"forestProtector Path 3" :
 			faction_path_label.text = "Path3 Echoing Vengeance"
 		"forestProtector Path 4" :
+			faction_path_label.text = "Path4 Placeholder"
+		"undead Path 1" :
+			faction_path_label.text = "Path1 Weaken"
+		"undead Path 2" :
+			faction_path_label.text = "Path2 Control Skeleton"
+		"undead Path 3" :
+			faction_path_label.text = "Path3 Control Zombie"
+		"undead Path 4" :
 			faction_path_label.text = "Path4 Placeholder"
 		_:
 			faction_path_label.text = "place holder"	
