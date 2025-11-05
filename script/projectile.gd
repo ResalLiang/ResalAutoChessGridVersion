@@ -2,10 +2,10 @@ extends Area2D
 class_name Projectile
 
 @export var speed: float = 600.0
-@export var damage: float = 20.0
+@export var damage: float = 2
 @export var penetration: int = 1  # 穿透次数
 @export var max_distance: float = 1000.0  # 最大飞行距离
-@export var decline_ratio := 3.0
+@export var decline_ratio := 1
 
 var current_penetration
 
@@ -106,7 +106,7 @@ func _on_area_entered(area):
 		hit_record.append(obstacle)
 
 		current_penetration -= 1  # 减少穿透计数
-		damage /= decline_ratio
+		damage -= decline_ratio
 		
 		# 穿透次数耗尽时消失
 		if current_penetration <= 0 or damage < 5:
