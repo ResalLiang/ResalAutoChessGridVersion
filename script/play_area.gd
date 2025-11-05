@@ -10,7 +10,7 @@ var placeable_bounds : Rect2i
 func _ready() -> void:
 	bounds = Rect2i(Vector2i.ZERO, unit_grid.size)
 	placeable_bounds = Rect2i(Vector2i.ZERO, unit_grid.size)
-	if not DataManagerSingleton.player_data["debug_mode"]:
+	if not DataManagerSingleton.player_data["debug_mode"] and DataManagerSingleton.current_player != "debug":
 		placeable_bounds.size.x = placeable_bounds.size.x / 2
 	
 func get_tile_from_global(global: Vector2) -> Vector2i:
