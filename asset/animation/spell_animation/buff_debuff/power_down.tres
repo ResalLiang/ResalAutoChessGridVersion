@@ -1,0 +1,74 @@
+[gd_resource type="SpriteFrames" load_steps=11 format=3 uid="uid://bkomnsfpsxq53"]
+
+[ext_resource type="Texture2D" uid="uid://b6d3w0p2o7be6" path="res://asset/sprite/spell_effect/Buff n Debuff VFX/Buff n Debuff P9 VFX 07/Buff n Debuff P9 VFX 06 Var2.png" id="1_sqpaf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ww6e6"]
+atlas = ExtResource("1_sqpaf")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w3xlk"]
+atlas = ExtResource("1_sqpaf")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j5w5d"]
+atlas = ExtResource("1_sqpaf")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xnwyc"]
+atlas = ExtResource("1_sqpaf")
+region = Rect2(72, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gnlid"]
+atlas = ExtResource("1_sqpaf")
+region = Rect2(96, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lh4uw"]
+atlas = ExtResource("1_sqpaf")
+region = Rect2(120, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2uy2v"]
+atlas = ExtResource("1_sqpaf")
+region = Rect2(144, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_etg3j"]
+atlas = ExtResource("1_sqpaf")
+region = Rect2(168, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iroqr"]
+atlas = ExtResource("1_sqpaf")
+region = Rect2(192, 0, 24, 24)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ww6e6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w3xlk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j5w5d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xnwyc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gnlid")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lh4uw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2uy2v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_etg3j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iroqr")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}]

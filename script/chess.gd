@@ -1343,7 +1343,7 @@ func take_damage(target:Obstacle, attacker: Obstacle, damage_value: float):
 		target.animated_sprite_2d.play("die")
 		await target.animated_sprite_2d.animation_finished
 		target.visible = false
-		_on_died()
+		_on_died(animated_sprite_2d.global_position)
 		target.is_died.emit()
 		game_root_scene.chess_mover._move_chess(target, grave, grave.unit_grid.get_first_empty_tile())
 		attacker.kill_chess.emit(attacker, target)
@@ -1436,6 +1436,8 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 		cast_spell_result = await entangling_roots()
 	elif chess_name == "Lich" and faction == "undead":
 		cast_spell_result = await devolve(spell_tgt)
+	elif chess_name == "ArchLich" and faction == "undead":
+		cast_spell_result = await corpse_explosion()
 	elif spell_tgt !=  self:
 		cast_spell_result = true
 
@@ -1495,19 +1497,21 @@ func get_points_in_radius(target: Vector2i, radius: int) -> Array[Vector2i]:
 				points.append(Vector2i(x,y))
 	return points
 	
-func _on_died():
+func _on_died(die_position: Vector2):
 	if animated_sprite_2d.sprite_frames.has_animation("die"):
 
-	var frame_count = animated_sprite_2d.sprite_frames.get_frame_count("die")
-	var last_frame_index = frame_count - 1
+		var frame_count = animated_sprite_2d.sprite_frames.get_frame_count("die")
+		var last_frame_index = frame_count - 1
 
-	var last_frame_texture = animated_sprite_2d.sprite_frames.get_frame_texture(animation_name, last_frame_index)
+		var last_frame_texture = animated_sprite_2d.sprite_frames.get_frame_texture("die", last_frame_index)
 		var die_texture = Sprite2D.new()
 		die_texture.texture = last_frame_texture
+		die_texture.z_index = 55
+		die_texture.centered = true
 		game_root_scene.add_child(die_texture)
-		die_texture.position = animated_sprite_2d.position
-		die_texture.set_meta("tile_position", get_children[1])
-		add_to_group("corpse_group")
+		die_texture.global_position = die_position
+		die_texture.set_meta("tile_position", get_current_tile(self)[1])
+		die_texture.add_to_group("corpse_group")
 
 	if faction == "dwarf":
 		var dwarf_king_array = arena.unit_grid.get_all_units().filter(
@@ -1655,7 +1659,7 @@ func update_effect():
 		_apply_heal(self, max(0, effect_handler.continuous_hp_modifier))
 	else:
 		# _apply_damage(self, max(0, effect_handler.continuous_hp_modifier))
-		deal_damage.emit(self, self, max(0, effect_handler.continuous_hp_modifier), "Continuous_effect", [])
+		deal_damage.emit(self, self, max(0, -effect_handler.continuous_hp_modifier), "Continuous_effect", [])
 
 	mp += effect_handler.continuous_mp_modifier
 
@@ -2108,11 +2112,11 @@ func warlock_bonus():
 	for i in range(bonus_level):
 		var empty_tiles = arena.unit_grid.get_empty_tile_in_radius(get_current_tile(self)[1], 1)
 		if empty_tiles.size() > 0:
-			summon_tile = empty_tiles.pick_random()
+			summoned_tile = empty_tiles.pick_random()
 		else:
 			return
 
-		summoned_character = summon_chess("undead", ["Zombie", "Skeleton"].pick_random(), 1, 1, arena, summon_tile)
+		summoned_character = game_root_scene.summon_chess("undead", ["Zombie", "Skeleton"].pick_random(), 1, 1, arena, summoned_tile)
 
 		var effect_instance = ChessEffect.new()
 		summoned_character.effect_handler.add_child(effect_instance)
@@ -2374,13 +2378,12 @@ func devolve(spell_target: Obstacle) -> bool:
 	var devolve_stats := false
 
 	if DataManagerSingleton.get_chess_data()[spell_target.faction][spell_target.chess_name].has("downgrade_chess") and chess_level == 3:
-		spell_target.chess_name == DataManagerSingleton.get_chess_data()[spell_target.faction][spell_target.chess_name]["downgrade_chess"]
-		devovle_grade = true
+		spell_target.chess_name = DataManagerSingleton.get_chess_data()[spell_target.faction][spell_target.chess_name]["downgrade_chess"]
+		devolve_grade = true
 		spell_target._load_animations()
 		spell_target._load_chess_stats()
 		# spell_target.update_effect()
 		spell_target.hp = min(spell_target.max_hp, spell_target_hp)
-		break
 
 	if not devolve_grade and spell_target.chess_level > 1 and chess_level >= 2:
 		spell_target.chess_level -= 1
@@ -2410,7 +2413,7 @@ func devolve(spell_target: Obstacle) -> bool:
 	return (devolve_grade or devolve_level or devolve_stats)
 
 func corpse_explosion() -> bool:
-	var corpse_group = get_tree().get_nodes_in_group("corpse_group").filer(
+	var corpse_group = get_tree().get_nodes_in_group("corpse_group").filter(
 		func(node):
 			var node_tile = node.get_meta("tile_position", Vector2i(-1, -1))
 			var current_tile = get_current_tile(self)[1]
@@ -2432,6 +2435,7 @@ func corpse_explosion() -> bool:
 					return true
 				return false
 		)
+		effect_animation_display("CorpseExplosion", arena, corpse_tile, "Center")
 		for chess_index in affected_obstacles:
 			deal_damage.emit(self, chess_index, chess_level, "Magic_attack", [])
 		remove_from_group("corpse_group")

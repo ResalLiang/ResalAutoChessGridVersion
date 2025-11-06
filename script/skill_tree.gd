@@ -137,7 +137,7 @@ func _ready() -> void:
 			if current_level_number == 0 or current_path_number == 0:
 				return
 			game_faction_path_upgrade[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
-			path_actived.emit(faction_array[current_page], current_path_number, current_level_number)
+			path_actived.emit(faction_array[current_page], "path" + str(current_path_number), current_level_number)
 			refresh_page()
 	)
 	consume_max_lose_round.pressed.connect(
@@ -149,7 +149,7 @@ func _ready() -> void:
 			if current_level_number == 0 or current_path_number == 0:
 				return
 			game_faction_path_upgrade[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
-			path_actived.emit(faction_array[current_page], current_path_number, current_level_number)
+			path_actived.emit(faction_array[current_page], "path" + str(current_path_number), current_level_number)
 			refresh_page()		
 	)
 	consume_won_round.pressed.connect(
@@ -159,7 +159,7 @@ func _ready() -> void:
 			if current_level_number == 0 or current_path_number == 0:
 				return
 			game_faction_path_upgrade[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
-			path_actived.emit(faction_array[current_page], current_path_number, current_level_number)
+			path_actived.emit(faction_array[current_page], "path" + str(current_path_number), current_level_number)
 			refresh_page()
 	)
 	just_active.pressed.connect(
@@ -169,7 +169,7 @@ func _ready() -> void:
 			if current_level_number == 0 or current_path_number == 0:
 				return
 			game_faction_path_upgrade[faction_array[current_page]]["path" + str(current_path_number)] = current_level_number
-			path_actived.emit(faction_array[current_page], current_path_number, current_level_number)
+			path_actived.emit(faction_array[current_page], "path" + str(current_path_number), current_level_number)
 			refresh_page()
 	)
 	

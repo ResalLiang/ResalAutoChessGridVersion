@@ -35,10 +35,13 @@ var effect_icon_path = {
 	"SpellerSkill" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__063.png",
 	"RangerSkill" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__088.png",
 	"SatyrSkill" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__008.png",
+	"WarlockSkill" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__135.png",
 	"Swift" = "res://asset/sprite/[VerArc Stash] Basic_Skills_and_Buffs/Buffs/attack_speed_boost.png",
 	"Berserker" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__072.png",
 	"March" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__138.png",
 	"EntaglingRoots" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__002.png",
+	"Devolve" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__112.png",
+	"Suicide" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__144.png",
 	"Default" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__071.png"
 }
 
@@ -71,6 +74,7 @@ var effect_animation_path = {
 	"DwarfMarch" = "res://asset/animation/spell_animation/DwarfMarch.tres",
 	"ElfSwift" = "res://asset/animation/spell_animation/ElfSwift.tres",
 	"ChessMerge" = "res://asset/animation/spell_animation/ChessMerge.tres",
+	"CorpseExplosion" = "res://asset/animation/spell_animation/CorpseExplosion.tres",
 	"Default" = "res://asset/animation/spell_animation/FireBeam.tres"
 }
 

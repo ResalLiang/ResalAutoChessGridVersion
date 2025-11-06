@@ -511,58 +511,60 @@ func _ready():
 				add_child(skill_tree)
 				skill_tree.set_process_mode(3)
 				get_tree().paused = true
+				skill_tree.path_actived.connect(
+					func(faction: String, path: String, level: int):
+						if is_game_turn_start:
+							return
+
+						if path == "path4" and level == 1:
+							match faction:
+								"human":
+									shop_handler.shop_refresh(shop_handler.shop_level, "human_path4")
+								"undead":
+									var summoned_character
+									var summoned_tile
+									var all_ally_tiles = arena.unit_grid.units.keys().filter(func(node): return arena.unit_grid.units[node] != null and arena.unit_grid.units[node].team == 1)
+									if all_ally_tiles.size() <= 0:
+										summoned_tile = arena.unit_grid.get_left_rand_empty_tile()
+										if summoned_tile == Vector2i(-1, -1):
+											return
+									else:
+										var find_nearby_empty_tile:= false
+										while not find_nearby_empty_tile:
+											var selected_tile = all_ally_tiles.pick_random()
+											var empty_tiles = arena.unit_grid.get_empty_tile_in_radius(selected_tile, 1)
+											if empty_tiles.size() > 0:
+												summoned_tile = empty_tiles.pick_random()
+
+
+									if faction_path_upgrade["undead"]["path3"] > 0:
+										#summon zombie
+										summoned_character = summon_chess("undead", "Zombie", 1, 1, arena, summoned_tile)
+									else:
+										#summon skeleton
+										summoned_character = summon_chess("undead", "Skeleton", 1, 1, arena, summoned_tile)
+
+									var effect_instance = ChessEffect.new()
+									summoned_character.effect_handler.add_child(effect_instance)
+									effect_instance.register_buff("continuous_hp_modifier", -30, 999)
+									effect_instance.effect_name = "Suicide"
+									effect_instance.effect_type = "Debuff"
+									effect_instance.effect_applier = "Undead Path4 effect"
+									effect_instance.effect_description = "A summoned skeleton or zombie, which will suicide when active."
+									summoned_character.effect_handler.add_to_effect_array(effect_instance)
+
+								_:
+									pass
+							faction_path_upgrade[faction][path] = 0
+				)			
+				
 				await skill_tree.tree_exiting
 				get_tree().paused = false
 				# faction_bonus_manager.bonus_refresh()
 				update_population(true)
 	)
 
-	skill_tree.path_actived.connect(
-		func(faction: String, path: String, level: int):
-			if is_game_turn_start:
-				return
 
-			if path == "path4" and level == 1:
-				match faction:
-					"human":
-						shop_handler.shop_refresh(shop_handler.shop_level, "human_path4")
-					"undead":
-						var summoned_character
-						var summoned_tile
-						var all_ally_tiles = arena.unit_grid.units.keys().filter(func(node): return arena.unit_grid.units[node] != null and arena.unit_grid.units[node].team == 1)
-						if all_ally_tiles.size() <= 0:
-							summon_tile = arena.unit_grid.get_left_rand_empty_tile()
-							if summon_tile == Vector2i(-1, -1):
-								return
-						else:
-							var find_nearby_empty_tile:= false
-							while not find_nearby_empty_tile:
-								var selected_tile = all_ally_tiles.pick_random()
-								var empty_tiles = arena.unit_grid.get_empty_tile_in_radius(selected_tile, 1)
-								if empty_tiles.size() > 0:
-									summon_tile = empty_tiles.pick_random()
-
-
-						if get_parent().faction_path_upgrade["undead"]["path3"] > 0:
-							#summon zombie
-							summoned_character = summon_chess("undead", "Zombie", 1, 1, arena, summon_tile)
-						else:
-							#summon skeleton
-							summoned_character = summon_chess("undead", "Skeleton", 1, 1, arena, summon_tile)
-
-						var effect_instance = ChessEffect.new()
-						summoned_character.effect_handler.add_child(effect_instance)
-						effect_instance.register_buff("continuous_hp_modifier", -30, 999)
-						effect_instance.effect_name = "Suicide"
-						effect_instance.effect_type = "Debuff"
-						effect_instance.effect_applier = "Undead Path4 effect"
-						effect_instance.effect_description = "A summoned skeleton or zombie, which will suicide when active."
-						summoned_character.effect_handler.add_to_effect_array(effect_instance)
-
-					_:
-						pass
-				get_parent().faction_path_upgrade[faction][path] = 0
-	)
 
 	if player_won_round.connect(DataManagerSingleton.handle_player_won_round) != OK:
 		print("player_won_round connect fail!")
@@ -749,8 +751,9 @@ func new_round_prepare_start():
 		node.queue_free()
 
 	var corpse_group = get_tree().get_nodes_in_group("corpse_group")
-	for node in corpse_group:
-		node.queue_free()
+	if corpse_group.size() > 0:
+		for node in corpse_group:
+			node.queue_free()
 		
 	# [chess_index.faction, chess_index.chess_name, chess_index.role, chess_index.chess_level]
 	var checked_faction: Array = []
@@ -1068,7 +1071,7 @@ func save_arena_team():
 	for chess_index in arena.unit_grid.units.keys():
 		if not is_instance_valid(arena.unit_grid.units[chess_index]):
 			arena.unit_grid.remove_unit(chess_index)
-		elif arena.unit_grid.units[chess_index] is Chess and arena.unit_grid.units[chess_index].team == 1:
+		elif arena.unit_grid.units[chess_index] is Chess and arena.unit_grid.units[chess_index].team == 1 and not arena.unit_grid.units[chess_index].chess_name.contains("Zombie") and not arena.unit_grid.units[chess_index].chess_name.contains("Skeleton"):
 			var current_obstacle = arena.unit_grid.units[chess_index]
 			saved_arena_team[chess_index] = [current_obstacle.faction, current_obstacle.chess_name, current_obstacle.chess_level, current_obstacle.total_kill_count, current_obstacle.chess_serial]
 
@@ -1363,9 +1366,7 @@ func update_population(forced_update: bool):
 		
 	current_population = 0
 	for chess_index in arena.unit_grid.get_all_units():
-		if DataManagerSingleton.check_chess_valid(chess_index) 
-		and chess_index.team == 1 and not population_record.has(chess_index) 
-		and (chess_index.chess_name != "Zombie" and chess_index.chess_name != "Skeleton"):
+		if DataManagerSingleton.check_chess_valid(chess_index) and chess_index.team == 1 and not population_record.has(chess_index) and (chess_index.chess_name != "Zombie" and chess_index.chess_name != "Skeleton"):
 			current_population += 1
 			population_record.append(chess_index)
 			

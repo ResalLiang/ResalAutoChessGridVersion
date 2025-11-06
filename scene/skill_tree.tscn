@@ -118,7 +118,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"backward",
-"speed": 10.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -147,7 +147,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"forward",
-"speed": 10.0
+"speed": 15.0
 }]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e7hi6"]
@@ -234,9 +234,7 @@ mouse_filter = 2
 z_index = 800
 position = Vector2(267, 157)
 sprite_frames = SubResource("SpriteFrames_l8fyk")
-animation = &"backward"
-frame = 7
-frame_progress = 1.0
+animation = &"forward"
 
 [node name="ui" type="Node2D" parent="."]
 z_index = 820

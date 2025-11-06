@@ -215,8 +215,8 @@ func _ready():
 	if damage_taken.connect(take_damage) != OK:
 		print("damage_taken connect fail!")
 
-	if is_died.connect(_on_died) != OK:
-		print("is_died connect fail!")
+	#if is_died.connect(_on_died) != OK:
+		#print("is_died connect fail!")
 
 	if spell_casted.connect(AudioManagerSingleton.play_sfx.bind("spell_casted")) != OK:
 		print("spell_casted connect fail!")
@@ -570,7 +570,7 @@ func _apply_heal(heal_target: Obstacle, heal_value: float):
 func snap(value: float, grid_size: int) -> int:
 	return floor(value / grid_size)
 	
-func _on_died():
+func _on_died(die_position: Vector2):
 	#Placeholder for chess passive ability on died
 	pass
 

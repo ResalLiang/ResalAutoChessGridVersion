@@ -63,7 +63,7 @@ func get_empty_tile_in_radius(tile: Vector2i, radius: int) -> Array:
 			if abs(tile.x - x) > radius and abs(tile.y - y) > radius:
 				continue
 			if units.keys().has(Vector2i(x, y)) and (units[Vector2i(x, y)] == null or not DataManagerSingleton.check_obstacle_valid(units[Vector2i(x, y)])):
-				result.append(units[Vector2i(x, y)])
+				result.append(Vector2i(x, y))
 	return result	
 
 func get_valid_obstacle_in_radius(tile: Vector2i, radius: int) -> Array:
