@@ -786,7 +786,7 @@ func _handle_movement():
 	if faction == "elf" and chess_name == "PegasusRider":
 		pegasus_rider_movement_result = await pegasus_rider_movement()
 		
-	if not pegasus_rider_movement_result:
+	if not pegasus_rider_movement_result and speed > 0:
 
 		animated_sprite_2d.play("move")
 
@@ -1434,12 +1434,15 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 		cast_spell_result = await shadow_wave(spell_tgt)
 	elif chess_name == "TreantGuard" and faction == "forestProtector":
 		cast_spell_result = await entangling_roots()
+	elif chess_name == "Lich" and faction == "undead":
+		cast_spell_result = await devolve(spell_tgt)
 	elif spell_tgt !=  self:
 		cast_spell_result = true
 
 	if cast_spell_result:
 		spell_casted.emit(self, skill_name)
 		mp = 0
+		warlock_bonus()
 
 	return cast_spell_result
 
@@ -1493,6 +1496,19 @@ func get_points_in_radius(target: Vector2i, radius: int) -> Array[Vector2i]:
 	return points
 	
 func _on_died():
+	if animated_sprite_2d.sprite_frames.has_animation("die"):
+
+	var frame_count = animated_sprite_2d.sprite_frames.get_frame_count("die")
+	var last_frame_index = frame_count - 1
+
+	var last_frame_texture = animated_sprite_2d.sprite_frames.get_frame_texture(animation_name, last_frame_index)
+		var die_texture = Sprite2D.new()
+		die_texture.texture = last_frame_texture
+		game_root_scene.add_child(die_texture)
+		die_texture.position = animated_sprite_2d.position
+		die_texture.set_meta("tile_position", get_children[1])
+		add_to_group("corpse_group")
+
 	if faction == "dwarf":
 		var dwarf_king_array = arena.unit_grid.get_all_units().filter(
 			func(obstacle):
@@ -2080,6 +2096,33 @@ func knight_bonus():
 	if total_movement >=5:
 		melee_damage += bonus_level * 2
 
+func warlock_bonus():
+	var bonus_level = faction_bonus_manager.get_bonus_level("warlock", team)
+	
+	if bonus_level <= 0 or role != "warlock":
+		return
+
+	var summoned_character
+	var summoned_tile
+
+	for i in range(bonus_level):
+		var empty_tiles = arena.unit_grid.get_empty_tile_in_radius(get_current_tile(self)[1], 1)
+		if empty_tiles.size() > 0:
+			summon_tile = empty_tiles.pick_random()
+		else:
+			return
+
+		summoned_character = summon_chess("undead", ["Zombie", "Skeleton"].pick_random(), 1, 1, arena, summon_tile)
+
+		var effect_instance = ChessEffect.new()
+		summoned_character.effect_handler.add_child(effect_instance)
+		effect_instance.register_buff("continuous_hp_modifier", -30, 999)
+		effect_instance.effect_name = "Suicide"
+		effect_instance.effect_type = "Debuff"
+		effect_instance.effect_applier = "Undead Path4 effect"
+		effect_instance.effect_description = "A summoned skeleton or zombie, which will suicide when active."
+		summoned_character.effect_handler.add_to_effect_array(effect_instance)
+
 func pegasus_rider_movement():
 	var fly_result := false
 	animated_sprite_2d.play("fly")
@@ -2321,6 +2364,80 @@ func entangling_roots() -> bool:
 				target._apply_heal(self, chess_level)
 		)
 	return true
+
+func devolve(spell_target: Obstacle) -> bool:
+	if spell_target.team == team or not DataManagerSingleton.check_chess_valid(spell_target):
+		return false
+	var spell_target_hp : int = spell_target.hp
+	var devolve_grade := false
+	var devolve_level := false
+	var devolve_stats := false
+
+	if DataManagerSingleton.get_chess_data()[spell_target.faction][spell_target.chess_name].has("downgrade_chess") and chess_level == 3:
+		spell_target.chess_name == DataManagerSingleton.get_chess_data()[spell_target.faction][spell_target.chess_name]["downgrade_chess"]
+		devovle_grade = true
+		spell_target._load_animations()
+		spell_target._load_chess_stats()
+		# spell_target.update_effect()
+		spell_target.hp = min(spell_target.max_hp, spell_target_hp)
+		break
+
+	if not devolve_grade and spell_target.chess_level > 1 and chess_level >= 2:
+		spell_target.chess_level -= 1
+		devolve_level = true
+		spell_target._load_chess_stats()
+		# spell_target.update_effect()
+		spell_target.hp = min(spell_target.max_hp, spell_target_hp)
+
+	if not devolve_level and not devolve_grade:
+		devolve_stats = true
+
+	var effect_instance = ChessEffect.new()
+	spell_target.effect_handler.add_child(effect_instance)
+	if devolve_stats:
+		effect_instance.register_buff("speed_modifier", -1, 2)
+		effect_instance.register_buff("armor_modifier", -1, 2)
+		effect_instance.register_buff("evasion_modifier", -0.1, 2)
+	elif devolve_grade or devolve_level:
+		effect_instance.register_buff("duration_only", 999, 999)
+	effect_instance.effect_name = "Devolve"
+	effect_instance.effect_type = "Debuff"
+	effect_instance.effect_applier = "Undead Lich Spell Devolve"
+	effect_instance.effect_description = "Chess devolve its grade, level or stats."
+	spell_target.effect_handler.add_to_effect_array(effect_instance)
+	spell_target.update_effect()
+	
+	return (devolve_grade or devolve_level or devolve_stats)
+
+func corpse_explosion() -> bool:
+	var corpse_group = get_tree().get_nodes_in_group("corpse_group").filer(
+		func(node):
+			var node_tile = node.get_meta("tile_position", Vector2i(-1, -1))
+			var current_tile = get_current_tile(self)[1]
+			if abs(node_tile.x - current_tile.x) > chess_level + 3 or abs(node_tile.y - current_tile.y) > chess_level + 3:
+				return false
+			if node_tile ==  Vector2i(-1, -1):
+				return false
+			return true
+	)
+	if corpse_group.size() <= 0:
+		return false
+	for corpse_index in corpse_group:
+		var corpse_tile = corpse_index.get_meta("tile_position", Vector2i(-1, -1))
+		effect_animation_display("CorpseExplosion", arena, corpse_tile, "Bottom")
+		var affected_obstacles = arena.unit_grid.get_all_units().filter(
+			func(node):
+				var affected_tile = node.get_current_tile(node)[1]
+				if abs(affected_tile.x - corpse_tile.x) <= 1 and abs(affected_tile.y - corpse_tile.y) <= 1 and DataManagerSingleton.check_obstacle_valid(node):
+					return true
+				return false
+		)
+		for chess_index in affected_obstacles:
+			deal_damage.emit(self, chess_index, chess_level, "Magic_attack", [])
+		remove_from_group("corpse_group")
+		corpse_index.queue_free()		
+	return true
+
 
 func human_mage_taunt(spell_duration: int) -> bool:
 	var chess_affected := true
