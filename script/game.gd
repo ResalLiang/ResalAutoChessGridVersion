@@ -517,6 +517,53 @@ func _ready():
 				update_population(true)
 	)
 
+	skill_tree.path_actived.connect(
+		func(faction: String, path: String, level: int):
+			if is_game_turn_start:
+				return
+
+			if path == "path4" and level == 1:
+				match faction:
+					"human":
+						shop_handler.shop_refresh(shop_handler.shop_level, "human_path4")
+					"undead":
+						var summoned_character
+						var summoned_tile
+						var all_ally_tiles = arena.unit_grid.units.keys().filter(func(node): return arena.unit_grid.units[node] != null and arena.unit_grid.units[node].team == 1)
+						if all_ally_tiles.size() <= 0:
+							summon_tile = arena.unit_grid.get_left_rand_empty_tile()
+							if summon_tile == Vector2i(-1, -1):
+								return
+						else:
+							var find_nearby_empty_tile:= false
+							while not find_nearby_empty_tile:
+								var selected_tile = all_ally_tiles.pick_random()
+								var empty_tiles = arena.unit_grid.get_empty_tile_in_radius(selected_tile, 1)
+								if empty_tiles.size() > 0:
+									summon_tile = empty_tiles.pick_random()
+
+
+						if get_parent().faction_path_upgrade["undead"]["path3"] > 0:
+							#summon zombie
+							summoned_character = summon_chess("undead", "Zombie", 1, 1, arena, summon_tile)
+						else:
+							#summon skeleton
+							summoned_character = summon_chess("undead", "Skeleton", 1, 1, arena, summon_tile)
+
+						var effect_instance = ChessEffect.new()
+						summoned_character.effect_handler.add_child(effect_instance)
+						effect_instance.register_buff("continuous_hp_modifier", -30, 999)
+						effect_instance.effect_name = "Suicide"
+						effect_instance.effect_type = "Debuff"
+						effect_instance.effect_applier = "Undead Path4 effect"
+						effect_instance.effect_description = "A summoned skeleton or zombie, which will suicide when active."
+						summoned_character.effect_handler.add_to_effect_array(effect_instance)
+
+					_:
+						pass
+				get_parent().faction_path_upgrade[faction][path] = 0
+	)
+
 	if player_won_round.connect(DataManagerSingleton.handle_player_won_round) != OK:
 		print("player_won_round connect fail!")
 	if player_lose_round.connect(DataManagerSingleton.handle_player_lose_round) != OK:
@@ -574,7 +621,7 @@ func _ready():
 
 	tips_label.visible = false
 	
-	shop_handler.shop_refresh(shop_handler.shop_level)
+	shop_handler.shop_refresh(shop_handler.shop_level, "")
 	shop_handler.buy_human_count = 0
 	current_round = 0
 	
@@ -682,7 +729,7 @@ func new_round_prepare_start():
 	current_round_label.text = "Current round : " + str(current_round)
 	won_lose_round_label.text = "Won rounds: " + str(DataManagerSingleton.won_rounds) + " | Lose rounds: " + str(DataManagerSingleton.lose_rounds)
 
-	shop_handler.shop_refresh(shop_handler.shop_level)
+	shop_handler.shop_refresh(shop_handler.shop_level, "")
 	shop_handler.buy_human_count = 0
 
 	game_turn_finished.emit()
@@ -699,6 +746,10 @@ func new_round_prepare_start():
 	print(str(enemey_array))
 
 	for node in enemy_faction_container.get_children():
+		node.queue_free()
+
+	var corpse_group = get_tree().get_nodes_in_group("corpse_group")
+	for node in corpse_group:
 		node.queue_free()
 		
 	# [chess_index.faction, chess_index.chess_name, chess_index.role, chess_index.chess_level]
@@ -823,6 +874,7 @@ func new_round_prepare_end():
 func start_new_round():
 	# if start new turn, it will be fully auto.
 	print("Start new round.")
+
 	var team1_alive_cnt = 0
 	var team2_alive_cnt = 0
 	for chess_index in team_dict[Team.TEAM1_FULL] + team_dict[Team.TEAM2_FULL]:
@@ -1311,7 +1363,9 @@ func update_population(forced_update: bool):
 		
 	current_population = 0
 	for chess_index in arena.unit_grid.get_all_units():
-		if DataManagerSingleton.check_chess_valid(chess_index) and chess_index.team == 1 and not population_record.has(chess_index):
+		if DataManagerSingleton.check_chess_valid(chess_index) 
+		and chess_index.team == 1 and not population_record.has(chess_index) 
+		and (chess_index.chess_name != "Zombie" and chess_index.chess_name != "Skeleton"):
 			current_population += 1
 			population_record.append(chess_index)
 			
@@ -1977,7 +2031,7 @@ func release_villager(villager_name: String) -> void:
 			remain_upgrade_count += 1
 
 		"NobleWoman":
-			shop_handler.shop_refresh(shop_handler.shop_level + 1)
+			shop_handler.shop_refresh(shop_handler.shop_level + 1, "")
 
 		"Merchant":
 			var shop_free_refresh_count = shop_handler.get_meta("free_refresh_count", 0)
