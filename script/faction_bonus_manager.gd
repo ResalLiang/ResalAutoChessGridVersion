@@ -508,6 +508,23 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
 
+
+		"warlock":
+			if friendly_chess.size() <= 0:
+				return
+
+			for chess_index in friendly_chess:
+				if chess_index.role != "warlock":
+					continue
+				var effect_instance = ChessEffect.new()
+				effect_instance.register_buff("duration_only", 0, 999)
+				# effect_instance.effect_duration = 999
+				effect_instance.effect_name = "WarlockSkill - Level " + str(bonus_level)
+				effect_instance.effect_type = "Faction Bonus"
+				effect_instance.effect_applier = "Warlock Role Bonus"
+				effect_instance.effect_description = "Warlock will summon a zombie or skeleton when casting spell."
+				chess_index.effect_handler.add_to_effect_array(effect_instance)
+				chess_index.effect_handler.add_child(effect_instance)
 		_:
 			pass
 			
