@@ -115,7 +115,7 @@ func shop_init():
 		for x in shop.unit_grid.size.x:
 			freeze_dict[Vector2i(x,y)] = false
 	
-	shop_refresh(shop_level)
+	shop_refresh(shop_level, "")
 
 func shop_manual_refresh() -> void:
 	if get_meta("suspicious_merchant_turn", 0) > 0:
@@ -126,14 +126,14 @@ func shop_manual_refresh() -> void:
 	if get_meta("free_refresh_count", 0) > 0:
 		var remain_free_refresh_count = get_meta("free_refresh_count", 0) - 1
 		set_meta("free_refresh_count", remain_free_refresh_count)
-		shop_refresh(shop_level)	
+		shop_refresh(shop_level, "")	
 
 	elif remain_coins >= shop_refresh_price:
 		remain_coins -= shop_refresh_price
 		coins_decreased.emit(shop_refresh_price, "refresh shop")
-		shop_refresh(shop_level)
+		shop_refresh(shop_level, "")
 
-func shop_refresh(level: int) -> void:
+func shop_refresh(level: int, special_note: String) -> void:
 
 	shop_refreshed.emit()
 	
@@ -154,11 +154,11 @@ func shop_refresh(level: int) -> void:
 		# var rand_faction = get_parent().chess_data.keys()[rand_faction_index]
 
 		var rand_character_result
-		if get_parent().check_villager_count("OldWoman") > 0 and randf() <= 0.3:
+		if get_parent().check_villager_count("OldWoman") > 0 and randf() <= 0.3  and special_note != "human_path4":
 			var rand_exist_chess = arena.unit_grid.get_all_units().duplicate().pick_random()
 			rand_character_result = [rand_exist_chess.faction, rand_exist_chess.chess_name]
 		else:
-			if get_parent().faction_path_upgrade.size() > 0 and get_parent().faction_path_upgrade["human"]["path4"] > 0:
+			if special_note == "human_path4":
 				rand_character_result = get_parent().generate_random_chess_update(min(6, shop_level), "villager")
 
 			else:
@@ -166,14 +166,6 @@ func shop_refresh(level: int) -> void:
 
 		var character = get_parent().summon_chess(rand_character_result[0], rand_character_result[1], 1, 1, shop, Vector2i(shop_col_index, shop_row_index))
 
-	if get_parent().faction_path_upgrade.size() > 0:
-		get_parent().faction_path_upgrade["human"]["path4"] = 0
-	# if get_parent().faction_path_upgrade.size() > 0:
-		
-	# 	get_parent().faction_path_upgrade["elf"]["path4"] = 0
-	# 	get_parent().faction_path_upgrade["dwarf"]["path4"] = 0
-	# 	get_parent().faction_path_upgrade["forestProtector"]["path4"] = 0
-	# 	get_parent().faction_path_upgrade["undead"]["path4"] = 0
 
 	if DataManagerSingleton.player_data["debug_mode"] or DataManagerSingleton.current_player == "debug":
 		var debug_chess_faction = ["human", "human", "human", "undead", "elf", "dwarf", "dwarf", "elf"]
