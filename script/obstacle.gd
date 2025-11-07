@@ -622,7 +622,7 @@ func get_current_tile(obstacle : Obstacle):
 
 
 # Load appropriate animations for the chess
-func effect_animation_display(effect_name: String, display_play_area: PlayArea, display_tile: Vector2i, alignment_pivot: String):
+func effect_animation_display(effect_name: String, display_play_area: PlayArea, display_tile: Vector2i, alignment_pivot: String, monochrome_color: Color = Color(0, 0, 0, 0)):
 	if not ["Center", "LeftTop", "Left", "LeftBottom", "Bottom", "RightBottom", "Right", "RightTop", "Top"].has(alignment_pivot):
 		return
 	
@@ -674,14 +674,14 @@ func effect_animation_display(effect_name: String, display_play_area: PlayArea, 
 				# Move from center to top center
 				final_position = tile_center + Vector2(0, -texture_size.y / 2)
 		
-		# Debug information
-		if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug":
-			print("Tile: ", display_tile)
-			print("Tile Center: ", tile_center)
-			print("Texture Size: ", texture_size)
-			print("Alignment: ", alignment_pivot)
-			print("Final Position: ", final_position)
-		
+		if monochrome_color != Color(0, 0, 0, 0):
+			var shader_mat = ShaderMaterial.new()
+			shader_mat.shader = load("res://asset/shader/LightweightPixelPerfectOutline.gdshader")
+			shader_mat.set_shader_parameter("outline_color", Color(1, 1, 1, 0))
+			shader_mat.set_shader_parameter("use_monochrome", true)
+			shader_mat.set_shader_parameter("monochrome_color", Color(1, 1, 1, 1))
+			effect_animation.material = shader_mat
+
 		add_child(effect_animation)
 		effect_animation.global_position = final_position
 		effect_animation.z_index = 60
