@@ -56,6 +56,28 @@ func add_to_effect_array(chess_effect: ChessEffect) -> void:
 							
 	effect_list.append(chess_effect)
 	effect_list_updated.emit()
+	if not get_parent() is Chess:
+		return
+
+	var parent_chess_node := get_parent()
+	for buff_index in chess_effect.buff_dict.keys():
+		if buff_index.contains("modifier") and buff_dict[buff_index] = 0 or buff_dict[buff_index + "duration"] = 0:
+			continue
+		elif buff_dict["is_" + buff_type_index] = false and buff_dict[buff_type_index + "duration"] = 0:
+			continue
+		match buff_index:
+			"speed_modifier":
+				if buff_dict[buff_index] > 0:
+					parent_chess_node.effect_animation_display("SpeedUp", arena, parent_chess_node.get_current_tile(parent_chess_node)[1], "RightTop")
+				else:
+					parent_chess_node.effect_animation_display("SpeedDown", arena, parent_chess_node.get_current_tile(parent_chess_node)[1], "RightTop")
+			"critical_rate_modifier":
+				if buff_dict[buff_index] > 0:
+					parent_chess_node.effect_animation_display("LuckUp", arena, parent_chess_node.get_current_tile(parent_chess_node)[1], "RightTop")
+				else:
+					parent_chess_node.effect_animation_display("LuckDown", arena, parent_chess_node.get_current_tile(parent_chess_node)[1], "RightTop")
+			_:
+				pass
 
 func turn_start_timeout_check() -> void:
 	if effect_list.size() != 0:
