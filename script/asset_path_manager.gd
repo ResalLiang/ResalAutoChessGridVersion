@@ -75,6 +75,13 @@ var effect_animation_path = {
 	"ElfSwift" = "res://asset/animation/spell_animation/ElfSwift.tres",
 	"ChessMerge" = "res://asset/animation/spell_animation/ChessMerge.tres",
 	"CorpseExplosion" = "res://asset/animation/spell_animation/CorpseExplosion.tres",
+	
+	"SpeedUp" = "res://asset/animation/spell_animation/buff_debuff/speed_up.tres",
+	"SpeedDown" = "res://asset/animation/spell_animation/buff_debuff/speed_down.tres",
+	"ArmorUp" = "res://asset/animation/spell_animation/buff_debuff/power_up.tres",
+	"ArmorDown" = "res://asset/animation/spell_animation/buff_debuff/power_down.tres",
+	
+	
 	"Default" = "res://asset/animation/spell_animation/FireBeam.tres"
 }
 

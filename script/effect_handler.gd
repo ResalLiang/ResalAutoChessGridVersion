@@ -60,22 +60,27 @@ func add_to_effect_array(chess_effect: ChessEffect) -> void:
 		return
 
 	var parent_chess_node := get_parent()
-	for buff_index in chess_effect.buff_dict.keys():
-		if buff_index.contains("modifier") and buff_dict[buff_index] = 0 or buff_dict[buff_index + "duration"] = 0:
+	for buff_index in chess_effect.buff_type_list:
+		if (buff_index.contains("modifier") and chess_effect.buff_dict[buff_index] == 0) or chess_effect.buff_dict[buff_index + "duration"] == 0:
 			continue
-		elif buff_dict["is_" + buff_type_index] = false and buff_dict[buff_type_index + "duration"] = 0:
+		elif not buff_index.contains("modifier") and (chess_effect.buff_dict["is_" + buff_index] == false or chess_effect.buff_dict[buff_index + "duration"] == 0):
 			continue
 		match buff_index:
 			"speed_modifier":
-				if buff_dict[buff_index] > 0:
-					parent_chess_node.effect_animation_display("SpeedUp", arena, parent_chess_node.get_current_tile(parent_chess_node)[1], "RightTop")
+				if chess_effect.buff_dict[buff_index] > 0:
+					await parent_chess_node.effect_animation_display("SpeedUp", get_parent().arena, parent_chess_node.get_current_tile(parent_chess_node)[1], "RightTop")
 				else:
-					parent_chess_node.effect_animation_display("SpeedDown", arena, parent_chess_node.get_current_tile(parent_chess_node)[1], "RightTop")
+					await parent_chess_node.effect_animation_display("SpeedDown",  get_parent().arena, parent_chess_node.get_current_tile(parent_chess_node)[1], "RightTop")
+			"armor_modifier":
+				if chess_effect.buff_dict[buff_index] > 0:
+					await parent_chess_node.effect_animation_display("ArmorUp", get_parent().arena, parent_chess_node.get_current_tile(parent_chess_node)[1], "RightTop")
+				else:
+					parent_chess_node.effect_animation_display("ArmorDown",  get_parent().arena, parent_chess_node.get_current_tile(parent_chess_node)[1], "RightTop")
 			"critical_rate_modifier":
-				if buff_dict[buff_index] > 0:
-					parent_chess_node.effect_animation_display("LuckUp", arena, parent_chess_node.get_current_tile(parent_chess_node)[1], "RightTop")
+				if chess_effect.buff_dict[buff_index] > 0:
+					await parent_chess_node.effect_animation_display("LuckUp",  get_parent().arena, parent_chess_node.get_current_tile(parent_chess_node)[1], "RightTop")
 				else:
-					parent_chess_node.effect_animation_display("LuckDown", arena, parent_chess_node.get_current_tile(parent_chess_node)[1], "RightTop")
+					await parent_chess_node.effect_animation_display("LuckDown",  get_parent().arena, parent_chess_node.get_current_tile(parent_chess_node)[1], "RightTop")
 			_:
 				pass
 

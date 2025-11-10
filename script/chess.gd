@@ -724,8 +724,6 @@ func start_turn():
 
 	dwarf_path2_bonus()
 
-	dwarf_path3_bonus()
-
 	update_effect()
 
 	remain_attack_count = attack_speed
@@ -892,7 +890,6 @@ func _handle_action():
 	action_started.emit(self)
 
 	await dwarf_path1_bonus()
-	await elf_path1_bonus()
 
 	var current_tile = get_current_tile(self)[1]
 		
@@ -1922,30 +1919,6 @@ func handle_free_strike(target: Obstacle):
 	change_target_to(previous_target)
 	return
 	
-func elf_path1_bonus():
-	var bonus_level : int
-	
-	if team ==1:
-		bonus_level = faction_bonus_manager.get_bonus_level("elf", team)
-		bonus_level = min(bonus_level, game_root_scene.faction_path_upgrade["elf"]["path1"])
-	elif team == 2:
-		bonus_level = faction_bonus_manager.get_bonus_level("elf", team)
-
-	if  bonus_level > 0 and faction == "elf":
-
-		var effect_instance = ChessEffect.new()
-		effect_handler.add_child(effect_instance)
-		effect_instance.register_buff("melee_attack_damage_modifier", -(base_melee_damage - bonus_level), 999)
-		effect_instance.register_buff("ranged_attack_damage_modifier", -(base_melee_damage - bonus_level), 999)
-		effect_instance.register_buff("attack_speed_modifier", bonus_level, 999)
-		effect_instance.effect_name = "Swift - Level " + str(bonus_level)
-		effect_instance.effect_type = "Faction Bonus"
-		effect_instance.effect_applier = "Elf path1 Faction Bonus"
-		effect_instance.effect_description = "Elf allies gain attack speed bonus, and attack damage decreased."
-		effect_handler.add_to_effect_array(effect_instance)
-		await effect_animation_display("ElfSwift", arena, get_current_tile(self)[1], "RightTop")
-		effect_handler.refresh_effects()
-
 func elf_path3_bonus():
 	var bonus_level : int
 	
@@ -2050,26 +2023,7 @@ func dwarf_path2_bonus():
 	effect_handler.add_child(effect_instance)
 	await effect_animation_display("DwarfBerserker", arena, get_current_tile(self)[1], "RightTop")
 
-func dwarf_path3_bonus():
-	var bonus_level : int
-	
-	if team ==1:
-		bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
-		bonus_level = min(bonus_level, game_root_scene.faction_path_upgrade["dwarf"]["path3"])
-	elif team == 2:
-		bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
 
-	if bonus_level > 0 and faction == "dwarf":
-		var effect_instance = ChessEffect.new()
-		effect_instance.register_buff("speed_modifier", bonus_level, 1)
-		# effect_instance.stunned_duration = spell_duration
-		effect_instance.effect_name = "March - Level " + str(bonus_level)
-		effect_instance.effect_type = "Faction Bonus"
-		effect_instance.effect_applier = "Dwarf path3 Faction Bonus"
-		effect_instance.effect_description = "Dwarf allied gain speed bonus at first turn."
-		effect_handler.add_to_effect_array(effect_instance)
-		effect_handler.add_child(effect_instance)
-		await effect_animation_display("DwarfMarch", arena, get_current_tile(self)[1], "RightTop")
 
 func warrior_bonus():
 	var bonus_level = faction_bonus_manager.get_bonus_level("warrior", team)
