@@ -68,8 +68,8 @@ func get_empty_tile_in_radius(tile: Vector2i, radius: int) -> Array:
 
 func get_valid_obstacle_in_radius(tile: Vector2i, radius: int) -> Array:
 	var result := []
-	for x in range(tile.x - radius, tile.x + radius):
-		for y in range(tile.y - radius, tile.y + radius):
+	for x in range(tile.x - radius, tile.x + radius + 1):
+		for y in range(tile.y - radius, tile.y + radius + 1):
 			if abs(x) and abs(y) > radius:
 				continue
 			if units.keys().has(Vector2i(x, y)) and (units[Vector2i(x, y)] and DataManagerSingleton.check_obstacle_valid(units[Vector2i(x, y)])):
