@@ -43,6 +43,7 @@ var player_upgrade_template = {
 		"forestProtector" : true,
 		"undead" : true,
 		"demon" : true,
+		"orc" : true,
 		"villager" : true
 	},
 	"interest_bonus" : 0.0,
@@ -120,6 +121,9 @@ func load_player(player_name: String):
 		
 	if not player_datas[current_player].has("difficulty"):
 		player_datas[current_player]["difficulty"] = "Normal"	
+
+	if not player_datas[current_player]["player_upgrade"]["faction_locked"].has("orc"):
+		player_datas[current_player]["player_upgrade"]["faction_locked"]["orc"] = true
 
 	if not player_datas[current_player].has("gem_count"):
 		player_datas[current_player]["gem_count"] = 0

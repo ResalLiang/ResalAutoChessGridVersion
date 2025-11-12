@@ -2400,8 +2400,6 @@ func corpse_explosion() -> bool:
 
 func death_coil(spell_target: Obstacle) -> bool:
 	var chess_affected := false
-	var arraow_degree_interval = 360.0 / arrow_count
-	var arraow_degree := 0.0
 
 	var spell_projectile = _launch_projectile_to_target(spell_target)
 	spell_projectile.projectile_animation = "DeathCoil"

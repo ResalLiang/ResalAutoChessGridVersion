@@ -21,6 +21,7 @@ var bonus_level_list : Dictionary = {
 	"forestProtector" : [2, 4, 6],
 	"undead" : [2, 4, 6],
 	"demon" : [2, 4, 6],
+	"orc" : [2, 4, 6],
 
 	"warrior" : [2, 4, 6],
 	"pikeman" : [2, 4, 6],
@@ -45,6 +46,7 @@ var player_faction_count_template : Dictionary = {
 		"forestProtector" : [],
 		"undead" : [],
 		"demon" : [],
+		"orc" : [],
 	
 		"warrior" : [],
 		"pikeman" : [],
@@ -64,6 +66,7 @@ var player_faction_count_template : Dictionary = {
 		"forestProtector" : [],
 		"undead" : [],
 		"demon" : [],
+		"orc" : [],
 	
 		"warrior" : [],
 		"pikeman" : [],
@@ -89,6 +92,7 @@ var player_bonus_level_dict_template : Dictionary = {
 		"forestProtector" : 0,
 		"undead" : 0,
 		"demon" : 0,
+		"orc" : 0,
 	
 		"warrior" : 0,
 		"pikeman" : 0,
@@ -108,6 +112,7 @@ var player_bonus_level_dict_template : Dictionary = {
 		"forestProtector" : 0,
 		"undead" : 0,
 		"demon" : 0,
+		"orc" : 0,
 	
 		"warrior" : 0,
 		"pikeman" : 0,

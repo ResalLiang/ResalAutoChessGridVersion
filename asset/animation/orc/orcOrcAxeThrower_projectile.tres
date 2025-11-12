@@ -1,0 +1,39 @@
+[gd_resource type="SpriteFrames" load_steps=6 format=3 uid="uid://bd7mkbwch5did"]
+
+[ext_resource type="Texture2D" uid="uid://63imk8mpd6gv" path="res://asset/sprite/MiniFolks/MinifolksOrcs/Without Outline/MiniThrowingAxe.png" id="1_5guy8"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8japd"]
+atlas = ExtResource("1_5guy8")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cxnqk"]
+atlas = ExtResource("1_5guy8")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rflv6"]
+atlas = ExtResource("1_5guy8")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pob4e"]
+atlas = ExtResource("1_5guy8")
+region = Rect2(48, 0, 16, 16)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8japd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cxnqk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rflv6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pob4e")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]

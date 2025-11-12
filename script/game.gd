@@ -220,8 +220,26 @@ var faction_path_upgrade_template = {
 		"path2" : 1,
 		"path3" : 0,
 		"path4" : 0
-	} ,
+	},
 	"undead": {
+		"path1" : 1,
+		"path2" : 0,
+		"path3" : 0,
+		"path4" : 0
+	},
+	"demon": {
+		"path1" : 1,
+		"path2" : 0,
+		"path3" : 0,
+		"path4" : 0
+	},
+	"holy": {
+		"path1" : 1,
+		"path2" : 0,
+		"path3" : 0,
+		"path4" : 0
+	},
+	"orc": {
 		"path1" : 1,
 		"path2" : 0,
 		"path3" : 0,
@@ -1192,6 +1210,8 @@ func generate_random_chess_update(generate_level: int, specific_faction: String)
 			forbidden_faction_pool.append("villager")
 		"locked":
 			for faction_index in DataManagerSingleton.get_chess_data().keys():
+				if not DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"].has(faction_index):
+					DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"][faction_index] = false
 				if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"][faction_index]:
 					forbidden_faction_pool.append(faction_index)
 			forbidden_faction_pool.append("villager")

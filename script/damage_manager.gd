@@ -123,7 +123,7 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: int, dam
 	#elif attacker != target and damage_type == "Magic_attack" and attacker is Chess and attacker.chess_name == "ArchMage" and attacker.faction == "human":
 		#attacker.gain_mp(damage_result * 0.15 * attacker.chess_level)
 		
-	var ghost_nearby := get_parent.arena.unit_grid.get_valid_obstacle_in_radius(attacker.get_current_tile(attacker)[1], 3).filter(
+	var ghost_nearby = get_parent().arena.unit_grid.get_valid_obstacle_in_radius(attacker.get_current_tile(attacker)[1], 3).filter(
 		func(chess):
 			if (chess.chess_name == "Ghost" or chess.chess_name == "Reaper") and chess.team != attacker.team and DataManagerSingleton.check_chess_valid(chess):
 				var chess_tile = chess.get_current_tile(chess)[1]
