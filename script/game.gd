@@ -1308,6 +1308,7 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, chess
 	summoned_character.chess_level = chess_level
 	add_child(summoned_character)
 	summoned_character._load_chess_stats()
+	summoned_character.update_effect()
 
 	if debug_handler.connect_to_chess_signal(summoned_character) != OK:
 		print("debug_handler connect fail!")
