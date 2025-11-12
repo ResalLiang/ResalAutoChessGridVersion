@@ -1120,7 +1120,7 @@ func _find_new_target(target_choice) -> Obstacle:
 		func(chess): return chess != self and DataManagerSingleton.check_obstacle_valid(chess) and chess.team == team
 	)
 
-	if chess_name == "Pixie" and faction == "forestProtector":
+	if (chess_name == "Pixie" and faction == "forestProtector") or ((chess_name == "Ghost" or chess_name == "Reaper") and faction == "undead"):
 		var enemy_spellers = enemy_chesses.filter(
 			func(chess):
 				return chess.role == "speller"
@@ -1435,6 +1435,8 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 		cast_spell_result = await devolve(spell_tgt)
 	elif chess_name == "ArchLich" and faction == "undead":
 		cast_spell_result = await corpse_explosion()
+	elif (chess_name == "DeathKnight" or chess_name == "DreadKnight") and faction == "undead":
+		cast_spell_result = await death_coil(spell_tgt)
 	elif spell_tgt !=  self:
 		cast_spell_result = true
 
@@ -2395,6 +2397,25 @@ func corpse_explosion() -> bool:
 		remove_from_group("corpse_group")
 		corpse_index.queue_free()		
 	return true
+
+func death_coil(spell_target: Obstacle) -> bool:
+	var chess_affected := false
+	var arraow_degree_interval = 360.0 / arrow_count
+	var arraow_degree := 0.0
+
+	var spell_projectile = _launch_projectile_to_target(spell_target)
+	spell_projectile.projectile_animation = "DeathCoil"
+	spell_projectile.damage = chess_level * 4 if chess_level > spell_target.chess_level else chess_level
+	spell_projectile.damage_type = "Magic_attack"
+	spell_projectile.projectile_hit.connect(
+		func(obstacle, projectile):
+			deal_damage.emit(self, obstacle, spell_projectile.damage, "Magic_attack", [])
+			_apply_heal(self, spell_projectile.damage)
+			chess_affected = true
+	)
+
+	return chess_affected	
+
 
 
 func human_mage_taunt(spell_duration: int) -> bool:
