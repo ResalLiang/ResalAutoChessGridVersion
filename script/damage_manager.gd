@@ -92,8 +92,8 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: int, dam
 
 	if not affix_array.has("ignore_armor") and damage_type != "Magic_attack":
 		damage_result -= target.armor
-		if damage_result < 0:
-			return
+		# if damage_result < 0:
+		# 	return
 
 	damage_result = floor(damage_result)
 		
@@ -123,13 +123,23 @@ func damage_handler(attacker: Obstacle, target: Obstacle, damage_value: int, dam
 	#elif attacker != target and damage_type == "Magic_attack" and attacker is Chess and attacker.chess_name == "ArchMage" and attacker.faction == "human":
 		#attacker.gain_mp(damage_result * 0.15 * attacker.chess_level)
 		
-	if attacker != target and damage_type != "Magic_attack" and attacker is Chess:
-		attacker.gain_mp(damage_result)
-	elif attacker != target and damage_type == "Magic_attack" and attacker is Chess and attacker.chess_name == "ArchMage" and attacker.faction == "human":
-		attacker.gain_mp(floor(damage_result * 0.3 * attacker.chess_level))
-		
-	if attacker != target and target is Chess:
-		target.gain_mp(damage_result)
+	var ghost_nearby := get_parent.arena.unit_grid.get_valid_obstacle_in_radius(attacker.get_current_tile(attacker)[1], 3).filter(
+		func(chess):
+			if (chess.chess_name == "Ghost" or chess.chess_name == "Reaper") and chess.team != attacker.team and DataManagerSingleton.check_chess_valid(chess):
+				var chess_tile = chess.get_current_tile(chess)[1]
+				var attacker_tile = attacker.get_current_tile(attacker)[1]
+				if abs(chess_tile.x - attacker_tile.x) + abs(chess_tile.y - attacker_tile.y) <= chess.chess_level + (1 if chess.chess_index == "Reaper" else 0):
+					return true
+			return false
+	)
+	if ghost_nearby.size() <= 0: 
+		if attacker != target and damage_type != "Magic_attack" and attacker is Chess:
+			attacker.gain_mp(damage_result)
+		elif attacker != target and damage_type == "Magic_attack" and attacker is Chess and attacker.chess_name == "ArchMage" and attacker.faction == "human":
+			attacker.gain_mp(floor(damage_result * 0.3 * attacker.chess_level))
+			
+		if attacker != target and target is Chess:
+			target.gain_mp(damage_result)
 
 	if attacker.chess_name == "Queen" and attacker.faction == "elf" and damage_type == "Magic_attack":
 		attacker.random_heal(damage_result, attacker)
