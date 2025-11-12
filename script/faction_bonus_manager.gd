@@ -432,136 +432,150 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 			if enemy_chess.size() <= 0:
 				return
 
-			for chess_index in enemy_chess:
-				var effect_instance = ChessEffect.new()
-				effect_instance.register_buff("armor_modifier", -bonus_level, 999)
-				effect_instance.register_buff("speed_modifier", -2, bonus_level)
-				effect_instance.effect_name = "Weak - Level " + str(bonus_level)
-				effect_instance.effect_type = "Faction Bonus"
-				effect_instance.effect_applier = "Undead path1 Faction Bonus"
-				effect_instance.effect_description = "Enemy chesses suffer speed and armor loss."
-				chess_index.effect_handler.add_to_effect_array(effect_instance)
-				chess_index.effect_handler.add_child(effect_instance)
+			var path1_bonus_level: int
+			if applier_team == 1:
+				path1_bonus_level = min(bonus_level, get_parent().faction_path_upgrade[faction]["path1"])
+			elif applier_team == 2:
+				path1_bonus_level = bonus_level
+
+			if path1_bonus_level > 0:
+				for chess_index in enemy_chess:
+					var effect_instance = ChessEffect.new()
+					effect_instance.register_buff("armor_modifier", -bonus_level, 999)
+					effect_instance.register_buff("speed_modifier", -2, bonus_level)
+					effect_instance.effect_name = "Weak - Level " + str(bonus_level)
+					effect_instance.effect_type = "Faction Bonus"
+					effect_instance.effect_applier = "Undead path1 Faction Bonus"
+					effect_instance.effect_description = "Enemy chesses suffer speed and armor loss."
+					chess_index.effect_handler.add_to_effect_array(effect_instance)
+					chess_index.effect_handler.add_child(effect_instance)
 
 		"warrior":
 			if friendly_chess.size() <= 0:
 				return
 
-			for chess_index in friendly_chess:
-				if chess_index.role != "warrior":
-					continue
-				var effect_instance = ChessEffect.new()
-				effect_instance.register_buff("duration_only", 0, 999)
-				# effect_instance.effect_duration = 999
-				effect_instance.effect_name = "WarriorSkill - Level " + str(bonus_level)
-				effect_instance.effect_type = "Faction Bonus"
-				effect_instance.effect_applier = "Warrior Role Bonus"
-				effect_instance.effect_description = "Warriors gain accumulative melee attack damage bonus when attacking the same target."
-				chess_index.effect_handler.add_to_effect_array(effect_instance)
-				chess_index.effect_handler.add_child(effect_instance)
+			if bonus_level > 0:
+				for chess_index in friendly_chess:
+					if chess_index.role != "warrior":
+						continue
+					var effect_instance = ChessEffect.new()
+					effect_instance.register_buff("duration_only", 0, 999)
+					# effect_instance.effect_duration = 999
+					effect_instance.effect_name = "WarriorSkill - Level " + str(bonus_level)
+					effect_instance.effect_type = "Faction Bonus"
+					effect_instance.effect_applier = "Warrior Role Bonus"
+					effect_instance.effect_description = "Warriors gain accumulative melee attack damage bonus when attacking the same target."
+					chess_index.effect_handler.add_to_effect_array(effect_instance)
+					chess_index.effect_handler.add_child(effect_instance)
 
 		"knight":
 			if friendly_chess.size() <= 0:
 				return
 
-			for chess_index in friendly_chess:
-				if chess_index.role != "knight":
-					continue
-				var effect_instance = ChessEffect.new()
-				effect_instance.register_buff("duration_only", 0, 999)
-				# effect_instance.effect_duration = 999
-				effect_instance.effect_name = "KnightSkill - Level " + str(bonus_level)
-				effect_instance.effect_type = "Faction Bonus"
-				effect_instance.effect_applier = "Knight Role Bonus"
-				effect_instance.effect_description = "When moving more than 5 grid, friendly knights will gain damage bonus."
-				chess_index.effect_handler.add_to_effect_array(effect_instance)
-				chess_index.effect_handler.add_child(effect_instance)
+			if bonus_level > 0:
+				for chess_index in friendly_chess:
+					if chess_index.role != "knight":
+						continue
+					var effect_instance = ChessEffect.new()
+					effect_instance.register_buff("duration_only", 0, 999)
+					# effect_instance.effect_duration = 999
+					effect_instance.effect_name = "KnightSkill - Level " + str(bonus_level)
+					effect_instance.effect_type = "Faction Bonus"
+					effect_instance.effect_applier = "Knight Role Bonus"
+					effect_instance.effect_description = "When moving more than 5 grid, friendly knights will gain damage bonus."
+					chess_index.effect_handler.add_to_effect_array(effect_instance)
+					chess_index.effect_handler.add_child(effect_instance)
 
 		"pikeman":
 			if friendly_chess.size() <= 0:
 				return
 
-			for chess_index in friendly_chess:
-				if chess_index.role != "pikeman":
-					continue
-				var effect_instance = ChessEffect.new()
-				effect_instance.register_buff("duration_only", 0, 999)
-				# effect_instance.effect_duration = 999
-				effect_instance.effect_name = "PikemanSkill - Level " + str(bonus_level)
-				effect_instance.effect_type = "Faction Bonus"
-				effect_instance.effect_applier = "Pikeman Role Bonus"
-				effect_instance.effect_description = "When B2B with other friendly pikeman, chess gain damage bonus."
-				chess_index.effect_handler.add_to_effect_array(effect_instance)
-				chess_index.effect_handler.add_child(effect_instance)
+			if bonus_level > 0:
+				for chess_index in friendly_chess:
+					if chess_index.role != "pikeman":
+						continue
+					var effect_instance = ChessEffect.new()
+					effect_instance.register_buff("duration_only", 0, 999)
+					# effect_instance.effect_duration = 999
+					effect_instance.effect_name = "PikemanSkill - Level " + str(bonus_level)
+					effect_instance.effect_type = "Faction Bonus"
+					effect_instance.effect_applier = "Pikeman Role Bonus"
+					effect_instance.effect_description = "When B2B with other friendly pikeman, chess gain damage bonus."
+					chess_index.effect_handler.add_to_effect_array(effect_instance)
+					chess_index.effect_handler.add_child(effect_instance)
 
 		"speller":
 			if friendly_chess.size() <= 0:
 				return
 
-			for chess_index in friendly_chess:
-				if chess_index.role != "speller":
-					continue
-				var effect_instance = ChessEffect.new()
-				effect_instance.register_buff("duration_only", 0, 999)
-				# effect_instance.effect_duration = 999
-				effect_instance.effect_name = "SpellerSkill - Level " + str(bonus_level)
-				effect_instance.effect_type = "Faction Bonus"
-				effect_instance.effect_applier = "Speller Role Bonus"
-				effect_instance.effect_description = "Speller gain magic damage bonus."
-				chess_index.effect_handler.add_to_effect_array(effect_instance)
-				chess_index.effect_handler.add_child(effect_instance)
+			if bonus_level > 0:
+				for chess_index in friendly_chess:
+					if chess_index.role != "speller":
+						continue
+					var effect_instance = ChessEffect.new()
+					effect_instance.register_buff("duration_only", 0, 999)
+					# effect_instance.effect_duration = 999
+					effect_instance.effect_name = "SpellerSkill - Level " + str(bonus_level)
+					effect_instance.effect_type = "Faction Bonus"
+					effect_instance.effect_applier = "Speller Role Bonus"
+					effect_instance.effect_description = "Speller gain critical magic damage."
+					chess_index.effect_handler.add_to_effect_array(effect_instance)
+					chess_index.effect_handler.add_child(effect_instance)
 
 		"ranger":
 			if friendly_chess.size() <= 0:
 				return
 
-			for chess_index in friendly_chess:
-				if chess_index.role != "ranger":
-					continue
-				var effect_instance = ChessEffect.new()
-				effect_instance.register_buff("duration_only", 0, 999)
-				# effect_instance.effect_duration = 999
-				effect_instance.effect_name = "RangerSkill - Level " + str(bonus_level)
-				effect_instance.effect_type = "Faction Bonus"
-				effect_instance.effect_applier = "Ranger Role Bonus"
-				effect_instance.effect_description = "All ranged ally gain penetration and decline_ratio bonus."
-				chess_index.effect_handler.add_to_effect_array(effect_instance)
-				chess_index.effect_handler.add_child(effect_instance)
+			if bonus_level > 0:
+				for chess_index in friendly_chess:
+					if chess_index.role != "ranger":
+						continue
+					var effect_instance = ChessEffect.new()
+					effect_instance.register_buff("duration_only", 0, 999)
+					# effect_instance.effect_duration = 999
+					effect_instance.effect_name = "RangerSkill - Level " + str(bonus_level)
+					effect_instance.effect_type = "Faction Bonus"
+					effect_instance.effect_applier = "Ranger Role Bonus"
+					effect_instance.effect_description = "All ranged ally gain penetration and decline_ratio bonus."
+					chess_index.effect_handler.add_to_effect_array(effect_instance)
+					chess_index.effect_handler.add_child(effect_instance)
 
 		"satyr":
 			if friendly_chess.size() <= 0:
 				return
 
-			for chess_index in friendly_chess:
-				if chess_index.role != "satyr":
-					continue
-				var effect_instance = ChessEffect.new()
-				effect_instance.register_buff("duration_only", 0, 999)
-				# effect_instance.effect_duration = 999
-				effect_instance.effect_name = "SatyrSkill - Level " + str(bonus_level)
-				effect_instance.effect_type = "Faction Bonus"
-				effect_instance.effect_applier = "Ranger Role Bonus"
-				effect_instance.effect_description = "Satyr will disseminate healing effect when got healing."
-				chess_index.effect_handler.add_to_effect_array(effect_instance)
-				chess_index.effect_handler.add_child(effect_instance)
+			if bonus_level > 0:
+				for chess_index in friendly_chess:
+					if chess_index.role != "satyr":
+						continue
+					var effect_instance = ChessEffect.new()
+					effect_instance.register_buff("duration_only", 0, 999)
+					# effect_instance.effect_duration = 999
+					effect_instance.effect_name = "SatyrSkill - Level " + str(bonus_level)
+					effect_instance.effect_type = "Faction Bonus"
+					effect_instance.effect_applier = "Ranger Role Bonus"
+					effect_instance.effect_description = "Satyr will disseminate healing effect when got healing."
+					chess_index.effect_handler.add_to_effect_array(effect_instance)
+					chess_index.effect_handler.add_child(effect_instance)
 
 
 		"warlock":
 			if friendly_chess.size() <= 0:
 				return
 
-			for chess_index in friendly_chess:
-				if chess_index.role != "warlock":
-					continue
-				var effect_instance = ChessEffect.new()
-				effect_instance.register_buff("duration_only", 0, 999)
-				# effect_instance.effect_duration = 999
-				effect_instance.effect_name = "WarlockSkill - Level " + str(bonus_level)
-				effect_instance.effect_type = "Faction Bonus"
-				effect_instance.effect_applier = "Warlock Role Bonus"
-				effect_instance.effect_description = "Warlock will summon a zombie or skeleton when casting spell."
-				chess_index.effect_handler.add_to_effect_array(effect_instance)
-				chess_index.effect_handler.add_child(effect_instance)
+			if bonus_level > 0:
+				for chess_index in friendly_chess:
+					if chess_index.role != "warlock":
+						continue
+					var effect_instance = ChessEffect.new()
+					effect_instance.register_buff("duration_only", 0, 999)
+					# effect_instance.effect_duration = 999
+					effect_instance.effect_name = "WarlockSkill - Level " + str(bonus_level)
+					effect_instance.effect_type = "Faction Bonus"
+					effect_instance.effect_applier = "Warlock Role Bonus"
+					effect_instance.effect_description = "Warlock will summon a zombie or skeleton when casting spell."
+					chess_index.effect_handler.add_to_effect_array(effect_instance)
+					chess_index.effect_handler.add_child(effect_instance)
 		_:
 			pass
 			
