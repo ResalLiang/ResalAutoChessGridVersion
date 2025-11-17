@@ -12,6 +12,7 @@ var is_silenced := false
 var is_disarmed := false
 var is_stunned := false
 var is_parry := false
+var is_chaotic := false
 
 var speed_modifier := 0
 var attack_rng_modifier := 0
@@ -109,6 +110,7 @@ func refresh_effects() -> void:
 	is_taunt = false
 	is_stealth = false
 	is_parry = false
+	is_chaotic = false
 
 	speed_modifier = 0
 	attack_rng_modifier = 0
@@ -156,6 +158,7 @@ func active_single_effect(chess_effect: ChessEffect) -> void:
 	is_taunt = is_taunt or chess_effect.buff_dict["is_taunt"] 
 	is_stealth = is_stealth or chess_effect.buff_dict["is_stealth"]
 	is_parry = is_parry or chess_effect.buff_dict["is_parry"]
+	is_chaotic = is_chaotic or chess_effect.buff_dict["is_chaotic"]
 
 	speed_modifier = speed_modifier + (max(0, chess_effect.buff_dict["speed_modifier"]) if is_spell_immunity 
 		else chess_effect.buff_dict["speed_modifier"])
