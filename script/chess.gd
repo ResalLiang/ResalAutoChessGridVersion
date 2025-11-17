@@ -195,6 +195,8 @@ var ranger_bonus_level := 0
 var speller_bonus_level := 0
 var pikeman_bonus_level := 0
 
+var enchant_rand_hit := false
+
 var faction_bonus_manager
 
 var total_kill_count := 0
@@ -710,6 +712,7 @@ func start_turn():
 
 	total_movement = 0
 	target_changed = false
+	enchant_rand_hit = false
 	
 	#Placeholder for chess passive ability on start turn
 	if status == STATUS.DIE:
@@ -941,28 +944,32 @@ func _handle_attack():
 		action_timer.start()
 		return
 
-	#if !chess_target or !is_instance_valid(chess_target) or chess_target.status == STATUS.DIE:
-	if not DataManagerSingleton.check_obstacle_valid(chess_target):
+	#if !attack_target or !is_instance_valid(attack_target) or attack_target.status == STATUS.DIE:
+	if not DataManagerSingleton.check_obstacle_valid(attack_target):
 		target_lost.emit(self)
 		action_timer.set_wait_time(action_timer_wait_time)
 		action_timer.start()
 		return
-	#elif not DataManagerSingleton.check_obstacle_valid(chess_target) and chess_name == "CrossBowMan" and faction == "human":
-		#target_lost.emit(self)
-		#change_target_to(_find_new_target(TARGET_CHOICE.CLOSE))
-		#if not DataManagerSingleton.check_obstacle_valid(chess_target):
-			#target_lost.emit(self)
-			#action_timer.set_wait_time(action_timer_wait_time)
-			#action_timer.start()
-			#return
 
 	warrior_bonus()
 
+	var attack_target
+	if effect_handler.search_effect("Enchant") and randf() >= 0.7 and not enchant_rand_hit:
+		#find new target...
+		var nearby_chess = arena.unit_grid.get_valid_obstacle_in_radius(get_current_tile(self)[1], 1)
+		if nearby_chess.size() > 0:
+			attack_target = nearby_chess.pick_random()
+			enchant_rand_hit = true
+		else:
+			attack_target = chess_target
+	else:
+		attack_target = chess_target
+
 	#Placeholder for chess passive ability on attack
-	var current_distance_to_target = global_position.distance_to(chess_target.global_position)
+	var current_distance_to_target = global_position.distance_to(attack_target.global_position)
 	remain_attack_count -= 1
 	if current_distance_to_target <= attack_range and (not effect_handler.is_stunned and not effect_handler.is_disarmed):
-		var rotate_vector = chess_target.global_position - global_position
+		var rotate_vector = attack_target.global_position - global_position
 		var rotate_degree := 0.0
 		if not animated_sprite_2d.flip_h:
 			rotate_degree = atan2(rotate_vector.y, rotate_vector.x)
@@ -980,7 +987,7 @@ func _handle_attack():
 				
 				animated_sprite_2d.play("ranged_attack")
 				ranged_attack_started.emit(self)
-				var chess_projectile = _launch_projectile_to_target(chess_target)
+				var chess_projectile = _launch_projectile_to_target(attack_target)
 				projectile_lauched.emit(self)
 
 				# chess_projectile.projectile_vanished.connect(_on_animated_sprite_2d_animation_finished)
@@ -997,9 +1004,30 @@ func _handle_attack():
 
 				ranged_attack_animation.play("ranged_attack")
 				ranged_attack_started.emit(self)
-				deal_damage.emit(self, chess_target, damage, "Ranged_attack", [])
+
+				if ["Banshee", "BansheeQueen"].has(chess_name):
+					var target_tile = attack_target.get_current_tile(attack_target)[1]
+					for x_offset in range(-2, 3):
+						for y_offset in range(-2, 3):
+							if arena.is_tile_in_bounds(target_tile + Vector2i(x_offset, y_offset)) and DataManagerSingleton.check_obstacle_valid(arena.unit_grid[target_tile + Vector2i(x_offset, y_offset)]):
+								var chess_nearby = arena.unit_grid[target_tile + Vector2i(x_offset, y_offset)]
+								if chess_nearby.team == team:
+									continue
+								if abs(rad_to_deg((position - attack_target.position).angle_to(position - chess_nearby.position))) <= 30:
+									deal_damage.emit(self, chess_nearby, damage, "Ranged_attack", [])
+
+									var effect_instance = ChessEffect.new()
+									chess_nearby.effect_handler.add_child(effect_instance)
+									effect_instance.register_buff("duration_only", 999, 2)
+									effect_instance.effect_name = "Enchant"
+									effect_instance.effect_type = "Debuff"
+									effect_instance.effect_applier = "Undead Banshee Attack Effect"
+									effect_instance.effect_description = "Chess hit may hit ally."
+									chess_nearby.effect_handler.add_to_effect_array(effect_instance)
+				else:
+					deal_damage.emit(self, attack_target, damage, "Ranged_attack", [])
 				if not target_evased_attack:
-					await handle_special_effect(chess_target)
+					await handle_special_effect(attack_target)
 					
 				animated_sprite_2d.set_animation("idle")
 				
@@ -1018,43 +1046,46 @@ func _handle_attack():
 			if animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
 				
 				if false:
-					if DataManagerSingleton.check_chess_valid(chess_target):
-						await chess_target.handle_free_strike(self)
+					if DataManagerSingleton.check_chess_valid(attack_target):
+						await attack_target.handle_free_strike(self)
 				
 				target_evased_attack = false
 				
 				status = STATUS.MELEE_ATTACK
-				melee_attack_animation.play("melee_attack")
+				if chess_name == "DreadKnight" and faction == "undead" and effect_handler.search_effect("WeaponPoison"):
+					melee_attack_animation.play("melee_attack2")
+				else:
+					melee_attack_animation.play("melee_attack")
 				melee_attack_started.emit(self)
 				await melee_attack_animation.animation_finished
 				
 				if not target_evased_attack:
-					await handle_special_effect(chess_target)
+					await handle_special_effect(attack_target)
 				
-				if faction_bonus_manager.get_bonus_level("elf", team) > 1 and target_evased_attack and chess_target.faction == "elf" :
+				if faction_bonus_manager.get_bonus_level("elf", team) > 1 and target_evased_attack and attack_target.faction == "elf" :
 					await elf_path3_bonus()
-				elif randf() >= 0.9 and DataManagerSingleton.check_chess_valid(chess_target):
-					await chess_target.handle_free_strike(self)
+				elif randf() >= 0.9 and DataManagerSingleton.check_chess_valid(attack_target):
+					await attack_target.handle_free_strike(self)
 					
 
 			elif animated_sprite_2d.sprite_frames.has_animation("attack"):
 				
 				if false:
-					if DataManagerSingleton.check_chess_valid(chess_target):
-						await chess_target.handle_free_strike(self)
+					if DataManagerSingleton.check_chess_valid(attack_target):
+						await attack_target.handle_free_strike(self)
 					
 				status = STATUS.MELEE_ATTACK
 				animated_sprite_2d.play("attack")
 				melee_attack_started.emit(self)
-				deal_damage.emit(self, chess_target, damage, "melee_attack", [])	
+				deal_damage.emit(self, attack_target, damage, "melee_attack", [])	
 
 				if not target_evased_attack:
-					await handle_special_effect(chess_target)
+					await handle_special_effect(attack_target)
 				
-				if faction_bonus_manager.get_bonus_level("elf", chess_target.team) > 1 and chess_target.faction == "elf" :
+				if faction_bonus_manager.get_bonus_level("elf", attack_target.team) > 1 and attack_target.faction == "elf" :
 					await elf_path3_bonus()
 				elif randf() >= 0.9:
-					await chess_target.handle_free_strike(self)
+					await attack_target.handle_free_strike(self)
 
 			else:
 				# No required attack animation
@@ -1080,7 +1111,7 @@ func _handle_attack():
 		action_timer.set_wait_time(action_timer_wait_time)
 		action_timer.start()
 
-	if not DataManagerSingleton.check_obstacle_valid(chess_target) and chess_name == "CrossBowMan" and faction == "human":
+	if not DataManagerSingleton.check_obstacle_valid(attack_target) and chess_name == "CrossBowMan" and faction == "human":
 		remain_attack_count += 1
 				
 	if remain_attack_count > 0:
@@ -1431,11 +1462,11 @@ func _cast_spell(spell_tgt: Obstacle) -> bool:
 		cast_spell_result = await shadow_wave(spell_tgt)
 	elif chess_name == "TreantGuard" and faction == "forestProtector":
 		cast_spell_result = await entangling_roots()
-	elif chess_name == "Lich" and faction == "undead":
+	elif (chess_name == "Lich" or chess_name == "ArchLich") and faction == "undead":
 		cast_spell_result = await devolve(spell_tgt)
 	elif chess_name == "ArchLich" and faction == "undead":
 		cast_spell_result = await corpse_explosion()
-	elif (chess_name == "DeathKnight" or chess_name == "DreadKnight") and faction == "undead":
+	elif chess_name == "DeathLord" and faction == "undead":
 		cast_spell_result = await death_coil(spell_tgt)
 	elif spell_tgt !=  self:
 		cast_spell_result = true
@@ -1453,9 +1484,15 @@ func chess_apply_damage(): # for animation player only
 		deal_damage.emit(self, chess_target, damage, "Free_strike", [])
 
 	if status == STATUS.RANGED_ATTACK:
-		deal_damage.emit(self, chess_target, damage, "Ranged_attack", [])
+		if effect_handler.is_chaotic:
+			deal_damage.emit(self, chess_target, damage, "Ranged_attack", ["ignore_armor", "ignore_evasion"])
+		else:
+			deal_damage.emit(self, chess_target, damage, "Ranged_attack", [])
 	elif status == STATUS.MELEE_ATTACK or not is_active:
-		deal_damage.emit(self, chess_target, damage, "Melee_attack", [])
+		if effect_handler.is_chaotic:
+			deal_damage.emit(self, chess_target, damage, "Melee_attack", ["ignore_armor", "ignore_evasion"])
+		else:
+			deal_damage.emit(self, chess_target, damage, "Melee_attack", [])
 
 func _apply_heal(heal_target: Obstacle = chess_spell_target, heal_value: float = damage):
 	if DataManagerSingleton.check_obstacle_valid(heal_target) and heal_value > 0:
@@ -1497,6 +1534,7 @@ func get_points_in_radius(target: Vector2i, radius: int) -> Array[Vector2i]:
 	return points
 	
 func _on_died(die_position: Vector2):
+	#Placeholder for chess passive ability on died
 	if animated_sprite_2d.sprite_frames.has_animation("die"):
 
 		var frame_count = animated_sprite_2d.sprite_frames.get_frame_count("die")
@@ -1595,7 +1633,7 @@ func _on_died(die_position: Vector2):
 				if position.distance_to(chess.position) <= 100:
 					is_corpse_collector = false
 
-				if chess.faction != "undead" or not ["Necromancer", "DeathLord"].has(chess.chess_name):
+				if chess.faction != "undead" or not ["Necromancer"].has(chess.chess_name):
 					is_corpse_collector = false
 
 				return is_corpse_collector
@@ -1609,7 +1647,6 @@ func _on_died(die_position: Vector2):
 			var soul_list = chosen_necromancer.get_meta("corpse_list", [])
 			soul_list.append([faction, chess_name])
 			chosen_necromancer.set_meta("corpse_list", soul_list)
-	#Placeholder for chess passive ability on died
 
 func update_solid_map():
 		
@@ -1814,6 +1851,17 @@ func handle_special_effect(target: Obstacle):
 			target.effect_handler.refresh_effects()
 			await target.effect_animation_display("ShieldBreakerKnock", arena, get_current_tile(target)[1], "Center")
 
+	var weapon_poison_effect = effect_handler.search_effect("WeaponPoison")
+	if weapon_poison_effect.check_effect_timeout():
+		var effect_instance = ChessEffect.new()
+		target.effect_handler.add_child(effect_instance)
+		effect_instance.register_buff("continuous_hp_modifier", -1, 3)
+		effect_instance.effect_name = "Poison"
+		effect_instance.effect_type = "Debuff"
+		effect_instance.effect_applier = "Undead DeathKnight Spell Effect"
+		effect_instance.effect_description = "Chess hit will suffer 1 hp loss per turn, last for 3 turns."
+		target.effect_handler.add_to_effect_array(effect_instance)		
+
 func connect_to_data_manager():
 	# DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["XX"], value)
 	attack_evased.connect(
@@ -1989,41 +2037,29 @@ func dwarf_path2_bonus():
 		bonus_level = min(bonus_level, game_root_scene.faction_path_upgrade["dwarf"]["path2"])
 	elif team == 2:
 		bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
-		
-	#var bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
 
 	if not (faction == "dwarf" and bonus_level > 0):
+		return
+
+	if total_movement > 0:
 		return
 
 	var damage_bonus = 0
 	var armor_bonus = 0
 	var life_steal_bonus = 0
 
-	damage_bonus += (bonus_level + 2)
-
-	if hp <= 0.33 * max_hp:
-		match bonus_level:
-			2:
-				damage_bonus += armor
-				armor_bonus = -armor
-				life_steal_bonus = 0.5
-			3:
-				damage_bonus += (armor + 2)
-				armor_bonus = -armor
-				life_steal_bonus = 1.0
+	damage_bonus = base_speed if bonus_level <= 1 else speed
 
 	var effect_instance = ChessEffect.new()
 	effect_instance.register_buff("melee_attack_damage_modifier", damage_bonus, 1)
-	effect_instance.register_buff("armor_modifier", armor_bonus, 999)
-	effect_instance.register_buff("life_steal_rate_modifier", life_steal_bonus, 1)
-	# effect_instance.stunned_duration = spell_duration
-	effect_instance.effect_name = "Berserker - Level " + str(bonus_level)
+	effect_instance.register_buff("ranged_attack_damage_modifier", damage_bonus, 1)
+	effect_instance.effect_name = "Principle - Level " + str(bonus_level)
 	effect_instance.effect_type = "Faction Bonus"
 	effect_instance.effect_applier = "Dwarf path2 Faction Bonus"
-	effect_instance.effect_description = "Dwarf will give up armor and gain attack damage."
+	effect_instance.effect_description = "Dwarf will give up speed and gain attack damage."
 	effect_handler.add_to_effect_array(effect_instance)
 	effect_handler.add_child(effect_instance)
-	await effect_animation_display("DwarfBerserker", arena, get_current_tile(self)[1], "RightTop")
+	await effect_animation_display("DwarfPrinciple", arena, get_current_tile(self)[1], "RightTop")
 
 
 
@@ -2408,12 +2444,37 @@ func death_coil(spell_target: Obstacle) -> bool:
 	spell_projectile.projectile_hit.connect(
 		func(obstacle, projectile):
 			deal_damage.emit(self, obstacle, spell_projectile.damage, "Magic_attack", [])
-			_apply_heal(self, spell_projectile.damage)
+			# _apply_heal(self, spell_projectile.damage)
+
+			var effect_instance = ChessEffect.new()
+			effect_handler.add_child(effect_instance)
+			effect_instance.register_buff("duration_only", 999, 2)
+			effect_instance.effect_name = "WeaponPoison"
+			effect_instance.effect_type = "Buff"
+			effect_instance.effect_applier = "Undead DreadKnight Spell Effect"
+			effect_instance.effect_description = "Chess hit will suffer 1 hp loss per turn, last for 3 turns."
+			effect_handler.add_to_effect_array(effect_instance)
+
 			chess_affected = true
 	)
 
 	return chess_affected	
 
+func enchant(spell_target: Obstacle) -> bool:
+	var chess_affected := false
+
+	var effect_instance = ChessEffect.new()
+	spell_target.effect_handler.add_child(effect_instance)
+	effect_instance.register_buff("duration_only", 999, 2)
+	effect_instance.effect_name = "Enchant"
+	effect_instance.effect_type = "Debuff"
+	effect_instance.effect_applier = "Undead Banshee Attack Effect"
+	effect_instance.effect_description = "Chess hit may hit ally."
+	spell_target.effect_handler.add_to_effect_array(effect_instance)
+
+	chess_affected = true
+
+	return chess_affected
 
 
 func human_mage_taunt(spell_duration: int) -> bool:
