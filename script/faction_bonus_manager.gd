@@ -290,8 +290,8 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 			if path1_bonus_level > 0:
 				for chess_index in friendly_faction_chess:
 					effect_instance3 = ChessEffect.new()
-					effect_instance3.register_buff("melee_attack_damage_modifier", -bonus_level, 999)
-					effect_instance3.register_buff("ranged_attack_damage_modifier", -bonus_level, 999)
+					effect_instance3.register_buff("melee_attack_damage_modifier", max(1 - chess_index.base_melee_damage), -bonus_level), 999)
+					effect_instance3.register_buff("ranged_attack_damage_modifier", max(1 - chess_index.base_ranged_damage), -bonus_level), 999)
 					effect_instance3.register_buff("attack_speed_modifier", bonus_level, 999)
 					effect_instance3.effect_name = "Swift - Level " + str(bonus_level)
 					effect_instance3.effect_type = "Faction Bonus"
