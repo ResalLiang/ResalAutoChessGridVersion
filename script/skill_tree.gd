@@ -308,11 +308,11 @@ func on_path_bonus_pressed(node: TextureButton):
 		"dwarf Path 1 Level 3" :
 			faction_bonus_description.text = "Armor increased by 6 points, increased by 8 points when adjacent to allied Dwarf, gain 10 points of damage reflection"
 		"dwarf Path 2 Level 1" :
-			faction_bonus_description.text = "Damage increased by 3 points"
+			faction_bonus_description.text = "Add base speed to damage when not moving"
 		"dwarf Path 2 Level 2" :
-			faction_bonus_description.text = "Damage increased by 4 points; when HP falls below one-third maximum: lose all armor, gain melee damage bonus equal to 50% of lost armor value and 50% damage lifesteal (lasts one turn)"
+			faction_bonus_description.text = "Add base speed to damage when not moving"
 		"dwarf Path 2 Level 3" :
-			faction_bonus_description.text = "Damage increased by 5 points; when HP falls below one-third maximum: lose all armor, gain melee damage bonus equal to 100% of lost armor value and 100% damage lifesteal (lasts one turn)"
+			faction_bonus_description.text = "Add base speed to damage when not moving"
 		"dwarf Path 3 Level 1" :
 			faction_bonus_description.text = "Movement speed increased by 1 point during first turn"
 		"dwarf Path 3 Level 2" :
@@ -384,7 +384,7 @@ func on_path_bonus_pressed(node: TextureButton):
 		"dwarf Path 1" :
 			faction_path_label.text = "Path1 Iron Defense"
 		"dwarf Path 2" :
-			faction_path_label.text = "Path2 Berserker Rage"
+			faction_path_label.text = "Path2 Army Principle"
 		"dwarf Path 3" :
 			faction_path_label.text = "Path3 Battle Momentum"
 		"dwarf Path 4" :
