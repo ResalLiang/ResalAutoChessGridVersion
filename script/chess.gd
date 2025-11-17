@@ -945,7 +945,7 @@ func _handle_attack():
 		return
 
 	#if !attack_target or !is_instance_valid(attack_target) or attack_target.status == STATUS.DIE:
-	if not DataManagerSingleton.check_obstacle_valid(attack_target):
+	if not DataManagerSingleton.check_obstacle_valid(chess_target):
 		target_lost.emit(self)
 		action_timer.set_wait_time(action_timer_wait_time)
 		action_timer.start()
