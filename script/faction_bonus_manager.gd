@@ -14,6 +14,7 @@ const faction_bonus_bar_scene = preload("res://scene/faction_bonus_bar.tscn")
 
 # bonus_level_list for storing each level need chess count
 var bonus_level_list : Dictionary = {
+	#faction
 	"elf" : [2, 4, 6],
 	"human" : [2, 4, 6],
 	"dwarf" : [2, 4, 6],
@@ -22,16 +23,21 @@ var bonus_level_list : Dictionary = {
 	"undead" : [2, 4, 6],
 	"demon" : [2, 4, 6],
 	"orc" : [2, 4, 6],
+	"ootf" : [2, 4, 6],
 
+	#role
 	"warrior" : [2, 4, 6],
 	"pikeman" : [2, 4, 6],
 	"ranger" : [2, 4, 6],
 	"knight" : [2, 4, 6],
 	"speller" : [2, 4, 6],
 	"satyr" : [1, 2, 3],
-	"skeleton" : [1, 2, 3],
-	"zombie" : [1, 2, 3],
-	"warlock" : [1, 2, 3]
+	"skeleton" : [2, 4, 6],
+	"zombie" : [2, 4, 6],
+	"warlock" : [2, 4, 6],
+	"paladin" : [1, 2, 3],
+	"angel" : [2, 4, 6],
+	"devil" : [2, 4, 6]
 }
 
 # player_faction_count for storing players chess name
@@ -39,6 +45,7 @@ var player_faction_count
 
 var player_faction_count_template : Dictionary = {
 	1 : {
+		#faction
 		"elf" : [],
 		"human" : [],
 		"dwarf" : [],
@@ -47,7 +54,10 @@ var player_faction_count_template : Dictionary = {
 		"undead" : [],
 		"demon" : [],
 		"orc" : [],
-	
+		"ootf" : [],,
+		"lizardMan" : [],
+
+		#role
 		"warrior" : [],
 		"pikeman" : [],
 		"ranger" : [],
@@ -56,9 +66,13 @@ var player_faction_count_template : Dictionary = {
 		"satyr" : [],
 		"skeleton" : [],
 		"zombie" : [],
-		"warlock" : []
+		"warlock" : [],
+		"paladin" : [],
+		"angel" : [],
+		"devil" : []
 	},
 	2 : {
+		#faction
 		"elf" : [],
 		"human" : [],
 		"dwarf" : [],
@@ -67,7 +81,10 @@ var player_faction_count_template : Dictionary = {
 		"undead" : [],
 		"demon" : [],
 		"orc" : [],
-	
+		"ootf" : [],
+		"lizardMan" : [],
+
+		#role
 		"warrior" : [],
 		"pikeman" : [],
 		"ranger" : [],
@@ -76,7 +93,10 @@ var player_faction_count_template : Dictionary = {
 		"satyr" : [],
 		"skeleton" : [],
 		"zombie" : [],
-		"warlock" : []
+		"warlock" : [],
+		"paladin" : [],
+		"angel" : [],
+		"devil" : []
 	}
 }
 
@@ -85,6 +105,7 @@ var player_bonus_level_dict : Dictionary = {}
 
 var player_bonus_level_dict_template : Dictionary = {
 	1 : {
+		#faction
 		"elf" : 0,
 		"human" : 0,
 		"dwarf" : 0,
@@ -93,7 +114,10 @@ var player_bonus_level_dict_template : Dictionary = {
 		"undead" : 0,
 		"demon" : 0,
 		"orc" : 0,
-	
+		"ootf" : 0,
+		"lizardMan" : 0,
+
+		#role
 		"warrior" : 0,
 		"pikeman" : 0,
 		"ranger" : 0,
@@ -102,9 +126,13 @@ var player_bonus_level_dict_template : Dictionary = {
 		"satyr" : 0,
 		"skeleton" : 0,
 		"zombie" : 0,
-		"warlock" : 0
+		"warlock" : 0,
+		"paladin" : 0,
+		"angel" : 0,
+		"devil" : 0
 	},
 	2 : {
+		#faction
 		"elf" : 0,
 		"human" : 0,
 		"dwarf" : 0,
@@ -113,7 +141,10 @@ var player_bonus_level_dict_template : Dictionary = {
 		"undead" : 0,
 		"demon" : 0,
 		"orc" : 0,
-	
+		"ootf" : 0,
+		"lizardMan" : 0,
+
+		#role
 		"warrior" : 0,
 		"pikeman" : 0,
 		"ranger" : 0,
@@ -122,7 +153,10 @@ var player_bonus_level_dict_template : Dictionary = {
 		"satyr" : 0,
 		"skeleton" : 0,
 		"zombie" : 0,
-		"warlock" : 0
+		"warlock" : 0,
+		"paladin" : 0,
+		"angel" : 0,
+		"devil" : 0
 	}
 }
 
@@ -158,6 +192,12 @@ func bonus_refresh() -> void:
 			continue
 
 		clean_chess_faction_bonus(chess_index)
+
+		var chess_faction : String
+		if chess_index.faction == "viking" or chess_index.faction == "bandit" or chess_index.faction == "pirate":
+			chess_faction = "human"
+		else:
+			chess_faction = chess_index.faction
 
 		if not player_faction_count[chess_index.team][chess_index.faction].has([chess_index.faction, chess_index.chess_name]):
 			player_faction_count[chess_index.team][chess_index.faction].append([chess_index.faction, chess_index.chess_name])
