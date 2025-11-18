@@ -1852,7 +1852,7 @@ func handle_special_effect(target: Obstacle):
 			await target.effect_animation_display("ShieldBreakerKnock", arena, get_current_tile(target)[1], "Center")
 
 	var weapon_poison_effect = effect_handler.search_effect("WeaponPoison")
-	if weapon_poison_effect.check_effect_timeout():
+	if weapon_poison_effect and weapon_poison_effect.check_effect_timeout():
 		var effect_instance = ChessEffect.new()
 		target.effect_handler.add_child(effect_instance)
 		effect_instance.register_buff("continuous_hp_modifier", -1, 3)

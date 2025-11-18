@@ -54,7 +54,7 @@ var player_faction_count_template : Dictionary = {
 		"undead" : [],
 		"demon" : [],
 		"orc" : [],
-		"ootf" : [],,
+		"ootf" : [],
 		"lizardMan" : [],
 
 		#role

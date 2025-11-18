@@ -1,0 +1,39 @@
+[gd_resource type="SpriteFrames" load_steps=6 format=3 uid="uid://c8u5rc462y0mq"]
+
+[ext_resource type="Texture2D" uid="uid://b8g8b43fkj0jp" path="res://asset/sprite/MiniFolks/MinifolksVikings/Without outline/MiniVikingAxe.png" id="1_pdug3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vfifr"]
+atlas = ExtResource("1_pdug3")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_egxhi"]
+atlas = ExtResource("1_pdug3")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l2hg5"]
+atlas = ExtResource("1_pdug3")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8lhat"]
+atlas = ExtResource("1_pdug3")
+region = Rect2(48, 0, 16, 16)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vfifr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_egxhi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l2hg5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8lhat")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]

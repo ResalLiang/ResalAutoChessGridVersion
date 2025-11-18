@@ -1,0 +1,39 @@
+[gd_resource type="SpriteFrames" load_steps=6 format=3 uid="uid://dfrr5aba8nes"]
+
+[ext_resource type="Texture2D" uid="uid://cvkrlpeoqs5gc" path="res://asset/sprite/MiniFolks/MinifolksBandits/Without outline/MiniThrowingKnife.png" id="1_2j26d"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_imqex"]
+atlas = ExtResource("1_2j26d")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4k1vu"]
+atlas = ExtResource("1_2j26d")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cppaq"]
+atlas = ExtResource("1_2j26d")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6fdey"]
+atlas = ExtResource("1_2j26d")
+region = Rect2(48, 0, 16, 16)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_imqex")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4k1vu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cppaq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6fdey")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]

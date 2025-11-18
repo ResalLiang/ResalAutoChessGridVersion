@@ -1,0 +1,18 @@
+[gd_resource type="SpriteFrames" load_steps=3 format=3 uid="uid://b1byyso2nt2ds"]
+
+[ext_resource type="Texture2D" uid="uid://f8p73c812fee" path="res://asset/sprite/MiniFolks/MinifolksPirates/Without Outline/MiniCannonBall.png" id="1_a7s1c"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ds88q"]
+atlas = ExtResource("1_a7s1c")
+region = Rect2(5, 5, 6, 6)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ds88q")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
