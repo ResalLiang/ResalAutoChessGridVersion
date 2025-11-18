@@ -685,6 +685,13 @@ func start_new_game() -> void:
 	DataManagerSingleton.load_game_json()
 	DataManagerSingleton.in_game_data = DataManagerSingleton.player_data_template.duplicate()
 
+	DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["bandit"] = true
+	DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["viking"] = true
+	DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["pirate"] = true
+	DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["ootf"] = true
+	DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["lizardMan"] = true
+
+
 	debug_handler.write_log("LOG", "Game Start.")
 	
 	await clear_play_area(arena)
@@ -2061,14 +2068,14 @@ func release_villager(villager_name: String) -> void:
 			shop_handler.set_meta("free_refresh_count", shop_free_refresh_count)
 
 		"VillagerMan":
-			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["ally_death_array"], ["villager", villager_name])
-			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["ally_death_count"], 1)
-			# DataManagerSingleton.record_death_chess()
+			DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["bandit"] = false
+			if not DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["viking"]:
+				DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["pirate"] = false
 
 		"VillagerWoman":
-			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["ally_death_array"], ["villager", villager_name])
-			DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["ally_death_count"], 1)
-			# DataManagerSingleton.record_death_chess()
+			DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["viking"] = false
+			if not DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["bandit"]:
+				DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["pirate"] = false
 
 		"SuspiciousMerchant":
 			var current_suspicious_merchant_turn = get_meta("suspicious_merchant_turn", 0) + 1
