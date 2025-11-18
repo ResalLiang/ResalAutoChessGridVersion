@@ -54,13 +54,38 @@ var faction_path_upgrade_template = {
 		"path1" : 0,
 		"path2" : 0,
 		"path3" : 0
-	}	,
+	},
 	"forestProtector": {
 		"path1" : 0,
 		"path2" : 0,
 		"path3" : 0
-	}	,
+	},
 	"undead": {
+		"path1" : 0,
+		"path2" : 0,
+		"path3" : 0
+	},
+	"demon": {
+		"path1" : 0,
+		"path2" : 0,
+		"path3" : 0
+	},
+	"holy": {
+		"path1" : 0,
+		"path2" : 0,
+		"path3" : 0
+	},
+	"orc": {
+		"path1" : 0,
+		"path2" : 0,
+		"path3" : 0
+	},
+	"ottf": {
+		"path1" : 0,
+		"path2" : 0,
+		"path3" : 0
+	},
+	"lizardMan": {
 		"path1" : 0,
 		"path2" : 0,
 		"path3" : 0
@@ -361,6 +386,86 @@ func on_path_bonus_pressed(node: TextureButton):
 			faction_bonus_description.text = "Necromancer and deathlord can summon zombie from corpse base on its stats, unlock ZombieCrusher and ZombieButcher"
 		"undead Path 4 Level 1" :
 			faction_bonus_description.text = "Placeholder"
+		"holy Path 1 Level 1" :
+			faction_bonus_description.text = "PlaceHolder"
+		"holy Path 1 Level 2" :
+			faction_bonus_description.text = "PlaceHolder"
+		"holy Path 1 Level 3" :
+			faction_bonus_description.text = "PlaceHolder"
+		"holy Path 2 Level 1" :
+			faction_bonus_description.text = "PlaceHolder"
+		"holy Path 2 Level 2" :
+			faction_bonus_description.text = "PlaceHolder"
+		"holy Path 2 Level 3" :
+			faction_bonus_description.text = "PlaceHolder"
+		"holy Path 3 Level 1" :
+			faction_bonus_description.text = "PlaceHolder"
+		"holy Path 3 Level 2" :
+			faction_bonus_description.text = "PlaceHolder"
+		"holy Path 3 Level 3" :
+			faction_bonus_description.text = "PlaceHolder"
+		"holy Path 4 Level 1" :
+			faction_bonus_description.text = "PlaceHolder"
+		"orc Path 1 Level 1" :
+			faction_bonus_description.text = "PlaceHolder"
+		"orc Path 1 Level 2" :
+			faction_bonus_description.text = "PlaceHolder"
+		"orc Path 1 Level 3" :
+			faction_bonus_description.text = "PlaceHolder"
+		"orc Path 2 Level 1" :
+			faction_bonus_description.text = "PlaceHolder"
+		"orc Path 2 Level 2" :
+			faction_bonus_description.text = "PlaceHolder"
+		"orc Path 2 Level 3" :
+			faction_bonus_description.text = "PlaceHolder"
+		"orc Path 3 Level 1" :
+			faction_bonus_description.text = "PlaceHolder"
+		"orc Path 3 Level 2" :
+			faction_bonus_description.text = "PlaceHolder"
+		"orc Path 3 Level 3" :
+			faction_bonus_description.text = "PlaceHolder"
+		"orc Path 4 Level 1" :
+			faction_bonus_description.text = "PlaceHolder"
+		"ootf Path 1 Level 1" :
+			faction_bonus_description.text = "Friendly faction gain a small amout of mp from each chess with burn effect"
+		"ootf Path 1 Level 2" :
+			faction_bonus_description.text = "Friendly faction gain some mp from each chess with burn effect"
+		"ootf Path 1 Level 3" :
+			faction_bonus_description.text = "Friendly faction gain a large amout of mp from each chess with burn effect"
+		"ootf Path 2 Level 1" :
+			faction_bonus_description.text = "Friendly faction with burn effect gain damage and speed buff"
+		"ootf Path 2 Level 2" :
+			faction_bonus_description.text = "Friendly faction with burn effect gain damage and speed buff"
+		"ootf Path 2 Level 3" :
+			faction_bonus_description.text = "Friendly faction with burn effect gain damage and speed buff"
+		"ootf Path 3 Level 1" :
+			faction_bonus_description.text = "Increase burn effect damage"
+		"ootf Path 3 Level 2" :
+			faction_bonus_description.text = "Increase burn effect damage"
+		"ootf Path 3 Level 3" :
+			faction_bonus_description.text = "Increase burn effect damage"
+		"ootf Path 4 Level 1" :
+			faction_bonus_description.text = "Randomly burn a chess at the start of turn"
+		"lizardMan Path 1 Level 1" :
+			faction_bonus_description.text = "PlaceHolder"
+		"lizardMan Path 1 Level 2" :
+			faction_bonus_description.text = "PlaceHolder"
+		"lizardMan Path 1 Level 3" :
+			faction_bonus_description.text = "PlaceHolder"
+		"lizardMan Path 2 Level 1" :
+			faction_bonus_description.text = "PlaceHolder"
+		"lizardMan Path 2 Level 2" :
+			faction_bonus_description.text = "PlaceHolder"
+		"lizardMan Path 2 Level 3" :
+			faction_bonus_description.text = "PlaceHolder"
+		"lizardMan Path 3 Level 1" :
+			faction_bonus_description.text = "PlaceHolder"
+		"lizardMan Path 3 Level 2" :
+			faction_bonus_description.text = "PlaceHolder"
+		"lizardMan Path 3 Level 3" :
+			faction_bonus_description.text = "PlaceHolder"
+		"lizardMan Path 4 Level 1" :
+			faction_bonus_description.text = "PlaceHolder"
 		_:
 			faction_bonus_description.text = "place holder"
 			
@@ -405,6 +510,38 @@ func on_path_bonus_pressed(node: TextureButton):
 			faction_path_label.text = "Path3 Control Zombie"
 		"undead Path 4" :
 			faction_path_label.text = "Path4 Placeholder"
+		"holy Path 1" :
+			faction_path_label.text = "PlaceHolder"
+		"holy Path 2" :
+			faction_path_label.text = "PlaceHolder"
+		"holy Path 3" :
+			faction_path_label.text = "PlaceHolder"
+		"holy Path 4" :
+			faction_path_label.text = "PlaceHolder"
+		"orc Path 1" :
+			faction_path_label.text = "PlaceHolder"
+		"orc Path 2" :
+			faction_path_label.text = "PlaceHolder"
+		"orc Path 3" :
+			faction_path_label.text = "PlaceHolder"
+		"orc Path 4" :
+			faction_path_label.text = "PlaceHolder"
+		"ootf Path 1" :
+			faction_path_label.text = "PlaceHolder"
+		"ootf Path 2" :
+			faction_path_label.text = "PlaceHolder"
+		"ootf Path 3" :
+			faction_path_label.text = "PlaceHolder"
+		"ootf Path 4" :
+			faction_path_label.text = "PlaceHolder"
+		"lizardMan Path 1" :
+			faction_path_label.text = "PlaceHolder"
+		"lizardMan Path 2" :
+			faction_path_label.text = "PlaceHolder"
+		"lizardMan Path 3" :
+			faction_path_label.text = "PlaceHolder"
+		"lizardMan Path 4" :
+			faction_path_label.text = "PlaceHolder"
 		_:
 			faction_path_label.text = "place holder"	
 		
