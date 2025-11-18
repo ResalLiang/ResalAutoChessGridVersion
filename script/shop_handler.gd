@@ -252,7 +252,7 @@ func buy_chess(chess: Obstacle):
 	if human_bonus_level <= 0:
 		return
 	
-	if chess.faction == "human":
+	if chess.faction == "human" or chess.faction == "bandit" or chess.faction == "viking" or chess.faction == "pirate":
 		buy_human_count += 1
 		
 	var buy_human_spec = 4 - human_bonus_level
