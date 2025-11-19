@@ -246,6 +246,25 @@ var faction_path_upgrade_template = {
 		"path4" : 0
 	}	
 }
+
+var human_upgrade_dict := {
+	"bandit" : {
+		"ShieldMan" : "Bandit",
+		"CrossBowMan" : "BanditCrossBowman",
+		"HalberMan" : "BanditBrute",
+		"CavalierMan" : "BanditHorseman",
+		"ArchMage" : "BanditThug",
+		"KingMan" : "BanditLeader"
+	},
+	"viking" : {
+		"ShieldMan" : "VikingSwordman",
+		"CrossBowMan" : "VikingArcher",
+		"HalberMan" : "VikingSpearman",
+		"CavalierMan" : "VikingHorseman",
+		"ArchMage" : "VikingBerserker",
+		"KingMan" : "VikingJarl"
+	}
+}
 var faction_path_upgrade: Dictionary
 
 var max_won_rounds_modifier := 0
@@ -772,63 +791,12 @@ func new_round_prepare_start():
 	enemey_array = await intelligent_generate_enemy(game_difficulty)
 	print(str(enemey_array))
 
-	for node in enemy_faction_container.get_children():
-		node.queue_free()
-
 	var corpse_group = get_tree().get_nodes_in_group("corpse_group")
 	if corpse_group.size() > 0:
 		for node in corpse_group:
 			node.queue_free()
-		
-	# [chess_index.faction, chess_index.chess_name, chess_index.role, chess_index.chess_level]
-	var checked_faction: Array = []
 
-	# Count factions from faction
-	for chess_index in enemey_array:
-		var faction = chess_index[0]
-		if checked_faction.has(faction):
-			continue
-		checked_faction.append(faction)
-		
-		var current_faction_count = 0
-		for enemy in enemey_array:
-			if enemy[0] == faction:
-				current_faction_count += 1
-
-		var current_faction_level := 0
-		for i in faction_bonus_manager.bonus_level_list[faction]:
-			if current_faction_count >= i:
-				current_faction_level += 1
-
-		if current_faction_level > 0:
-			if check_villager_count("NobleMan") > 0:
-				add_bonus_bar_to_enemy_container(faction, faction_bonus_manager.bonus_level_list[faction][current_faction_level])
-			else:
-				add_bonus_bar_to_enemy_container(faction, 6)
-
-	# Count factions from role
-	for chess_index in enemey_array:
-		var role = chess_index[2]
-		if checked_faction.has(role):
-			continue
-		checked_faction.append(role)
-		
-		var current_role_count = 0
-		for enemy in enemey_array:
-			if enemy[2] == role:
-				current_role_count += 1
-
-		var current_role_level := 0
-		for i in faction_bonus_manager.bonus_level_list[role]:
-			if current_role_count >= i:
-				current_role_level += 1
-		
-		if current_role_level > 0:
-			if check_villager_count("NobleMan") > 0:
-				add_bonus_bar_to_enemy_container(role, faction_bonus_manager.bonus_level_list[role][current_role_level])
-			else:
-				add_bonus_bar_to_enemy_container(role, 6)
-
+	update_enemy_container()
 
 	if check_villager_count("Miner") > 0:
 		for i in range(check_villager_count("Miner")):
@@ -1101,89 +1069,6 @@ func save_arena_team():
 			saved_arena_team[chess_index] = [current_obstacle.faction, current_obstacle.chess_name, current_obstacle.chess_level, current_obstacle.total_kill_count, current_obstacle.chess_serial]
 
 					
-# Generates random chess based on shop level and rarity weights
-'''func generate_random_chess(generate_level: int, specific_faction: String):'''
-func generate_random_chess(generate_level: int, specific_faction: String):
-	# --- Rarity Selection Phase ---
-	# Calculate total weight for current shop level
-	var total_rarity_weight := 0
-	for weight in RARITY_WEIGHTS[max(1,min(6,generate_level))].values():
-		total_rarity_weight += weight
-	
-	# Get random value within weight range
-	var random_rarity_threshold := randi_range(0, total_rarity_weight - 1)
-	
-	# Determine selected rarity tier
-	var accumulated_rarity_weight := 0
-	var selected_rarity: String
-	for rarity_type in RARITY_WEIGHTS[max(1,min(6,generate_level))]:
-		accumulated_rarity_weight += RARITY_WEIGHTS[max(1,min(6,generate_level))][rarity_type]
-		if accumulated_rarity_weight > random_rarity_threshold:
-			selected_rarity = rarity_type
-			break
-
-	# --- Existing Chesses Tracking ---
-	# Count existing chess instances (faction+name pairs)
-	var existing_chess_counts := {}
-	# for node in get_tree().get_nodes_in_group("chess_group"):
-	# 	if node is Chess:
-	# 		var composite_key = "%s_%s" % [node.faction, node.chess_name]
-	# 		existing_chess_counts[composite_key] = existing_chess_counts.get(composite_key, 0) + 1
-	for chess_index in (arena.unit_grid.get_all_units() + bench.unit_grid.get_all_units()):
-		if chess_index is Chess:
-			var composite_key = "%s_%s" % [chess_index.faction, chess_index.chess_name]
-			existing_chess_counts[composite_key] = existing_chess_counts.get(composite_key, 0) + 1	
-
-	# --- Eligible Chesses Filtering ---
-	var candidate_chesses := []
-	var total_weight_pool := 0
-	
-	# Pre-process all eligible chesses with calculated weights
-	for faction in DataManagerSingleton.get_chess_data().keys():
-		# Skip special faction
-		if DataManagerSingleton.get_chess_data().has(specific_faction) and faction != specific_faction and specific_faction != "all":
-			continue # Skip all not specific faction chess
-
-		if (specific_faction == "locked" and DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"][faction]) or (faction == "villager" and specific_faction != "villager"):
-			continue # Skip all locked chess and villager
-			
-		for chess_name in DataManagerSingleton.get_chess_data()[faction]:
-			var chess_attributes = DataManagerSingleton.get_chess_data()[faction][chess_name]
-			
-			# Validation checks
-			if (chess_attributes["speed"] == 0 and specific_faction != "villager") or chess_attributes["rarity"] != selected_rarity:
-				continue
-
-			if faction == "undead" and (chess_name.contains("Zombie") or chess_name.contains("Skeleton")):
-				continue
-				
-			# Calculate dynamic weight with duplicate penalty
-			var chess_identifier = "%s_%s" % [faction, chess_name]
-			var base_weight = RARITY_WEIGHTS[min(6, shop_handler.shop_level)][chess_attributes["rarity"]]
-			var duplicate_penalty = existing_chess_counts.get(chess_identifier, 0)
-			var final_weight = max(base_weight - duplicate_penalty, 1)  # Ensure minimum weight
-			
-			# Register candidate chess
-			total_weight_pool += final_weight
-			candidate_chesses.append({
-				"faction": faction,
-				"name": chess_name,
-				"weight": final_weight,
-				"cumulative_weight": total_weight_pool
-			})
-
-	# --- Weighted Random Selection ---
-	if candidate_chesses.size() == 0:
-		push_warning("No eligible chesses found for rarity: %s" % selected_rarity)
-		return ["human", "SwordMan"]  # Fallback
-	
-	var random_chess_point := randi_range(0, total_weight_pool - 1)
-	for chess in candidate_chesses:
-		if chess["cumulative_weight"] > random_chess_point:
-			return [chess["faction"], chess["name"]]
-	
-	# Should never reach here if candidates exist
-	return ["human", "SwordMan"]
 '''func generate_random_chess(generate_level: int, specific_faction: String):'''
 func generate_random_chess_update(generate_level: int, specific_faction: String):
 	# --- Existing Chesses Tracking ---
@@ -1232,18 +1117,35 @@ func generate_random_chess_update(generate_level: int, specific_faction: String)
 			continue
 
 		for chess_index in DataManagerSingleton.get_chess_data()[faction_index].keys():
+			var final_faction_index := faction_index
+			var final_chess_index := chess_index
+
 			var current_chess = DataManagerSingleton.get_chess_data()[faction_index][chess_index]
 
 			if current_chess["speed"] == 0 and faction_index != "villager":
 				continue
+
+			if ["bandit", "viking"].has(faction_index):
+				continue
 				
 			if chess_index == "Anvil" and faction_index == "villager":
 				continue
-				
+
+			if faction_index == "villager" and (DataManagerSingleton.player_datas[DataManagerSingleton.current]["player_upgrade"]["faction_locked"]["bandit"] or DataManagerSingleton.player_datas[DataManagerSingleton.current]["player_upgrade"]["faction_locked"]["viking"]):
+				if chess_index == "VillagerMan" or chess_index == "VillagerWoman":
+					continue
+
 			if faction_index == "undead" and (chess_index.contains("Zombie") or chess_index.contains("Skeleton")):
 				continue
 
-			var composite_key = "%s_%s" % [faction_index, chess_index]
+			if faction_index == "human" and (DataManagerSingleton.player_datas[DataManagerSingleton.current]["player_upgrade"]["faction_locked"]["bandit"] or DataManagerSingleton.player_datas[DataManagerSingleton.current]["player_upgrade"]["faction_locked"]["viking"]):
+				for i in ["bandit", "viking"]:
+					if not DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"][i]:
+						final_faction_index = i
+						final_chess_index = human_upgrade_dict[i][chess_index]
+						break
+
+			var composite_key = final_faction_index + "_" + final_chess_index
 			if current_chess["rarity"] == "Common":
 				common_chess_pool.append(composite_key)
 			else:
@@ -1574,7 +1476,7 @@ func check_chess_merge():
 							var removed_chess_play_area = removed_chess.get_current_tile(removed_chess)[0]
 							var removed_chess_tile = removed_chess.get_current_tile(removed_chess)[1]
 
-							#removed_chess_play_area.unit_grid.remove_unit(removed_chess_tile)
+							removed_chess_play_area.unit_grid.remove_unit(removed_chess_tile) #TODO: Why remove this line?
 							total_kill_count_sum += removed_chess.total_kill_count
 							removed_chess.visible = false
 
@@ -1624,7 +1526,6 @@ func check_chess_merge():
 							alternative_choice.queue_free()
 						else:
 							upgrade_chess= summon_chess(merged_chess_faction, merged_chess_name, merged_level, 1, merged_play_area, merged_tile)
-						# TODO add animation name
 						await upgrade_chess.effect_animation_display("ChessMerge", arena, merged_tile, "Center")
 						upgrade_chess.total_kill_count = total_kill_count_sum
 						merge_count = 0
@@ -1644,7 +1545,7 @@ func check_chess_merge():
 				2:
 					for i in team_dict[Team.TEAM2_FULL]:
 						if i[0] == node:
-							team_dict[Team.TEAM1_FULL].erase(i)
+							team_dict[Team.TEAM2_FULL].erase(i)
 			
 			if node.is_queued_for_deletion():
 				pass
@@ -2062,20 +1963,58 @@ func release_villager(villager_name: String) -> void:
 		"NobleWoman":
 			shop_handler.shop_refresh(shop_handler.shop_level + 1, "")
 
+		"NobleMan":
+			update_enemy_container()
+
 		"Merchant":
 			var shop_free_refresh_count = shop_handler.get_meta("free_refresh_count", 0)
 			shop_free_refresh_count += 3
 			shop_handler.set_meta("free_refresh_count", shop_free_refresh_count)
 
 		"VillagerMan":
-			DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["bandit"] = false
-			if not DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["viking"]:
-				DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["pirate"] = false
+			if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["viking"]:
+				DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["bandit"] = false
+			else:
+				return
+			for chess_index in arena.unit_grid.get_all_units() + bench.unit_grid.get_all_units():
+				if chess_index.faction != "human" or chess_index.team != 1:
+					continue
+				if human_upgrade_dict["bandit"].keys().has(chess_index.chess_name):
+					var upgrade_chess_faction := "bandit"
+					var upgrade_chess_name := human_upgrade_dict[chess_index.chess_name]
+					var upgrade_chess_playarea = chess_index.get_current_tile(chess_index)[0]
+					var upgrade_chess_tile = chess_index.get_current_tile(chess_index)[1]
+					var upgrade_chess_level = chess_index.chess_level
+					if team_dict[Team.TEAM1_FULL].has(chess_index):
+						team_dict[Team.TEAM1_FULL].erase(chess_index)
+					upgrade_chess_playarea.remove_unit(upgrade_chess_tile)
+					chess_index.queue_free() #TODO: how to remove chess???
+					summon_chess(upgrade_chess_faction, upgrade_chess_name, upgrade_chess_level, 1, upgrade_chess_playarea, upgrade_chess_tile)
+
+			# if not DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["viking"]:
+			# 	DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["pirate"] = false
 
 		"VillagerWoman":
-			DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["viking"] = false
-			if not DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["bandit"]:
-				DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["pirate"] = false
+			if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["bandit"]:
+				DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["viking"] = false
+			else:
+				return
+			for chess_index in arena.unit_grid.get_all_units() + bench.unit_grid.get_all_units():
+				if chess_index.faction != "human" or chess_index.team != 1:
+					continue
+				if human_upgrade_dict["viking"].keys().has(chess_index.chess_name):
+					var upgrade_chess_faction := "bandit"
+					var upgrade_chess_name := human_upgrade_dict[chess_index.chess_name]
+					var upgrade_chess_playarea = chess_index.get_current_tile(chess_index)[0]
+					var upgrade_chess_tile = chess_index.get_current_tile(chess_index)[1]
+					var upgrade_chess_level = chess_index.chess_level
+					if team_dict[Team.TEAM1_FULL].has(chess_index):
+						team_dict[Team.TEAM1_FULL].erase(chess_index)
+					upgrade_chess_playarea.remove_unit(upgrade_chess_tile)
+					chess_index.queue_free() #TODO: how to remove chess???
+					summon_chess(upgrade_chess_faction, upgrade_chess_name, upgrade_chess_level, 1, upgrade_chess_playarea, upgrade_chess_tile)
+			# if not DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["bandit"]:
+			# 	DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["pirate"] = false
 
 		"SuspiciousMerchant":
 			var current_suspicious_merchant_turn = get_meta("suspicious_merchant_turn", 0) + 1
@@ -2104,3 +2043,57 @@ func add_debug_chess(chess_side: String) -> void:
 		summoned_debug_chess.set_meta("WeakDummy", true)
 	elif chess_name_option.get_item_text(chess_name_option_index) == "HeavyDummy":
 		summoned_debug_chess.set_meta("HeavyDummy", true)
+
+func update_enemy_container() _> void:
+
+	for node in enemy_faction_container.get_children():
+		node.queue_free()
+
+	# [chess_index.faction, chess_index.chess_name, chess_index.role, chess_index.chess_level]
+	var checked_faction: Array = []
+
+	# Count factions from faction
+	for chess_index in enemey_array:
+		var faction = chess_index[0]
+		if checked_faction.has(faction):
+			continue
+		checked_faction.append(faction)
+		
+		var current_faction_count = 0
+		for enemy in enemey_array:
+			if enemy[0] == faction:
+				current_faction_count += 1
+
+		var current_faction_level := 0
+		for i in faction_bonus_manager.bonus_level_list[faction]:
+			if current_faction_count >= i:
+				current_faction_level += 1
+
+		if current_faction_level > 0:
+			if check_villager_count("NobleMan") > 0:
+				add_bonus_bar_to_enemy_container(faction, faction_bonus_manager.bonus_level_list[faction][current_faction_level])
+			else:
+				add_bonus_bar_to_enemy_container(faction, 6)
+
+	# Count factions from role
+	for chess_index in enemey_array:
+		var role = chess_index[2]
+		if checked_faction.has(role):
+			continue
+		checked_faction.append(role)
+		
+		var current_role_count = 0
+		for enemy in enemey_array:
+			if enemy[2] == role:
+				current_role_count += 1
+
+		var current_role_level := 0
+		for i in faction_bonus_manager.bonus_level_list[role]:
+			if current_role_count >= i:
+				current_role_level += 1
+		
+		if current_role_level > 0:
+			if check_villager_count("NobleMan") > 0:
+				add_bonus_bar_to_enemy_container(role, faction_bonus_manager.bonus_level_list[role][current_role_level])
+			else:
+				add_bonus_bar_to_enemy_container(role, 6)
