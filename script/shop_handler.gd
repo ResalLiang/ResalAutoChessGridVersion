@@ -270,6 +270,8 @@ func buy_chess(chess: Obstacle):
 			buy_human_count = 0
 
 func sell_chess(chess: Chess):
+	var sell_chess_faction := chess.faction
+	var sell_chess_name := chess.chess_name
 	chess_sold.emit(chess)
 	remain_coins += get_chess_sell_price(chess)
 	#get_parent().team_dict[get_parent().Team.TEAM1_FULL].erase(chess)
@@ -278,6 +280,8 @@ func sell_chess(chess: Chess):
 			get_parent().team_dict[get_parent().Team.TEAM1_FULL].erase(node)
 	coins_increased.emit(get_chess_sell_price(chess), "selling chess")
 	chess.queue_free()
+	if sell_chess_faction == "villager" and sell_chess_name == "NobleMan":
+		get_parent().update_enemy_container()
 
 func get_chess_buy_price(chess: Obstacle):
 	var buy_chess_discount = -1 if get_meta("suspicious_merchant_turn", 0) > 0 else 0
