@@ -265,7 +265,7 @@ func buy_chess(chess: Obstacle):
 				break
 		
 		if add_villager_tile != Vector2i(-1, -1):
-			var rand_character_result = get_parent().generate_random_chess(human_bonus_level * 2, "villager")
+			var rand_character_result = get_parent().generate_random_chess_update(human_bonus_level * 2, "villager")
 			var character = get_parent().summon_chess(rand_character_result[0], rand_character_result[1], 1, 1, shop, add_villager_tile)
 			buy_human_count = 0
 

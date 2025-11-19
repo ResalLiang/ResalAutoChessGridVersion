@@ -24,6 +24,9 @@ var bonus_level_list : Dictionary = {
 	"demon" : [2, 4, 6],
 	"orc" : [2, 4, 6],
 	"ootf" : [2, 4, 6],
+	"bandit" : [2, 4, 6],
+	"viking" : [2, 4, 6],
+	"pirate" : [2, 4, 6],
 
 	#role
 	"warrior" : [2, 4, 6],
@@ -56,6 +59,9 @@ var player_faction_count_template : Dictionary = {
 		"orc" : [],
 		"ootf" : [],
 		"lizardMan" : [],
+		"bandit" : [],
+		"viking" : [],
+		"pirate" : [],
 
 		#role
 		"warrior" : [],
@@ -83,6 +89,9 @@ var player_faction_count_template : Dictionary = {
 		"orc" : [],
 		"ootf" : [],
 		"lizardMan" : [],
+		"bandit" : [],
+		"viking" : [],
+		"pirate" : [],
 
 		#role
 		"warrior" : [],
@@ -116,6 +125,9 @@ var player_bonus_level_dict_template : Dictionary = {
 		"orc" : 0,
 		"ootf" : 0,
 		"lizardMan" : 0,
+		"bandit" : 0,
+		"viking" : 0,
+		"pirate" : 0,
 
 		#role
 		"warrior" : 0,
@@ -143,6 +155,9 @@ var player_bonus_level_dict_template : Dictionary = {
 		"orc" : 0,
 		"ootf" : 0,
 		"lizardMan" : 0,
+		"bandit" : 0,
+		"viking" : 0,
+		"pirate" : 0,
 
 		#role
 		"warrior" : 0,
@@ -198,7 +213,10 @@ func bonus_refresh() -> void:
 			chess_faction = "human"
 		else:
 			chess_faction = chess_index.faction
-
+		
+		if chess_index.faction == "villager":
+			continue
+			
 		if not player_faction_count[chess_index.team][chess_index.faction].has([chess_index.faction, chess_index.chess_name]):
 			player_faction_count[chess_index.team][chess_index.faction].append([chess_index.faction, chess_index.chess_name])
 

@@ -244,7 +244,25 @@ var faction_path_upgrade_template = {
 		"path2" : 0,
 		"path3" : 0,
 		"path4" : 0
-	}	
+	},
+	"bandit": {
+		"path1" : 1,
+		"path2" : 0,
+		"path3" : 0,
+		"path4" : 0
+	},
+	"viking": {
+		"path1" : 1,
+		"path2" : 0,
+		"path3" : 0,
+		"path4" : 0
+	},
+	"pirate": {
+		"path1" : 1,
+		"path2" : 0,
+		"path3" : 0,
+		"path4" : 0
+	}		
 }
 
 var human_upgrade_dict := {
@@ -1117,8 +1135,8 @@ func generate_random_chess_update(generate_level: int, specific_faction: String)
 			continue
 
 		for chess_index in DataManagerSingleton.get_chess_data()[faction_index].keys():
-			var final_faction_index := faction_index
-			var final_chess_index := chess_index
+			var final_faction_index = faction_index
+			var final_chess_index = chess_index
 
 			var current_chess = DataManagerSingleton.get_chess_data()[faction_index][chess_index]
 
@@ -1131,14 +1149,14 @@ func generate_random_chess_update(generate_level: int, specific_faction: String)
 			if chess_index == "Anvil" and faction_index == "villager":
 				continue
 
-			if faction_index == "villager" and (DataManagerSingleton.player_datas[DataManagerSingleton.current]["player_upgrade"]["faction_locked"]["bandit"] or DataManagerSingleton.player_datas[DataManagerSingleton.current]["player_upgrade"]["faction_locked"]["viking"]):
+			if faction_index == "villager" and (not DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["bandit"] and not DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["viking"]):
 				if chess_index == "VillagerMan" or chess_index == "VillagerWoman":
 					continue
 
 			if faction_index == "undead" and (chess_index.contains("Zombie") or chess_index.contains("Skeleton")):
 				continue
 
-			if faction_index == "human" and (DataManagerSingleton.player_datas[DataManagerSingleton.current]["player_upgrade"]["faction_locked"]["bandit"] or DataManagerSingleton.player_datas[DataManagerSingleton.current]["player_upgrade"]["faction_locked"]["viking"]):
+			if faction_index == "human" and (DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["bandit"] or DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["viking"]):
 				for i in ["bandit", "viking"]:
 					if not DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"][i]:
 						final_faction_index = i
@@ -1817,7 +1835,7 @@ func intelligent_generate_enemy(difficulty: String) -> Array:
 
 		# generate one time
 		for i in range(randi_range(current_min_population, current_max_population)):
-			var generate_chess = generate_random_chess(current_max_shop_level, "locked")
+			var generate_chess = generate_random_chess_update(current_max_shop_level, "locked")
 			var generate_chess_faction = generate_chess[0]
 			var generate_chess_name = generate_chess[1]
 			var generate_chess_role = DataManagerSingleton.get_chess_data()[generate_chess_faction][generate_chess_name]["role"]
@@ -1981,13 +1999,13 @@ func release_villager(villager_name: String) -> void:
 					continue
 				if human_upgrade_dict["bandit"].keys().has(chess_index.chess_name):
 					var upgrade_chess_faction := "bandit"
-					var upgrade_chess_name := human_upgrade_dict[chess_index.chess_name]
+					var upgrade_chess_name = human_upgrade_dict["bandit"][chess_index.chess_name]
 					var upgrade_chess_playarea = chess_index.get_current_tile(chess_index)[0]
 					var upgrade_chess_tile = chess_index.get_current_tile(chess_index)[1]
 					var upgrade_chess_level = chess_index.chess_level
 					if team_dict[Team.TEAM1_FULL].has(chess_index):
 						team_dict[Team.TEAM1_FULL].erase(chess_index)
-					upgrade_chess_playarea.remove_unit(upgrade_chess_tile)
+					upgrade_chess_playarea.unit_grid.remove_unit(upgrade_chess_tile)
 					chess_index.queue_free() #TODO: how to remove chess???
 					summon_chess(upgrade_chess_faction, upgrade_chess_name, upgrade_chess_level, 1, upgrade_chess_playarea, upgrade_chess_tile)
 
@@ -2004,13 +2022,13 @@ func release_villager(villager_name: String) -> void:
 					continue
 				if human_upgrade_dict["viking"].keys().has(chess_index.chess_name):
 					var upgrade_chess_faction := "bandit"
-					var upgrade_chess_name := human_upgrade_dict[chess_index.chess_name]
+					var upgrade_chess_name = human_upgrade_dict["viking"][chess_index.chess_name]
 					var upgrade_chess_playarea = chess_index.get_current_tile(chess_index)[0]
 					var upgrade_chess_tile = chess_index.get_current_tile(chess_index)[1]
 					var upgrade_chess_level = chess_index.chess_level
 					if team_dict[Team.TEAM1_FULL].has(chess_index):
 						team_dict[Team.TEAM1_FULL].erase(chess_index)
-					upgrade_chess_playarea.remove_unit(upgrade_chess_tile)
+					upgrade_chess_playarea.unit_grid.remove_unit(upgrade_chess_tile)
 					chess_index.queue_free() #TODO: how to remove chess???
 					summon_chess(upgrade_chess_faction, upgrade_chess_name, upgrade_chess_level, 1, upgrade_chess_playarea, upgrade_chess_tile)
 			# if not DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["bandit"]:
@@ -2044,7 +2062,7 @@ func add_debug_chess(chess_side: String) -> void:
 	elif chess_name_option.get_item_text(chess_name_option_index) == "HeavyDummy":
 		summoned_debug_chess.set_meta("HeavyDummy", true)
 
-func update_enemy_container() _> void:
+func update_enemy_container() -> void:
 
 	for node in enemy_faction_container.get_children():
 		node.queue_free()
