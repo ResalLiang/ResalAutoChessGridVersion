@@ -156,15 +156,15 @@ func play_music(music_key: String):
 #summoned_character.attack_evased.connect(AudioManagerSingleton.play_sfx.unbind(1).bind("attack_evased"))
 #summoned_character.is_died.connect(AudioManagerSingleton.play_sfx.bind("is_died"))
 	
-func play_sfx(obstacle: Obstacle, action: String):
-	var keys = [obstacle.faction, obstacle.chess_name, action]
+func play_sfx(chess: Chess, action: String):
+	var keys = [chess.faction, chess.chess_name, action]
 	
 	var sfx_stream: AudioStream
 	
 	if not DataManagerSingleton.check_key_valid(sfx_resources, keys):
 		sfx_stream = sfx_resources["default"][action]
 	else:
-		sfx_stream = sfx_resources[obstacle.faction][obstacle.chess_name][action]
+		sfx_stream = sfx_resources[chess.faction][chess.chess_name][action]
 	
 	for player in sfx_player_pool:
 		if not player.is_playing():
