@@ -3,7 +3,7 @@ extends Node2D
 
 # 预加载角色场景
 const chess_scene = preload("res://scene/chess.tscn")
-const obstacle_scene = preload("res://scene/obstacle.tscn")
+# const obstacle_scene = preload("res://scene/obstacle.tscn")
 const chess_class = preload("res://script/chess.gd")
 const alternative_choice_scene = preload("res://scene/alternative_choice.tscn")
 const skill_tree_scene = preload("res://scene/skill_tree.tscn")
@@ -320,8 +320,8 @@ func _ready():
 			chess_order_near_center.disabled = true
 			chess_order_far_center.disabled = true
 			is_game_turn_start = true
-			for node in get_tree().get_nodes_in_group("obstacle_group"):
-				if node is Obstacle:
+			for node in get_tree().get_nodes_in_group("chess_group"):
+				if node is Chess:
 					node.dragging_enabled =  false
 	)
 	game_turn_finished.connect(
@@ -333,8 +333,8 @@ func _ready():
 			chess_order_near_center.disabled = false
 			chess_order_far_center.disabled = false
 			is_game_turn_start = false
-			for node in get_tree().get_nodes_in_group("obstacle_group"):
-				if node is Obstacle:
+			for node in get_tree().get_nodes_in_group("chess_group"):
+				if node is Chess:
 					node.dragging_enabled =  true
 	)
 
@@ -477,22 +477,32 @@ func _ready():
 	)
 
 	chess_mover.chess_moved.connect(
-		func(chess: Obstacle, play_area: PlayArea, tile: Vector2i):
+		func(chess: Chess, play_area: PlayArea, tile: Vector2i):
 			if not is_game_turn_start and not merge_start:
 				await check_chess_merge()
 				# faction_bonus_manager.bonus_refresh()
 				update_population(true)
+
+			if play_area.name != "arena":
+				chess.hp_bar.visible = false
+				chess.mp_bar.visible = false
+			else:
+				chess.hp_bar.visible = true
+				if not chess.animated_sprite_2d.sprite_frames.has_animation("spell") :
+					chess.mp_bar.visible = false
+				else:
+					chess.mp_bar.visible = true
 	)
 	
 	chess_mover.chess_raised.connect(
-		func(chess_position, obstacle):
+		func(chess_position, chess):
 			arrow.is_visible = true
 			arrow.start_pos = chess_position
 			#TODO : add faction_bonus_highlight material
-			if not obstacle is Chess:
+			if not chess is Chess:
 				return
 			for bar_index in (faction_bonus_manager.v_box_container_1.get_children() + faction_bonus_manager.v_box_container_2.get_children() + faction_bonus_manager.v_box_container_3.get_children()):
-				if bar_index is FactionBonusBar and (bar_index.label.text == obstacle.faction or bar_index.label.text == obstacle.role):
+				if bar_index is FactionBonusBar and (bar_index.label.text == chess.faction or bar_index.label.text == chess.role):
 					var new_material = bar_index.frame_texture_rect.material.duplicate()
 					#new_material.set_shader_parameter("use_monochrome", true)
 					new_material.set_shader_parameter("outline_color", Color(1, 1 ,0, 1))
@@ -500,7 +510,7 @@ func _ready():
 	)
 	
 	chess_mover.chess_dropped.connect(
-		func(obstacle):
+		func(chess):
 			arrow.is_visible = false
 			for bar_index in (faction_bonus_manager.v_box_container_1.get_children() + faction_bonus_manager.v_box_container_2.get_children() + faction_bonus_manager.v_box_container_3.get_children()):
 				var new_material = bar_index.frame_texture_rect.material.duplicate()
@@ -693,9 +703,9 @@ func _process(delta: float) -> void:
 		
 	debug_label.text = current_playarea_index.name + " / " + str(current_tile)
 	
-	if current_playarea_index.is_tile_in_bounds(current_tile) and DataManagerSingleton.check_obstacle_valid(current_playarea_index.unit_grid.units[current_tile]):
-		var mouse_position_obstacle = current_playarea_index.unit_grid.units[current_tile]
-		debug_label.text += "\n" + mouse_position_obstacle.faction + " / " +  mouse_position_obstacle.chess_name
+	if current_playarea_index.is_tile_in_bounds(current_tile) and DataManagerSingleton.check_chess_valid(current_playarea_index.unit_grid.units[current_tile]):
+		var mouse_position_chess = current_playarea_index.unit_grid.units[current_tile]
+		debug_label.text += "\n" + mouse_position_chess.faction + " / " +  mouse_position_chess.chess_name
 	
 	if remain_upgrade_count > 0:
 		exclamation_mark.visible = true
@@ -864,8 +874,8 @@ func new_round_prepare_end():
 				summon_chess(current_chess_faction, upgrade_chess_name, current_chess_level, 1, arena, current_chess_tile)
 		
 	if team_dict[Team.TEAM2_FULL] == []:
-		for node in get_tree().get_nodes_in_group("obstacle_group"):
-			if node is Obstacle and node.current_play_area == node.play_areas.playarea_arena and node.team != 1:
+		for node in get_tree().get_nodes_in_group("chess_group"):
+			if node is Chess and node.current_play_area == node.play_areas.playarea_arena and node.team != 1:
 				node.queue_free()
 		for chess_index in enemey_array:
 			var rand_x = randi_range(arena.unit_grid.size.x / 2, arena.unit_grid.size.x - 1)
@@ -892,7 +902,7 @@ func start_new_round():
 	var team1_alive_cnt = 0
 	var team2_alive_cnt = 0
 	for chess_index in team_dict[Team.TEAM1_FULL] + team_dict[Team.TEAM2_FULL]:
-		if DataManagerSingleton.check_obstacle_valid(chess_index[0]):
+		if DataManagerSingleton.check_chess_valid(chess_index[0]):
 			chess_index[1] = false
 	
 	team_dict[Team.TEAM1_FULL] = sort_characters(Team.TEAM1_FULL, current_chess_active_order)
@@ -923,7 +933,7 @@ func start_new_round():
 func start_chess_turn(team: Team) -> void:
 	var current_chess
 	for chess_index in team_dict[team]:
-		if not DataManagerSingleton.check_obstacle_valid(chess_index[0]) or chess_index[1]:
+		if not DataManagerSingleton.check_chess_valid(chess_index[0]) or chess_index[1]:
 			continue
 		current_chess = chess_index[0]
 		chess_index[1] = true
@@ -933,7 +943,7 @@ func start_chess_turn(team: Team) -> void:
 		process_character_turn(current_chess)
 
 
-func process_character_turn(chess: Obstacle):
+func process_character_turn(chess: Chess):
 	active_chess = chess
 	active_chess.is_active = true
 	#active_chess.action_finished.connect(handle_character_action_finished)
@@ -945,14 +955,14 @@ func process_character_turn(chess: Obstacle):
 
 func array_alive_sum(accum, node):
 	var result := 0
-	if DataManagerSingleton.check_obstacle_valid(node[0]):
+	if DataManagerSingleton.check_chess_valid(node[0]):
 		result = 1
 
 	return accum + result
 	
 func array_available_sum(accum, node):
 	var result := 0
-	if DataManagerSingleton.check_obstacle_valid(node[0]) and not node[1]:
+	if DataManagerSingleton.check_chess_valid(node[0]) and not node[1]:
 		result = 1
 
 	return accum + result
@@ -1064,7 +1074,7 @@ func clear_play_area(play_area_to_clear: PlayArea):
 	await get_tree().process_frame
 	var all_children = play_area_to_clear.unit_grid.get_children()
 	for node in all_children:
-		if node is Obstacle:
+		if node is Chess:
 			node.free()
 	await get_tree().process_frame
 
@@ -1083,8 +1093,8 @@ func save_arena_team():
 		if not is_instance_valid(arena.unit_grid.units[chess_index]):
 			arena.unit_grid.remove_unit(chess_index)
 		elif arena.unit_grid.units[chess_index] is Chess and arena.unit_grid.units[chess_index].team == 1 and not arena.unit_grid.units[chess_index].chess_name.contains("Zombie") and not arena.unit_grid.units[chess_index].chess_name.contains("Skeleton"):
-			var current_obstacle = arena.unit_grid.units[chess_index]
-			saved_arena_team[chess_index] = [current_obstacle.faction, current_obstacle.chess_name, current_obstacle.chess_level, current_obstacle.total_kill_count, current_obstacle.chess_serial]
+			var current_chess = arena.unit_grid.units[chess_index]
+			saved_arena_team[chess_index] = [current_chess.faction, current_chess.chess_name, current_chess.chess_level, current_chess.total_kill_count, current_chess.chess_serial]
 
 					
 '''func generate_random_chess(generate_level: int, specific_faction: String):'''
@@ -1240,9 +1250,11 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, chess
 
 	var summoned_character
 	if DataManagerSingleton.get_chess_data()[summon_chess_faction][summon_chess_name]["speed"] == 0 and summon_chess_faction != "villager":
-		summoned_character = obstacle_scene.instantiate()
+		summoned_character = chess_scene.instantiate()
+		summoned_character.is_obstacle = true
 	else:
 		summoned_character = chess_scene.instantiate()
+		summoned_character.is_obstacle = false
 
 	summoned_character.faction = summon_chess_faction
 	summoned_character.chess_name = summon_chess_name
@@ -1285,11 +1297,11 @@ func summon_chess(summon_chess_faction: String, summon_chess_name: String, chess
 	
 	if summoned_character is Chess:
 		summoned_character.kill_chess.connect(
-			func(obstacle: Obstacle, target: Obstacle):
-				if obstacle == target:
+			func(chess: Chess, target: Chess):
+				if chess == target:
 					return
 				for chess_index in saved_arena_team.values():			
-					if chess_index[4] == obstacle.chess_serial and chess_index[0] == obstacle.faction and chess_index[1] == obstacle.chess_name:
+					if chess_index[4] == chess.chess_serial and chess_index[0] == chess.faction and chess_index[1] == chess.chess_name:
 						chess_index[3] += 1
 						break
 		)
@@ -1337,12 +1349,12 @@ func update_population(forced_update: bool):
 		game_start_button.global_position.x = 24
 	faction_bonus_manager.bonus_refresh()
 
-func chess_death_handle(obstacle: Obstacle):
+func chess_death_handle(chess: Chess):
 
-	# arena.unit_grid.remove_unit(obstacle.get_current_tile(obstacle)[1])
-	# obstacle.visible = false
-	if obstacle.is_active:
-		obstacle.action_finished.emit(obstacle)
+	# arena.unit_grid.remove_unit(chess.get_current_tile(chess)[1])
+	# chess.visible = false
+	if chess.is_active:
+		chess.action_finished.emit(chess)
 
 func control_shaker(control: Control):
 	var old_position = control.global_position
@@ -1362,7 +1374,7 @@ func _on_back_button_pressed() -> void:
 	game_speed_controller._set_preset_speed(1.0)
 	to_menu_scene.emit()
 
-func battle_value_display(chess: Obstacle, chess2: Obstacle, display_value, signal_name: String):
+func battle_value_display(chess: Chess, chess2: Chess, display_value, signal_name: String):
 
 	if display_value <= 0 and (signal_name == "damage_applied" or signal_name == "critical_damage_applied" or signal_name == "heal_taken"):
 		return
