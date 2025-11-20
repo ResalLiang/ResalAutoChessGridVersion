@@ -214,7 +214,7 @@ func clean_player_data(player: String = current_player):
 	player_datas[current_player]["player_upgrade"] = player_upgrade_template.duplicate()
 	save_game_json()
 		
-func record_death_chess(chess: Obstacle) -> void:
+func record_death_chess(chess: Chess) -> void:
 
 	if not chess is Chess:
 		return
@@ -239,16 +239,16 @@ func handle_player_lose_round():
 func handle_player_lose_game():
 	add_data_to_dict(in_game_data, ["total_lose_game"], 1)
 
-func handle_chess_bought(chess: Obstacle):
+func handle_chess_bought(chess: Chess):
 	add_data_to_dict(in_game_data, ["chess_stat", chess.faction, chess.chess_name, "buy_count"], 1)
 
-func handle_chess_kill(attacker: Obstacle, target: Obstacle):
+func handle_chess_kill(attacker: Chess, target: Chess):
 	add_data_to_dict(in_game_data, ["chess_stat", attacker.faction, attacker.chess_name, "kill_count"], 1)
 
-func handle_chess_sold(chess: Obstacle):
+func handle_chess_sold(chess: Chess):
 	add_data_to_dict(in_game_data, ["chess_stat", chess.faction, chess.chess_name, "sell_count"], 1)
 
-func handle_chess_refreshed(chess: Obstacle):
+func handle_chess_refreshed(chess: Chess):
 	add_data_to_dict(in_game_data, ["chess_stat", chess.faction, chess.chess_name, "refresh_count"], 1)
 
 func handle_coin_spend(value: int, reason: String):
@@ -418,27 +418,6 @@ func record_game(score: int, chess_array: Array):
 	add_data_to_dict(player_data, ["game_record"], current_game_record)
 
 	add_data_to_dict(player_data, ["total_experience"], score)
-
-func check_obstacle_valid(node):
-	if not is_instance_valid(node):
-		return false
-
-	if not node:
-		return false
-
-	if not node is Obstacle:
-		return false
-
-	if node.visible == false:
-		return false
-
-	if node.status == node.STATUS.DIE:
-		return false
-		
-	if node.is_queued_for_deletion():
-		return false
-
-	return true
 
 func check_chess_valid(node):
 	if not is_instance_valid(node):
