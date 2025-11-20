@@ -8,6 +8,7 @@ const emoji_bubble_scene = preload("res://scene/emoji_bubble.tscn")
 # Character states
 enum STATUS {IDLE, MOVE, MELEE_ATTACK, RANGED_ATTACK, JUMP, HIT, DIE, SPELL}
 enum play_areas {playarea_arena, playarea_bench, playarea_shop, playarea_grave}
+enum TARGET_CHOICE {FAR, CLOSE, STRONG, WEAK, ALLY, SELF}
 
 const MAX_SEARCH_RADIUS = 3
 const projectile_scene = preload("res://scene/projectile.tscn")
@@ -29,6 +30,10 @@ const chess_scene = preload("res://scene/chess.tscn")
 @onready var mp_bar: ProgressBar = $mp_bar
 @onready var reference_rect: ReferenceRect = $Area2D/ReferenceRect
 @onready var level_label: Label = $level_label
+
+@onready var stats_container: VBoxContainer = $stats_container
+@onready var hp_container: HBoxContainer = $stats_container/hp_container
+@onready var mp_container: HBoxContainer = $stats_container/mp_container
 
 # ========================
 # Exported Variables
@@ -79,12 +84,17 @@ var mp: int = 0:
 
 var max_hp = base_max_hp:
 	set(value):
-		var update_hp = value * (hp / max_hp)
+		var update_hp = value - (max_hp - hp)
 		max_hp = value
 		hp = update_hp
+		
 var max_mp = base_max_mp:
 	set(value):
-		var update_mp = value * (mp / max_mp)
+		if value == 0:
+			mp = 0
+			max_mp = 0
+			return
+		var update_mp = value - (max_mp - mp)
 		max_mp = value
 		mp = update_mp
 
@@ -127,9 +137,7 @@ var effect_handler = EffectHandler.new()
 #============================================
 # Target setting
 #============================================
-var chess_target_choice := TARGET_CHOICE.CLOSE  # Target selection strategy
 var chess_target: Chess  # Current attack target
-var chess_spell_target_choice := TARGET_CHOICE.CLOSE  # Target selection strategy
 var chess_spell_target: Chess # Current spell target
 
 @export var team: int      # 0 for player, 1~7 for AI enemy
@@ -209,6 +217,13 @@ var status := STATUS.IDLE         # Current character state
 
 var rng = RandomNumberGenerator.new() # Random number generator
 
+var chess_mover
+
+var chess_target_choice := TARGET_CHOICE.CLOSE
+var chess_spell_target_choice := TARGET_CHOICE.CLOSE
+var chess_level := 1
+
+var target_evased_attack := false
 #============================================
 # Signals
 #============================================
@@ -237,11 +252,13 @@ signal heal_applied(chess: Chess, heal_target: Chess, heal_value: float)
 
 signal damage_taken(chess: Chess, attacker: Chess, damage_value: float) # for audio player and display
 signal critical_damage_taken(chess: Chess, attacker: Chess, damage_value: float) # for audio player and display
-signal heal_taken(chess: Chesst, healer: Chess, heal_value: floa) # for audio player and display
+signal heal_taken(chess: Chess, healer: Chess, heal_value: float) # for audio player and display
 signal attack_evased(chess: Chess, attacker: Chess) # for audio player and display
 
 signal is_died(chess: Chess, attacker: Chess) # for audio player and display
+signal deal_damage(attacker: Obstacle, target: Obstacle, damage_value: int, damage_type: String, affix_array: Array[String])
 
+signal kill_chess(obstacle: Obstacle, target: Obstacle)
 
 # ========================
 # Initialization
@@ -644,6 +661,21 @@ func _load_chess_stats():
 		else:
 			base_max_mp = 0
 
+		if stats.keys().has("target_priority"):			
+			match stats["target_priority"]:
+				"FAR":
+					chess_target_choice = TARGET_CHOICE.FAR
+				"CLOSE":
+					chess_target_choice = TARGET_CHOICE.CLOSE
+				"STRONG":
+					chess_target_choice = TARGET_CHOICE.STRONG
+				"WEAK":
+					chess_target_choice = TARGET_CHOICE.WEAK
+				"ALLY":
+					chess_target_choice = TARGET_CHOICE.ALLY
+				"SELF":
+					chess_target_choice = TARGET_CHOICE.SELF
+				
 		match chess_level:
 			1:
 				pass
@@ -713,7 +745,7 @@ func start_turn():
 
 	if is_obstacle:
 		if obstacle_counter <= 0:
-			await _cast_spell()
+			await _cast_spell(chess_spell_target)
 		else:
 			obstacle_counter -= 1
 		action_timer.start()

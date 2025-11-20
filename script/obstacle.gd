@@ -139,7 +139,6 @@ var target_evased_attack := false
 var status := STATUS.IDLE         # Current character state
 
 var rng = RandomNumberGenerator.new() # Random number generator
-
 #============================================
 # Signals
 #============================================

@@ -482,16 +482,18 @@ func _ready():
 				await check_chess_merge()
 				# faction_bonus_manager.bonus_refresh()
 				update_population(true)
-
+			if not DataManagerSingleton.check_chess_valid(chess):
+				return
+				
 			if play_area.name != "arena":
-				chess.hp_bar.visible = false
-				chess.mp_bar.visible = false
+				chess.hp_container.visible = false
+				chess.mp_container.visible = false
 			else:
-				chess.hp_bar.visible = true
+				chess.hp_container.visible = true
 				if not chess.animated_sprite_2d.sprite_frames.has_animation("spell") :
-					chess.mp_bar.visible = false
+					chess.mp_container.visible = false
 				else:
-					chess.mp_bar.visible = true
+					chess.mp_container.visible = true
 	)
 	
 	chess_mover.chess_raised.connect(
@@ -1168,7 +1170,7 @@ func generate_random_chess_update(generate_level: int, specific_faction: String)
 
 			if faction_index == "human" and (DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["bandit"] or DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"]["viking"]):
 				for i in ["bandit", "viking"]:
-					if not DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"][i]:
+					if not DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["player_upgrade"]["faction_locked"][i] and DataManagerSingleton.get_chess_data()["human"][chess_index].keys().has("downgrade_chess"):
 						final_faction_index = i
 						final_chess_index = human_upgrade_dict[i][chess_index]
 						break
