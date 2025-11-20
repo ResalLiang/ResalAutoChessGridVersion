@@ -26,8 +26,8 @@ const effect_icon_scene = preload("res://scene/effect_icon.tscn")
 var animation_faction := "human"
 var animation_chess_name := "SwordMan"
 
-var record_chess: Obstacle
-var showed_chess: Obstacle
+var record_chess: Chess
+var showed_chess: Chess
 
 var game_root_scene
 
@@ -74,23 +74,23 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	if DataManagerSingleton.check_obstacle_valid(showed_chess):
+	if DataManagerSingleton.check_chess_valid(showed_chess):
 		refresh_chess_information()
 
-func setup_chess(obstacle: Obstacle) -> void:
-	if obstacle.drag_handler.drag_started.connect(show_chess_information.bind(obstacle)) != OK:
-		print("2obstacle.drag_handler.drag_started connect fail!")
-	if obstacle.drag_handler.is_clicked.connect(show_chess_information.bind(obstacle)) != OK:
-		print("obstacle.drag_handler.is_clicked connect fail!")
-	if obstacle.drag_handler.drag_canceled.connect(_on_chess_drag_canceled.bind(obstacle)) != OK:
-		print("obstacle.drag_handler.drag_canceled connect fail!")
-	if obstacle.drag_handler.drag_dropped.connect(_on_chess_dropped.bind(obstacle)) != OK:
-		print("obstacle.drag_handler.drag_dropped connect fail!")
+func setup_chess(chess: Chess) -> void:
+	if chess.drag_handler.drag_started.connect(show_chess_information.bind(chess)) != OK:
+		print("chess.drag_handler.drag_started connect fail!")
+	if chess.drag_handler.is_clicked.connect(show_chess_information.bind(chess)) != OK:
+		print("chess.drag_handler.is_clicked connect fail!")
+	if chess.drag_handler.drag_canceled.connect(_on_chess_drag_canceled.bind(chess)) != OK:
+		print("chess.drag_handler.drag_canceled connect fail!")
+	if chess.drag_handler.drag_dropped.connect(_on_chess_dropped.bind(chess)) != OK:
+		print("chess.drag_handler.drag_dropped connect fail!")
 	
 		
-func show_chess_information(starting_position: Vector2, status: String, obstacle: Obstacle) -> void:
+func show_chess_information(starting_position: Vector2, status: String, chess: Chess) -> void:
 
-	showed_chess = obstacle
+	showed_chess = chess
 	
 	refresh_chess_information()
 
@@ -187,10 +187,10 @@ func refresh_chess_information():
 						game_root_scene.tips_label.visible = false
 			)
 				
-func _on_chess_drag_canceled(starting_position: Vector2, status: String, obstacle: Obstacle) -> void:
+func _on_chess_drag_canceled(starting_position: Vector2, status: String, chess: Chess) -> void:
 	visible = false
 	
-func _on_chess_dropped(starting_position: Vector2, status: String, obstacle: Obstacle) -> void:
+func _on_chess_dropped(starting_position: Vector2, status: String, chess: Chess) -> void:
 	visible = false
 
 func _load_animations():
