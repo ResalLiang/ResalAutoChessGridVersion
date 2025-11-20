@@ -642,7 +642,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 		_:
 			pass
 			
-func clean_chess_faction_bonus(chess: Obstacle) -> void:
+func clean_chess_faction_bonus(chess: Chess) -> void:
 	var chess_effect_list = chess.effect_handler.effect_list.duplicate()
 	if chess_effect_list.size() == 0:
 		return
