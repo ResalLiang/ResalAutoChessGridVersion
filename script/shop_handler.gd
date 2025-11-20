@@ -3,7 +3,6 @@ extends Node2D
 
 const max_shop_level := 6
 const chess_scene = preload("res://scene/chess.tscn")
-const obstacle_scene = preload("res://scene/obstacle.tscn")
 
 @onready var chess_mover: ChessMover = %chess_mover
 @onready var arena: PlayArea = %arena
@@ -138,7 +137,7 @@ func shop_refresh(level: int, special_note: String) -> void:
 	shop_refreshed.emit()
 	
 	for tile_index in shop.unit_grid.units.keys():
-		if DataManagerSingleton.check_obstacle_valid(shop.unit_grid.units[tile_index]) and not freeze_dict[tile_index]:
+		if DataManagerSingleton.check_chess_valid(shop.unit_grid.units[tile_index]) and not freeze_dict[tile_index]:
 			var current_chess = shop.unit_grid.units[tile_index]
 			# DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["chess_stat", chess_index.faction, chess_index.chess_name, "refresh_count"], 1)
 			chess_refreshed.emit(current_chess)
@@ -183,7 +182,7 @@ func shop_refresh(level: int, special_note: String) -> void:
 func shop_freeze() -> void:
 	var check_all_freeze := true
 	for tile_index in shop.unit_grid.units.keys():
-		if freeze_dict[tile_index] == false and DataManagerSingleton.check_obstacle_valid(shop.unit_grid.units[tile_index]):
+		if freeze_dict[tile_index] == false and DataManagerSingleton.check_chess_valid(shop.unit_grid.units[tile_index]):
 			check_all_freeze = false
 			break
 	
@@ -191,7 +190,7 @@ func shop_freeze() -> void:
 		shop_freezed.emit()
 		clear_effect_animation()
 		for tile_index in shop.unit_grid.units.keys():
-			if DataManagerSingleton.check_obstacle_valid(shop.unit_grid.units[tile_index]):
+			if DataManagerSingleton.check_chess_valid(shop.unit_grid.units[tile_index]):
 				effect_animation_display("IceFreeze", shop, tile_index)
 				freeze_dict[tile_index] = true
 			else:
@@ -200,7 +199,7 @@ func shop_freeze() -> void:
 		shop_unfreezed.emit()
 		clear_effect_animation()
 		for tile_index in shop.unit_grid.units.keys():
-			if DataManagerSingleton.check_obstacle_valid(shop.unit_grid.units[tile_index]) and freeze_dict[tile_index] == true:
+			if DataManagerSingleton.check_chess_valid(shop.unit_grid.units[tile_index]) and freeze_dict[tile_index] == true:
 				effect_animation_display("IceUnfreeze", shop, tile_index)
 			freeze_dict[tile_index] = false
 
@@ -234,13 +233,13 @@ func get_max_population():
 
 	return (max_population + extra_max_population)
 
-func can_pay_chess(chess: Obstacle) -> bool:
+func can_pay_chess(chess: Chess) -> bool:
 	if get_chess_buy_price(chess) > remain_coins:
 		return false
 	else:
 		return true
 
-func buy_chess(chess: Obstacle):
+func buy_chess(chess: Chess):
 	chess_bought.emit(chess)
 	remain_coins -= get_chess_buy_price(chess)
 	coins_decreased.emit(get_chess_buy_price(chess), "buyinging chess")
@@ -260,7 +259,7 @@ func buy_chess(chess: Obstacle):
 	if buy_human_count >= buy_human_spec:
 		var add_villager_tile := Vector2i(-1, -1)
 		for tile_index in shop.unit_grid.units.keys():
-			if not DataManagerSingleton.check_obstacle_valid(shop.unit_grid.units[tile_index]):
+			if not DataManagerSingleton.check_chess_valid(shop.unit_grid.units[tile_index]):
 				add_villager_tile = tile_index
 				break
 		
@@ -283,14 +282,14 @@ func sell_chess(chess: Chess):
 	if sell_chess_faction == "villager" and sell_chess_name == "NobleMan":
 		get_parent().update_enemy_container()
 
-func get_chess_buy_price(chess: Obstacle):
+func get_chess_buy_price(chess: Chess):
 	var buy_chess_discount = -1 if get_meta("suspicious_merchant_turn", 0) > 0 else 0
 
 	if chess.faction == "villager" and (chess.chess_name == "VillagerMan" or chess.chess_name == "VillagerWoman"):
 		return 1 + buy_chess_discount
 	return shop_buy_price + buy_chess_discount
 
-func get_chess_sell_price(chess: Obstacle):
+func get_chess_sell_price(chess: Chess):
 	if chess is Chess:
 		return (chess.chess_level + 1)
 	else:
