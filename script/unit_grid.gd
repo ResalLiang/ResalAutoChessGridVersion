@@ -12,15 +12,15 @@ func _ready() -> void:
 		for x in size.x:
 			units[Vector2i(x,y)] = null
 	
-func add_unit(tile: Vector2i, obstacle: Obstacle) -> void:
-	if units.values().has(obstacle):
+func add_unit(tile: Vector2i, chess: Chess) -> void:
+	if units.values().has(chess):
 		for tile_index in units.keys():
-			if units[tile_index] == obstacle:
+			if units[tile_index] == chess:
 				remove_unit(tile_index)
-		units[tile] = obstacle
+		units[tile] = chess
 		unit_grid_changed.emit()
 	else:
-		units[tile] = obstacle
+		units[tile] = chess
 		unit_grid_changed.emit()
 
 func remove_unit(tile: Vector2i) -> void:
@@ -33,7 +33,7 @@ func remove_unit(tile: Vector2i) -> void:
 func is_tile_occupied(tile: Vector2i) -> bool:
 	if not get_parent().is_tile_in_bounds(tile):
 		return false
-	return DataManagerSingleton.check_obstacle_valid(units[tile])
+	return DataManagerSingleton.check_chess_valid(units[tile])
 	
 func is_grid_full() -> bool:
 	return units.keys().all(is_tile_occupied)
@@ -62,29 +62,29 @@ func get_empty_tile_in_radius(tile: Vector2i, radius: int) -> Array:
 		for y in range(tile.y - radius, tile.y + radius + 1):
 			if abs(tile.x - x) > radius and abs(tile.y - y) > radius:
 				continue
-			if units.keys().has(Vector2i(x, y)) and (units[Vector2i(x, y)] == null or not DataManagerSingleton.check_obstacle_valid(units[Vector2i(x, y)])):
+			if units.keys().has(Vector2i(x, y)) and (units[Vector2i(x, y)] == null or not DataManagerSingleton.check_chess_valid(units[Vector2i(x, y)])):
 				result.append(Vector2i(x, y))
 	return result	
 
-func get_valid_obstacle_in_radius(tile: Vector2i, radius: int) -> Array:
+func get_valid_chess_in_radius(tile: Vector2i, radius: int) -> Array:
 	var result := []
 	for x in range(tile.x - radius, tile.x + radius + 1):
 		for y in range(tile.y - radius, tile.y + radius + 1):
 			if abs(x) and abs(y) > radius:
 				continue
-			if units.keys().has(Vector2i(x, y)) and (units[Vector2i(x, y)] and DataManagerSingleton.check_obstacle_valid(units[Vector2i(x, y)])):
+			if units.keys().has(Vector2i(x, y)) and (units[Vector2i(x, y)] and DataManagerSingleton.check_chess_valid(units[Vector2i(x, y)])):
 				result.append(units[Vector2i(x, y)])
 	return result	
 
-func get_all_units() -> Array[Obstacle]:
+func get_all_units() -> Array[Chess]:
 	refresh_units()
-	var unit_arry: Array[Obstacle] = []
+	var unit_arry: Array[Chess] = []
 	for chess_index in units.values():
-		if DataManagerSingleton.check_obstacle_valid(chess_index):
+		if DataManagerSingleton.check_chess_valid(chess_index):
 			unit_arry.append(chess_index)
 	return unit_arry
 
-func get_all_unit_by_name(faction: String, chess_name: String, team: int) -> Array[Obstacle]:
+func get_all_unit_by_name(faction: String, chess_name: String, team: int) -> Array[Chess]:
 
 	if not DataManagerSingleton.get_chess_data().keys().has(faction):
 		return []
@@ -96,12 +96,12 @@ func get_all_unit_by_name(faction: String, chess_name: String, team: int) -> Arr
 		return []
 
 	refresh_units()
-	var unit_arry: Array[Obstacle] = []
+	var unit_arry: Array[Chess] = []
 
 	return get_all_units().filter(
-		func(obstacle):
+		func(chess):
 			var result := false
-			if DataManagerSingleton.check_obstacle_valid(obstacle) and obstacle.faction == faction and obstacle.chess_name == chess_name:
+			if DataManagerSingleton.check_chess_valid(chess) and chess.faction == faction and chess.chess_name == chess_name:
 				result = true
 			return result
 	)
@@ -110,7 +110,7 @@ func has_valid_chess(tile: Vector2i) -> bool:
 	# if tile.x >= 0 and tile.x < size.x and tile.y >= 0 and tile.y < size.y:
 	if units in units.keys():
 		var unit_result = units[tile]
-		if is_instance_valid(unit_result) and unit_result is Obstacle and unit_result.status != unit_result.STATUS.DIE:
+		if is_instance_valid(unit_result) and unit_result is Chess and unit_result.status != unit_result.STATUS.DIE:
 			return true
 	return false
 
@@ -122,6 +122,6 @@ func refresh_units():
 		return
 
 	for node in child_nodes:
-		if not DataManagerSingleton.check_obstacle_valid(node):
+		if not DataManagerSingleton.check_chess_valid(node):
 			continue
 		units[node.get_current_tile(node)[1]] = node
