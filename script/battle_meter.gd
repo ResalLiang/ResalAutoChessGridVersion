@@ -16,9 +16,9 @@ func _ready() -> void:
 	if update_round_end_data.connect(DataManagerSingleton.battle_meter_data_update) != OK:
 		print("update_round_end_data connect fail!")
 
-func get_damage_data(obstacle: Obstacle, attacker: Obstacle, value: float):
+func get_damage_data(chess: Chess, attacker: Chess, value: float):
 	var attacker_index = [attacker.faction, attacker.chess_name, attacker.chess_serial, attacker.team]
-	var chess_index = [obstacle.faction, obstacle.chess_name, obstacle.chess_serial, obstacle.team]
+	var chess_index = [chess.faction, chess.chess_name, chess.chess_serial, chess.team]
 
 	if battle_data.has(attacker_index):
 		battle_data[attacker_index][0] += value
@@ -34,9 +34,9 @@ func get_damage_data(obstacle: Obstacle, attacker: Obstacle, value: float):
 
 	update_ranking()
 
-func get_heal_data(obstacle: Obstacle, healer: Obstacle, value: float):
+func get_heal_data(chess: Chess, healer: Chess, value: float):
 	var healer_index = [healer.faction, healer.chess_name, healer.chess_serial, healer.team]
-	var chess_index = [obstacle.faction, obstacle.chess_name, obstacle.chess_serial, obstacle.team]
+	var chess_index = [chess.faction, chess.chess_name, chess.chess_serial, chess.team]
 
 	if battle_data.has(healer_index):
 		battle_data[healer_index][2] += value
