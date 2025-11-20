@@ -24,7 +24,7 @@ var traveled_distance: float = 0.0
 var source_team: int = -1  # 发射队伍
 var initial_flip: bool = false  # 初始翻转状态
 var is_active := false
-var attacker: Obstacle = null:
+var attacker: Chess = null:
 	set(value):
 		attacker = value
 		# Load animation resource in editor mode
@@ -69,7 +69,7 @@ func _ready():
 		
 	animated_sprite_2d.play("move")
 
-#func setup(pos: Vector2, dir: Vector2, team: int, is_flipped: bool, chess_attack: Obstacle):
+#func setup(pos: Vector2, dir: Vector2, team: int, is_flipped: bool, chess_attack: Chess):
 	#global_position = pos
 	#direction = dir.normalized()
 	#source_team = team
@@ -93,23 +93,23 @@ func _physics_process(delta):
 			queue_free()
 
 func _on_area_entered(area):
-	var obstacle = area.get_parent()
-	if DataManagerSingleton.check_obstacle_valid(obstacle) and not projectile_disabled:
+	var chess = area.get_parent()
+	if DataManagerSingleton.check_chess_valid(chess) and not projectile_disabled:
 		
-		if obstacle == attacker:
+		if chess == attacker:
 			return
-		if not affect_ally and attacker.team == obstacle.team:
+		if not affect_ally and attacker.team == chess.team:
 			return
-		if hit_record.has(obstacle):
+		if hit_record.has(chess):
 			return
-		projectile_hit.emit(obstacle, self)
-		hit_record.append(obstacle)
+		projectile_hit.emit(chess, self)
+		hit_record.append(chess)
 
 		current_penetration -= 1  # 减少穿透计数
 		damage -= decline_ratio
 		
 		# 穿透次数耗尽时消失
-		if current_penetration <= 0 or damage < 5:
+		if current_penetration <= 0 or damage < 1:
 			projectile_disabled = true
 			visible = false
 			# projectile_vanished.emit()
