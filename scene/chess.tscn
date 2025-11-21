@@ -1,15 +1,17 @@
-[gd_scene load_steps=37 format=3 uid="uid://d28hb81gv3e5x"]
+[gd_scene load_steps=39 format=3 uid="uid://d28hb81gv3e5x"]
 
 [ext_resource type="Script" uid="uid://cmj65pa4j3u1u" path="res://script/chess.gd" id="1_q0pof"]
 [ext_resource type="Shader" uid="uid://d3tyrfwlw2c1g" path="res://asset/shader/LightweightPixelPerfectOutline.gdshader" id="2_8icae"]
-[ext_resource type="SpriteFrames" uid="uid://cp300rynpsj4v" path="res://asset/animation/human/humanSwordMan.tres" id="3_yludp"]
+[ext_resource type="SpriteFrames" uid="uid://c5bllcn4yy6nw" path="res://asset/animation/ootf/ootfLiveFire.tres" id="3_mwtpt"]
 [ext_resource type="Script" uid="uid://pmtyv1bl3nog" path="res://script/drag_handler.gd" id="4_ddkfs"]
 [ext_resource type="Script" uid="uid://c101twvdkyo0l" path="res://script/area_effect_handler.gd" id="7_8osrc"]
 [ext_resource type="FontFile" uid="uid://bfd8lxmo20ddl" path="res://asset/font/Everyday_Tiny_Bold.ttf" id="7_yludp"]
 [ext_resource type="Script" uid="uid://f2vi2gwgn32i" path="res://script/effect_handler.gd" id="8_feolq"]
 [ext_resource type="Texture2D" uid="uid://wt5vohyl76x" path="res://asset/sprite/resal_heart.png" id="8_l1ly7"]
 [ext_resource type="Texture2D" uid="uid://qnk284clwwuk" path="res://asset/sprite/resal_half_heart.png" id="9_ddkfs"]
+[ext_resource type="Texture2D" uid="uid://ygu8drxm1nl8" path="res://asset/sprite/resal_loss_heart.png" id="9_mwtpt"]
 [ext_resource type="Texture2D" uid="uid://bqv1xi1tsy5g8" path="res://asset/sprite/resal_mana.png" id="10_mwtpt"]
+[ext_resource type="Texture2D" uid="uid://hxt6bt81exul" path="res://asset/sprite/resal_loss_mana.png" id="12_mwtpt"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dbi3s"]
 shader = ExtResource("2_8icae")
@@ -515,8 +517,8 @@ z_index = 50
 y_sort_enabled = true
 material = SubResource("ShaderMaterial_dbi3s")
 position = Vector2(0, -2.5)
-sprite_frames = ExtResource("3_yludp")
-animation = &"move"
+sprite_frames = ExtResource("3_mwtpt")
+animation = &"die"
 offset = Vector2(0, -6.89)
 
 [node name="Area2D" type="Area2D" parent="."]
@@ -638,12 +640,17 @@ z_index = 50
 layout_mode = 2
 theme_override_constants/separation = 1
 
-[node name="heart_template" type="TextureRect" parent="stats_container/hp_container"]
+[node name="hp_icon_template" type="TextureRect" parent="stats_container/hp_container"]
 z_index = 50
 layout_mode = 2
 texture = ExtResource("8_l1ly7")
 
-[node name="half_heart_template" type="TextureRect" parent="stats_container/hp_container"]
+[node name="loss_hp_icon_template" type="TextureRect" parent="stats_container/hp_container"]
+z_index = 50
+layout_mode = 2
+texture = ExtResource("9_mwtpt")
+
+[node name="half_hp_icon_template" type="TextureRect" parent="stats_container/hp_container"]
 z_index = 50
 layout_mode = 2
 texture = ExtResource("9_ddkfs")
@@ -652,10 +659,17 @@ texture = ExtResource("9_ddkfs")
 z_index = 50
 layout_mode = 2
 
-[node name="mana_template" type="TextureRect" parent="stats_container/mp_container"]
+[node name="mp_icon_template" type="TextureRect" parent="stats_container/mp_container"]
 z_index = 50
+layout_direction = 2
 layout_mode = 2
 texture = ExtResource("10_mwtpt")
+
+[node name="empty_mp_icon_template" type="TextureRect" parent="stats_container/mp_container"]
+z_index = 50
+layout_direction = 2
+layout_mode = 2
+texture = ExtResource("12_mwtpt")
 
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
 [connection signal="animation_finished" from="ranged_attack_animation" to="." method="_on_ranged_attack_animation_animation_finished"]

@@ -33,7 +33,12 @@ const chess_scene = preload("res://scene/chess.tscn")
 
 @onready var stats_container: VBoxContainer = $stats_container
 @onready var hp_container: HBoxContainer = $stats_container/hp_container
+@onready var hp_icon_template: TextureRect = $stats_container/hp_container/hp_icon_template
+@onready var half_hp_icon_template: TextureRect = $stats_container/hp_container/half_hp_icon_template
+@onready var loss_hp_icon_template: TextureRect = $stats_container/hp_container/loss_hp_icon_template
 @onready var mp_container: HBoxContainer = $stats_container/mp_container
+@onready var mp_icon_template: TextureRect = $stats_container/mp_container/mp_icon_template
+@onready var empty_mp_icon_template: TextureRect = $stats_container/mp_container/empty_mp_icon_template
 
 # ========================
 # Exported Variables
@@ -705,7 +710,8 @@ func _load_chess_stats():
 		if stats.keys().has("passive_ability"):
 			passive_ability = stats["passive_ability"]
 
-		chess_rarity = stats["rarity"]
+		if stats.keys().has("rarity"):
+			chess_rarity = stats["rarity"]
 		stats_loaded.emit(self, stats)
 	else:
 		push_error("Stats not found for %s/%s" % [faction, chess_name])
@@ -2768,9 +2774,9 @@ func update_hp_mp() -> void:
 			continue
 		node.queue_free()
 
-	var remained_hp := hp
-	while remained_hp > 0:
-		if remained_hp > 2:
+	var remain_hp := hp
+	while remain_hp > 0:
+		if remain_hp >= 2:
 			var new_hp_icon = hp_icon_template.duplicate(true)
 			new_hp_icon.visible = true
 			hp_container.add_child(new_hp_icon)
@@ -2788,8 +2794,8 @@ func update_hp_mp() -> void:
 		loss_hp -= 2		
 
 	if mp_bar.visible:
-		var remained_mp := mp
-		while remained_mp > 0:
+		var remain_mp := mp
+		while remain_mp > 0:
 			var new_mp_icon = mp_icon_template.duplicate(true)
 			new_mp_icon.visible = true
 			mp_container.add_child(new_mp_icon)

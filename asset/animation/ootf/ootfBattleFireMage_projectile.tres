@@ -1,0 +1,67 @@
+[gd_resource type="SpriteFrames" load_steps=10 format=3 uid="uid://cc42u0bdapbfp"]
+
+[ext_resource type="Texture2D" uid="uid://c82r0gwymrv7x" path="res://asset/sprite/MiniFolks/MiniOrderOfTheFire/FireBall-Sheet.png" id="1_n3y1a"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yho08"]
+atlas = ExtResource("1_n3y1a")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7sg2g"]
+atlas = ExtResource("1_n3y1a")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_831hd"]
+atlas = ExtResource("1_n3y1a")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rh3mm"]
+atlas = ExtResource("1_n3y1a")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mtfe6"]
+atlas = ExtResource("1_n3y1a")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jiykc"]
+atlas = ExtResource("1_n3y1a")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4mcoq"]
+atlas = ExtResource("1_n3y1a")
+region = Rect2(64, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sjf56"]
+atlas = ExtResource("1_n3y1a")
+region = Rect2(96, 32, 32, 32)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yho08")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7sg2g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_831hd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rh3mm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mtfe6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jiykc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4mcoq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sjf56")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
