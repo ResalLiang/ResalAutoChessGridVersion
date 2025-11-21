@@ -456,6 +456,8 @@ func _process(delta: float) -> void:
 	hp_bar.max_value = max_hp
 	mp_bar.max_value = max_mp
 
+	update_hp_mp()
+
 	if chess_level > 1:
 		level_label.text = "I".repeat(chess_level)
 		level_label.visible = true
@@ -1494,12 +1496,12 @@ func chess_apply_damage(): # for animation player only
 		deal_damage.emit(self, chess_target, damage, "Free_strike", [])
 
 	if status == STATUS.RANGED_ATTACK:
-		if effect_handler.is_chaotic:
+		if effect_handler.is_insulation:
 			deal_damage.emit(self, chess_target, damage, "Ranged_attack", ["ignore_armor", "ignore_evasion"])
 		else:
 			deal_damage.emit(self, chess_target, damage, "Ranged_attack", [])
 	elif status == STATUS.MELEE_ATTACK or not is_active:
-		if effect_handler.is_chaotic:
+		if effect_handler.is_insulation:
 			deal_damage.emit(self, chess_target, damage, "Melee_attack", ["ignore_armor", "ignore_evasion"])
 		else:
 			deal_damage.emit(self, chess_target, damage, "Melee_attack", [])
@@ -2758,3 +2760,43 @@ func get_temp_copy() -> Chess:
 	temp_copy.faction = faction
 	temp_copy.chess_name = chess_name
 	return temp_copy
+
+func update_hp_mp() -> void:
+	for node in hp_container.get_children() + mp_container.get_children():
+		if node.name.contains("template"):
+			node.visible = false
+			continue
+		node.queue_free()
+
+	var remained_hp := hp
+	while remained_hp > 0:
+		if remained_hp > 2:
+			var new_hp_icon = hp_icon_template.duplicate(true)
+			new_hp_icon.visible = true
+			hp_container.add_child(new_hp_icon)
+			remain_hp -= 2
+		else:
+			var new_half_hp_icon = half_hp_icon_template.duplicate(true)
+			new_half_hp_icon.visible = true
+			hp_container.add_child(new_half_hp_icon)
+			remain_hp -= 1
+	var loss_hp = floor((max_hp - hp) / 2) * 2
+	while loss_hp > 0:
+		var new_loss_hp_icon = loss_hp_icon_template.duplicate(true)
+		new_loss_hp_icon.visible = true
+		hp_container.add_child(new_loss_hp_icon)
+		loss_hp -= 2		
+
+	if mp_bar.visible:
+		var remained_mp := mp
+		while remained_mp > 0:
+			var new_mp_icon = mp_icon_template.duplicate(true)
+			new_mp_icon.visible = true
+			mp_container.add_child(new_mp_icon)
+			remain_mp -= 1
+		var empty_mana = max_mp - mp
+		while empty_mana > 0:
+			var new_empty_mp_icon = empty_mp_icon_template.duplicate(true)
+			new_empty_mp_icon.visible = true
+			mp_container.add_child(new_empty_mp_icon)
+			empty_mana -= 1			
