@@ -439,11 +439,11 @@ func on_path_bonus_pressed(node: TextureButton):
 		"ootf Path 2 Level 3" :
 			faction_bonus_description.text = "Friendly faction with burn effect gain damage and speed buff"
 		"ootf Path 3 Level 1" :
-			faction_bonus_description.text = "Increase burn effect damage"
+			faction_bonus_description.text = "Summon a weak fire elemental creature when killing enemies"
 		"ootf Path 3 Level 2" :
-			faction_bonus_description.text = "Increase burn effect damage"
+			faction_bonus_description.text = "Summon a fire elemental creature when killing enemies"
 		"ootf Path 3 Level 3" :
-			faction_bonus_description.text = "Increase burn effect damage"
+			faction_bonus_description.text = "Summon a strong fire elemental creature when killing enemies"
 		"ootf Path 4 Level 1" :
 			faction_bonus_description.text = "Randomly burn a chess at the start of turn"
 		"lizardMan Path 1 Level 1" :
