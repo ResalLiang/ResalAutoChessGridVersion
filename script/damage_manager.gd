@@ -19,6 +19,11 @@ func damage_handler(attacker: Chess, target: Chess, damage_value: int, damage_ty
 	if target.effect_handler.is_immunity or (damage_type == "Magic_attack" and target.effect_handler.is_spell_immunity):
 		return
 
+	if attacker.effect_handler.is_insulation:
+		attacker.damage_applied.emit(attacker, target, damage_result)
+		target.damage_taken.emit(target, attacker, damage_result)
+		return	
+
 	if target is Chess:
 		if (target.get("evasion_rate") != null and randf() <= target.evasion_rate and not affix_array.has("ignore_evasion") and damage_type != "Magic_attack") or (damage_type == "Free_strike" and target.effect_handler.is_parry):
 			target.attack_evased.emit(target, attacker)
