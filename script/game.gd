@@ -620,6 +620,26 @@ func _ready():
 									effect_instance.effect_description = "A summoned skeleton or zombie, which will suicide when active."
 									summoned_character.effect_handler.add_to_effect_array(effect_instance)
 
+								"ootf":
+
+									var unburn_chesses = arena.unit_grid.get_all_units().filter(
+										func(chess):
+											if DataManagerSingleton.check_chess_valid(chess) and not chess.effect_handler.search_effect("Burn"):
+												return true
+											return false
+									)
+									if unburn_chesses.size() <= 0:
+										return
+									var burn_chess = unburn_chesses.pick_random()
+									var effect_instance = ChessEffect.new()
+									burn_chess.effect_handler.add_child(effect_instance)
+									effect_instance.register_buff("continuous_hp_modifier", -1, burn_chess.chess_level)
+									effect_instance.effect_name = "Burn"
+									effect_instance.effect_type = "Debuff"
+									effect_instance.effect_applier = "Order of the Flames faction passive"
+									effect_instance.effect_description = "Chess hit will suffer 1 hp loss per turn."
+									target.effect_handler.add_to_effect_array(effect_instance)	
+
 								_:
 									pass
 							faction_path_upgrade[faction][path] = 0
