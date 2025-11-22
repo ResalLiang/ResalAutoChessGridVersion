@@ -1,0 +1,53 @@
+[gd_resource type="SpriteFrames" load_steps=8 format=3 uid="uid://h83dht10l67m"]
+
+[ext_resource type="Texture2D" uid="uid://dm1kaffa3e1gl" path="res://asset/sprite/MiniFolks/MinifolksLizardmen/Without outline/MiniLizardManPriest.png" id="1_h7tkq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t1as8"]
+atlas = ExtResource("1_h7tkq")
+region = Rect2(0, 256, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w3bcr"]
+atlas = ExtResource("1_h7tkq")
+region = Rect2(32, 256, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0w1op"]
+atlas = ExtResource("1_h7tkq")
+region = Rect2(64, 256, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rj8k0"]
+atlas = ExtResource("1_h7tkq")
+region = Rect2(96, 256, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vhh3l"]
+atlas = ExtResource("1_h7tkq")
+region = Rect2(128, 256, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ialnq"]
+atlas = ExtResource("1_h7tkq")
+region = Rect2(160, 256, 32, 32)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t1as8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w3bcr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0w1op")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rj8k0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vhh3l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ialnq")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]

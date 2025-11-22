@@ -1,0 +1,60 @@
+[gd_resource type="SpriteFrames" load_steps=9 format=3 uid="uid://ofli4qqy1mu7"]
+
+[ext_resource type="Texture2D" uid="uid://cp5sxoo5fsv5x" path="res://asset/sprite/MiniFolks/MinifolksLizardmen/Without outline/MiniLizardManFirebreather.png" id="1_j2okf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yxq55"]
+atlas = ExtResource("1_j2okf")
+region = Rect2(0, 224, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ob7ci"]
+atlas = ExtResource("1_j2okf")
+region = Rect2(32, 224, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u8xi8"]
+atlas = ExtResource("1_j2okf")
+region = Rect2(64, 224, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o6c7v"]
+atlas = ExtResource("1_j2okf")
+region = Rect2(96, 224, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gc8kd"]
+atlas = ExtResource("1_j2okf")
+region = Rect2(128, 224, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2n0u2"]
+atlas = ExtResource("1_j2okf")
+region = Rect2(160, 224, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wtkrw"]
+atlas = ExtResource("1_j2okf")
+region = Rect2(192, 224, 32, 32)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yxq55")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ob7ci")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u8xi8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o6c7v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gc8kd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2n0u2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wtkrw")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]

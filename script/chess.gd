@@ -394,11 +394,11 @@ func _ready():
 					3:
 						summoned_character_name = "GreaterFireElemental"
 					_:
-						pass
-
-					var summoned_tile = arena.unit_grid.get_empty_tile_in_radius(get_current_tile[self][1], 1)
-					if summoned_character_name != "" and summoned_tile.size() > 0:
-						var summoned_character = game_root_scene.summon_chess("ootf", summoned_character_name, chess_level, team, arena, summoned_tile.pick_random())
+						summoned_character_name = ""
+						
+				var summoned_tile = arena.unit_grid.get_empty_tile_in_radius(get_current_tile(self)[1], 1)
+				if summoned_character_name != "" and summoned_tile.size() > 0:
+					var summoned_character = game_root_scene.summon_chess("ootf", summoned_character_name, chess_level, team, arena, summoned_tile.pick_random())
 
 
 	)			
@@ -1502,7 +1502,7 @@ func _cast_spell(spell_tgt: Chess) -> bool:
 	elif chess_name == "Bomb" and faction == "dwarf":
 		cast_spell_result = await dwarf_bomb_boom()
 	elif chess_name == "BattleFireMage" and faction == "ootf":
-		cast_spell_result = await X
+		cast_spell_result = await death_coil(spell_tgt)
 
 
 	if cast_spell_result:
@@ -2167,7 +2167,7 @@ func ootf_path1_bonus():
 	if not (faction == "ootf" and bonus_level > 0):
 		return
 
-	var burn_chesses = arena.unit_grid.get_all_units.filter(
+	var burn_chesses = arena.unit_grid.get_all_units().filter(
 		func(chess):
 			if DataManagerSingleton.check_chess_valid(chess) and chess.effect_handler.search_effect("Burn"):
 				return true

@@ -262,6 +262,18 @@ var faction_path_upgrade_template = {
 		"path2" : 0,
 		"path3" : 0,
 		"path4" : 0
+	},
+	"ootf": {
+		"path1" : 1,
+		"path2" : 0,
+		"path3" : 0,
+		"path4" : 0
+	},
+	"lizardMan": {
+		"path1" : 1,
+		"path2" : 0,
+		"path3" : 0,
+		"path4" : 0
 	}		
 }
 
@@ -638,7 +650,7 @@ func _ready():
 									effect_instance.effect_type = "Debuff"
 									effect_instance.effect_applier = "Order of the Flames faction passive"
 									effect_instance.effect_description = "Chess hit will suffer 1 hp loss per turn."
-									target.effect_handler.add_to_effect_array(effect_instance)	
+									burn_chess.effect_handler.add_to_effect_array(effect_instance)	
 
 								_:
 									pass

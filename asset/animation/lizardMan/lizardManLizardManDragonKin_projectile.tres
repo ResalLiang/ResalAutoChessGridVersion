@@ -1,0 +1,74 @@
+[gd_resource type="SpriteFrames" load_steps=11 format=3 uid="uid://b5trmux3hlyc7"]
+
+[ext_resource type="Texture2D" uid="uid://b4bvffdije4u4" path="res://asset/sprite/MiniFolks/MinifolksLizardmen/Without outline/MiniLizardManDragonKin.png" id="1_ccicv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2mi2k"]
+atlas = ExtResource("1_ccicv")
+region = Rect2(0, 256, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u8l61"]
+atlas = ExtResource("1_ccicv")
+region = Rect2(32, 256, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_up2bi"]
+atlas = ExtResource("1_ccicv")
+region = Rect2(64, 256, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n372u"]
+atlas = ExtResource("1_ccicv")
+region = Rect2(96, 256, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g8pgh"]
+atlas = ExtResource("1_ccicv")
+region = Rect2(128, 256, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vwrrc"]
+atlas = ExtResource("1_ccicv")
+region = Rect2(160, 256, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d6275"]
+atlas = ExtResource("1_ccicv")
+region = Rect2(192, 256, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2f4md"]
+atlas = ExtResource("1_ccicv")
+region = Rect2(224, 256, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_628yk"]
+atlas = ExtResource("1_ccicv")
+region = Rect2(256, 256, 32, 32)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2mi2k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u8l61")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_up2bi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n372u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g8pgh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vwrrc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d6275")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2f4md")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_628yk")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]

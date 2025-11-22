@@ -2,6 +2,7 @@
 .godot/
 build/
 export/
+script/*.csv
 *.pck
 
 # 导出文件
