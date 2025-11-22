@@ -341,12 +341,7 @@ func _ready():
 				effect_instance.effect_description = "ForestProtector gain damage and resistance againt who kills them."
 				effect_handler.add_to_effect_array(effect_instance)
 				effect_handler.add_child(effect_instance)
-	)
 
-	kill_chess.connect(
-		func(attacker: Chess, target: Chess):
-			if attacker == target:
-				return
 			if attacker.faction == "dwarf":
 				match attacker.chess_name:
 					"BearRider":
@@ -387,6 +382,25 @@ func _ready():
 						forestProtector_path2_effect.buff_dict["max_hp_modifier"] += 2
 					_:
 						pass
+
+			elif attacker.faction == "ootf":
+				var ootf_bonus_level = faction_bonus_manager.get_bonus_level("ootf", team) if attacker.team != 1 else min(faction_bonus_manager.get_bonus_level("ootf", team), game_root_scene.faction_path_upgrade["ootf"]["path3"])
+				var summoned_character_name : String = ""
+				match ootf_bonus_level:
+					1:
+						summoned_character_name = "LiveFire"
+					2:
+						summoned_character_name = "FireElemental"
+					3:
+						summoned_character_name = "GreaterFireElemental"
+					_:
+						pass
+
+					var summoned_tile = arena.unit_grid.get_empty_tile_in_radius(get_current_tile[self][1], 1)
+					if summoned_character_name != "" and summoned_tile.size() > 0:
+						var summoned_character = game_root_scene.summon_chess("ootf", summoned_character_name, chess_level, team, arena, summoned_tile.pick_random())
+
+
 	)			
 
 
@@ -734,6 +748,9 @@ func start_turn():
 	_load_chess_stats()
 
 	dwarf_path2_bonus()
+
+	ootf_path1_bonus() # gain mana
+	ootf_path2_bonus() # gain damage bonus when burn
 
 	update_effect()
 
@@ -1370,8 +1387,8 @@ func _launch_projectile_to_degree(direction_degree: float):
 func take_damage(target:Chess, attacker: Chess, damage_value: float):
 	#Placeholder for chess passive ability on take damage
 
-	if (-1.0 if animated_sprite_2d.flip_h else 1.0) * (attacker.position - target.position).x > 0 and target.faction == "human" and target.chess_name == "ShieldMan":
-		if randf() <= target.chess_level * 0.1:
+	if (-1.0 if animated_sprite_2d.flip_h else 1.0) * (attacker.position - target.position).x > 0 and animated_sprite_2d.sprite_frames.has_animation("block"):
+		if randf() <= target.chess_level * 0.2:
 			target.animated_sprite_2d.play("block")
 			await target.animated_sprite_2d.animation_finished
 			target.animated_sprite_2d.set_animation("idle")
@@ -1462,10 +1479,8 @@ func _cast_spell(spell_tgt: Chess) -> bool:
 		cast_spell_result = freezing_field(20)
 	elif chess_name == "Mage" and faction == "elf":
 		cast_spell_result = await sun_strike(chess_level)
-		# cast_spell_result = elf_mage_damage(spell_tgt, 0.2, 10, 80)
 	elif chess_name == "Queen" and faction == "elf":
 		cast_spell_result = freezing_field(20)
-		# cast_spell_result = elf_queen_stun(2, 5)
 	elif (chess_name == "Necromancer" or chess_name == "DeathLord") and faction == "undead":
 		cast_spell_result = await control_corpse()
 	elif chess_name == "Demolitionist" and faction == "dwarf":
@@ -1486,8 +1501,9 @@ func _cast_spell(spell_tgt: Chess) -> bool:
 		cast_spell_result = await death_coil(spell_tgt)
 	elif chess_name == "Bomb" and faction == "dwarf":
 		cast_spell_result = await dwarf_bomb_boom()
-	elif spell_tgt !=  self:
-		cast_spell_result = true
+	elif chess_name == "BattleFireMage" and faction == "ootf":
+		cast_spell_result = await X
+
 
 	if cast_spell_result:
 		spell_casted.emit(self, skill_name)
@@ -1876,6 +1892,17 @@ func handle_special_effect(target: Chess):
 		effect_instance.effect_description = "Chess hit will suffer 1 hp loss per turn, last for 3 turns."
 		target.effect_handler.add_to_effect_array(effect_instance)		
 
+
+	elif faction == "ootf":
+		var effect_instance = ChessEffect.new()
+		target.effect_handler.add_child(effect_instance)
+		effect_instance.register_buff("continuous_hp_modifier", -1, chess_level)
+		effect_instance.effect_name = "Burn"
+		effect_instance.effect_type = "Debuff"
+		effect_instance.effect_applier = "Order of the Flames faction passive"
+		effect_instance.effect_description = "Chess hit will suffer 1 hp loss per turn."
+		target.effect_handler.add_to_effect_array(effect_instance)			
+
 func connect_to_data_manager():
 	# DataManagerSingleton.add_data_to_dict(DataManagerSingleton.in_game_data, ["XX"], value)
 	attack_evased.connect(
@@ -2128,7 +2155,56 @@ func dwarf_path2_bonus():
 	effect_handler.add_child(effect_instance)
 	await effect_animation_display("DwarfPrinciple", arena, get_current_tile(self)[1], "RightTop")
 
+func ootf_path1_bonus():
+	var bonus_level : int
 
+	if team ==1:
+		bonus_level = faction_bonus_manager.get_bonus_level("ootf", team)
+		bonus_level = min(bonus_level, game_root_scene.faction_path_upgrade["ootf"]["path1"])
+	elif team == 2:
+		bonus_level = faction_bonus_manager.get_bonus_level("ootf", team)
+
+	if not (faction == "ootf" and bonus_level > 0):
+		return
+
+	var burn_chesses = arena.unit_grid.get_all_units.filter(
+		func(chess):
+			if DataManagerSingleton.check_chess_valid(chess) and chess.effect_handler.search_effect("Burn"):
+				return true
+			return false
+	)
+	if burn_chesses.size() > 0:
+		gain_mp(burn_chesses.size() * bonus_level)
+		for chess_index in burn_chesses:
+			if randf() >= 0.7:
+				var burn_effect = chess_index.effect_handler.search_effect("Burn")
+				chess_index.effect_handler.effect_list.erase(burn_effect)
+
+
+func ootf_path2_bonus():
+	var bonus_level : int
+
+	if team ==1:
+		bonus_level = faction_bonus_manager.get_bonus_level("ootf", team)
+		bonus_level = min(bonus_level, game_root_scene.faction_path_upgrade["ootf"]["path2"])
+	elif team == 2:
+		bonus_level = faction_bonus_manager.get_bonus_level("ootf", team)
+
+	if not (faction == "ootf" and bonus_level > 0):
+		return
+
+	if effect_handler.search_effect("Burn"):
+		var effect_instance = ChessEffect.new()
+		effect_instance.register_buff("melee_attack_damage_modifier", bonus_level, 1)
+		effect_instance.register_buff("ranged_attack_damage_modifier", bonus_level, 1)
+		if bonus_level >= 2:
+			effect_instance.register_buff("attack_speed_modifier", bonus_level - 1, 1)
+		effect_instance.effect_name = "FierySoul"
+		effect_instance.effect_type = "Faction Bonus"
+		effect_instance.effect_applier = "OOTF path2 Faction Bonus"
+		effect_instance.effect_description = "OOTF chess increase damage and attack speed when burn."
+		effect_handler.add_to_effect_array(effect_instance)
+		effect_handler.add_child(effect_instance)
 
 func warrior_bonus():
 	var bonus_level = faction_bonus_manager.get_bonus_level("warrior", team)
