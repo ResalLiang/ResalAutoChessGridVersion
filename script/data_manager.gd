@@ -81,6 +81,8 @@ var expiration_date := Time.get_unix_time_from_datetime_dict({
 		"minute": 0,
 		"second": 0
 	})
+	
+const screen_size := Rect2i(0, 0, 540, 360)
 
 func _ready() -> void:
 

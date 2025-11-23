@@ -1567,7 +1567,7 @@ func _cast_spell(spell_tgt: Chess) -> bool:
 		cast_spell_result = await devolve(spell_tgt)
 	elif chess_name == "ArchLich" and faction == "undead":
 		cast_spell_result = await corpse_explosion()
-	elif chess_name == "DeathLord" and faction == "undead":
+	elif chess_name == "DreadKnight" and faction == "undead":
 		cast_spell_result = await death_coil(spell_tgt)
 	elif chess_name == "Bomb" and faction == "dwarf":
 		cast_spell_result = await dwarf_bomb_boom()
@@ -2617,7 +2617,12 @@ func corpse_explosion() -> bool:
 	return true
 
 func death_coil(spell_target: Chess) -> bool:
-	var chess_affected := false
+	var chess_affected := true
+	if DataManagerSingleton.check_chess_valid(spell_target):
+		chess_affected = true
+	else:
+		chess_affected = false
+		return chess_affected
 
 	var spell_projectile = _launch_projectile_to_target(spell_target)
 	spell_projectile.projectile_animation = "DeathCoil"
@@ -2628,18 +2633,18 @@ func death_coil(spell_target: Chess) -> bool:
 			deal_damage.emit(self, chess, spell_projectile.damage, "Magic_attack", [])
 			# _apply_heal(self, spell_projectile.damage)
 
-			var effect_instance = ChessEffect.new()
-			effect_handler.add_child(effect_instance)
-			effect_instance.register_buff("duration_only", 999, 2)
-			effect_instance.effect_name = "WeaponPoison"
-			effect_instance.effect_type = "Buff"
-			effect_instance.effect_applier = "Undead DreadKnight Spell Effect"
-			effect_instance.effect_description = "Chess hit will suffer 1 hp loss per turn, last for 3 turns."
-			effect_handler.add_to_effect_array(effect_instance)
+			#var effect_instance = ChessEffect.new()
+			#effect_handler.add_child(effect_instance)
+			#effect_instance.register_buff("duration_only", 999, 2)
+			#effect_instance.effect_name = "WeaponPoison"
+			#effect_instance.effect_type = "Buff"
+			#effect_instance.effect_applier = "Undead DreadKnight Spell Effect"
+			#effect_instance.effect_description = "Chess hit will suffer 1 hp loss per turn, last for 3 turns."
+			#effect_handler.add_to_effect_array(effect_instance)
 
 			chess_affected = true
 	)
-
+	await spell_projectile.projectile_vanished
 	return chess_affected	
 
 func enchant(spell_target: Chess) -> bool:

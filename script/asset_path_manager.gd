@@ -44,6 +44,11 @@ var effect_icon_path = {
 	"Suicide" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__144.png",
 	"ScaleSkin" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__066.png",
 	"FierySoul" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__020.png",
+	"Poison" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__059.png",
+	"Burn" = "res://asset/sprite/[VerArc Stash] Basic_Skills_and_Buffs/Spells/fire_spell.png",
+	"Enchant" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__079.png",
+	"WeaponPoison" = "res://asset/sprite/[VerArc Stash] Basic_Skills_and_Buffs/Spells/poison_dagger.png",
+	"Vengeance" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__004.png",
 	"Default" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__071.png"
 }
 
@@ -89,6 +94,7 @@ var effect_animation_path = {
 
 var projectile_animation_path = {
 	"Ice" = "res://asset/animation/projectile_animation/ice.tres",
+	"DeathCoil" = "res://asset/animation/projectile_animation/death_coil.tres",
 	"Default" = "res://asset/animation/projectile_animation/ice.tres"
 }
 

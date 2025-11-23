@@ -88,7 +88,7 @@ func _physics_process(delta):
 		traveled_distance += movement.length()
 		
 		# 超出最大距离或穿透次数耗尽时消失
-		if traveled_distance > max_distance:
+		if global_position.x >= DataManagerSingleton.screen_size.size.x or global_position.x <= 0 or global_position.y >= DataManagerSingleton.screen_size.size.y or global_position.y <= 0:
 			projectile_vanished.emit()
 			queue_free()
 
@@ -114,12 +114,6 @@ func _on_area_entered(area):
 			visible = false
 			# projectile_vanished.emit()
 			# queue_free()
-
-# 处理离开屏幕
-func _on_visibility_notifier_screen_exited():
-	projectile_vanished.emit()
-	queue_free()
-
 
 func _on_animated_sprite_2d_animation_finished() -> void:
 	die_animation.queue_free()
