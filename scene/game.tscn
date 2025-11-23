@@ -8514,7 +8514,7 @@ z_index = 100
 offset_right = 32.0
 offset_bottom = 20.0
 theme_override_fonts/font = ExtResource("42_l2xpq")
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 4
 metadata/_edit_use_anchors_ = true
 
 [node name="chess_name_option" type="OptionButton" parent="debug_add_chess"]
@@ -8523,7 +8523,7 @@ offset_top = 27.0
 offset_right = 32.0
 offset_bottom = 47.0
 theme_override_fonts/font = ExtResource("42_l2xpq")
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 4
 metadata/_edit_use_anchors_ = true
 
 [node name="add_to_ally" type="Button" parent="debug_add_chess"]

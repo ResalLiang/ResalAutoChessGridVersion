@@ -435,7 +435,8 @@ func _ready():
 
 	# Load chess stats from JSON
 	_load_chess_stats()
-
+	_load_animations()
+	
 	# Initialize character properties
 	hp = max_hp
 	mp = max_mp if DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug" else 0
@@ -1387,6 +1388,9 @@ func _launch_projectile_to_degree(direction_degree: float):
 func take_damage(target:Chess, attacker: Chess, damage_value: float):
 	#Placeholder for chess passive ability on take damage
 
+	if target != self:
+		return
+		
 	if (-1.0 if animated_sprite_2d.flip_h else 1.0) * (attacker.position - target.position).x > 0 and animated_sprite_2d.sprite_frames.has_animation("block"):
 		if randf() <= target.chess_level * 0.2:
 			target.animated_sprite_2d.play("block")
@@ -1394,7 +1398,7 @@ func take_damage(target:Chess, attacker: Chess, damage_value: float):
 			target.animated_sprite_2d.set_animation("idle")
 			target.status = STATUS.IDLE
 			return
-
+	
 	target.hp -= damage_value
 	target.hp_bar.value = target.hp
 
@@ -1405,6 +1409,17 @@ func take_damage(target:Chess, attacker: Chess, damage_value: float):
 		await target.animated_sprite_2d.animation_finished
 		target.visible = false
 		_on_died(animated_sprite_2d.global_position)
+		
+		var lizardMan_path2_bonus_level
+		if attacker.team ==1:
+			lizardMan_path2_bonus_level = faction_bonus_manager.get_bonus_level("lizardMan", attacker.team)
+			lizardMan_path2_bonus_level = min(lizardMan_path2_bonus_level, game_root_scene.faction_path_upgrade["lizardMan"]["path2"])
+		elif attacker.team == 2:
+			lizardMan_path2_bonus_level = faction_bonus_manager.get_bonus_level("lizardMan", attacker.team)
+		
+		if lizardMan_path2_bonus_level <= 0:
+			corpse_generate(animated_sprite_2d.global_position)		
+			
 		target.is_died.emit()
 		game_root_scene.chess_mover._move_chess(target, grave, grave.unit_grid.get_first_empty_tile())
 		attacker.kill_chess.emit(attacker, target)
@@ -1416,7 +1431,62 @@ func take_damage(target:Chess, attacker: Chess, damage_value: float):
 		await target.animated_sprite_2d.animation_finished
 		target.animated_sprite_2d.set_animation("idle")
 		target.status = STATUS.IDLE
-
+		
+		var lizardMan_path1_bonus_level
+		if team ==1:
+			lizardMan_path1_bonus_level = faction_bonus_manager.get_bonus_level("lizardMan", team)
+			lizardMan_path1_bonus_level = min(lizardMan_path1_bonus_level, game_root_scene.faction_path_upgrade["lizardMan"]["path1"])
+		elif team == 2:
+			lizardMan_path1_bonus_level = faction_bonus_manager.get_bonus_level("lizardMan", team)
+		var hp_threshold : float = 0.0
+		match lizardMan_path1_bonus_level:
+			1:
+				hp_threshold = 0.25
+			2:
+				hp_threshold = 0.5
+			3:
+				hp_threshold = 0.75
+				
+		if faction == "lizardMan" and hp <= max_hp * hp_threshold:
+			var shedskin_animation = animated_sprite_2d.duplicate(true)
+			add_child(shedskin_animation)
+			var new_material = shedskin_animation.material.duplicate(true)
+			new_material.set_shader_parameter("monochrome_color", Color(0.739, 0.739, 0.739, 1.0))
+			new_material.set_shader_parameter("use_monochrome", true)
+			shedskin_animation.material = new_material
+			shedskin_animation.play("die")
+			for effect_index in effect_handler.effect_list:
+				if effect_index.effect_type == "Debuff":
+					effect_handler.effect_list.erase(effect_index)
+			await shedskin_animation.animation_finished
+			shedskin_animation.queue_free()
+			
+		var lizardMan_path3_bonus_level
+		if team ==1:
+			lizardMan_path3_bonus_level = faction_bonus_manager.get_bonus_level("lizardMan", team)
+			lizardMan_path3_bonus_level = min(lizardMan_path3_bonus_level, game_root_scene.faction_path_upgrade["lizardMan"]["path2"])
+		elif team == 2:
+			lizardMan_path3_bonus_level = faction_bonus_manager.get_bonus_level("lizardMan", team)
+			
+		if faction == "lizardMan" and lizardMan_path3_bonus_level > 0:
+			if effect_handler.search_effect("ScaleSkin"):
+				var scaleskin_effect = effect_handler.search_effect("ScaleSkin")
+				var current_armor_bonus = scaleskin_effect.buff_dict["armor_modifier"]
+				var current_armor_duration = scaleskin_effect.buff_dict["armor_modifierduration"]
+				if current_armor_duration >= 0:
+					scaleskin_effect.buff_dict["armor_modifier"] = min(chess_level, current_armor_bonus + 1)
+					scaleskin_effect.buff_dict["armor_modifierduration"] = 2
+					effect_handler.refresh_effects()				
+			else:
+				var effect_instance = ChessEffect.new()
+				effect_handler.add_child(effect_instance)
+				effect_instance.register_buff("armor_modifier",  1, 2)
+				effect_instance.effect_name = "ScaleSkin"
+				effect_instance.effect_type = "Buff"
+				effect_instance.effect_description = "Gain cummulative 1 armor when hit."
+				effect_instance.effect_applier = "LizardMan Path3 Bonus"
+				effect_handler.add_to_effect_array(effect_instance)
+				effect_handler.refresh_effects()
 
 func take_heal(heal_value: float, healer: Chess):
 	#Placeholder for chess passive ability on take heal
@@ -1569,21 +1639,6 @@ func get_points_in_radius(target: Vector2i, radius: int) -> Array[Vector2i]:
 
 func _on_died(die_position: Vector2):
 	#Placeholder for chess passive ability on died
-	if animated_sprite_2d.sprite_frames.has_animation("die"):
-
-		var frame_count = animated_sprite_2d.sprite_frames.get_frame_count("die")
-		var last_frame_index = frame_count - 1
-
-		var last_frame_texture = animated_sprite_2d.sprite_frames.get_frame_texture("die", last_frame_index)
-		var die_texture = Sprite2D.new()
-		die_texture.texture = last_frame_texture
-		die_texture.z_index = 55
-		die_texture.centered = true
-		game_root_scene.add_child(die_texture)
-		die_texture.global_position = die_position
-		die_texture.set_meta("tile_position", get_current_tile(self)[1])
-		die_texture.add_to_group("corpse_group")
-
 	if faction == "dwarf":
 		var dwarf_king_array = arena.unit_grid.get_all_units().filter(
 			func(chess):
@@ -1626,6 +1681,10 @@ func _on_died(die_position: Vector2):
 		if enemy_spellers.size() > 0:
 			for chess_index in enemy_spellers:
 				chess_index.mp -= chess_level
+				
+	elif chess_name == "LizardManRider" and faction == "lizardMan":
+		var summon_tile = arena.get_tile_from_global(die_position)
+		game_root_scene.summon_chess("lizardMan", "ArmoredRaptor", chess_level, team, arena, summon_tile)
 
 	#soul collection
 	if not chess_name.contains("Skeleton") and not chess_name.contains("Zombie") and not is_phantom:
@@ -1654,33 +1713,13 @@ func _on_died(die_position: Vector2):
 			soul_list.append([faction, chess_name])
 			chosen_soul_collector.set_meta("soul_list", soul_list)
 
+	var lizardMan_bonus_level
+	if team ==1:
+		lizardMan_bonus_level = faction_bonus_manager.get_bonus_level("lizardMan", team)
+		lizardMan_bonus_level = min(lizardMan_bonus_level, game_root_scene.faction_path_upgrade["lizardMan"]["path2"])
+	elif team == 2:
+		lizardMan_bonus_level = faction_bonus_manager.get_bonus_level("lizardMan", team)
 
-	#corpse collection
-	if not chess_name.contains("Treant") and not is_phantom:
-		var all_necromancer = arena.unit_grid.get_all_units().filter(
-			func(chess): 
-				var is_corpse_collector := true
-
-				if DataManagerSingleton.check_chess_valid(chess):
-					is_corpse_collector = false
-
-				if position.distance_to(chess.position) <= 100:
-					is_corpse_collector = false
-
-				if chess.faction != "undead" or not ["Necromancer"].has(chess.chess_name):
-					is_corpse_collector = false
-
-				return is_corpse_collector
-		)
-		if all_necromancer.size() > 0:
-			all_necromancer.sort_custom(
-				func(a, b):
-					return self.position.distance_to(a.position) <= self.position.distance_to(a.position)
-			)
-			var chosen_necromancer = all_necromancer.pop_front()
-			var soul_list = chosen_necromancer.get_meta("corpse_list", [])
-			soul_list.append([faction, chess_name])
-			chosen_necromancer.set_meta("corpse_list", soul_list)
 
 func update_solid_map():
 
@@ -2232,8 +2271,8 @@ func knight_bonus():
 	if bonus_level <= 0 or role != "knight":
 		return
 
-	if total_movement >=5:
-		melee_damage += bonus_level * 2
+	if total_movement > 0 and (speed - total_movement) > 0:
+		melee_damage += (speed - total_movement)
 
 func warlock_bonus():
 	var bonus_level = faction_bonus_manager.get_bonus_level("warlock", team)
@@ -2869,7 +2908,7 @@ func update_hp_mp() -> void:
 		hp_container.add_child(new_loss_hp_icon)
 		loss_hp -= 2		
 
-	if mp_bar.visible:
+	if animated_sprite_2d.sprite_frames.has_animation("spell"):
 		var remain_mp := mp
 		while remain_mp > 0:
 			var new_mp_icon = mp_icon_template.duplicate(true)
@@ -2882,3 +2921,47 @@ func update_hp_mp() -> void:
 			new_empty_mp_icon.visible = true
 			mp_container.add_child(new_empty_mp_icon)
 			empty_mana -= 1			
+
+func corpse_generate(die_position: Vector2):
+			
+	if animated_sprite_2d.sprite_frames.has_animation("die"):
+
+		var frame_count = animated_sprite_2d.sprite_frames.get_frame_count("die")
+		var last_frame_index = frame_count - 1
+
+		var last_frame_texture = animated_sprite_2d.sprite_frames.get_frame_texture("die", last_frame_index)
+		var die_texture = Sprite2D.new()
+		die_texture.texture = last_frame_texture
+		die_texture.z_index = 55
+		die_texture.centered = true
+		game_root_scene.add_child(die_texture)
+		die_texture.global_position = die_position
+		die_texture.set_meta("tile_position", get_current_tile(self)[1])
+		die_texture.add_to_group("corpse_group")
+		
+	#corpse collection
+	if not chess_name.contains("Treant") and not is_phantom:
+		var all_necromancer = arena.unit_grid.get_all_units().filter(
+			func(chess): 
+				var is_corpse_collector := true
+
+				if DataManagerSingleton.check_chess_valid(chess):
+					is_corpse_collector = false
+
+				if position.distance_to(chess.position) <= 100:
+					is_corpse_collector = false
+
+				if chess.faction != "undead" or not ["Necromancer"].has(chess.chess_name):
+					is_corpse_collector = false
+
+				return is_corpse_collector
+		)
+		if all_necromancer.size() > 0:
+			all_necromancer.sort_custom(
+				func(a, b):
+					return self.position.distance_to(a.position) <= self.position.distance_to(a.position)
+			)
+			var chosen_necromancer = all_necromancer.pop_front()
+			var soul_list = chosen_necromancer.get_meta("corpse_list", [])
+			soul_list.append([faction, chess_name])
+			chosen_necromancer.set_meta("corpse_list", soul_list)

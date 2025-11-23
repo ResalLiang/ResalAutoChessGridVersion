@@ -12,3 +12,4 @@ script/*.csv
 *.x86_64
 *.html"build/" 
 "export/" 
+.DS_Store

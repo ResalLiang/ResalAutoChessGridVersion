@@ -687,38 +687,52 @@ func _ready():
 	debug_label.visible = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug"
 
 	debug_add_chess.visible = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug"
-	var option_index := 0
-	chess_faction_option.clear()
-	for faction_index in DataManagerSingleton.get_chess_data().keys():
-		chess_faction_option.add_item(faction_index, option_index)
-		option_index += 1
-	option_index = 0
-	chess_name_option.clear()
-	for chess_index in DataManagerSingleton.get_chess_data()["human"].keys():
-		chess_name_option.add_item(chess_index, option_index)
-		option_index += 1
-		chess_name_option.add_item("WeakDummy", option_index)
-		option_index += 1			
-		chess_name_option.add_item("HeavyDummy", option_index)
-		option_index += 1		
+	
+	if debug_label.visible:
+		var option_index := 0
+		chess_faction_option.clear()
+		for faction_index in DataManagerSingleton.get_chess_data().keys():
+			chess_faction_option.add_item(faction_index, option_index)
+			option_index += 1
+		option_index = 0
+		chess_name_option.clear()
+		for chess_index in DataManagerSingleton.get_chess_data()["human"].keys():
+			chess_name_option.add_item(chess_index, option_index)
+			option_index += 1
+			chess_name_option.add_item("WeakDummy", option_index)
+			option_index += 1			
+			chess_name_option.add_item("HeavyDummy", option_index)
+			option_index += 1	
+			
+		var custom_font = FontFile.new()
+		custom_font.font_data = load("res://asset/font/Everyday_Tiny_Bold.ttf")
+		
+		var popup_theme = Theme.new()
+		popup_theme.set_font("font", "PopupMenu", custom_font)
+		popup_theme.set_font_size("font_size", "PopupMenu", 4)
 
-	chess_faction_option.item_selected.connect(
-		func(index):
-			var selected_faction = DataManagerSingleton.get_chess_data().keys()[index]
-			var chess_option_index = 0
-			chess_name_option.clear()
-			for chess_index in DataManagerSingleton.get_chess_data()[selected_faction].keys():
-				chess_name_option.add_item(chess_index, chess_option_index)
-				chess_option_index += 1
-			if selected_faction == "human":
-				chess_name_option.add_item("WeakDummy", chess_option_index)
-				chess_option_index += 1			
-				chess_name_option.add_item("HeavyDummy", chess_option_index)
-				chess_option_index += 1				
-	)
+		var chess_faction_option_popup = chess_faction_option.get_popup()
+		chess_faction_option_popup.theme = popup_theme	
+		var chess_name_option_popup = chess_name_option.get_popup()
+		chess_name_option_popup.theme = popup_theme			
 
-	add_to_ally.pressed.connect(add_debug_chess.bind("ally"))
-	add_to_enemy.pressed.connect(add_debug_chess.bind("enemy"))
+		chess_faction_option.item_selected.connect(
+			func(index):
+				var selected_faction = DataManagerSingleton.get_chess_data().keys()[index]
+				var chess_option_index = 0
+				chess_name_option.clear()
+				for chess_index in DataManagerSingleton.get_chess_data()[selected_faction].keys():
+					chess_name_option.add_item(chess_index, chess_option_index)
+					chess_option_index += 1
+				if selected_faction == "human":
+					chess_name_option.add_item("WeakDummy", chess_option_index)
+					chess_option_index += 1			
+					chess_name_option.add_item("HeavyDummy", chess_option_index)
+					chess_option_index += 1				
+		)
+
+		add_to_ally.pressed.connect(add_debug_chess.bind("ally"))
+		add_to_enemy.pressed.connect(add_debug_chess.bind("enemy"))
 
 	tips_label.visible = false
 	

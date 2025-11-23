@@ -42,6 +42,8 @@ var effect_icon_path = {
 	"EntaglingRoots" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__002.png",
 	"Devolve" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__112.png",
 	"Suicide" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__144.png",
+	"ScaleSkin" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__066.png",
+	"FierySoul" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__020.png",
 	"Default" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__071.png"
 }
 
