@@ -13,7 +13,7 @@ func damage_handler(attacker: Chess, target: Chess, damage_value: int, damage_ty
 	if not ["Melee_attack", "Ranged_attack", "Magic_attack", "Continuous_effect", "Free_strike"].has(damage_type):
 		return
 
-	if not is_instance_valid(target) or target.visible == false or not target is Chess or target.status == target.STATUS.DIE:
+	if not DataManagerSingleton.check_chess_valid(target):
 		return
 
 	if target.effect_handler.is_immunity or (damage_type == "Magic_attack" and target.effect_handler.is_spell_immunity):
@@ -24,37 +24,35 @@ func damage_handler(attacker: Chess, target: Chess, damage_value: int, damage_ty
 		target.damage_taken.emit(target, attacker, damage_result)
 		return	
 
-	if target is Chess:
-		if (target.get("evasion_rate") != null and randf() <= target.evasion_rate and not affix_array.has("ignore_evasion") and damage_type != "Magic_attack") or (damage_type == "Free_strike" and target.effect_handler.is_parry):
-			target.attack_evased.emit(target, attacker)
-			return
+	if (target.get("evasion_rate") != null and randf() <= target.evasion_rate and not affix_array.has("ignore_evasion") and damage_type != "Magic_attack") or (damage_type == "Free_strike" and target.effect_handler.is_parry):
+		target.attack_evased.emit(target, attacker)
+		return
 
-	var speller_bonus_level = attacker.faction_bonus_manager.get_bonus_level("speller", attacker.team) if attacker is Chess else 0
+	var speller_bonus_level = attacker.faction_bonus_manager.get_bonus_level("speller", attacker.team)
 
-	if attacker is Chess:
-		if attacker.get("critical_rate") != null and (randf() <= attacker.critical_rate and damage_type != "Magic_attack" and not target.effect_handler.is_critical_immunity):
+	if (attacker.get("critical_rate") != null and (randf() <= attacker.critical_rate and damage_type != "Magic_attack" and not target.effect_handler.is_critical_immunity)) or affix_array.has("force_critical"):
+		damage_result *= attacker.critical_damage
+		critical_damage = true
+	elif speller_bonus_level > 0 and attacker.role == "speller" and damage_type == "Magic_attack":
+		if randf() <= speller_bonus_level * 0.1:
 			damage_result *= attacker.critical_damage
-			critical_damage = true
-		elif speller_bonus_level > 0 and attacker is Chess and attacker.role == "speller" and damage_type == "Magic_attack":
-			if randf() <= speller_bonus_level * 0.1:
-				damage_result *= attacker.critical_damage
-				critical_damage = true				
+			critical_damage = true				
 
-	var elf_bonus_level = attacker.faction_bonus_manager.get_bonus_level("elf", attacker.team) if attacker is Chess else 0
-	var pikeman_bonus_level = attacker.faction_bonus_manager.get_bonus_level("pikeman", attacker.team) if attacker is Chess else 0
+	var elf_bonus_level = attacker.faction_bonus_manager.get_bonus_level("elf", attacker.team)
+	var pikeman_bonus_level = attacker.faction_bonus_manager.get_bonus_level("pikeman", attacker.team)
 
 	var min_damage_value = elf_bonus_level if elf_bonus_level > 0 else 1
 
-	if pikeman_bonus_level > 0 and target is Chess and target.role == "knight" and attacker is Chess and attacker.role == "pikeman":
+	if pikeman_bonus_level > 0 and target.role == "knight" and attacker.role == "pikeman":
 		damage_result += pikeman_bonus_level
 
 
-	if target is Chess and target.is_phantom and damage_type != "Magic_attack":
+	if target.is_phantom and damage_type != "Magic_attack":
 		damage_result *= 2
-	elif target is Chess and target.is_phantom and damage_type == "Magic_attack":
+	elif target.is_phantom and damage_type == "Magic_attack":
 		damage_result *= 10
 
-	if attacker is Chess and attacker.is_phantom:
+	if attacker.is_phantom:
 		damage_result = floor(damage_result / 2)
 
 	var forest_bonus_level := 0
@@ -62,12 +60,7 @@ func damage_handler(attacker: Chess, target: Chess, damage_value: int, damage_ty
 
 
 	if target.faction == "forestProtector":
-		forest_bonus_level = 0
-		match target.team:
-			1:
-				forest_bonus_level = min(target.faction_bonus_manager.get_bonus_level("forestProtector", target.team), get_parent().faction_path_upgrade["forestProtector"]["path3"])
-			2:
-				forest_bonus_level = target.faction_bonus_manager.get_bonus_level("forestProtector", target.team)
+		forest_bonus_level = get_parent().get_effective_bonus_level("forestProtector", target.team, "path3")
 
 		vengeance_faction = ""
 		for effect_index in target.effect_handler.effect_list:
@@ -79,12 +72,7 @@ func damage_handler(attacker: Chess, target: Chess, damage_value: int, damage_ty
 			damage_result -= forest_bonus_level
 
 	if attacker.faction == "forestProtector":
-		forest_bonus_level = 0
-		match attacker.team:
-			1:
-				forest_bonus_level = min(attacker.faction_bonus_manager.get_bonus_level("forestProtector", attacker.team), get_parent().faction_path_upgrade["forestProtector"]["path3"])
-			2:
-				forest_bonus_level = attacker.faction_bonus_manager.get_bonus_level("forestProtector", attacker.team)
+		forest_bonus_level = get_parent().get_effective_bonus_level("forestProtector", target.team, "path3")
 
 		vengeance_faction = ""
 		for effect_index in attacker.effect_handler.effect_list:
@@ -106,7 +94,7 @@ func damage_handler(attacker: Chess, target: Chess, damage_value: int, damage_ty
 
 	damage_result = max(damage_result, min_damage_value)
 
-	if (attacker is Chess and attacker.life_steal_rate > 0) or (attacker.faction == "forestProtector" and attacker.chess_name == "SatyrWarrior"):
+	if attacker.life_steal_rate > 0 or (attacker.faction == "forestProtector" and attacker.chess_name == "SatyrWarrior"):
 		life_steal_result = floor(attacker.life_steal_rate * damage_result) if attacker.life_steal_rate > 0 else floor(damage_result * 0.2 * attacker.chess_level)
 
 	if critical_damage:
@@ -116,17 +104,11 @@ func damage_handler(attacker: Chess, target: Chess, damage_value: int, damage_ty
 
 	target.damage_taken.emit(target, attacker, damage_result)
 
-	if target is Chess and target.reflect_damage > 0:
+	if target.reflect_damage > 0:
 		attacker.damage_taken.emit(attacker, target, target.reflect_damage)
 	
 	if life_steal_result > 0:
 		attacker._apply_heal(attacker, life_steal_result)
-		# attacker.take_heal(life_steal_result, attacker)
-		
-	#if attacker != target and damage_type != "Magic_attack" and attacker is Chess:
-		#attacker.gain_mp(damage_result)
-	#elif attacker != target and damage_type == "Magic_attack" and attacker is Chess and attacker.chess_name == "ArchMage" and attacker.faction == "human":
-		#attacker.gain_mp(damage_result * 0.15 * attacker.chess_level)
 		
 	var ghost_nearby = get_parent().arena.unit_grid.get_valid_chess_in_radius(attacker.get_current_tile(attacker)[1], 3).filter(
 		func(chess):
@@ -138,12 +120,12 @@ func damage_handler(attacker: Chess, target: Chess, damage_value: int, damage_ty
 			return false
 	)
 	if ghost_nearby.size() <= 0: 
-		if attacker != target and damage_type != "Magic_attack" and attacker is Chess:
+		if attacker != target and damage_type != "Magic_attack":
 			attacker.gain_mp(damage_result)
-		elif attacker != target and damage_type == "Magic_attack" and attacker is Chess and attacker.chess_name == "ArchMage" and attacker.faction == "human":
+		elif attacker != target and damage_type == "Magic_attack" and attacker.chess_name == "ArchMage" and attacker.faction == "human":
 			attacker.gain_mp(floor(damage_result * 0.3 * attacker.chess_level))
 			
-		if attacker != target and target is Chess:
+		if attacker != target:
 			target.gain_mp(damage_result)
 
 	if attacker.chess_name == "Queen" and attacker.faction == "elf" and damage_type == "Magic_attack":
