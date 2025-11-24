@@ -1523,7 +1523,7 @@ func check_chess_merge():
 
 				if node.faction == other_node.faction and node.chess_name == other_node.chess_name:
 					
-					if other_node.faction == "human" and min(faction_path_upgrade["human"]["path3"], faction_bonus_manager.get_bonus_level("human", 1)) > 1 and other_node.total_kill_count >= 5:
+					if other_node.faction == "human" and get_effective_bonus_level("human", 1, "path3") > 1 and other_node.total_kill_count >= 5:
 						var extra_merge_count = 1
 						merge_count += (1 + extra_merge_count)
 						other_node.total_kill_count -= 5
@@ -1534,11 +1534,11 @@ func check_chess_merge():
 
 					var merge_criteria:= 3
 
-					if other_node.faction == "forestProtector" and min(faction_path_upgrade["forestProtector"]["path1"], faction_bonus_manager.get_bonus_level("forestProtector", 1)) >= 2:
+					if other_node.faction == "forestProtector" and get_effective_bonus_level("forestProtector", 1, "path1") >= 2:
 						merge_criteria = 2
-					elif other_node.faction == "forestProtector" and min(faction_path_upgrade["forestProtector"]["path1"], faction_bonus_manager.get_bonus_level("forestProtector", 1)) == 1 and merge_level == 1:
+					elif other_node.faction == "forestProtector" and get_effective_bonus_level("forestProtector", 1, "path1") == 1 and merge_level == 1:
 						merge_criteria = 2
-					elif min(faction_path_upgrade["forestProtector"]["path1"], faction_bonus_manager.get_bonus_level("forestProtector", 1)) == 3 and merge_level == 1:
+					elif get_effective_bonus_level("forestProtector", 1, "path1") == 3 and merge_level == 1:
 						merge_criteria = 2
 
 					if merge_count >= merge_criteria:
@@ -1561,7 +1561,7 @@ func check_chess_merge():
 						var upgrade_chess 
 						var merged_level = merge_level + 1
 						var human_path3_level : int
-						human_path3_level = min(faction_path_upgrade["human"]["path3"], faction_bonus_manager.get_bonus_level("human", 1))
+						human_path3_level = get_effective_bonus_level("human", 1, "path3")
 						var can_upgrade: bool
 						match DataManagerSingleton.get_chess_data()[merged_chess_faction][merged_chess_name]["rarity"]:
 							"Common":
@@ -2175,3 +2175,9 @@ func update_enemy_container() -> void:
 				add_bonus_bar_to_enemy_container(role, faction_bonus_manager.bonus_level_list[role][current_role_level])
 			else:
 				add_bonus_bar_to_enemy_container(role, 6)
+
+func get_effective_bonus_level(faction: String, team: int, path: String) -> int:
+	if team == 2:
+		return faction_bonus_manager.player_bonus_level_dict[team][faction]
+	else:
+		return min(faction_bonus_manager.player_bonus_level_dict[team][faction], faction_path_upgrade[faction][path])
