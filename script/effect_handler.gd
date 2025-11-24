@@ -31,6 +31,7 @@ var life_steal_rate_modifier := 0.0
 var reflect_damage_modifier := 0.0
 
 signal effect_list_updated
+signal effect_timeout(chess_effect: ChessEffect)
 
 func _ready() -> void:
 	if effect_list_updated.connect(refresh_effects) != OK:
@@ -91,7 +92,7 @@ func turn_start_timeout_check() -> void:
 		effect_list = []
 		for effect_index in new_effect_list:
 			if not effect_index.check_effect_timeout():
-				pass
+				effect_timeout.emit(effect_index)
 				#new_effect_list.queue_free()
 			else:
 				add_to_effect_array(effect_index)
