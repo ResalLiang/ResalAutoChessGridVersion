@@ -790,7 +790,25 @@ func _handle_movement():
 
 	var current_tile = get_current_tile(self)[1]
 	var chess_target_tile = get_current_tile(chess_target)[1]
-
+	
+	if (chess_name == "Goblin" or chess_name == "GoblinThief") and faction == "orc" and hp <= (max_hp / 2):
+		var all_ally = arena.unit_grid.get_all_units().filter(
+			func(chess_index):
+				if chess_index.team == team and DataManagerSingleton.check_chess_valid(chess_index):
+					return true
+				return false
+		)
+		var ally_back_tile = all_ally.map(
+			func(chess_index):
+				var chess_tile = chess_index.get_current_tile(chess_index)[1]
+				var back_chess_tile = chess_tile + Vector2i(-1, 0) if chess_index.team == 1 else Vector2i(1, 0)
+				if not arena.unit_grid.is_tile_occupied(back_chess_tile):
+					return back_chess_tile
+				else:
+					return Vector2i(-1, -1)
+		)
+		if ally_back_tile.size() > 0:
+			chess_target_tile = ally_back_tile.pick_random()
 
 	if game_root_scene.get_effective_bonus_level("dwarf", team, "path3") > 0:
 		astar_grid.diagonal_mode = 0
@@ -1036,7 +1054,7 @@ func _handle_attack():
 					var target_tile = attack_target.get_current_tile(attack_target)[1]
 					for x_offset in range(-2, 3):
 						for y_offset in range(-2, 3):
-							if arena.is_tile_in_bounds(target_tile + Vector2i(x_offset, y_offset)) and DataManagerSingleton.check_chess_valid(arena.unit_grid[target_tile + Vector2i(x_offset, y_offset)]):
+							if arena.is_tile_in_bounds(target_tile + Vector2i(x_offset, y_offset)) and DataManagerSingleton.check_chess_valid(arena.unit_grid.units[target_tile + Vector2i(x_offset, y_offset)]):
 								var chess_nearby = arena.unit_grid[target_tile + Vector2i(x_offset, y_offset)]
 								if chess_nearby.team == team:
 									continue
@@ -1594,17 +1612,17 @@ func _apply_heal(heal_target: Chess = chess_spell_target, heal_value: float = da
 func snap(value: float, grid_size: int) -> int:
 	return floor(value / grid_size)
 
-func get_safe_path(start, target):
-	var base_path = astar_grid.get_point_path(start, target)
+func get_safe_path(start_tile:Vector2i, target_tile:Vector2i):
+	var base_path = astar_grid.get_point_path(start_tile, target_tile)
 	if not base_path.is_empty():
 		return base_path
 	var min_path_size = 999	
 	var best_path = []
 	# 渐进式扩大搜索范围
 	for radius in range(1, MAX_SEARCH_RADIUS + 1):
-		var candidates = get_points_in_radius(target, radius)
+		var candidates = get_points_in_radius(target_tile, radius)
 		for point in candidates:
-			var test_path = astar_grid.get_point_path(start, point)
+			var test_path = astar_grid.get_point_path(start_tile, point)
 
 			if not test_path.is_empty():
 				if test_path.size() < min_path_size:
@@ -2735,8 +2753,8 @@ func elf_mage_damage(spell_target:Chess, damage_threshold: float, min_damage_val
 func control_corpse() -> bool:
 	var corpse_list = get_meta("corpse_list", [["human", "SwordMan"]])
 
-	var undead_path2_bonus_level : = game_root_scene.get_effective_bonus_level("undead", team, "path2")
-	var undead_path3_bonus_level : = game_root_scene.get_effective_bonus_level("undead", team, "path3")
+	var undead_path2_bonus_level = game_root_scene.get_effective_bonus_level("undead", team, "path2")
+	var undead_path3_bonus_level = game_root_scene.get_effective_bonus_level("undead", team, "path3")
 
 	var remain_summon_count = chess_level + 1
 	for i in range(remain_summon_count):

@@ -115,7 +115,7 @@ func damage_handler(attacker: Chess, target: Chess, damage_value: int, damage_ty
 			if (chess.chess_name == "Ghost" or chess.chess_name == "Reaper") and chess.team != attacker.team and DataManagerSingleton.check_chess_valid(chess):
 				var chess_tile = chess.get_current_tile(chess)[1]
 				var attacker_tile = attacker.get_current_tile(attacker)[1]
-				if abs(chess_tile.x - attacker_tile.x) + abs(chess_tile.y - attacker_tile.y) <= chess.chess_level + (1 if chess.chess_index == "Reaper" else 0):
+				if abs(chess_tile.x - attacker_tile.x) + abs(chess_tile.y - attacker_tile.y) <= chess.chess_level + (1 if chess.chess_name == "Reaper" else 0):
 					return true
 			return false
 	)
