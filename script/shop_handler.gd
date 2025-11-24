@@ -220,7 +220,6 @@ func get_shop_upgrade_price():
 	return shop_level + 5 
 
 func get_max_population():
-	#var max_population = 999 if (shop_level == 7 and DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"]) else (shop_level + 2 + get_parent().faction_bonus_manager.get_bonus_level("human", 1))
 	var max_population: int
 	var extra_max_population := 0
 	if shop_level == 7 and DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug":
@@ -229,7 +228,7 @@ func get_max_population():
 		max_population = shop_level + 2
 		
 	if get_parent().faction_bonus_manager.get_bonus_level("human", 1) > 0:
-		extra_max_population = min(get_parent().faction_bonus_manager.get_bonus_level("human", 1), get_parent().faction_path_upgrade["human"]["path1"])
+		extra_max_population = get_parent().get_effective_bonus_level("human", 1, "path1")
 
 	return (max_population + extra_max_population)
 
@@ -284,10 +283,10 @@ func sell_chess(chess: Chess):
 
 func get_chess_buy_price(chess: Chess):
 	var buy_chess_discount = -1 if get_meta("suspicious_merchant_turn", 0) > 0 else 0
-
-	if chess.faction == "villager" and (chess.chess_name == "VillagerMan" or chess.chess_name == "VillagerWoman"):
-		return 1 + buy_chess_discount
-	return shop_buy_price + buy_chess_discount
+	var buy_chess_price = shop_buy_price
+	if (chess.chess_name == "GoblinThief" or chess.chess_name == "Goblin") and chess.faction == "orc":
+		buy_chess_price = 1
+	return max(0, buy_chess_price + buy_chess_discount)
 
 func get_chess_sell_price(chess: Chess):
 	if chess is Chess:
