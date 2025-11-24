@@ -342,26 +342,12 @@ func _ready():
 				effect_handler.add_to_effect_array(effect_instance)
 				effect_handler.add_child(effect_instance)
 
-			if attacker.faction == "dwarf":
-				match attacker.chess_name:
-					"BearRider":
-						attacker.take_heal(floor(target.max_hp * 0.1 * attacker.chess_level),self)
-					"ArmoredBearRider":
-						attacker.take_heal(floor(target.max_hp * 0.1 * attacker.chess_level),self)
-					_:
-						pass
-			elif attacker.faction == "forestProtector":
-				if min(faction_bonus_manager.get_bonus_level("forestProtector", 1), game_root_scene.faction_path_upgrade["forestProtector"]["path2"]) == 0 and attacker.team == 1:
+			if attacker.faction == "forestProtector":
+
+				if game_root_scene.get_effective_bonus_level("forestProtector", attacker.team, "path2") == 0:
 					return
 
-				if faction_bonus_manager.get_bonus_level("forestProtector", 2) == 0 and attacker.team == 2:
-					return
-
-				var current_bonus_level
-				if attacker.team == 1:
-					current_bonus_level = min(faction_bonus_manager.get_bonus_level("forestProtector", 1), game_root_scene.faction_path_upgrade["forestProtector"]["path2"])
-				elif attacker.team == 2:
-					current_bonus_level = faction_bonus_manager.get_bonus_level("forestProtector", 2)
+				var current_bonus_level = game_root_scene.get_effective_bonus_level("forestProtector", attacker.team, "path2")
 
 				if current_bonus_level < 2:
 					return
@@ -384,7 +370,7 @@ func _ready():
 						pass
 
 			elif attacker.faction == "ootf":
-				var ootf_bonus_level = faction_bonus_manager.get_bonus_level("ootf", team) if attacker.team != 1 else min(faction_bonus_manager.get_bonus_level("ootf", team), game_root_scene.faction_path_upgrade["ootf"]["path3"])
+				var ootf_bonus_level = game_root_scene.get_effective_bonus_level("ootf", team, "path3")
 				var summoned_character_name : String = ""
 				match ootf_bonus_level:
 					1:
@@ -401,7 +387,13 @@ func _ready():
 					var summoned_character = game_root_scene.summon_chess("ootf", summoned_character_name, chess_level, team, arena, summoned_tile.pick_random())
 
 
-	)			
+	)	
+
+	effect_handler.effect_timeout.connect(
+		func(chess_effect: ChessEffect):
+			if chess_effect.effect_name == "BattleCry":
+				deal_damage.emit(self, self, max_hp, "Magic_attack", ["ignore_evasion"])
+	)		
 
 
 	# Initialize random number generator
@@ -760,9 +752,9 @@ func start_turn():
 	var corpse_list: Array
 	if (DataManagerSingleton.player_data["debug_mode"] or DataManagerSingleton.current_player == "debug") and team == 1:
 		if chess_name == "Necromancer" or chess_name == "DeathLord":
-			if min(faction_bonus_manager.get_bonus_level("undead", team), game_root_scene.faction_path_upgrade["undead"]["path2"]) > 0:
+			if game_root_scene.get_effective_bonus_level("undead", team, "path2") > 0:
 				corpse_list = [["human", "ArcherMan"], ["human", "Mage"], ["human", "HorseMan"], ["human", "KingMan"]]
-			elif min(faction_bonus_manager.get_bonus_level("undead", team), game_root_scene.faction_path_upgrade["undead"]["path3"]) > 0:
+			elif game_root_scene.get_effective_bonus_level("undead", team, "path3") > 0:
 				corpse_list = [["human", "CavalierMan"], ["forestProtector", "TreantGuard"], ["elf", "PegasusRider"], ["dwarf", "Shieldbreaker"], ["forestProtector", "Pixie"]]
 			else:
 				corpse_list = []
@@ -797,10 +789,10 @@ func _handle_movement():
 		return
 
 	var current_tile = get_current_tile(self)[1]
-	var chess_target_tile = get_current_tile(self)[1]
+	var chess_target_tile = get_current_tile(chess_target)[1]
 
 
-	if faction_bonus_manager.get_bonus_level("dwarf", team) > 0:
+	if game_root_scene.get_effective_bonus_level("dwarf", team, "path3") > 0:
 		astar_grid.diagonal_mode = 0
 	else:
 		astar_grid.diagonal_mode = 1
@@ -828,7 +820,7 @@ func _handle_movement():
 
 
 		astar_grid.set_point_solid(current_tile, false)
-		astar_grid.set_point_solid(get_current_tile(chess_target)[1], false)
+		astar_grid.set_point_solid(chess_target_tile, false)
 
 		await get_tree().process_frame
 
@@ -1097,7 +1089,7 @@ func _handle_attack():
 				if not target_evased_attack:
 					await handle_special_effect(attack_target)
 
-				if faction_bonus_manager.get_bonus_level("elf", team) > 1 and target_evased_attack and attack_target.faction == "elf" :
+				if target_evased_attack and attack_target.faction == "elf" :
 					await elf_path3_bonus()
 				elif randf() >= 0.9 and DataManagerSingleton.check_chess_valid(attack_target):
 					await attack_target.handle_free_strike(self)
@@ -1117,7 +1109,7 @@ func _handle_attack():
 				if not target_evased_attack:
 					await handle_special_effect(attack_target)
 
-				if faction_bonus_manager.get_bonus_level("elf", attack_target.team) > 1 and attack_target.faction == "elf" :
+				if target_evased_attack and attack_target.faction == "elf" :
 					await elf_path3_bonus()
 				elif randf() >= 0.9:
 					await attack_target.handle_free_strike(self)
@@ -1391,53 +1383,45 @@ func take_damage(target:Chess, attacker: Chess, damage_value: float):
 	if target != self:
 		return
 		
-	if (-1.0 if animated_sprite_2d.flip_h else 1.0) * (attacker.position - target.position).x > 0 and animated_sprite_2d.sprite_frames.has_animation("block"):
-		if randf() <= target.chess_level * 0.2:
-			target.animated_sprite_2d.play("block")
-			await target.animated_sprite_2d.animation_finished
-			target.animated_sprite_2d.set_animation("idle")
-			target.status = STATUS.IDLE
+	if (-1.0 if animated_sprite_2d.flip_h else 1.0) * (attacker.position - position).x > 0 and animated_sprite_2d.sprite_frames.has_animation("block"):
+		if randf() <= chess_level * 0.2:
+			animated_sprite_2d.play("block")
+			await animated_sprite_2d.animation_finished
+			animated_sprite_2d.set_animation("idle")
+			status = STATUS.IDLE
 			return
-	
-	target.hp -= damage_value
-	target.hp_bar.value = target.hp
+	var previous_hp = hp
+	hp -= damage_value
+	hp_bar.value = hp
 
-	if target.hp <= 0:
-		target.status = STATUS.DIE
-		target.animated_sprite_2d.stop()
-		target.animated_sprite_2d.play("die")
-		await target.animated_sprite_2d.animation_finished
-		target.visible = false
+	if hp <= 0:
+		status = STATUS.DIE
+		animated_sprite_2d.stop()
+		animated_sprite_2d.play("die")
+		await animated_sprite_2d.animation_finished
+		visible = false
 		_on_died(animated_sprite_2d.global_position)
 		
-		var lizardMan_path2_bonus_level
-		if attacker.team ==1:
-			lizardMan_path2_bonus_level = faction_bonus_manager.get_bonus_level("lizardMan", attacker.team)
-			lizardMan_path2_bonus_level = min(lizardMan_path2_bonus_level, game_root_scene.faction_path_upgrade["lizardMan"]["path2"])
-		elif attacker.team == 2:
-			lizardMan_path2_bonus_level = faction_bonus_manager.get_bonus_level("lizardMan", attacker.team)
+		var lizardMan_path2_bonus_level = game_root_scene.get_effective_bonus_level("lizardMan", attacker.team, "path2")
 		
-		if lizardMan_path2_bonus_level <= 0:
-			corpse_generate(animated_sprite_2d.global_position)		
-			
-		target.is_died.emit()
+		if lizardMan_path2_bonus_level > 0 or (attacker.faction == "dwarf" and (attacker.chess_name == "BearRider" or attacker.chess_name == "ArmoredBearRider")):
+			attacker.take_heal(attacker.chess_level * 2, attacker)
+		else:
+			corpse_generate(animated_sprite_2d.global_position)
+
+		is_died.emit()
 		game_root_scene.chess_mover._move_chess(target, grave, grave.unit_grid.get_first_empty_tile())
 		attacker.kill_chess.emit(attacker, target)
 
 	else:
 		#Placeholder for chess passive ability on hit
-		target.status = STATUS.HIT
-		target.animated_sprite_2d.play("hit")
-		await target.animated_sprite_2d.animation_finished
-		target.animated_sprite_2d.set_animation("idle")
-		target.status = STATUS.IDLE
+		status = STATUS.HIT
+		animated_sprite_2d.play("hit")
+		await animated_sprite_2d.animation_finished
+		animated_sprite_2d.set_animation("idle")
+		status = STATUS.IDLE
 		
-		var lizardMan_path1_bonus_level
-		if team ==1:
-			lizardMan_path1_bonus_level = faction_bonus_manager.get_bonus_level("lizardMan", team)
-			lizardMan_path1_bonus_level = min(lizardMan_path1_bonus_level, game_root_scene.faction_path_upgrade["lizardMan"]["path1"])
-		elif team == 2:
-			lizardMan_path1_bonus_level = faction_bonus_manager.get_bonus_level("lizardMan", team)
+		var lizardMan_path1_bonus_level = game_root_scene.get_effective_bonus_level("lizardMan", team, "path1")
 		var hp_threshold : float = 0.0
 		match lizardMan_path1_bonus_level:
 			1:
@@ -1447,7 +1431,7 @@ func take_damage(target:Chess, attacker: Chess, damage_value: float):
 			3:
 				hp_threshold = 0.75
 				
-		if faction == "lizardMan" and hp <= max_hp * hp_threshold:
+		if faction == "lizardMan" and hp <= max_hp * hp_threshold and previous_hp >= max_hp * hp_threshold:
 			var shedskin_animation = animated_sprite_2d.duplicate(true)
 			add_child(shedskin_animation)
 			var new_material = shedskin_animation.material.duplicate(true)
@@ -1461,12 +1445,7 @@ func take_damage(target:Chess, attacker: Chess, damage_value: float):
 			await shedskin_animation.animation_finished
 			shedskin_animation.queue_free()
 			
-		var lizardMan_path3_bonus_level
-		if team ==1:
-			lizardMan_path3_bonus_level = faction_bonus_manager.get_bonus_level("lizardMan", team)
-			lizardMan_path3_bonus_level = min(lizardMan_path3_bonus_level, game_root_scene.faction_path_upgrade["lizardMan"]["path2"])
-		elif team == 2:
-			lizardMan_path3_bonus_level = faction_bonus_manager.get_bonus_level("lizardMan", team)
+		var lizardMan_path3_bonus_level = game_root_scene.get_effective_bonus_level("lizardMan", team, "path2")
 			
 		if faction == "lizardMan" and lizardMan_path3_bonus_level > 0:
 			if effect_handler.search_effect("ScaleSkin"):
@@ -1573,6 +1552,12 @@ func _cast_spell(spell_tgt: Chess) -> bool:
 		cast_spell_result = await dwarf_bomb_boom()
 	elif chess_name == "BattleFireMage" and faction == "ootf":
 		cast_spell_result = await death_coil(spell_tgt)
+	elif (chess_name == "OrcWarChief" or chess_name == "OrcBerserker") and faction == "orc":
+		cast_spell_result = await battle_cry()
+	elif chess_name == "GoblinThief" and faction == "orc":
+		cast_spell_result = true
+		var current_goblin_coins = get_meta("goblin_coins", 0)
+		get_meta("goblin_coins", current_goblin_coins + 1)
 
 
 	if cast_spell_result:
@@ -1686,6 +1671,12 @@ func _on_died(die_position: Vector2):
 		var summon_tile = arena.get_tile_from_global(die_position)
 		game_root_scene.summon_chess("lizardMan", "ArmoredRaptor", chess_level, team, arena, summon_tile)
 
+
+	elif chess_name == "GoblinThief" and faction == "orc":
+		if get_meta("goblin_coins", 0) > 0:
+			var current_goblin_coins = get_meta("goblin_coins", 0)
+			game_root_scene.shop_handler.remain_coins += current_goblin_coins
+
 	#soul collection
 	if not chess_name.contains("Skeleton") and not chess_name.contains("Zombie") and not is_phantom:
 		var all_soul_collector = arena.unit_grid.get_all_units().filter(
@@ -1712,14 +1703,6 @@ func _on_died(die_position: Vector2):
 			var soul_list = chosen_soul_collector.get_meta("soul_list", [])
 			soul_list.append([faction, chess_name])
 			chosen_soul_collector.set_meta("soul_list", soul_list)
-
-	var lizardMan_bonus_level
-	if team ==1:
-		lizardMan_bonus_level = faction_bonus_manager.get_bonus_level("lizardMan", team)
-		lizardMan_bonus_level = min(lizardMan_bonus_level, game_root_scene.faction_path_upgrade["lizardMan"]["path2"])
-	elif team == 2:
-		lizardMan_bonus_level = faction_bonus_manager.get_bonus_level("lizardMan", team)
-
 
 func update_solid_map():
 
@@ -2103,13 +2086,7 @@ func handle_free_strike(target: Chess):
 	return
 
 func elf_path3_bonus():
-	var bonus_level : int
-
-	if chess_target.team == 1:
-		bonus_level = faction_bonus_manager.get_bonus_level("elf", chess_target.team)
-		bonus_level = min(bonus_level, game_root_scene.faction_path_upgrade["elf"]["path3"])
-	elif chess_target.team == 2:
-		bonus_level = faction_bonus_manager.get_bonus_level("elf", chess_target.team)
+	var bonus_level : int = game_root_scene.get_effective_bonus_level("elf", chess_target.team, "path3")
 
 	if bonus_level == 2 and randf() >= 0.5 and target_evased_attack:
 		if DataManagerSingleton.check_chess_valid(chess_target):
@@ -2120,16 +2097,8 @@ func elf_path3_bonus():
 
 
 func dwarf_path1_bonus():
-	var bonus_level : int
+	var bonus_level : int = game_root_scene.get_effective_bonus_level("dwarf", chess_target.team, "path1")
 
-	if team ==1:
-		bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
-		bonus_level = min(bonus_level, game_root_scene.faction_path_upgrade["dwarf"]["path1"])
-	elif team == 2:
-		bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
-
-
-	#var bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
 	var b2b_ally_dwarf := false
 
 	if not (faction == "dwarf" and bonus_level > 0):
@@ -2163,13 +2132,7 @@ func dwarf_path1_bonus():
 	effect_handler.refresh_effects()
 
 func dwarf_path2_bonus():
-	var bonus_level : int
-
-	if team ==1:
-		bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
-		bonus_level = min(bonus_level, game_root_scene.faction_path_upgrade["dwarf"]["path2"])
-	elif team == 2:
-		bonus_level = faction_bonus_manager.get_bonus_level("dwarf", team)
+	var bonus_level : int = game_root_scene.get_effective_bonus_level("dwarf", team, "path2")
 
 	if not (faction == "dwarf" and bonus_level > 0):
 		return
@@ -2195,13 +2158,7 @@ func dwarf_path2_bonus():
 	await effect_animation_display("DwarfPrinciple", arena, get_current_tile(self)[1], "RightTop")
 
 func ootf_path1_bonus():
-	var bonus_level : int
-
-	if team ==1:
-		bonus_level = faction_bonus_manager.get_bonus_level("ootf", team)
-		bonus_level = min(bonus_level, game_root_scene.faction_path_upgrade["ootf"]["path1"])
-	elif team == 2:
-		bonus_level = faction_bonus_manager.get_bonus_level("ootf", team)
+	var bonus_level : int = game_root_scene.get_effective_bonus_level("ootf", team, "path1")
 
 	if not (faction == "ootf" and bonus_level > 0):
 		return
@@ -2221,13 +2178,7 @@ func ootf_path1_bonus():
 
 
 func ootf_path2_bonus():
-	var bonus_level : int
-
-	if team ==1:
-		bonus_level = faction_bonus_manager.get_bonus_level("ootf", team)
-		bonus_level = min(bonus_level, game_root_scene.faction_path_upgrade["ootf"]["path2"])
-	elif team == 2:
-		bonus_level = faction_bonus_manager.get_bonus_level("ootf", team)
+	var bonus_level : int = game_root_scene.get_effective_bonus_level("ootf", team, "path2")
 
 	if not (faction == "ootf" and bonus_level > 0):
 		return
@@ -2647,6 +2598,24 @@ func death_coil(spell_target: Chess) -> bool:
 	await spell_projectile.projectile_vanished
 	return chess_affected	
 
+func battle_cry() -> bool:
+	var chess_affected := false
+	if effect_handler.search_effect("BattleCry"):
+		return chess_affected
+
+	var effect_instance = ChessEffect.new()
+	effect_handler.add_child(effect_instance)
+	effect_instance.register_buff("melee_attack_damage_modifier", chess_level, chess_level * 4)
+	effect_instance.register_buff("ranged_attack_damage_modifier", chess_level, chess_level * 4)
+	effect_instance.effect_name = "BattleCry"
+	effect_instance.effect_type = "Buff"
+	effect_instance.effect_applier = "Orc WarChief and Berserker spell"
+	effect_instance.effect_description = "Chess gain massive damage bonus then die after a few rounds"
+	effect_handler.add_to_effect_array(effect_instance)	
+	chess_affected = true
+
+	return chess_affected
+
 func enchant(spell_target: Chess) -> bool:
 	var chess_affected := false
 
@@ -2766,15 +2735,8 @@ func elf_mage_damage(spell_target:Chess, damage_threshold: float, min_damage_val
 func control_corpse() -> bool:
 	var corpse_list = get_meta("corpse_list", [["human", "SwordMan"]])
 
-	var undead_path2_bonus_level := 0
-	var undead_path3_bonus_level := 0
-
-	if team == 1:
-		undead_path2_bonus_level = min(faction_bonus_manager.get_bonus_level("undead", team), game_root_scene.faction_path_upgrade["undead"]["path2"])
-		undead_path3_bonus_level = min(faction_bonus_manager.get_bonus_level("undead", team), game_root_scene.faction_path_upgrade["undead"]["path3"])
-	else:
-		undead_path2_bonus_level = faction_bonus_manager.get_bonus_level("undead", team)
-		undead_path3_bonus_level = faction_bonus_manager.get_bonus_level("undead", team)
+	var undead_path2_bonus_level : = game_root_scene.get_effective_bonus_level("undead", team, "path2")
+	var undead_path3_bonus_level : = game_root_scene.get_effective_bonus_level("undead", team, "path3")
 
 	var remain_summon_count = chess_level + 1
 	for i in range(remain_summon_count):
