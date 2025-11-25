@@ -747,6 +747,9 @@ func start_turn():
 
 	update_effect()
 
+	if faction == "orc" and chess_name.contains("Goblin"):
+		goblin_permanent_parry()
+
 	remain_attack_count = attack_speed
 
 	var corpse_list: Array
@@ -807,6 +810,10 @@ func _handle_movement():
 				else:
 					return Vector2i(-1, -1)
 		)
+		ally_back_tile = ally_back_tile.filter(
+			func(tile_index):
+				return tile_index != Vector2i(-1, -1) 
+		)
 		if ally_back_tile.size() > 0:
 			chess_target_tile = ally_back_tile.pick_random()
 
@@ -818,7 +825,7 @@ func _handle_movement():
 	move_started.emit(self, current_tile)
 
 
-	if global_position.distance_to(chess_target.global_position) <= attack_range or effect_handler.is_stunned:
+	if (global_position.distance_to(chess_target.global_position) <= attack_range or effect_handler.is_stunned) and chess_name != "Goblin" and chess_name != "GoblinThief":
 		move_finished.emit(self, current_tile)
 		move_timer.set_wait_time(move_timer_wait_time)			
 		move_timer.start()
@@ -937,7 +944,7 @@ func _handle_action():
 	move_timer.stop()
 	action_started.emit(self)
 
-	await dwarf_path1_bonus()
+	await dwarf_path1_bonus() #Dwarves gain armor bonus
 
 	var current_tile = get_current_tile(self)[1]
 
@@ -973,7 +980,6 @@ func _handle_action():
 				action_timer.start()
 				return
 
-	#if !chess_target or !is_instance_valid(chess_target) or chess_target.status == STATUS.DIE or not chess_target.visible:
 	if not DataManagerSingleton.check_chess_valid(chess_target):
 		target_lost.emit(self)
 		action_timer.start()
@@ -1043,7 +1049,6 @@ func _handle_attack():
 				chess_projectile.projectile_hit.connect(handle_projectile_hit)
 				chess_projectile.projectile_hit.connect(handle_special_effect.unbind(1))
 				await chess_projectile.projectile_vanished
-
 
 			else:
 
@@ -1424,6 +1429,9 @@ func take_damage(target:Chess, attacker: Chess, damage_value: float):
 		
 		if lizardMan_path2_bonus_level > 0 or (attacker.faction == "dwarf" and (attacker.chess_name == "BearRider" or attacker.chess_name == "ArmoredBearRider")):
 			attacker.take_heal(attacker.chess_level * 2, attacker)
+		elif attacker.faction == "undead" and (attacker.chess_name == "Ghoul" or attacker.chess_name == "SpikedGhoul"):
+			attacker.take_heal(attacker.chess_level * 2, attacker)
+			attacker.animated_sprite_2d.play("spell")
 		else:
 			corpse_generate(animated_sprite_2d.global_position)
 
@@ -1516,7 +1524,6 @@ func take_heal(heal_value: float, healer: Chess):
 
 	if healer != self:
 		healer.mp += heal_value
-
 
 func gain_mp(mp_value: float):
 	if mp_value <= 0:
@@ -1689,7 +1696,6 @@ func _on_died(die_position: Vector2):
 		var summon_tile = arena.get_tile_from_global(die_position)
 		game_root_scene.summon_chess("lizardMan", "ArmoredRaptor", chess_level, team, arena, summon_tile)
 
-
 	elif chess_name == "GoblinThief" and faction == "orc":
 		if get_meta("goblin_coins", 0) > 0:
 			var current_goblin_coins = get_meta("goblin_coins", 0)
@@ -1778,8 +1784,6 @@ func update_effect():
 
 	max_hp = base_max_hp + effect_handler.max_hp_modifier
 	max_mp = base_max_mp + effect_handler.max_mp_modifier
-
-
 
 func handle_projectile_hit(chess:Chess, projectile: Projectile):
 
@@ -2650,6 +2654,15 @@ func enchant(spell_target: Chess) -> bool:
 
 	return chess_affected
 
+func goblin_permanent_parry() -> void:
+	var effect_instance = ChessEffect.new()
+	effect_instance.register_buff("parry", 0, 999)
+	effect_instance.effect_name = "GoblinParry"
+	effect_instance.effect_type = "PermanentBuff"
+	effect_instance.effect_applier = "Orc Goblin Permanent Passive Ability"
+	effect_instance.effect_description = "Orc Goblin Permanent Passive Ability."
+	effect_handler.add_to_effect_array(effect_instance)
+	effect_handler.add_child(effect_instance)	
 
 func human_mage_taunt(spell_duration: int) -> bool:
 	var chess_affected := true
@@ -2950,3 +2963,8 @@ func corpse_generate(die_position: Vector2):
 			var soul_list = chosen_necromancer.get_meta("corpse_list", [])
 			soul_list.append([faction, chess_name])
 			chosen_necromancer.set_meta("corpse_list", soul_list)
+
+func tile_distance(tile1: Vector2i, tile2: Vector2i) -> flot:
+	var x_distacne = abs(tile1.x - tile2.x)
+	var y_distance = abs(tile1.y - tile2.y)
+	return 1.4 * min(x_distance, y_distance) + abs(x_distance - y_distance)
