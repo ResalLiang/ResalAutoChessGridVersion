@@ -1060,7 +1060,7 @@ func _handle_attack():
 					for x_offset in range(-2, 3):
 						for y_offset in range(-2, 3):
 							if arena.is_tile_in_bounds(target_tile + Vector2i(x_offset, y_offset)) and DataManagerSingleton.check_chess_valid(arena.unit_grid.units[target_tile + Vector2i(x_offset, y_offset)]):
-								var chess_nearby = arena.unit_grid[target_tile + Vector2i(x_offset, y_offset)]
+								var chess_nearby = arena.unit_grid.units[target_tile + Vector2i(x_offset, y_offset)]
 								if chess_nearby.team == team:
 									continue
 								if abs(rad_to_deg((position - attack_target.position).angle_to(position - chess_nearby.position))) <= 30:
@@ -1571,7 +1571,7 @@ func _cast_spell(spell_tgt: Chess) -> bool:
 		cast_spell_result = await devolve(spell_tgt)
 	elif chess_name == "ArchLich" and faction == "undead":
 		cast_spell_result = await corpse_explosion()
-	elif chess_name == "DreadKnight" and faction == "undead":
+	elif (chess_name == "DreadKnight" or chess_name == "DeathKnight") and faction == "undead":
 		cast_spell_result = await death_coil(spell_tgt)
 	elif chess_name == "Bomb" and faction == "dwarf":
 		cast_spell_result = await dwarf_bomb_boom()
@@ -2964,7 +2964,7 @@ func corpse_generate(die_position: Vector2):
 			soul_list.append([faction, chess_name])
 			chosen_necromancer.set_meta("corpse_list", soul_list)
 
-func tile_distance(tile1: Vector2i, tile2: Vector2i) -> flot:
-	var x_distacne = abs(tile1.x - tile2.x)
+func tile_distance(tile1: Vector2i, tile2: Vector2i) -> float:
+	var x_distance = abs(tile1.x - tile2.x)
 	var y_distance = abs(tile1.y - tile2.y)
 	return 1.4 * min(x_distance, y_distance) + abs(x_distance - y_distance)
