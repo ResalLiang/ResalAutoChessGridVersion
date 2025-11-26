@@ -120,13 +120,14 @@ var attack_range = base_attack_range
 var evasion_rate := 0.10:
 	set(value):
 		if is_obstacle:
-			speed = 0
+			evasion_rate = 0.0
 		else:
 			evasion_rate = value
-var critical_rate := 0.10
+			
+var critical_rate := 0.10:
 	set(value):
 		if is_obstacle:
-			speed = 0
+			critical_rate = 0.0
 		else:
 			critical_rate = value
 var critical_damage := 2

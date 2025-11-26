@@ -339,7 +339,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 			var effect_instance2
 			var effect_instance3
 			
-			var path1_bonus_level: int = get_parent.get_effective_bonus_level(faction, applier_team, "path1")
+			var path1_bonus_level: int = get_parent().get_effective_bonus_level(faction, applier_team, "path1")
 			
 			if path1_bonus_level > 0:
 				for chess_index in friendly_faction_chess:
@@ -354,7 +354,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 					chess_index.effect_handler.add_to_effect_array(effect_instance3)
 					chess_index.effect_handler.add_child(effect_instance3)
 
-			var path2_bonus_level: int = get_parent.get_effective_bonus_level(faction, applier_team, "path2")
+			var path2_bonus_level: int = get_parent().get_effective_bonus_level(faction, applier_team, "path2")
 			
 			if path2_bonus_level > 0:
 				for chess_index in friendly_faction_chess:
@@ -381,7 +381,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 					chess_index.effect_handler.add_to_effect_array(effect_instance)
 					chess_index.effect_handler.add_child(effect_instance)
 			
-			var path3_bonus_level: int = get_parent.get_effective_bonus_level(faction, applier_team, "path3")
+			var path3_bonus_level: int = get_parent().get_effective_bonus_level(faction, applier_team, "path3")
 			
 			if path3_bonus_level > 0:
 				for chess_index in friendly_faction_chess:
@@ -398,7 +398,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 			pass
 
 		"dwarf":
-			var path3_bonus_level: int = get_parent.get_effective_bonus_level(faction, applier_team, "path3")
+			var path3_bonus_level: int = get_parent().get_effective_bonus_level(faction, applier_team, "path3")
 
 			if path3_bonus_level > 0:
 				for chess_index in friendly_faction_chess:
@@ -432,7 +432,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 			if friendly_chess.size() <= 0:
 				return
 				
-			var path2_bonus_level: int = get_parent.get_effective_bonus_level(faction, applier_team, "path2")
+			var path2_bonus_level: int = get_parent().get_effective_bonus_level(faction, applier_team, "path2")
 			
 			if path2_bonus_level > 0:
 				var effect_instance
@@ -453,7 +453,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 
 			var affected_chess : Array = []
 
-			var path1_bonus_level: int = get_parent.get_effective_bonus_level(faction, applier_team, "path1")
+			var path1_bonus_level: int = get_parent().get_effective_bonus_level(faction, applier_team, "path1")
 
 			if path1_bonus_level >= 3:
 				affected_chess = enemy_chess
@@ -473,7 +473,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
 
-			var path2_bonus_level: int = get_parent.get_effective_bonus_level(faction, applier_team, "path2")
+			var path2_bonus_level: int = get_parent().get_effective_bonus_level(faction, applier_team, "path2")
 
 			if path2_bonus_level >= 3:
 				affected_chess = enemy_chess
@@ -493,9 +493,9 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
 
-			var path3_bonus_level: int = get_parent.get_effective_bonus_level(faction, applier_team, "path3")
+			var path3_bonus_level: int = get_parent().get_effective_bonus_level(faction, applier_team, "path3")
 
-			lif path3_bonus_level > 0:
+			if path3_bonus_level > 0:
 				affected_chess = enemy_chess + friendly_chess
 			else:
 				affected_chess = []
@@ -514,7 +514,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 			if enemy_chess.size() <= 0:
 				return
 
-			var path1_bonus_level: int = get_parent.get_effective_bonus_level(faction, applier_team, "path1")
+			var path1_bonus_level: int = get_parent().get_effective_bonus_level(faction, applier_team, "path1")
 
 			if path1_bonus_level > 0:
 				for chess_index in enemy_chess:
