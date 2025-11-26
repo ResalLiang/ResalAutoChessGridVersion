@@ -82,6 +82,7 @@ var hp: int = base_max_hp:
 	set(value):
 		hp = min(value, max_hp)
 		hp = max(0, hp)
+
 var mp: int = 0:
 	set(value):
 		mp = min(value, max_mp)
@@ -110,6 +111,7 @@ var speed = base_speed:
 			speed = 0
 		else:
 			speed = value
+
 var melee_damage = base_melee_damage
 var ranged_damage = base_ranged_damage
 var damage
@@ -122,6 +124,11 @@ var evasion_rate := 0.10:
 		else:
 			evasion_rate = value
 var critical_rate := 0.10
+	set(value):
+		if is_obstacle:
+			speed = 0
+		else:
+			critical_rate = value
 var critical_damage := 2
 var life_steal_rate := 0.0
 var reflect_damage := base_reflect_damage
@@ -270,19 +277,14 @@ signal kill_chess(obstacle: Obstacle, target: Obstacle)
 # ========================
 func _ready():
 
-	chess_mover = arena.get_parent().get_parent().chess_mover
+	game_root_scene = arena.get_parent().get_parent()
+	chess_mover = game_root_scene.chess_mover
+	faction_bonus_manager = game_root_scene.faction_bonus_manager
 
 	drag_handler.dragging_enabled = dragging_enabled
 
 	effect_handler = EffectHandler.new()
 	add_child(effect_handler)
-
-	game_root_scene = arena.get_parent().get_parent()
-
-	faction_bonus_manager = game_root_scene.faction_bonus_manager
-
-	# Load animations
-	_load_animations()
 
 	# Validate node references before proceeding
 	if not _validate_node_references():
@@ -447,16 +449,15 @@ func _ready():
 	astar_grid.diagonal_mode = 2
 	astar_grid.update()
 
-
 	area_effect_handler.arena = arena
 
 	connect_to_data_manager()
 
 	line_visible = DataManagerSingleton.player_datas[DataManagerSingleton.current_player]["debug_mode"] or DataManagerSingleton.current_player == "debug"
+
 # ========================
 # Process Functions
 # ========================
-
 
 func _process(delta: float) -> void:
 
@@ -651,13 +652,17 @@ func _load_chess_stats():
 		var stats = chess_data[faction][chess_name]
 		role = stats["role"]
 		base_speed = stats["speed"]
-		base_max_hp = stats["max_health"]
+		base_max_hp = stats["max_health"] * (2 if effect_handler.search_effect("TitanicGrowth") else 1)
 		base_attack_range = stats["attack_range"]
 		base_attack_speed = stats["attack_speed"]
 		if base_attack_speed == 0:
 			base_melee_damage = 0
 			base_ranged_damage = 0
 		elif (not animated_sprite_2d.sprite_frames.has_animation("melee_attack") and not animated_sprite_2d.sprite_frames.has_animation("attack")) or not stats.keys().has("melee_attack_damage"):
+			if animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
+				base_ranged_damage = stats["ranged_attack_damage"]
+			else:
+				base_ranged_damage = 0
 			base_melee_damage = 0
 		elif base_attack_range <= 32 or not animated_sprite_2d.sprite_frames.has_animation("ranged_attack") or not stats.keys().has("ranged_attack_damage"):
 			base_melee_damage = stats["melee_attack_damage"]
@@ -669,6 +674,10 @@ func _load_chess_stats():
 			base_ranged_damage = stats["ranged_attack_damage"]
 			decline_ratio = stats["decline_ratio"]
 			projectile_penetration = stats["projectile_penetration"]
+
+		if effect_handler.search_effect("TitanicGrowth"):
+			base_melee_damage *= 2
+			base_ranged_damage *= 2
 
 		if stats.keys().has("max_mana"):
 			base_max_mp = stats["max_mana"]
@@ -746,6 +755,11 @@ func start_turn():
 	ootf_path2_bonus() # gain damage bonus when burn
 
 	update_effect()
+
+	if effect_handler.search_effect("TitanicGrowth"):
+		animated_sprite_2d.scale = Vector2(2.0, 2.0)
+	else:
+		animated_sprite_2d.scale = Vector2(1.0, 1.0)
 
 	if faction == "orc" and chess_name.contains("Goblin"):
 		goblin_permanent_parry()
@@ -1728,6 +1742,24 @@ func _on_died(die_position: Vector2):
 			soul_list.append([faction, chess_name])
 			chosen_soul_collector.set_meta("soul_list", soul_list)
 
+	#DeathExplosion
+	if effect_handler.search_effect("DeathExplosion"):
+		var death_explosion_effect = effect_handler.search_effect("DeathExplosion")
+		var death_explosion_level = int(death_explosion_effect.effect_name.right(1))
+		var nearby_chess = arena.unit_grid.get_valid_chess_in_radius(get_current_tile(self)[1], min(2, death_explosion_level)).filter(
+				func(chess_index):
+					if DataManagerSingleton.check_chess_valid(chess_index):
+						if death_explosion_level >= 3:
+							return chess_index.team == team
+						else:
+							return true
+					else:
+						return false
+		)
+		for chess_index in nearby_chess:
+			deal_damage.emit(self, chess_index, 4, "Magic_attack", [])
+			await effect_animation_display("DeathExplosion", arena, get_current_tile(self)[1], "Center")
+
 func update_solid_map():
 
 	astar_grid.fill_solid_region(astar_grid_region, false)
@@ -1770,9 +1802,9 @@ func update_effect():
 	if effect_handler.continuous_hp_modifier >= 0:
 		_apply_heal(self, max(0, effect_handler.continuous_hp_modifier))
 	else:
-		# _apply_damage(self, max(0, effect_handler.continuous_hp_modifier))
-		deal_damage.emit(self, self, max(0, -effect_handler.continuous_hp_modifier), "Continuous_effect", [])
+		deal_damage.emit(self, self, effect_handler.continuous_hp_modifier, "Continuous_effect", [])
 
+	
 	mp += effect_handler.continuous_mp_modifier
 
 	armor = base_armor + effect_handler.armor_modifier
@@ -2192,9 +2224,9 @@ func ootf_path1_bonus():
 			return false
 	)
 	if burn_chesses.size() > 0:
-		gain_mp(burn_chesses.size() * bonus_level)
+		gain_mp(burn_chesses.size())
 		for chess_index in burn_chesses:
-			if randf() >= 0.7:
+			if randf() >= 0.3 * bonus_level:
 				var burn_effect = chess_index.effect_handler.search_effect("Burn")
 				chess_index.effect_handler.effect_list.erase(burn_effect)
 
@@ -2419,14 +2451,14 @@ func mana_transfer() -> bool:
 	if all_ally.size() == 0:
 		chess_affected = false
 	elif all_ally.size() == 1:
-		all_ally[0].gain_mp(floor(mp * 0.3 * chess_level))
+		all_ally[0].gain_mp(chess_level)
 		chess_affected =  true
 	else:
 		all_ally.sort_custom(
 			func(a, b):
 				return a.mp >= b.mp			
 		)
-		all_ally.front().gain_mp(floor(mp * 0.3 * chess_level))
+		all_ally.front().gain_mp(chess_level)
 		chess_affected =  true
 	return chess_affected
 
