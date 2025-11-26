@@ -33,64 +33,11 @@ const alternative_choice_scene = preload("res://scene/alternative_choice.tscn")
 @onready var remain_won_rounds_template: TextureRect = $ui/won_lose_round_container/won_round_container/remain_won_rounds_template
 
 var current_page := 0
-var faction_array := ["elf", "human", "dwarf", "forestProtector", "undead"]
+var faction_array : Array
 var game_faction_path_upgrade
 
 var current_path_number := 0
 var current_level_number := 0
-
-var faction_path_upgrade_template = {
-	"elf": {
-		"path1" : 0,
-		"path2" : 0,
-		"path3" : 0
-	},
-	"human": {
-		"path1" : 0,
-		"path2" : 0,
-		"path3" : 0
-	},
-	"dwarf": {
-		"path1" : 0,
-		"path2" : 0,
-		"path3" : 0
-	},
-	"forestProtector": {
-		"path1" : 0,
-		"path2" : 0,
-		"path3" : 0
-	},
-	"undead": {
-		"path1" : 0,
-		"path2" : 0,
-		"path3" : 0
-	},
-	"demon": {
-		"path1" : 0,
-		"path2" : 0,
-		"path3" : 0
-	},
-	"holy": {
-		"path1" : 0,
-		"path2" : 0,
-		"path3" : 0
-	},
-	"orc": {
-		"path1" : 0,
-		"path2" : 0,
-		"path3" : 0
-	},
-	"ottf": {
-		"path1" : 0,
-		"path2" : 0,
-		"path3" : 0
-	},
-	"lizardMan": {
-		"path1" : 0,
-		"path2" : 0,
-		"path3" : 0
-	}	
-}
 
 signal button_actived
 signal path_actived(faction: String, path:String, level: int)
@@ -98,11 +45,11 @@ signal path_actived(faction: String, path:String, level: int)
 func _ready() -> void:
 	
 	game_faction_path_upgrade = get_parent().faction_path_upgrade
-	#game_faction_path_upgrade = faction_path_upgrade_template.duplicate(true)
 	
 	if button_actived.connect(handle_button_actived) != OK:
 		print("button_actived connect fail!")
 	
+	faction_array = game_faction_path_upgrade.keys()
 	var total_page = faction_array.size()
 	
 	for node in bonus_button_container.get_children():
@@ -218,7 +165,7 @@ func refresh_page():
 			_:
 				pass
 
-		if disable_third_path:
+		if disable_third_path and faction_array[current_page] != "demon":
 			set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button1"), false)
 			set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button2"), false)
 			set_button_texture(get_node("ui/bonus_button_container/"+ path_index + "_button3"), false)
@@ -542,6 +489,14 @@ func on_path_bonus_pressed(node: TextureButton):
 			faction_path_label.text = "PlaceHolder"
 		"lizardMan Path 4" :
 			faction_path_label.text = "PlaceHolder"
+		"demon Path 1" :
+			faction_path_label.text = "PlaceHolder"
+		"demon Path 2" :
+			faction_path_label.text = "PlaceHolder"
+		"demon Path 3" :
+			faction_path_label.text = "PlaceHolder"
+		"demon Path 4" :
+			faction_path_label.text = "Path4 Deal with the devil"
 		_:
 			faction_path_label.text = "place holder"	
 		
