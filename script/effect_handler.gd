@@ -42,6 +42,10 @@ func search_effect(search_effect_name: String):
 		for effect_index in effect_list:
 			if effect_index.effect_name == search_effect_name and effect_index.check_effect_timeout():
 				return effect_index
+			elif effect_index.effect_name.contains(search_effect_name) \
+			and effect_index.effect_name.contains("Level") \
+			and effect_index.check_effect_timeout():
+				return effect_index
 			else:
 				continue
 	else:
