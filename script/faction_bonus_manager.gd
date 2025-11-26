@@ -339,30 +339,22 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 			var effect_instance2
 			var effect_instance3
 			
-			var path1_bonus_level: int
-			if applier_team == 1:
-				path1_bonus_level = min(bonus_level, get_parent().faction_path_upgrade[faction]["path1"])
-			elif applier_team == 2:
-				path1_bonus_level = bonus_level
+			var path1_bonus_level: int = get_parent.get_effective_bonus_level(faction, applier_team, "path1")
 			
 			if path1_bonus_level > 0:
 				for chess_index in friendly_faction_chess:
 					effect_instance3 = ChessEffect.new()
-					effect_instance3.register_buff("melee_attack_damage_modifier", max(1 - chess_index.base_melee_damage, -bonus_level), 999)
-					effect_instance3.register_buff("ranged_attack_damage_modifier", max(1 - chess_index.base_ranged_damage, -bonus_level), 999)
-					effect_instance3.register_buff("attack_speed_modifier", bonus_level, 999)
-					effect_instance3.effect_name = "Swift - Level " + str(bonus_level)
+					effect_instance3.register_buff("melee_attack_damage_modifier", max(1 - chess_index.base_melee_damage, -path1_bonus_level), 999)
+					effect_instance3.register_buff("ranged_attack_damage_modifier", max(1 - chess_index.base_ranged_damage, -path1_bonus_level), 999)
+					effect_instance3.register_buff("attack_speed_modifier", path1_bonus_level, 999)
+					effect_instance3.effect_name = "Swift - Level " + str(path1_bonus_level)
 					effect_instance3.effect_type = "Faction Bonus"
 					effect_instance3.effect_applier = "Elf path1 Faction Bonus"
 					effect_instance3.effect_description = "Elf allies gain attack speed bonus, and attack damage decreased."
 					chess_index.effect_handler.add_to_effect_array(effect_instance3)
 					chess_index.effect_handler.add_child(effect_instance3)
 
-			var path2_bonus_level: int
-			if applier_team == 1:
-				path2_bonus_level = min(bonus_level, get_parent().faction_path_upgrade[faction]["path2"])
-			elif applier_team == 2:
-				path2_bonus_level = bonus_level
+			var path2_bonus_level: int = get_parent.get_effective_bonus_level(faction, applier_team, "path2")
 			
 			if path2_bonus_level > 0:
 				for chess_index in friendly_faction_chess:
@@ -389,16 +381,12 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 					chess_index.effect_handler.add_to_effect_array(effect_instance)
 					chess_index.effect_handler.add_child(effect_instance)
 			
-			var path3_bonus_level: int
-			if applier_team == 1:
-				path3_bonus_level = min(bonus_level, get_parent().faction_path_upgrade[faction]["path3"])
-			elif applier_team == 2:
-				path3_bonus_level = bonus_level
+			var path3_bonus_level: int = get_parent.get_effective_bonus_level(faction, applier_team, "path3")
 			
 			if path3_bonus_level > 0:
 				for chess_index in friendly_faction_chess:
 					effect_instance2 = ChessEffect.new()
-					effect_instance2.register_buff("evasion_rate_modifier", bonus_level * 0.1, 999)
+					effect_instance2.register_buff("evasion_rate_modifier", path3_bonus_level * 0.1, 999)
 					effect_instance2.effect_name = "Gentle - Level " + str(path3_bonus_level)
 					effect_instance2.effect_type = "Faction Bonus"
 					effect_instance2.effect_applier = "Elf path3 Faction Bonus"
@@ -410,18 +398,14 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 			pass
 
 		"dwarf":
-			var path3_bonus_level: int
-			if applier_team == 1:
-				path3_bonus_level = min(bonus_level, get_parent().faction_path_upgrade[faction]["path3"])
-			elif applier_team == 2:
-				path3_bonus_level = bonus_level
+			var path3_bonus_level: int = get_parent.get_effective_bonus_level(faction, applier_team, "path3")
 
 			if path3_bonus_level > 0:
 				for chess_index in friendly_faction_chess:
 					var effect_instance = ChessEffect.new()
-					effect_instance.register_buff("speed_modifier", bonus_level, 1)
+					effect_instance.register_buff("speed_modifier", path3_bonus_level, 1)
 					# effect_instance.stunned_duration = spell_duration
-					effect_instance.effect_name = "March - Level " + str(bonus_level)
+					effect_instance.effect_name = "March - Level " + str(path3_bonus_level)
 					effect_instance.effect_type = "Faction Bonus"
 					effect_instance.effect_applier = "Dwarf path3 Faction Bonus"
 					effect_instance.effect_description = "Dwarf allied gain speed bonus at first turn."
@@ -443,29 +427,19 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
 
-
 		"forestProtector":
 				
 			if friendly_chess.size() <= 0:
 				return
 				
-			var path2_bonus_level: int
-			if applier_team == 1:
-				path2_bonus_level = min(bonus_level, get_parent().faction_path_upgrade[faction]["path2"])
-			elif applier_team == 2:
-
-				path2_bonus_level = bonus_level
+			var path2_bonus_level: int = get_parent.get_effective_bonus_level(faction, applier_team, "path2")
 			
 			if path2_bonus_level > 0:
 				var effect_instance
 				for chess_index in friendly_chess:
 					effect_instance = ChessEffect.new()
 					effect_instance.register_buff("continuous_hp_modifier", path2_bonus_level, 999)
-					# effect_instance.continuous_hp_modifier = 20 * bonus_level
-					# effect_instance.continuous_hp_modifier_duration = 999
 					effect_instance.register_buff("max_hp_modifier", path2_bonus_level, 999)
-					# effect_instance.max_hp_modifier = 30 * bonus_level
-					# effect_instance.max_hp_modifier_duration = 999
 					effect_instance.effect_name = "Strong - Level " + str(path2_bonus_level)
 					effect_instance.effect_type = "Faction Bonus"
 					effect_instance.effect_applier = "Forest Protector path2 Faction Bonus"
@@ -477,17 +451,62 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 			if enemy_chess.size() <= 0:
 				return
 
-			for chess_index in enemy_chess:
+			var affected_chess : Array = []
+
+			var path1_bonus_level: int = get_parent.get_effective_bonus_level(faction, applier_team, "path1")
+
+			if path1_bonus_level >= 3:
+				affected_chess = enemy_chess
+			elif path1_bonus_level > 0:
+				affected_chess = enemy_chess + friendly_chess
+			else:
+				affected_chess = []
+
+			for chess_index in affected_chess:
 				var effect_instance = ChessEffect.new()
-				effect_instance.register_buff("continuous_hp_modifier", -bonus_level, bonus_level)
-				# effect_instance.continuous_hp_modifier = -5 * bonus_level
-				# effect_instance.continuous_hp_modifier_duration = bonus_level
-				effect_instance.register_buff("silenced", 0, bonus_level)
-				# effect_instance.silence_duration = bonus_level
-				effect_instance.effect_name = "Doom - Level " + str(bonus_level)
+				effect_instance.register_buff("continuous_hp_modifier", -path1_bonus_level, 2)
+				effect_instance.register_buff("silenced", 0, path1_bonus_level)
+				effect_instance.effect_name = "Doom - Level " + str(path1_bonus_level)
 				effect_instance.effect_type = "Faction Bonus"
-				effect_instance.effect_applier = "Demon Faction Bonus"
-				effect_instance.effect_description = "Enemy chesses suffer damage each turn."
+				effect_instance.effect_applier = "Demon Path1 Faction Bonus"
+				effect_instance.effect_description = "All chesses suffer damage each turn."
+				chess_index.effect_handler.add_to_effect_array(effect_instance)
+				chess_index.effect_handler.add_child(effect_instance)
+
+			var path2_bonus_level: int = get_parent.get_effective_bonus_level(faction, applier_team, "path2")
+
+			if path2_bonus_level >= 3:
+				affected_chess = enemy_chess
+			elif path2_bonus_level > 0:
+				affected_chess = enemy_chess + friendly_chess
+			else:
+				affected_chess = []
+
+			for chess_index in affected_chess:
+				var effect_instance = ChessEffect.new()
+				effect_instance.register_buff("continuous_mp_modifier", -path2_bonus_level, 999)
+				effect_instance.register_buff("max_mp_modifier", path2_bonus_level, 999)
+				effect_instance.effect_name = "ManaBreak - Level " + str(path2_bonus_level)
+				effect_instance.effect_type = "Faction Bonus"
+				effect_instance.effect_applier = "Demon Path2 Faction Bonus"
+				effect_instance.effect_description = "All chesses suffer mana loss each turn."
+				chess_index.effect_handler.add_to_effect_array(effect_instance)
+				chess_index.effect_handler.add_child(effect_instance)
+
+			var path3_bonus_level: int = get_parent.get_effective_bonus_level(faction, applier_team, "path3")
+
+			lif path3_bonus_level > 0:
+				affected_chess = enemy_chess + friendly_chess
+			else:
+				affected_chess = []
+
+			for chess_index in affected_chess:
+				var effect_instance = ChessEffect.new()
+				effect_instance.register_buff("duration_only", 0, 999)
+				effect_instance.effect_name = "DeathExplosion - Level " + str(path2_bonus_level)
+				effect_instance.effect_type = "Faction Bonus"
+				effect_instance.effect_applier = "Demon Path3 Faction Bonus"
+				effect_instance.effect_description = "All chesses will damage nearby chess when died."
 				chess_index.effect_handler.add_to_effect_array(effect_instance)
 				chess_index.effect_handler.add_child(effect_instance)
 
@@ -495,18 +514,14 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 			if enemy_chess.size() <= 0:
 				return
 
-			var path1_bonus_level: int
-			if applier_team == 1:
-				path1_bonus_level = min(bonus_level, get_parent().faction_path_upgrade[faction]["path1"])
-			elif applier_team == 2:
-				path1_bonus_level = bonus_level
+			var path1_bonus_level: int = get_parent.get_effective_bonus_level(faction, applier_team, "path1")
 
 			if path1_bonus_level > 0:
 				for chess_index in enemy_chess:
 					var effect_instance = ChessEffect.new()
-					effect_instance.register_buff("armor_modifier", -bonus_level, 999)
-					effect_instance.register_buff("speed_modifier", -2, bonus_level)
-					effect_instance.effect_name = "Weak - Level " + str(bonus_level)
+					effect_instance.register_buff("armor_modifier", -path1_bonus_level, 999)
+					effect_instance.register_buff("speed_modifier", -2, path1_bonus_level)
+					effect_instance.effect_name = "Weak - Level " + str(path1_bonus_level)
 					effect_instance.effect_type = "Faction Bonus"
 					effect_instance.effect_applier = "Undead path1 Faction Bonus"
 					effect_instance.effect_description = "Enemy chesses suffer speed and armor loss."
@@ -526,7 +541,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 					# effect_instance.effect_duration = 999
 					effect_instance.effect_name = "WarriorSkill - Level " + str(bonus_level)
 					effect_instance.effect_type = "Faction Bonus"
-					effect_instance.effect_applier = "Warrior Role Bonus"
+					effect_instance.effect_applier = "Warrior Role Faction Bonus"
 					effect_instance.effect_description = "Warriors gain accumulative melee attack damage bonus when attacking the same target."
 					chess_index.effect_handler.add_to_effect_array(effect_instance)
 					chess_index.effect_handler.add_child(effect_instance)
@@ -544,7 +559,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 					# effect_instance.effect_duration = 999
 					effect_instance.effect_name = "KnightSkill - Level " + str(bonus_level)
 					effect_instance.effect_type = "Faction Bonus"
-					effect_instance.effect_applier = "Knight Role Bonus"
+					effect_instance.effect_applier = "Knight Role Faction Bonus"
 					effect_instance.effect_description = "When moving more than 5 grid, friendly knights will gain damage bonus."
 					chess_index.effect_handler.add_to_effect_array(effect_instance)
 					chess_index.effect_handler.add_child(effect_instance)
@@ -562,7 +577,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 					# effect_instance.effect_duration = 999
 					effect_instance.effect_name = "PikemanSkill - Level " + str(bonus_level)
 					effect_instance.effect_type = "Faction Bonus"
-					effect_instance.effect_applier = "Pikeman Role Bonus"
+					effect_instance.effect_applier = "Pikeman Role Faction Bonus"
 					effect_instance.effect_description = "When B2B with other friendly pikeman, chess gain damage bonus."
 					chess_index.effect_handler.add_to_effect_array(effect_instance)
 					chess_index.effect_handler.add_child(effect_instance)
@@ -580,7 +595,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 					# effect_instance.effect_duration = 999
 					effect_instance.effect_name = "SpellerSkill - Level " + str(bonus_level)
 					effect_instance.effect_type = "Faction Bonus"
-					effect_instance.effect_applier = "Speller Role Bonus"
+					effect_instance.effect_applier = "Speller Role Faction Bonus"
 					effect_instance.effect_description = "Speller gain critical magic damage."
 					chess_index.effect_handler.add_to_effect_array(effect_instance)
 					chess_index.effect_handler.add_child(effect_instance)
@@ -598,7 +613,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 					# effect_instance.effect_duration = 999
 					effect_instance.effect_name = "RangerSkill - Level " + str(bonus_level)
 					effect_instance.effect_type = "Faction Bonus"
-					effect_instance.effect_applier = "Ranger Role Bonus"
+					effect_instance.effect_applier = "Ranger Role Faction Bonus"
 					effect_instance.effect_description = "All ranged ally gain penetration and decline_ratio bonus."
 					chess_index.effect_handler.add_to_effect_array(effect_instance)
 					chess_index.effect_handler.add_child(effect_instance)
@@ -616,7 +631,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 					# effect_instance.effect_duration = 999
 					effect_instance.effect_name = "SatyrSkill - Level " + str(bonus_level)
 					effect_instance.effect_type = "Faction Bonus"
-					effect_instance.effect_applier = "Ranger Role Bonus"
+					effect_instance.effect_applier = "Ranger Role Faction Bonus"
 					effect_instance.effect_description = "Satyr will disseminate healing effect when got healing."
 					chess_index.effect_handler.add_to_effect_array(effect_instance)
 					chess_index.effect_handler.add_child(effect_instance)
@@ -635,7 +650,7 @@ func apply_faction_bonus(faction: String, bonus_level: int, applier_team: int) -
 					# effect_instance.effect_duration = 999
 					effect_instance.effect_name = "WarlockSkill - Level " + str(bonus_level)
 					effect_instance.effect_type = "Faction Bonus"
-					effect_instance.effect_applier = "Warlock Role Bonus"
+					effect_instance.effect_applier = "Warlock Role Faction Bonus"
 					effect_instance.effect_description = "Warlock will summon a zombie or skeleton when casting spell."
 					chess_index.effect_handler.add_to_effect_array(effect_instance)
 					chess_index.effect_handler.add_child(effect_instance)
@@ -649,7 +664,7 @@ func clean_chess_faction_bonus(chess: Chess) -> void:
 
 	chess.effect_handler.effect_list = []
 	for effect_index in chess_effect_list:
-		if not effect_index.effect_type.contains("Faction Bonus"):
+		if not effect_index.effect_applier.contains("Faction Bonus"):
 			chess.effect_handler.add_to_effect_array(effect_index)
 
 	chess.effect_handler.refresh_effects()
