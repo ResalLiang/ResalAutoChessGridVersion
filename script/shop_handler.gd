@@ -115,6 +115,7 @@ func shop_init():
 			freeze_dict[Vector2i(x,y)] = false
 	
 	shop_refresh(shop_level, "")
+	set_meta("free_refresh_count", 0)
 
 func shop_manual_refresh() -> void:
 	if get_meta("suspicious_merchant_turn", 0) > 0:
