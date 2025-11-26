@@ -652,6 +652,11 @@ func _ready():
 									effect_instance.effect_description = "Chess hit will suffer 1 hp loss per turn."
 									burn_chess.effect_handler.add_to_effect_array(effect_instance)	
 
+								"demon":
+
+									var deal_with_devil_count = get_meta("deal_with_devil", 0)
+									set_meta("deal_with_devil", deal_with_devil_count + 1)
+
 								_:
 									pass
 							faction_path_upgrade[faction][path] = 0
@@ -673,11 +678,6 @@ func _ready():
 		print("player_won_game connect fail!")
 	if player_lose_game.connect(DataManagerSingleton.handle_player_lose_game) != OK:
 		print("player_lose_game connect fail!")
-
-	# player_won_round.connect(func(): AudioManagerSingleton.play_music("round_win"))
-	# player_lose_round.connect(func(): AudioManagerSingleton.play_music("round_lose"))
-	# player_won_game.connect(func(): AudioManagerSingleton.play_music("game_win"))
-	# player_lose_game.connect(func(): AudioManagerSingleton.play_music("game_lose"))
 
 	chess_mover.play_areas = [arena, bench, shop]
 	#arena.bounds = Rect2i(0, 0, 6, 12)
@@ -804,6 +804,13 @@ func start_new_game() -> void:
 	chess_serial = 1000
 
 	battle_meter.battle_data = {}
+
+	set_meta("deal_with_devil", 0)
+	set_meta("suspicious_merchant_turn", 0)
+	set_meta("peasant_counter", 0)
+	set_meta("blacksmith_turn", 0)
+	set_meta("free_refresh_count", 0)
+	set_meta("peasant_counter", 0) 
 
 	current_round = 0
 	DataManagerSingleton.win_lose_round_init()
@@ -1056,22 +1063,41 @@ func handle_round_finished(msg):
 		handle_game_end()
 		return
 	
+	var deal_with_devil_count = get_meta("deal_with_devil", 0)
 	if msg == "team1":
-		DataManagerSingleton.won_rounds += 1
+		if deal_with_devil_count > 0:
+			DataManagerSingleton.won_rounds += 2
+		else:
+			DataManagerSingleton.won_rounds += 1
+		set_meta("deal_with_devil", deal_with_devil_count - 1)
+
 		print("Round %d over, you won!" % current_round)
 		last_turn_label.text = 'WON'
 		player_won_round.emit()
 		add_round_finish_scene.emit('WON')
 	elif msg == "team2":
-		DataManagerSingleton.lose_rounds += 1
+		if deal_with_devil_count > 0:
+			DataManagerSingleton.lose_rounds += 2
+		else:
+			DataManagerSingleton.lose_rounds += 1
+		set_meta("deal_with_devil", deal_with_devil_count - 1)
+
 		print("Round %d over, you lose..." % current_round)
 		last_turn_label.text = 'LOSE'
 		player_lose_round.emit()
 		add_round_finish_scene.emit('LOSE')
 	elif msg == "draw":
-		print("Round %d over,draw..." % current_round)
-		last_turn_label.text = 'DRAW'
-		add_round_finish_scene.emit('DRAW')
+		if deal_with_devil_count > 0:
+			DataManagerSingleton.lose_rounds += 1
+
+			print("Round %d over, you lose..." % current_round)
+			last_turn_label.text = 'LOSE'
+			player_lose_round.emit()
+			add_round_finish_scene.emit('LOSE')
+		else:
+			print("Round %d over,draw..." % current_round)
+			last_turn_label.text = 'DRAW'
+			add_round_finish_scene.emit('DRAW')
 
 	new_round_prepare_start()
 
