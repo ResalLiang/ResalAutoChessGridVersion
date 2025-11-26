@@ -19,7 +19,7 @@ func damage_handler(attacker: Chess, target: Chess, damage_value: int, damage_ty
 	if target.effect_handler.is_immunity or (damage_type == "Magic_attack" and target.effect_handler.is_spell_immunity):
 		return
 
-	if attacker.effect_handler.is_insulation:
+	if attacker.effect_handler.is_insulation or damage_type == "Continuous_effect":
 		attacker.damage_applied.emit(attacker, target, damage_result)
 		target.damage_taken.emit(target, attacker, damage_result)
 		return	
@@ -121,12 +121,12 @@ func damage_handler(attacker: Chess, target: Chess, damage_value: int, damage_ty
 	)
 	if ghost_nearby.size() <= 0: 
 		if attacker != target and damage_type != "Magic_attack":
-			attacker.gain_mp(damage_result)
+			attacker.gain_mp(1)
 		elif attacker != target and damage_type == "Magic_attack" and attacker.chess_name == "ArchMage" and attacker.faction == "human":
-			attacker.gain_mp(floor(damage_result * 0.3 * attacker.chess_level))
+			attacker.gain_mp(1)
 			
 		if attacker != target:
-			target.gain_mp(damage_result)
+			target.gain_mp(1)
 
 	if attacker.chess_name == "Queen" and attacker.faction == "elf" and damage_type == "Magic_attack":
 		attacker.random_heal(damage_result, attacker)
