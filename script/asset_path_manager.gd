@@ -50,6 +50,9 @@ var effect_icon_path = {
 	"WeaponPoison" = "res://asset/sprite/[VerArc Stash] Basic_Skills_and_Buffs/Spells/poison_dagger.png",
 	"Vengeance" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__004.png",
 	"BattleCry" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__134.png",
+	"Principle" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__134.png", #TODO
+	"ManaBreak" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__134.png", #TODO
+	"DeathExplosion" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__134.png", #TODO
 	"Default" = "res://asset/sprite/Archive2[skills_buffs_debuffs]/icon__071.png"
 }
 
