@@ -466,11 +466,11 @@ func on_path_bonus_pressed(node: TextureButton):
 		"holy Path 4" :
 			faction_path_label.text = "PlaceHolder"
 		"orc Path 1" :
-			faction_path_label.text = "PlaceHolder"
+			faction_path_label.text = "Chess nearby gain a lesser buff when ally orc cast battle cry in small area"
 		"orc Path 2" :
-			faction_path_label.text = "PlaceHolder"
+			faction_path_label.text = "Chess nearby gain a lesser buff when ally orc cast battle cry nearby"
 		"orc Path 3" :
-			faction_path_label.text = "PlaceHolder"
+			faction_path_label.text = "Chess nearby gain a lesser buff when ally orc cast battle cry in large area"
 		"orc Path 4" :
 			faction_path_label.text = "PlaceHolder"
 		"ootf Path 1" :
