@@ -33,8 +33,10 @@ const chess_scene = preload("res://scene/chess.tscn")
 
 @onready var stats_container: VBoxContainer = $stats_container
 @onready var hp_container: HBoxContainer = $stats_container/hp_container
-@onready var hp_icon_template: TextureRect = $stats_container/hp_container/hp_icon_template
-@onready var half_hp_icon_template: TextureRect = $stats_container/hp_container/half_hp_icon_template
+@onready var team1_hp_icon_template: TextureRect = $stats_container/hp_container/team1_hp_icon_template
+@onready var team1_half_hp_icon_template: TextureRect = $stats_container/hp_container/team1_half_hp_icon_template
+@onready var team2_hp_icon_template: TextureRect = $stats_container/hp_container/team2_hp_icon_template
+@onready var team2_half_hp_icon_template: TextureRect = $stats_container/hp_container/team2_half_hp_icon_template
 @onready var loss_hp_icon_template: TextureRect = $stats_container/hp_container/loss_hp_icon_template
 @onready var mp_container: HBoxContainer = $stats_container/mp_container
 @onready var mp_icon_template: TextureRect = $stats_container/mp_container/mp_icon_template
@@ -194,13 +196,13 @@ var skill_description := "Place holder."
 
 var passive_ability: String = ""
 
-var taunt_range := 70
+var taunt_range := 3
 
 # Projectile Related
 var projectile_speed: float = 300.0  # Projectile speed
 var projectile_damage: int = 15  # Projectile damage
 var projectile_penetration: int = 3  # Number of enemies projectile can penetrate
-var ranged_attack_threshold: float = 32.0  # Minimum distance for ranged attack
+var ranged_attack_threshold: float = 2.5  # Minimum distance for ranged attack
 var projectile
 
 var demon_bonus_level := 0
@@ -388,14 +390,12 @@ func _ready():
 				var summoned_tile = arena.unit_grid.get_empty_tile_in_radius(get_current_tile(self)[1], 1)
 				if summoned_character_name != "" and summoned_tile.size() > 0:
 					var summoned_character = game_root_scene.summon_chess("ootf", summoned_character_name, chess_level, team, arena, summoned_tile.pick_random())
-
-
 	)	
 
 	effect_handler.effect_timeout.connect(
 		func(chess_effect: ChessEffect):
 			if chess_effect.effect_name == "BattleCry":
-				deal_damage.emit(self, self, max_hp, "Magic_attack", ["ignore_evasion"])
+				deal_damage.emit(self, self, 2 * max_hp, "Magic_attack", ["True_damage"])
 	)		
 
 
@@ -659,17 +659,23 @@ func _load_chess_stats():
 		if base_attack_speed == 0:
 			base_melee_damage = 0
 			base_ranged_damage = 0
+			decline_ratio = 0
+			projectile_penetration = 0
 		elif (not animated_sprite_2d.sprite_frames.has_animation("melee_attack") and not animated_sprite_2d.sprite_frames.has_animation("attack")) or not stats.keys().has("melee_attack_damage"):
 			if animated_sprite_2d.sprite_frames.has_animation("ranged_attack"):
 				base_ranged_damage = stats["ranged_attack_damage"]
+				decline_ratio = stats["decline_ratio"]
+				projectile_penetration = stats["projectile_penetration"]
 			else:
 				base_ranged_damage = 0
+				decline_ratio = 0
+				projectile_penetration = 0
 			base_melee_damage = 0
 		elif base_attack_range <= 32 or not animated_sprite_2d.sprite_frames.has_animation("ranged_attack") or not stats.keys().has("ranged_attack_damage"):
 			base_melee_damage = stats["melee_attack_damage"]
 			base_ranged_damage = 0
-			decline_ratio = 1
-			projectile_penetration = 1
+			decline_ratio = 0
+			projectile_penetration = 0
 		else:
 			base_melee_damage = stats["melee_attack_damage"]
 			base_ranged_damage = stats["ranged_attack_damage"]
@@ -762,10 +768,15 @@ func start_turn():
 	else:
 		animated_sprite_2d.scale = Vector2(1.0, 1.0)
 
+	if chess_name == "GoblinThief" and faction == "orc":
+		set_meta("goblin_coins", 0)
 	if faction == "orc" and chess_name.contains("Goblin"):
 		goblin_permanent_parry()
 
-	remain_attack_count = attack_speed
+	if effect_handler.search_effect("BattleCry"):
+		remain_attack_count = attack_speed + floor((max_hp - hp) / 3)
+	else:
+		remain_attack_count = attack_speed
 
 	var corpse_list: Array
 	if (DataManagerSingleton.player_data["debug_mode"] or DataManagerSingleton.current_player == "debug") and team == 1:
@@ -809,6 +820,7 @@ func _handle_movement():
 	var current_tile = get_current_tile(self)[1]
 	var chess_target_tile = get_current_tile(chess_target)[1]
 	
+	var goblin_flee := false
 	if (chess_name == "Goblin" or chess_name == "GoblinThief") and faction == "orc" and hp <= (max_hp / 2):
 		var all_ally = arena.unit_grid.get_all_units().filter(
 			func(chess_index):
@@ -831,6 +843,7 @@ func _handle_movement():
 		)
 		if ally_back_tile.size() > 0:
 			chess_target_tile = ally_back_tile.pick_random()
+			goblin_flee = true
 
 	if game_root_scene.get_effective_bonus_level("dwarf", team, "path3") > 0:
 		astar_grid.diagonal_mode = 0
@@ -840,7 +853,7 @@ func _handle_movement():
 	move_started.emit(self, current_tile)
 
 
-	if (global_position.distance_to(chess_target.global_position) <= attack_range or effect_handler.is_stunned) and chess_name != "Goblin" and chess_name != "GoblinThief":
+	if (chess_tile_distance(self, chess_target) <= attack_range or effect_handler.is_stunned) and not goblin_flee:
 		move_finished.emit(self, current_tile)
 		move_timer.set_wait_time(move_timer_wait_time)			
 		move_timer.start()
@@ -893,7 +906,8 @@ func _handle_movement():
 				continue
 			var target_pos = move_path[current_step + 1] + grid_offset
 			var target_tile = arena.get_tile_from_global(target_pos + get_parent().global_position)
-			if arena.unit_grid.is_tile_occupied(target_tile) or astar_grid.is_point_solid(target_pos) or remain_step <= 0 or global_position.distance_to(chess_target.global_position) <= attack_range:
+			current_tile = get_current_tile(self)[1]
+			if arena.unit_grid.is_tile_occupied(target_tile) or astar_grid.is_point_solid(target_pos) or remain_step <= 0 or (tile_distance(current_tile, target_tile) <= attack_range and not goblin_flee):
 				break
 
 			var previous_tile = get_current_tile(self)[1]
@@ -910,7 +924,8 @@ func _handle_movement():
 					if not DataManagerSingleton.check_chess_valid(arena.unit_grid.units[previous_tile + tile_offset_index]):
 						continue
 
-					neighbor_chess = arena.unit_grid.units[previous_tile + tile_offset_index]
+					var neighbor_chess_tile = previous_tile + tile_offset_index
+					neighbor_chess = arena.unit_grid.units[neighbor_chess_tile]
 
 					if neighbor_chess.team == team:
 						continue
@@ -918,12 +933,12 @@ func _handle_movement():
 					if not neighbor_chess.animated_sprite_2d.sprite_frames.has_animation("melee_attack"):
 						continue
 
-					if position.distance_to(neighbor_chess.position) <= min(neighbor_chess.attack_range, ranged_attack_threshold) and target_pos.distance_to(neighbor_chess.position) > min(neighbor_chess.attack_range, ranged_attack_threshold):
+					if tile_distance(current_tile, neighbor_chess_tile) <= min(neighbor_chess.attack_range, ranged_attack_threshold) and tile_distance(target_tile, neighbor_chess_tile) > min(neighbor_chess.attack_range, ranged_attack_threshold):
 						if DataManagerSingleton.check_chess_valid(neighbor_chess):
 							await neighbor_chess.handle_free_strike(self) #leave attack range free strike
 
 					if neighbor_chess.role == "pikeman" and faction_bonus_manager.get_bonus_level("pikeman", neighbor_chess.team) > 0:
-						if position.distance_to(neighbor_chess.position) > min(neighbor_chess.attack_range, ranged_attack_threshold) and target_pos.distance_to(neighbor_chess.position) <= min(neighbor_chess.attack_range, ranged_attack_threshold):
+						if tile_distance(current_tile, neighbor_chess_tile) > min(neighbor_chess.attack_range, ranged_attack_threshold) and tile_distance(target_tile, neighbor_chess_tile) <= min(neighbor_chess.attack_range, ranged_attack_threshold):
 							if DataManagerSingleton.check_chess_valid(neighbor_chess):
 								await neighbor_chess.handle_free_strike(self) #enter attack range free strike
 
@@ -1004,7 +1019,6 @@ func _handle_action():
 
 func _handle_attack():
 	var rotate_tween = create_tween().set_parallel(false)
-
 	if status == STATUS.DIE:
 		action_timer.set_wait_time(action_timer_wait_time)
 		action_timer.start()
@@ -1031,8 +1045,11 @@ func _handle_attack():
 	else:
 		attack_target = chess_target
 
+	var current_tile = get_current_tile(self)[1]
+	var target_tile = get_current_tile(attack_target)[1]
+
 	#Placeholder for chess passive ability on attack
-	var current_distance_to_target = global_position.distance_to(attack_target.global_position)
+	var current_distance_to_target = chess_tile_distance(self, attack_target) #global_position.distance_to(attack_target.global_position)
 	remain_attack_count -= 1
 	if current_distance_to_target <= attack_range and (not effect_handler.is_stunned and not effect_handler.is_disarmed):
 		var rotate_vector = attack_target.global_position - global_position
@@ -1179,6 +1196,13 @@ func _handle_attack():
 	if not DataManagerSingleton.check_chess_valid(attack_target) and chess_name == "CrossBowMan" and faction == "human":
 		remain_attack_count += 1
 
+	if effect_handler.search_effect("BattleCry"):
+		if max_hp - hp <= 3 * chess_level:
+			deal_damage.emit(self, self, 3 * chess_level, "Magic_attack", ["True_damage"])
+			return
+		else:
+			deal_damage.emit(self, self, 3 * chess_level, "Magic_attack", ["True_damage"])
+
 	if remain_attack_count > 0:
 		await get_tree().create_timer(0.2).timeout
 		await _handle_attack()
@@ -1287,9 +1311,9 @@ func handle_target_evased_attack(target: Chess, attacker: Chess):
 func _compare_distance(a: Chess, b: Chess) -> bool:
 
 	# handling taunt
-	if (a.effect_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range) and (not b.effect_handler.is_taunt or b.global_position.distance_to(global_position) > taunt_range):
+	if (a.effect_handler.is_taunt and chess_tile_distance(self, a) <= taunt_range) and (not b.effect_handler.is_taunt or chess_tile_distance(self, b) > taunt_range):
 		return true
-	if (not a.effect_handler.is_taunt or a.global_position.distance_to(global_position) > taunt_range) and (b.effect_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range):
+	if (not a.effect_handler.is_taunt or chess_tile_distance(self, a) > taunt_range) and (b.effect_handler.is_taunt and chess_tile_distance(self, b) <= taunt_range):
 		return false
 
 	# handling stealth chess
@@ -1298,14 +1322,14 @@ func _compare_distance(a: Chess, b: Chess) -> bool:
 	if not a.effect_handler.is_stealth and b.effect_handler.is_stealth:
 		return true
 
-	return a.global_position.distance_to(global_position) > b.global_position.distance_to(global_position)
+	return chess_tile_distance(self, a) > chess_tile_distance(self, b)
 
 func _compare_hp(a: Chess, b: Chess) -> bool:
 
 	# handling taunt
-	if (a.effect_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range) and (not b.effect_handler.is_taunt or b.global_position.distance_to(global_position) > taunt_range):
+	if (a.effect_handler.is_taunt and chess_tile_distance(self, a) <= taunt_range) and (not b.effect_handler.is_taunt or chess_tile_distance(self, b) > taunt_range):
 		return true
-	if (not a.effect_handler.is_taunt or a.global_position.distance_to(global_position) > taunt_range) and (b.effect_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range):
+	if (not a.effect_handler.is_taunt or chess_tile_distance(self, a) > taunt_range) and (b.effect_handler.is_taunt and chess_tile_distance(self, b) <= taunt_range):
 		return false
 
 	# handling stealth chess
@@ -1318,10 +1342,14 @@ func _compare_hp(a: Chess, b: Chess) -> bool:
 
 func _compare_damage(a: Chess, b: Chess) -> bool:
 
+	var a_tile = get_current_tile(a)[1]
+	var b_tile = get_current_tile(b)[1]
+	var current_tile = get_current_tile(self)[1]
+
 	# handling taunt
-	if (a.effect_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range) and (not b.effect_handler.is_taunt or b.global_position.distance_to(global_position) > taunt_range):
+	if (a.effect_handler.is_taunt and chess_tile_distance(self, a) <= taunt_range) and (not b.effect_handler.is_taunt or chess_tile_distance(self, b) > taunt_range):
 		return true
-	if (not a.effect_handler.is_taunt or a.global_position.distance_to(global_position) > taunt_range) and (b.effect_handler.is_taunt and a.global_position.distance_to(global_position) <= taunt_range):
+	if (not a.effect_handler.is_taunt or chess_tile_distance(self, a) > taunt_range) and (b.effect_handler.is_taunt and chess_tile_distance(self, b) <= taunt_range):
 		return false
 
 	# handling stealth chess
@@ -1573,7 +1601,7 @@ func _cast_spell(spell_tgt: Chess) -> bool:
 	elif (chess_name == "Necromancer" or chess_name == "DeathLord") and faction == "undead":
 		cast_spell_result = await control_corpse()
 	elif chess_name == "Demolitionist" and faction == "dwarf":
-		cast_spell_result = dwarf_demolitionist_placebomb(100)
+		cast_spell_result = dwarf_demolitionist_placebomb(4)
 	elif chess_name == "SpellSword" and faction == "elf":
 		cast_spell_result = mana_transfer()
 	elif chess_name == "Satyr" and faction == "forestProtector":
@@ -1598,7 +1626,6 @@ func _cast_spell(spell_tgt: Chess) -> bool:
 		cast_spell_result = true
 		var current_goblin_coins = get_meta("goblin_coins", 0)
 		get_meta("goblin_coins", current_goblin_coins + 1)
-
 
 	if cast_spell_result:
 		spell_casted.emit(self, skill_name)
@@ -1641,11 +1668,22 @@ func get_safe_path(start_tile:Vector2i, target_tile:Vector2i):
 	var min_path_size = 999	
 	var best_path = []
 	# 渐进式扩大搜索范围
+	var test_path
+	if attack_range < 1.5 and attack_range >= 1:
+		for offset_index in [Vector2i(-1, 0), Vector2i(1, 0), Vector2i(0, -1), Vector2i(0, 1)]:
+			test_path = astar_grid.get_point_path(start_tile, target_tile + offset_index)
+			if not test_path.is_empty():
+				if test_path.size() < min_path_size:
+					best_path = test_path.duplicate()
+					min_path_size = test_path.size()
+		if min_path_size != 999:
+			return best_path
+
+	min_path_size = 999					
 	for radius in range(1, MAX_SEARCH_RADIUS + 1):
 		var candidates = get_points_in_radius(target_tile, radius)
 		for point in candidates:
-			var test_path = astar_grid.get_point_path(start_tile, point)
-
+			test_path = astar_grid.get_point_path(start_tile, point)
 			if not test_path.is_empty():
 				if test_path.size() < min_path_size:
 					best_path = test_path.duplicate()
@@ -1699,7 +1737,7 @@ func _on_died(die_position: Vector2):
 		var enemy_spellers = arena.unit_grid.get_all_units().filter(
 			func(chess):
 				if DataManagerSingleton.check_chess_valid(chess) and chess.role == "speller" and chess.team != team:
-					if global_position.distance_to(chess.global_position) <= 50:
+					if chess_tile_distance(chess, self) <= 3:
 						return true
 				return false
 		)
@@ -1721,11 +1759,12 @@ func _on_died(die_position: Vector2):
 		var all_soul_collector = arena.unit_grid.get_all_units().filter(
 			func(chess): 
 				var is_soul_collector := true
+				var soul_collect_distance := 4
 
 				if DataManagerSingleton.check_chess_valid(chess):
 					is_soul_collector = false
 
-				if position.distance_to(chess.position) <= 100:
+				if chess_tile_distance(chess, self) <= soul_collect_distance:
 					is_soul_collector = false
 
 				if chess.faction != "undead" or not ["ArchLich", "DeathKnight", "DreadKnight", "Lich"].has(chess.chess_name):
@@ -1736,7 +1775,7 @@ func _on_died(die_position: Vector2):
 		if all_soul_collector.size() > 0:
 			all_soul_collector.sort_custom(
 				func(a, b):
-					return self.position.distance_to(a.position) <= self.position.distance_to(a.position)
+					return chess_tile_distance(a, self) <= chess_tile_distance(b, self)
 			)
 			var chosen_soul_collector = all_soul_collector.pop_front()
 			var soul_list = chosen_soul_collector.get_meta("soul_list", [])
@@ -2516,7 +2555,7 @@ func shadow_wave(spell_target: Chess) -> bool:
 					func(chess1): 
 						if chess_affect.has(chess1):
 							return false
-						if chess1.global_position.distance_to(chess.global_position) > 100:
+						if chess_tile_distance(chess, chess1) > 5:
 							return false
 						return true
 				)
@@ -2530,7 +2569,7 @@ func entangling_roots() -> bool:
 	var all_enemy = all_chesses.filter(func(chess): return (DataManagerSingleton.check_chess_valid(chess) and chess.team != team))
 	var enemy_nearby = all_enemy.filter(
 		func(node):
-			return node.global_position.distance_to(global_position) < 50 * chess_level
+			return chess_tile_distance(node, self) < 3 * chess_level
 	)
 	if enemy_nearby.size() <= 0:
 		return false
@@ -2637,17 +2676,6 @@ func death_coil(spell_target: Chess) -> bool:
 	spell_projectile.projectile_hit.connect(
 		func(chess, projectile):
 			deal_damage.emit(self, chess, spell_projectile.damage, "Magic_attack", [])
-			# _apply_heal(self, spell_projectile.damage)
-
-			#var effect_instance = ChessEffect.new()
-			#effect_handler.add_child(effect_instance)
-			#effect_instance.register_buff("duration_only", 999, 2)
-			#effect_instance.effect_name = "WeaponPoison"
-			#effect_instance.effect_type = "Buff"
-			#effect_instance.effect_applier = "Undead DreadKnight Spell Effect"
-			#effect_instance.effect_description = "Chess hit will suffer 1 hp loss per turn, last for 3 turns."
-			#effect_handler.add_to_effect_array(effect_instance)
-
 			chess_affected = true
 	)
 	await spell_projectile.projectile_vanished
@@ -2660,8 +2688,9 @@ func battle_cry() -> bool:
 
 	var effect_instance = ChessEffect.new()
 	effect_handler.add_child(effect_instance)
-	effect_instance.register_buff("melee_attack_damage_modifier", chess_level, chess_level * 4)
-	effect_instance.register_buff("ranged_attack_damage_modifier", chess_level, chess_level * 4)
+	effect_instance.register_buff("melee_attack_damage_modifier", chess_level * 3, chess_level)
+	effect_instance.register_buff("ranged_attack_damage_modifier", chess_level * 3, chess_level)
+	effect_instance.register_buff("life_steal_rate", 0.5, chess_level)
 	effect_instance.effect_name = "BattleCry"
 	effect_instance.effect_type = "Buff"
 	effect_instance.effect_applier = "Orc WarChief and Berserker spell"
@@ -2669,6 +2698,23 @@ func battle_cry() -> bool:
 	effect_handler.add_to_effect_array(effect_instance)	
 	chess_affected = true
 
+	var orc_path1_bonus_level = game_root_scene.get_effective_bonus_level("orc", team, "path1")
+	if orc_path1_bonus_level > 0:
+		var nearby_chess = get_valid_chess_in_radius(get_current_tile(self)[1], orc_path1_bonus_level + 1).filter(
+			func(chess):
+				return chess.team == team and DataManagerSingleton.check_chess_valid(chess)
+		)
+		if nearby_chess.size() > 0:
+			for chess_index in nearby_chess:
+				var effect_instance1 = ChessEffect.new()
+				chess_index.effect_handler.add_child(effect_instance1)
+				effect_instance1.register_buff("melee_attack_damage_modifier", chess_level, chess_level)
+				effect_instance1.register_buff("ranged_attack_damage_modifier", chess_level, chess_level)
+				effect_instance1.effect_name = "LesserBattleCry"
+				effect_instance1.effect_type = "Buff"
+				effect_instance1.effect_applier = "Orc WarChief and Berserker spell"
+				effect_instance1.effect_description = "Chess gain damage bonus nearby battle cry chess"
+				chess_index.effect_handler.add_to_effect_array(effect_instance1)	
 	return chess_affected
 
 func enchant(spell_target: Chess) -> bool:
@@ -2782,7 +2828,7 @@ func elf_queen_stun(spell_duration: int, damage_value: float) -> bool:
 
 func elf_mage_damage(spell_target:Chess, damage_threshold: float, min_damage_value: int, spell_range: int) -> bool:
 	var chess_affected := false
-	if spell_target.status != STATUS.DIE and spell_target.team != team and spell_target.global_position.distance_to(global_position) <= spell_range:
+	if spell_target.status != STATUS.DIE and spell_target.team != team and chess_tile_distance(spell_target, self) <= spell_range:
 
 		if spell_target.hp <= spell_target.max_hp * damage_threshold:
 			# _apply_damage(spell_target, spell_target.hp)
@@ -2874,7 +2920,7 @@ func control_corpse() -> bool:
 func dwarf_demolitionist_placebomb(spell_range: int) -> bool:
 	# var chess_affected := false
 	var attempt_summon_count := 10
-	if chess_spell_target.status != STATUS.DIE and chess_spell_target.team != team and chess_spell_target.global_position.distance_to(global_position) <= spell_range:
+	if chess_spell_target.status != STATUS.DIE and chess_spell_target.team != team and chess_tile_distance(chess_spell_target, self) <= spell_range:
 		while attempt_summon_count >= 0:
 			var current_tile = get_current_tile(self)[1]
 			var target_current_tile = chess_spell_target.get_current_tile(self)[1]
@@ -2919,25 +2965,53 @@ func update_hp_mp() -> void:
 			node.visible = false
 			continue
 		node.queue_free()
+	hp_container.visible = false
 
+	var hp_x := 0
 	var remain_hp := hp
-	while remain_hp > 0:
-		if remain_hp >= 2:
-			var new_hp_icon = hp_icon_template.duplicate(true)
-			new_hp_icon.visible = true
-			hp_container.add_child(new_hp_icon)
-			remain_hp -= 2
-		else:
-			var new_half_hp_icon = half_hp_icon_template.duplicate(true)
-			new_half_hp_icon.visible = true
-			hp_container.add_child(new_half_hp_icon)
-			remain_hp -= 1
 	var loss_hp = floor((max_hp - hp) / 2) * 2
-	while loss_hp > 0:
-		var new_loss_hp_icon = loss_hp_icon_template.duplicate(true)
-		new_loss_hp_icon.visible = true
-		hp_container.add_child(new_loss_hp_icon)
-		loss_hp -= 2		
+	var current_container
+
+	while remain_hp + loss_hp > 0:
+		if hp_x == 0:
+			var new_hp_container = hp_container.duplicate(true)
+			current_container = new_hp_container
+			current_container.visible = true
+			stats_container.add_child(current_container)
+
+		if remain_hp >= 2:
+			var new_hp_icon
+			match team:
+				1:
+					new_hp_icon = team1_hp_icon_template.duplicate(true)
+				2:
+					new_hp_icon = team2_hp_icon_template.duplicate(true)
+			new_hp_icon.visible = true
+			current_container.add_child(new_hp_icon)
+			remain_hp -= 2
+			hp_x += 1
+		elif remain_hp > 0:
+			var new_half_hp_icon
+			match team:
+				1:
+					new_half_hp_icon = team1_half_hp_icon_template.duplicate(true)
+				2:
+					new_half_hp_icon = team2_half_hp_icon_template.duplicate(true)
+			new_half_hp_icon.visible = true
+			current_container.add_child(new_half_hp_icon)
+			remain_hp -= 1
+			hp_x += 1
+		elif loss_hp >= 2:
+			var new_loss_hp_icon = loss_hp_icon_template.duplicate(true)
+			new_loss_hp_icon.visible = true
+			current_container.add_child(new_loss_hp_icon)
+			loss_hp -= 2	
+			hp_x += 1
+		else:
+			break
+
+		if hp_x >= 5:
+			hp_x = 0	
 
 	if animated_sprite_2d.sprite_frames.has_animation("spell"):
 		var remain_mp := mp
@@ -2953,7 +3027,7 @@ func update_hp_mp() -> void:
 			mp_container.add_child(new_empty_mp_icon)
 			empty_mana -= 1			
 
-func corpse_generate(die_position: Vector2):
+func corpse_generate(die_position: Vector2) -> void:
 			
 	if animated_sprite_2d.sprite_frames.has_animation("die"):
 
@@ -2975,11 +3049,12 @@ func corpse_generate(die_position: Vector2):
 		var all_necromancer = arena.unit_grid.get_all_units().filter(
 			func(chess): 
 				var is_corpse_collector := true
+				var corpse_collect_distance := 4
 
 				if DataManagerSingleton.check_chess_valid(chess):
 					is_corpse_collector = false
 
-				if position.distance_to(chess.position) <= 100:
+				if chess_tile_distance(chess, self) <= corpse_collect_distance:
 					is_corpse_collector = false
 
 				if chess.faction != "undead" or not ["Necromancer"].has(chess.chess_name):
@@ -2990,7 +3065,7 @@ func corpse_generate(die_position: Vector2):
 		if all_necromancer.size() > 0:
 			all_necromancer.sort_custom(
 				func(a, b):
-					return self.position.distance_to(a.position) <= self.position.distance_to(a.position)
+					return chess_tile_distance(self, a) <= chess_tile_distance(self, b)
 			)
 			var chosen_necromancer = all_necromancer.pop_front()
 			var soul_list = chosen_necromancer.get_meta("corpse_list", [])
@@ -2998,6 +3073,13 @@ func corpse_generate(die_position: Vector2):
 			chosen_necromancer.set_meta("corpse_list", soul_list)
 
 func tile_distance(tile1: Vector2i, tile2: Vector2i) -> float:
+	var x_distance = abs(tile1.x - tile2.x)
+	var y_distance = abs(tile1.y - tile2.y)
+	return 1.4 * min(x_distance, y_distance) + abs(x_distance - y_distance)
+
+func chess_tile_distance(chess1: Chess, chess2: Chess) -> float:
+	var tile1 = get_current_tile(chess1)[1]
+	var tile2 = get_current_tile(chess2)[1]
 	var x_distance = abs(tile1.x - tile2.x)
 	var y_distance = abs(tile1.y - tile2.y)
 	return 1.4 * min(x_distance, y_distance) + abs(x_distance - y_distance)
