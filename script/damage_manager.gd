@@ -16,10 +16,10 @@ func damage_handler(attacker: Chess, target: Chess, damage_value: int, damage_ty
 	if not DataManagerSingleton.check_chess_valid(target):
 		return
 
-	if target.effect_handler.is_immunity or (damage_type == "Magic_attack" and target.effect_handler.is_spell_immunity):
+	if target.effect_handler.is_immunity or (damage_type == "Magic_attack" and target.effect_handler.is_spell_immunity and not affix_array.has("True_damage")):
 		return
 
-	if attacker.effect_handler.is_insulation or damage_type == "Continuous_effect":
+	if attacker.effect_handler.is_insulation or damage_type == "Continuous_effect" or affix_array.has("True_damage"):
 		attacker.damage_applied.emit(attacker, target, damage_result)
 		target.damage_taken.emit(target, attacker, damage_result)
 		return	
