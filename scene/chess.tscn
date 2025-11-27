@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://d28hb81gv3e5x"]
+[gd_scene load_steps=41 format=3 uid="uid://d28hb81gv3e5x"]
 
 [ext_resource type="Script" uid="uid://cmj65pa4j3u1u" path="res://script/chess.gd" id="1_q0pof"]
 [ext_resource type="Shader" uid="uid://d3tyrfwlw2c1g" path="res://asset/shader/LightweightPixelPerfectOutline.gdshader" id="2_8icae"]
@@ -8,9 +8,11 @@
 [ext_resource type="FontFile" uid="uid://bfd8lxmo20ddl" path="res://asset/font/Everyday_Tiny_Bold.ttf" id="7_yludp"]
 [ext_resource type="Script" uid="uid://f2vi2gwgn32i" path="res://script/effect_handler.gd" id="8_feolq"]
 [ext_resource type="Texture2D" uid="uid://wt5vohyl76x" path="res://asset/sprite/resal_heart.png" id="8_l1ly7"]
+[ext_resource type="Texture2D" uid="uid://cebnrg81fmyqx" path="res://asset/sprite/resal_heart_2.png" id="9_8osrc"]
 [ext_resource type="Texture2D" uid="uid://qnk284clwwuk" path="res://asset/sprite/resal_half_heart.png" id="9_ddkfs"]
 [ext_resource type="Texture2D" uid="uid://ygu8drxm1nl8" path="res://asset/sprite/resal_loss_heart.png" id="9_mwtpt"]
 [ext_resource type="Texture2D" uid="uid://bqv1xi1tsy5g8" path="res://asset/sprite/resal_mana.png" id="10_mwtpt"]
+[ext_resource type="Texture2D" uid="uid://bpud80dkwqxxf" path="res://asset/sprite/resal_half_heart_2.png" id="12_feolq"]
 [ext_resource type="Texture2D" uid="uid://hxt6bt81exul" path="res://asset/sprite/resal_loss_mana.png" id="12_mwtpt"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dbi3s"]
@@ -642,20 +644,30 @@ z_index = 50
 layout_mode = 2
 theme_override_constants/separation = 1
 
-[node name="hp_icon_template" type="TextureRect" parent="stats_container/hp_container"]
+[node name="team1_hp_icon_template" type="TextureRect" parent="stats_container/hp_container"]
 z_index = 50
 layout_mode = 2
 texture = ExtResource("8_l1ly7")
+
+[node name="team2_hp_icon_template" type="TextureRect" parent="stats_container/hp_container"]
+z_index = 50
+layout_mode = 2
+texture = ExtResource("9_8osrc")
 
 [node name="loss_hp_icon_template" type="TextureRect" parent="stats_container/hp_container"]
 z_index = 50
 layout_mode = 2
 texture = ExtResource("9_mwtpt")
 
-[node name="half_hp_icon_template" type="TextureRect" parent="stats_container/hp_container"]
+[node name="team1_half_hp_icon_template" type="TextureRect" parent="stats_container/hp_container"]
 z_index = 50
 layout_mode = 2
 texture = ExtResource("9_ddkfs")
+
+[node name="team2_half_hp_icon_template" type="TextureRect" parent="stats_container/hp_container"]
+z_index = 50
+layout_mode = 2
+texture = ExtResource("12_feolq")
 
 [node name="mp_container" type="HBoxContainer" parent="stats_container"]
 z_index = 50

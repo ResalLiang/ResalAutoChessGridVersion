@@ -470,7 +470,8 @@ func _process(delta: float) -> void:
 	hp_bar.max_value = max_hp
 	mp_bar.max_value = max_mp
 
-	update_hp_mp()
+	if get_current_tile(self)[0] == arena:
+		update_hp_mp()
 
 	if chess_level > 1:
 		level_label.text = "I".repeat(chess_level)
@@ -671,7 +672,7 @@ func _load_chess_stats():
 				decline_ratio = 0
 				projectile_penetration = 0
 			base_melee_damage = 0
-		elif base_attack_range <= 32 or not animated_sprite_2d.sprite_frames.has_animation("ranged_attack") or not stats.keys().has("ranged_attack_damage"):
+		elif base_attack_range <= ranged_attack_threshold or not animated_sprite_2d.sprite_frames.has_animation("ranged_attack") or not stats.keys().has("ranged_attack_damage"):
 			base_melee_damage = stats["melee_attack_damage"]
 			base_ranged_damage = 0
 			decline_ratio = 0
@@ -855,7 +856,7 @@ func _handle_movement():
 
 	if (chess_tile_distance(self, chess_target) <= attack_range or effect_handler.is_stunned) and not goblin_flee:
 		move_finished.emit(self, current_tile)
-		move_timer.set_wait_time(move_timer_wait_time)			
+		move_timer.set_wait_time(move_timer_wait_time)
 		move_timer.start()
 		return
 
@@ -877,13 +878,13 @@ func _handle_movement():
 
 		await get_tree().process_frame
 
-		move_path = astar_grid.get_point_path(current_tile, get_current_tile(chess_target)[1])
+		move_path = astar_grid.get_point_path(current_tile, chess_target_tile)
 
 		if move_path.is_empty():
-			move_path = get_safe_path(current_tile, get_current_tile(chess_target)[1])
+			move_path = get_safe_path(current_tile, chess_target_tile)
 
 		if move_path.is_empty():
-			astar_grid.set_point_solid(get_current_tile(chess_target)[1], true)
+			astar_grid.set_point_solid(chess_target_tile, true)
 			move_finished.emit(self, current_tile)
 			move_timer.set_wait_time(move_timer_wait_time)
 			move_timer.start()
@@ -907,7 +908,7 @@ func _handle_movement():
 			var target_pos = move_path[current_step + 1] + grid_offset
 			var target_tile = arena.get_tile_from_global(target_pos + get_parent().global_position)
 			current_tile = get_current_tile(self)[1]
-			if arena.unit_grid.is_tile_occupied(target_tile) or astar_grid.is_point_solid(target_pos) or remain_step <= 0 or (tile_distance(current_tile, target_tile) <= attack_range and not goblin_flee):
+			if arena.unit_grid.is_tile_occupied(target_tile) or astar_grid.is_point_solid(target_pos) or remain_step <= 0 or (chess_tile_distance(self, chess_target) <= attack_range and not goblin_flee):
 				break
 
 			var previous_tile = get_current_tile(self)[1]
@@ -955,6 +956,7 @@ func _handle_movement():
 
 	astar_grid.set_point_solid(get_current_tile(self)[1], true)
 	astar_grid.set_point_solid(get_current_tile(chess_target)[1], true)
+
 	#Placeholder for chess passive ability on move finish
 	move_finished.emit(self,get_current_tile(self)[1])
 	move_timer.set_wait_time(move_timer_wait_time)
@@ -1088,7 +1090,6 @@ func _handle_attack():
 				ranged_attack_started.emit(self)
 
 				if ["Banshee", "BansheeQueen"].has(chess_name):
-					var target_tile = attack_target.get_current_tile(attack_target)[1]
 					for x_offset in range(-2, 3):
 						for y_offset in range(-2, 3):
 							if arena.is_tile_in_bounds(target_tile + Vector2i(x_offset, y_offset)) and DataManagerSingleton.check_chess_valid(arena.unit_grid.units[target_tile + Vector2i(x_offset, y_offset)]):
@@ -2700,7 +2701,7 @@ func battle_cry() -> bool:
 
 	var orc_path1_bonus_level = game_root_scene.get_effective_bonus_level("orc", team, "path1")
 	if orc_path1_bonus_level > 0:
-		var nearby_chess = get_valid_chess_in_radius(get_current_tile(self)[1], orc_path1_bonus_level + 1).filter(
+		var nearby_chess = arena.unit_grid.get_valid_chess_in_radius(get_current_tile(self)[1], orc_path1_bonus_level + 1).filter(
 			func(chess):
 				return chess.team == team and DataManagerSingleton.check_chess_valid(chess)
 		)
@@ -2966,6 +2967,13 @@ func update_hp_mp() -> void:
 			continue
 		node.queue_free()
 	hp_container.visible = false
+	
+	for node in stats_container.get_children():
+		if ["hp_container", "mp_container"].has(node.name):
+			node.visible = false
+			continue
+		else:
+			node.queue_free()
 
 	var hp_x := 0
 	var remain_hp := hp
